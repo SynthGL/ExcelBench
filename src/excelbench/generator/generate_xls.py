@@ -211,7 +211,7 @@ def _generate_alignment(output_dir: Path) -> TestFile:
         "Align - indent 2",
         10,
         {"indent": 2},
-        xlwt.easyxf("align: inde 2"),
+        xlwt.easyxf("align: indent 2"),
         "Indented",
     )
 
