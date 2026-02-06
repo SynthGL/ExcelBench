@@ -4,7 +4,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from excelbench.models import BenchmarkResults, FeatureScore, OperationType
+from excelbench.models import BenchmarkResults, FeatureScore, OperationType, TestResult
 
 # Feature tier assignments
 _FEATURE_TIERS: dict[str, tuple[int, str]] = {
@@ -216,7 +216,7 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
             if failed:
                 lines.append("")
                 lines.extend(
-                    _render_per_test_table(score, libraries)
+                    _render_per_test_table(score)
                 )
 
             lines.append("")
@@ -280,7 +280,7 @@ def _render_statistics(
     return lines
 
 
-def _render_per_test_table(score: FeatureScore, libraries: list[str]) -> list[str]:
+def _render_per_test_table(score: FeatureScore) -> list[str]:
     """Render per-test-case breakdown table for a feature/library with failures."""
     lines: list[str] = []
 
@@ -293,7 +293,7 @@ def _render_per_test_table(score: FeatureScore, libraries: list[str]) -> list[st
             seen.add(tr.test_case_id)
 
     # Build lookup: (test_id, op) -> TestResult
-    lookup: dict[tuple[str, str], any] = {}
+    lookup: dict[tuple[str, str], TestResult] = {}
     for tr in score.test_results:
         lookup[(tr.test_case_id, tr.operation.value)] = tr
 
@@ -391,8 +391,8 @@ def _get_git_commit() -> str | None:
         )
         if result.returncode == 0:
             return result.stdout.strip()
-    except Exception:
-        pass
+    except (FileNotFoundError, OSError, subprocess.SubprocessError):
+        return None
     return None
 
 

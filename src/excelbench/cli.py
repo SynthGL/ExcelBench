@@ -1,10 +1,14 @@
 """Command-line interface for ExcelBench."""
 
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import typer
 from rich.console import Console
 from rich.table import Table
+
+if TYPE_CHECKING:
+    from excelbench.models import BenchmarkResults
 
 app = typer.Typer(
     name="excelbench",
@@ -265,13 +269,14 @@ def benchmark_profiles(
     console.print(f"  - {output_dir}/README.md")
 
 
-def _results_from_json(data: dict):
+def _results_from_json(data: dict) -> "BenchmarkResults":
     from datetime import datetime
 
     from excelbench.models import (
         BenchmarkMetadata,
         BenchmarkResults,
         FeatureScore,
+        Importance,
         LibraryInfo,
         OperationType,
         TestResult,
@@ -313,6 +318,12 @@ def _results_from_json(data: dict):
                             expected=op_data["expected"],
                             actual=op_data["actual"],
                             notes=op_data.get("notes"),
+                            importance=(
+                                Importance(op_data["importance"])
+                                if op_data.get("importance")
+                                else None
+                            ),
+                            label=op_data.get("label"),
                         )
                     )
             else:
@@ -325,6 +336,10 @@ def _results_from_json(data: dict):
                         expected=tc["expected"],
                         actual=tc["actual"],
                         notes=tc.get("notes"),
+                        importance=(
+                            Importance(tc["importance"]) if tc.get("importance") else None
+                        ),
+                        label=tc.get("label"),
                     )
                 )
         scores.append(

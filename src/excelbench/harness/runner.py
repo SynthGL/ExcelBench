@@ -830,7 +830,8 @@ def test_write(
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir) / adapter.name
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = output_dir / f"{test_file.feature}{ext}"
+        feature_stem = Path(test_file.feature).name or "feature"
+        output_path = output_dir / f"{feature_stem}{ext}"
 
         try:
             workbook = adapter.create_workbook()
