@@ -1,0 +1,1363 @@
+{
+  "generated_at": "2026-02-06T15:19:20.668154+00:00",
+  "excel_version": "16.105.3",
+  "generator_version": "0.1.0",
+  "file_format": "xlsx",
+  "files": [
+    {
+      "path": "tier1/01_cell_values.xlsx",
+      "feature": "cell_values",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "string_simple",
+          "label": "String - simple",
+          "row": 2,
+          "expected": {
+            "type": "string",
+            "value": "Hello World"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "string_unicode",
+          "label": "String - unicode",
+          "row": 3,
+          "expected": {
+            "type": "string",
+            "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "string_empty",
+          "label": "String - empty",
+          "row": 4,
+          "expected": {
+            "type": "blank"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "string_long",
+          "label": "String - long (1000 chars)",
+          "row": 5,
+          "expected": {
+            "type": "string",
+            "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "string_newline",
+          "label": "String - with newlines",
+          "row": 6,
+          "expected": {
+            "type": "string",
+            "value": "Line 1\nLine 2\nLine 3"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "number_integer",
+          "label": "Number - integer",
+          "row": 7,
+          "expected": {
+            "type": "number",
+            "value": 42
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "number_float",
+          "label": "Number - float",
+          "row": 8,
+          "expected": {
+            "type": "number",
+            "value": 3.14159265358979
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "number_negative",
+          "label": "Number - negative",
+          "row": 9,
+          "expected": {
+            "type": "number",
+            "value": -100.5
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "number_large",
+          "label": "Number - large",
+          "row": 10,
+          "expected": {
+            "type": "number",
+            "value": 1234567890123456
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "number_scientific",
+          "label": "Number - scientific notation",
+          "row": 11,
+          "expected": {
+            "type": "number",
+            "value": 1.23e-10
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "date_standard",
+          "label": "Date - standard",
+          "row": 12,
+          "expected": {
+            "type": "date",
+            "value": "2026-02-04"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "datetime",
+          "label": "DateTime - with time",
+          "row": 13,
+          "expected": {
+            "type": "datetime",
+            "value": "2026-02-04T10:30:45"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "boolean_true",
+          "label": "Boolean - TRUE",
+          "row": 14,
+          "expected": {
+            "type": "boolean",
+            "value": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "boolean_false",
+          "label": "Boolean - FALSE",
+          "row": 15,
+          "expected": {
+            "type": "boolean",
+            "value": false
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "error_div0",
+          "label": "Error - #DIV/0!",
+          "row": 16,
+          "expected": {
+            "type": "error",
+            "value": "#DIV/0!"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "error_na",
+          "label": "Error - #N/A",
+          "row": 17,
+          "expected": {
+            "type": "error",
+            "value": "#N/A"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "error_value",
+          "label": "Error - #VALUE!",
+          "row": 18,
+          "expected": {
+            "type": "error",
+            "value": "#VALUE!"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "blank",
+          "label": "Blank cell",
+          "row": 19,
+          "expected": {
+            "type": "blank"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/02_formulas.xlsx",
+      "feature": "formulas",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "formula_sum",
+          "label": "Formula - SUM",
+          "row": 2,
+          "expected": {
+            "type": "formula",
+            "formula": "=SUM(1,2,3)"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "formula_cell_ref",
+          "label": "Formula - cell reference",
+          "row": 3,
+          "expected": {
+            "type": "formula",
+            "formula": "=A3*2"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "formula_concat",
+          "label": "Formula - concat",
+          "row": 4,
+          "expected": {
+            "type": "formula",
+            "formula": "=A4&\" \"&A5"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "formula_cross_sheet",
+          "label": "Formula - cross sheet",
+          "row": 5,
+          "expected": {
+            "type": "formula",
+            "formula": "='References'!B2"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/03_text_formatting.xlsx",
+      "feature": "text_formatting",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "bold",
+          "label": "Bold",
+          "row": 2,
+          "expected": {
+            "bold": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "italic",
+          "label": "Italic",
+          "row": 3,
+          "expected": {
+            "italic": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "underline_single",
+          "label": "Underline - single",
+          "row": 4,
+          "expected": {
+            "underline": "single"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "underline_double",
+          "label": "Underline - double",
+          "row": 5,
+          "expected": {
+            "underline": "double"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "strikethrough",
+          "label": "Strikethrough",
+          "row": 6,
+          "expected": {
+            "strikethrough": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "bold_italic",
+          "label": "Bold + Italic",
+          "row": 7,
+          "expected": {
+            "bold": true,
+            "italic": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_size_8",
+          "label": "Font size 8",
+          "row": 8,
+          "expected": {
+            "font_size": 8
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_size_14",
+          "label": "Font size 14",
+          "row": 9,
+          "expected": {
+            "font_size": 14
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_size_24",
+          "label": "Font size 24",
+          "row": 10,
+          "expected": {
+            "font_size": 24
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_size_36",
+          "label": "Font size 36",
+          "row": 11,
+          "expected": {
+            "font_size": 36
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_arial",
+          "label": "Font - Arial",
+          "row": 12,
+          "expected": {
+            "font_name": "Arial"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_times",
+          "label": "Font - Times New Roman",
+          "row": 13,
+          "expected": {
+            "font_name": "Times New Roman"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "font_courier",
+          "label": "Font - Courier New",
+          "row": 14,
+          "expected": {
+            "font_name": "Courier New"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_red",
+          "label": "Font color - red",
+          "row": 15,
+          "expected": {
+            "font_color": "#FF0000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_blue",
+          "label": "Font color - blue",
+          "row": 16,
+          "expected": {
+            "font_color": "#0000FF"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_green",
+          "label": "Font color - green",
+          "row": 17,
+          "expected": {
+            "font_color": "#00FF00"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_custom",
+          "label": "Font color - custom (#8B4513)",
+          "row": 18,
+          "expected": {
+            "font_color": "#8B4513"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "combined",
+          "label": "Combined - bold, 16pt, red",
+          "row": 19,
+          "expected": {
+            "bold": true,
+            "font_size": 16,
+            "font_color": "#FF0000"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/04_background_colors.xlsx",
+      "feature": "background_colors",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "bg_red",
+          "label": "Background - red",
+          "row": 2,
+          "expected": {
+            "bg_color": "#FF0000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "bg_blue",
+          "label": "Background - blue",
+          "row": 3,
+          "expected": {
+            "bg_color": "#0000FF"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "bg_green",
+          "label": "Background - green",
+          "row": 4,
+          "expected": {
+            "bg_color": "#00FF00"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "bg_custom",
+          "label": "Background - custom (#8B4513)",
+          "row": 5,
+          "expected": {
+            "bg_color": "#8B4513"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/05_number_formats.xlsx",
+      "feature": "number_formats",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "numfmt_currency",
+          "label": "Format - currency",
+          "row": 2,
+          "expected": {
+            "number_format": "$#,##0.00"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "numfmt_percent",
+          "label": "Format - percent",
+          "row": 3,
+          "expected": {
+            "number_format": "0.00%"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "numfmt_date",
+          "label": "Format - date",
+          "row": 4,
+          "expected": {
+            "number_format": "yyyy-mm-dd"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "numfmt_scientific",
+          "label": "Format - scientific",
+          "row": 5,
+          "expected": {
+            "number_format": "0.00E+00"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "numfmt_custom_text",
+          "label": "Format - custom text",
+          "row": 6,
+          "expected": {
+            "number_format": "\"USD\" 0.00"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/06_alignment.xlsx",
+      "feature": "alignment",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "h_left",
+          "label": "Align - left",
+          "row": 2,
+          "expected": {
+            "h_align": "left"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "h_center",
+          "label": "Align - center",
+          "row": 3,
+          "expected": {
+            "h_align": "center"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "h_right",
+          "label": "Align - right",
+          "row": 4,
+          "expected": {
+            "h_align": "right"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "v_top",
+          "label": "Align - top",
+          "row": 5,
+          "expected": {
+            "v_align": "top"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "v_center",
+          "label": "Align - center",
+          "row": 6,
+          "expected": {
+            "v_align": "center"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "v_bottom",
+          "label": "Align - bottom",
+          "row": 7,
+          "expected": {
+            "v_align": "bottom"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "wrap_text",
+          "label": "Align - wrap text",
+          "row": 8,
+          "expected": {
+            "wrap": true
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "rotation_45",
+          "label": "Align - rotation 45",
+          "row": 9,
+          "expected": {
+            "rotation": 45
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "indent_2",
+          "label": "Align - indent 2",
+          "row": 10,
+          "expected": {
+            "indent": 2
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/07_borders.xlsx",
+      "feature": "borders",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "thin_all",
+          "label": "Border - thin all edges",
+          "row": 2,
+          "expected": {
+            "border_style": "thin",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "medium_all",
+          "label": "Border - medium all edges",
+          "row": 3,
+          "expected": {
+            "border_style": "medium",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "thick_all",
+          "label": "Border - thick all edges",
+          "row": 4,
+          "expected": {
+            "border_style": "thick",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "double",
+          "label": "Border - double line",
+          "row": 5,
+          "expected": {
+            "border_style": "double",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "dashed",
+          "label": "Border - dashed",
+          "row": 6,
+          "expected": {
+            "border_style": "dashed",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "dotted",
+          "label": "Border - dotted",
+          "row": 7,
+          "expected": {
+            "border_style": "dotted",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "dash_dot",
+          "label": "Border - dash-dot",
+          "row": 8,
+          "expected": {
+            "border_style": "dashDot",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "dash_dot_dot",
+          "label": "Border - dash-dot-dot",
+          "row": 9,
+          "expected": {
+            "border_style": "dashDotDot",
+            "border_color": "#000000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "top_only",
+          "label": "Border - top only",
+          "row": 10,
+          "expected": {
+            "border_top": "thin",
+            "border_bottom": null,
+            "border_left": null,
+            "border_right": null
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "bottom_only",
+          "label": "Border - bottom only",
+          "row": 11,
+          "expected": {
+            "border_top": null,
+            "border_bottom": "thin",
+            "border_left": null,
+            "border_right": null
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "left_only",
+          "label": "Border - left only",
+          "row": 12,
+          "expected": {
+            "border_top": null,
+            "border_bottom": null,
+            "border_left": "thin",
+            "border_right": null
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "right_only",
+          "label": "Border - right only",
+          "row": 13,
+          "expected": {
+            "border_top": null,
+            "border_bottom": null,
+            "border_left": null,
+            "border_right": "thin"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "diagonal_up",
+          "label": "Border - diagonal up",
+          "row": 14,
+          "expected": {
+            "border_diagonal_up": "thin"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "diagonal_down",
+          "label": "Border - diagonal down",
+          "row": 15,
+          "expected": {
+            "border_diagonal_down": "thin"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "diagonal_both",
+          "label": "Border - diagonal both",
+          "row": 16,
+          "expected": {
+            "border_diagonal_up": "thin",
+            "border_diagonal_down": "thin"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_red",
+          "label": "Border - red color",
+          "row": 17,
+          "expected": {
+            "border_style": "thin",
+            "border_color": "#FF0000"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_blue",
+          "label": "Border - blue color",
+          "row": 18,
+          "expected": {
+            "border_style": "thin",
+            "border_color": "#0000FF"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "color_custom",
+          "label": "Border - custom color (#8B4513)",
+          "row": 19,
+          "expected": {
+            "border_style": "thin",
+            "border_color": "#8B4513"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "mixed_styles",
+          "label": "Border - mixed styles per edge",
+          "row": 20,
+          "expected": {
+            "border_top": "thick",
+            "border_bottom": "thin",
+            "border_left": "medium",
+            "border_right": "dashed"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "mixed_colors",
+          "label": "Border - mixed colors per edge",
+          "row": 21,
+          "expected": {
+            "border_top_color": "#FF0000",
+            "border_bottom_color": "#00FF00",
+            "border_left_color": "#0000FF",
+            "border_right_color": "#FFFF00"
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/08_dimensions.xlsx",
+      "feature": "dimensions",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "row_height_30",
+          "label": "Row height - 30",
+          "row": 2,
+          "expected": {
+            "row_height": 30
+          },
+          "cell": "B2",
+          "importance": "basic"
+        },
+        {
+          "id": "row_height_45",
+          "label": "Row height - 45",
+          "row": 3,
+          "expected": {
+            "row_height": 45
+          },
+          "cell": "B3",
+          "importance": "basic"
+        },
+        {
+          "id": "col_width_20",
+          "label": "Column width - D = 20",
+          "row": 4,
+          "expected": {
+            "column_width": 20
+          },
+          "cell": "D4",
+          "importance": "basic"
+        },
+        {
+          "id": "col_width_8",
+          "label": "Column width - E = 8",
+          "row": 5,
+          "expected": {
+            "column_width": 8
+          },
+          "cell": "E5",
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier1/09_multiple_sheets.xlsx",
+      "feature": "multiple_sheets",
+      "tier": 1,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "sheet_names",
+          "label": "Sheet names",
+          "row": 2,
+          "expected": {
+            "sheet_names": [
+              "Alpha",
+              "Beta",
+              "Gamma"
+            ]
+          },
+          "sheet": "Alpha",
+          "importance": "basic"
+        },
+        {
+          "id": "value_alpha",
+          "label": "Alpha value",
+          "row": 3,
+          "expected": {
+            "type": "string",
+            "value": "Alpha"
+          },
+          "sheet": "Alpha",
+          "cell": "B3",
+          "importance": "basic"
+        },
+        {
+          "id": "value_beta",
+          "label": "Beta value",
+          "row": 3,
+          "expected": {
+            "type": "string",
+            "value": "Beta"
+          },
+          "sheet": "Beta",
+          "cell": "B3",
+          "importance": "basic"
+        },
+        {
+          "id": "value_gamma",
+          "label": "Gamma value",
+          "row": 3,
+          "expected": {
+            "type": "string",
+            "value": "Gamma"
+          },
+          "sheet": "Gamma",
+          "cell": "B3",
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier2/10_merged_cells.xlsx",
+      "feature": "merged_cells",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "merge_horizontal",
+          "label": "Merge horizontal B2:D2",
+          "row": 2,
+          "expected": {
+            "merged_range": "B2:D2",
+            "top_left_value": "Merged"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "merge_vertical",
+          "label": "Merge vertical B3:B5",
+          "row": 3,
+          "expected": {
+            "merged_range": "B3:B5",
+            "top_left_value": "Vertical"
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "merge_value_off_top_left",
+          "label": "Merge with non-top-left value",
+          "row": 4,
+          "expected": {
+            "merged_range": "B6:D6",
+            "top_left_value": "OffTop",
+            "non_top_left_nonempty": 0
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "merge_top_left_fill",
+          "label": "Merge with top-left fill",
+          "row": 5,
+          "expected": {
+            "merged_range": "B7:D7",
+            "top_left_value": "Fill",
+            "top_left_bg_color": "#FF0000"
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier2/11_conditional_formatting.xlsx",
+      "feature": "conditional_formatting",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "cf_cell_gt",
+          "label": "CF: cell > 5 (yellow fill)",
+          "row": 2,
+          "expected": {
+            "cf_rule": {
+              "range": "B2:B6",
+              "rule_type": "cellIs",
+              "operator": "greaterThan",
+              "formula": "5",
+              "priority": 1,
+              "format": {
+                "bg_color": "#FFFF00"
+              }
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "cf_formula_cross_sheet",
+          "label": "CF: formula rule with cross-sheet ref",
+          "row": 3,
+          "expected": {
+            "cf_rule": {
+              "range": "B2:B6",
+              "rule_type": "expression",
+              "formula": "=Ref!$A$1>5",
+              "priority": 2,
+              "format": {
+                "bg_color": "#FF00FF"
+              }
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "cf_text_contains",
+          "label": "CF: text contains",
+          "row": 4,
+          "expected": {
+            "cf_rule": {
+              "range": "B2:B6",
+              "rule_type": "expression",
+              "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+              "priority": 3,
+              "format": {
+                "bg_color": "#FFFF00"
+              }
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "cf_data_bar",
+          "label": "CF: data bar",
+          "row": 5,
+          "expected": {
+            "cf_rule": {
+              "range": "B2:B6",
+              "rule_type": "dataBar",
+              "priority": 4
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "cf_color_scale",
+          "label": "CF: 3-color scale",
+          "row": 6,
+          "expected": {
+            "cf_rule": {
+              "range": "B2:B6",
+              "rule_type": "colorScale",
+              "priority": 5
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "cf_stop_if_true",
+          "label": "CF: stop-if-true priority",
+          "row": 7,
+          "expected": {
+            "cf_rule": {
+              "range": "B7:B9",
+              "rule_type": "cellIs",
+              "operator": "lessThan",
+              "formula": "3",
+              "priority": 1,
+              "stop_if_true": true,
+              "format": {
+                "bg_color": "#FF0000"
+              }
+            }
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier2/12_data_validation.xlsx",
+      "feature": "data_validation",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "dv_list_csv",
+          "label": "DV: list from CSV",
+          "row": 2,
+          "expected": {
+            "validation": {
+              "range": "B2",
+              "validation_type": "list",
+              "formula1": "\"Red,Green,Blue\"",
+              "allow_blank": true
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "dv_list_range",
+          "label": "DV: list from range",
+          "row": 3,
+          "expected": {
+            "validation": {
+              "range": "B3",
+              "validation_type": "list",
+              "formula1": "=$D$2:$D$4"
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "dv_cross_sheet",
+          "label": "DV: cross-sheet named range",
+          "row": 4,
+          "expected": {
+            "validation": {
+              "range": "B4",
+              "validation_type": "list",
+              "formula1": "=RegionList"
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "dv_custom_formula",
+          "label": "DV: custom formula",
+          "row": 5,
+          "expected": {
+            "validation": {
+              "range": "B5",
+              "validation_type": "custom",
+              "formula1": "=B5>C5"
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "dv_whole_between",
+          "label": "DV: whole number with error",
+          "row": 6,
+          "expected": {
+            "validation": {
+              "range": "B6",
+              "validation_type": "whole",
+              "operator": "between",
+              "formula1": "1",
+              "formula2": "10",
+              "allow_blank": false,
+              "error_title": "Invalid",
+              "error": "Enter 1-10"
+            }
+          },
+          "importance": "basic"
+        }
+      ]
+    },
+    {
+      "path": "tier2/13_hyperlinks.xlsx",
+      "feature": "hyperlinks",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "link_external",
+          "label": "Hyperlink: external URL",
+          "row": 2,
+          "expected": {
+            "hyperlink": {
+              "cell": "B2",
+              "target": "https://example.com/docs",
+              "display": "Example Docs",
+              "tooltip": "Go to docs",
+              "internal": false
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "link_internal",
+          "label": "Hyperlink: internal sheet",
+          "row": 3,
+          "expected": {
+            "hyperlink": {
+              "cell": "B3",
+              "target": "Targets!A1",
+              "display": "Go Target",
+              "tooltip": "Jump to target",
+              "internal": true
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "link_mailto",
+          "label": "Hyperlink: mailto",
+          "row": 4,
+          "expected": {
+            "hyperlink": {
+              "cell": "B4",
+              "target": "mailto:test@example.com",
+              "display": "Email",
+              "tooltip": "Send email",
+              "internal": false
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "link_long",
+          "label": "Hyperlink: long encoded URL",
+          "row": 5,
+          "expected": {
+            "hyperlink": {
+              "cell": "B5",
+              "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+              "display": "Search",
+              "tooltip": "Encoded URL",
+              "internal": false
+            }
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier2/14_images.xlsx",
+      "feature": "images",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "image_one_cell",
+          "label": "Image: one-cell anchor",
+          "row": 2,
+          "expected": {
+            "image": {
+              "cell": "B2",
+              "path": "fixtures/images/sample.png",
+              "anchor": "oneCell"
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "image_two_cell_offset",
+          "label": "Image: two-cell anchor with offset",
+          "row": 3,
+          "expected": {
+            "image": {
+              "cell": "D6",
+              "path": "fixtures/images/sample.jpg",
+              "anchor": "oneCell"
+            }
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier2/15_pivot_tables.xlsx",
+      "feature": "pivot_tables",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": []
+    },
+    {
+      "path": "tier2/16_comments.xlsx",
+      "feature": "comments",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "comment_legacy",
+          "label": "Comment: legacy note",
+          "row": 2,
+          "expected": {
+            "comment": {
+              "cell": "B2",
+              "text": "Legacy note",
+              "threaded": false
+            }
+          },
+          "importance": "basic"
+        },
+        {
+          "id": "comment_threaded",
+          "label": "Comment: threaded",
+          "row": 3,
+          "expected": {
+            "comment": {
+              "cell": "B3",
+              "text": "Threaded fallback",
+              "threaded": false
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "comment_author",
+          "label": "Comment: second author",
+          "row": 4,
+          "expected": {
+            "comment": {
+              "cell": "B4",
+              "text": "Another note",
+              "threaded": false
+            }
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier2/17_freeze_panes.xlsx",
+      "feature": "freeze_panes",
+      "tier": 2,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "freeze_b2",
+          "label": "Freeze panes at B2",
+          "row": 2,
+          "expected": {
+            "freeze": {
+              "mode": "freeze",
+              "top_left_cell": "B2"
+            }
+          },
+          "sheet": "FreezeB2",
+          "importance": "basic"
+        },
+        {
+          "id": "freeze_d5",
+          "label": "Freeze panes at D5",
+          "row": 3,
+          "expected": {
+            "freeze": {
+              "mode": "freeze",
+              "top_left_cell": "D5"
+            }
+          },
+          "sheet": "FreezeD5",
+          "importance": "edge"
+        },
+        {
+          "id": "split_2x1",
+          "label": "Split panes row=2 col=1",
+          "row": 4,
+          "expected": {
+            "freeze": {
+              "mode": "split",
+              "x_split": 1,
+              "y_split": 2
+            }
+          },
+          "sheet": "SplitPanes",
+          "importance": "edge"
+        }
+      ]
+    }
+  ]
+}
