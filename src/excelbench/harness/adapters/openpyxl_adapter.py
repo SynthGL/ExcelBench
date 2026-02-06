@@ -678,43 +678,32 @@ class OpenpyxlAdapter(ExcelAdapter):
         rule_type = cf.get("rule_type")
         formula = cf.get("formula")
         operator = cf.get("operator")
+        stop_if_true = cf.get("stop_if_true", False)
         fmt = cf.get("format") or {}
 
-        dxf = None
-        if fmt:
-            fill = None
-            font = None
-            if fmt.get("bg_color"):
-                hex_color = fmt["bg_color"].lstrip("#")
-                fill = PatternFill(
-                    start_color=f"FF{hex_color}", end_color=f"FF{hex_color}", fill_type="solid"
-                )
-            if fmt.get("font_color"):
-                hex_color = fmt["font_color"].lstrip("#")
-                font = Font(color=f"FF{hex_color}")
-            if fill or font:
-                from openpyxl.styles import DifferentialStyle
+        fill = None
+        font = None
+        if fmt.get("bg_color"):
+            hex_color = fmt["bg_color"].lstrip("#")
+            fill = PatternFill(
+                start_color=f"FF{hex_color}", end_color=f"FF{hex_color}", fill_type="solid"
+            )
+        if fmt.get("font_color"):
+            hex_color = fmt["font_color"].lstrip("#")
+            font = Font(color=f"FF{hex_color}")
 
-                dxf = DifferentialStyle(fill=fill, font=font)
-
+        rule_obj = None
         if rule_type in ("cellIs", "cellIsRule"):
-            op_map = {
-                "greaterThan": "greaterThan",
-                "lessThan": "lessThan",
-                "between": "between",
-                "equal": "equal",
-                "notEqual": "notEqual",
-                "greaterThanOrEqual": "greaterThanOrEqual",
-                "lessThanOrEqual": "lessThanOrEqual",
-            }
-            op = op_map.get(operator, operator)
             from openpyxl.formatting.rule import CellIsRule
 
-            rule_obj = CellIsRule(operator=op, formula=[formula], dxf=dxf)
-            ws.conditional_formatting.add(range_ref, rule_obj)
+            rule_obj = CellIsRule(
+                operator=operator, formula=[formula],
+                fill=fill, font=font, stopIfTrue=stop_if_true,
+            )
         elif rule_type in ("expression", "formula"):
-            rule_obj = FormulaRule(formula=[formula], dxf=dxf)
-            ws.conditional_formatting.add(range_ref, rule_obj)
+            rule_obj = FormulaRule(
+                formula=[formula], fill=fill, font=font, stopIfTrue=stop_if_true,
+            )
         elif rule_type == "colorScale":
             rule_obj = ColorScaleRule(
                 start_type="min",
@@ -725,11 +714,15 @@ class OpenpyxlAdapter(ExcelAdapter):
                 end_type="max",
                 end_color="FF00AA00",
             )
-            ws.conditional_formatting.add(range_ref, rule_obj)
         elif rule_type == "dataBar":
             rule_obj = DataBarRule(
                 start_type="min", end_type="max", color="FF638EC6", showValue=True
             )
+
+        if rule_obj is not None:
+            priority = cf.get("priority")
+            if priority is not None:
+                rule_obj.priority = priority
             ws.conditional_formatting.add(range_ref, rule_obj)
 
     def add_data_validation(self, workbook: Workbook, sheet: str, validation: dict) -> None:
@@ -799,9 +792,19 @@ class OpenpyxlAdapter(ExcelAdapter):
         if mode == "freeze":
             ws.freeze_panes = cfg.get("top_left_cell")
         elif mode == "split":
+            from openpyxl.worksheet.views import Pane
+
             ws.freeze_panes = None
             pane = ws.sheet_view.pane
-            pane.xSplit = cfg.get("x_split")
-            pane.ySplit = cfg.get("y_split")
-            pane.topLeftCell = cfg.get("top_left_cell")
-            pane.activePane = cfg.get("active_pane")
+            if pane is None:
+                pane = Pane()
+                ws.sheet_view.pane = pane
+            if cfg.get("x_split") is not None:
+                pane.xSplit = cfg["x_split"]
+            if cfg.get("y_split") is not None:
+                pane.ySplit = cfg["y_split"]
+            if cfg.get("top_left_cell") is not None:
+                pane.topLeftCell = cfg["top_left_cell"]
+            if cfg.get("active_pane") is not None:
+                pane.activePane = cfg["active_pane"]
+            pane.state = "split"

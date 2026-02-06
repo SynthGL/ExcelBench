@@ -26,9 +26,10 @@ Each feature is scored on a 0-3 scale for both **Read** and **Write** capabiliti
 - xlsxwriter (write-only)
 - python-calamine (read-only, Rust-backed)
 - pylightxl (read/write, zero-dependency)
+- xlrd (read-only, .xls format)
 
 **Planned:**
-- pyexcel, xlrd
+- pyexcel
 - Rust: rust_xlsxwriter, umya-spreadsheet
 
 ## Features Tested
@@ -75,7 +76,7 @@ Full methodology: [METHODOLOGY.md](METHODOLOGY.md)
 
 ## Project Status
 
-🚧 **In Development** - Tier 1 completion underway
+🚧 **In Development** - Tier 1+2 complete, 5 adapters (openpyxl, xlsxwriter, python-calamine, pylightxl, xlrd)
 
 ## License
 

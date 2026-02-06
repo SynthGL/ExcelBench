@@ -1,4 +1,4 @@
-"""Tests for python-calamine and pylightxl adapters."""
+"""Tests for python-calamine, pylightxl, and xlrd adapters."""
 
 import tempfile
 from datetime import date, datetime
@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from excelbench.harness.adapters import CalamineAdapter, PylightxlAdapter
+from excelbench.harness.adapters import CalamineAdapter, PylightxlAdapter, XlrdAdapter
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 from excelbench.models import BorderInfo, CellFormat, CellType, CellValue
 
@@ -476,3 +476,141 @@ class TestCrossAdapterRead:
             calamine_adapter.close_workbook(wb2)
         finally:
             path.unlink(missing_ok=True)
+
+
+# =========================================================================
+# XlrdAdapter Tests
+# =========================================================================
+
+
+@pytest.fixture
+def xlrd_adapter():
+    return XlrdAdapter()
+
+
+class TestXlrdInfo:
+    def test_name(self, xlrd_adapter):
+        assert xlrd_adapter.name == "xlrd"
+
+    def test_capabilities(self, xlrd_adapter):
+        assert xlrd_adapter.can_read() is True
+        assert xlrd_adapter.can_write() is False
+
+    def test_info_language(self, xlrd_adapter):
+        assert xlrd_adapter.info.language == "python"
+
+    def test_info_version(self, xlrd_adapter):
+        assert xlrd_adapter.info.version  # Non-empty
+
+
+class TestXlrdXlsxRejection:
+    """xlrd >=2.0 rejects .xlsx files — verify graceful error."""
+
+    def test_open_xlsx_raises(self, xlrd_adapter, sample_xlsx):
+        with pytest.raises(Exception):
+            xlrd_adapter.open_workbook(sample_xlsx)
+
+
+class TestXlrdWriteBlocked:
+    def test_create_workbook_raises(self, xlrd_adapter):
+        with pytest.raises(NotImplementedError, match="read-only"):
+            xlrd_adapter.create_workbook()
+
+    def test_save_workbook_raises(self, xlrd_adapter):
+        with pytest.raises(NotImplementedError, match="read-only"):
+            xlrd_adapter.save_workbook(None, Path("/tmp/test.xlsx"))
+
+    def test_write_cell_value_raises(self, xlrd_adapter):
+        with pytest.raises(NotImplementedError, match="read-only"):
+            xlrd_adapter.write_cell_value(None, "S1", "A1", CellValue(type=CellType.BLANK))
+
+    def test_add_sheet_raises(self, xlrd_adapter):
+        with pytest.raises(NotImplementedError, match="read-only"):
+            xlrd_adapter.add_sheet(None, "S1")
+
+
+class TestXlrdXlsRead:
+    """Test xlrd reading .xls files created with xlwt."""
+
+    @pytest.fixture
+    def sample_xls(self):
+        """Create a sample .xls file using xlwt for xlrd to read."""
+        try:
+            import xlwt
+        except ImportError:
+            pytest.skip("xlwt not installed — cannot create .xls test files")
+        path = Path(tempfile.mktemp(suffix=".xls"))
+        wb = xlwt.Workbook()
+        ws = wb.add_sheet("Data")
+        ws.write(0, 0, "hello")        # A1
+        ws.write(1, 0, 42)             # A2
+        ws.write(2, 0, 3.14)           # A3
+        ws.write(3, 0, True)           # A4
+        ws.write(4, 0, "")             # A5 - blank-ish
+        # Second sheet
+        ws2 = wb.add_sheet("Sheet2")
+        ws2.write(0, 0, "second")
+        wb.save(str(path))
+        yield path
+        path.unlink(missing_ok=True)
+
+    def test_sheet_names(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        names = xlrd_adapter.get_sheet_names(wb)
+        assert "Data" in names
+        assert "Sheet2" in names
+        xlrd_adapter.close_workbook(wb)
+
+    def test_read_string(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        val = xlrd_adapter.read_cell_value(wb, "Data", "A1")
+        assert val.type == CellType.STRING
+        assert val.value == "hello"
+        xlrd_adapter.close_workbook(wb)
+
+    def test_read_number_int(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        val = xlrd_adapter.read_cell_value(wb, "Data", "A2")
+        assert val.type == CellType.NUMBER
+        assert val.value == 42 or val.value == 42.0
+        xlrd_adapter.close_workbook(wb)
+
+    def test_read_number_float(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        val = xlrd_adapter.read_cell_value(wb, "Data", "A3")
+        assert val.type == CellType.NUMBER
+        assert abs(val.value - 3.14) < 0.001
+        xlrd_adapter.close_workbook(wb)
+
+    def test_read_boolean(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        val = xlrd_adapter.read_cell_value(wb, "Data", "A4")
+        assert val.type == CellType.BOOLEAN
+        assert val.value is True
+        xlrd_adapter.close_workbook(wb)
+
+    def test_read_out_of_bounds(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        val = xlrd_adapter.read_cell_value(wb, "Data", "Z99")
+        assert val.type == CellType.BLANK
+        xlrd_adapter.close_workbook(wb)
+
+    def test_format_returns_cellformat(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        fmt = xlrd_adapter.read_cell_format(wb, "Data", "A1")
+        assert isinstance(fmt, CellFormat)
+        xlrd_adapter.close_workbook(wb)
+
+    def test_border_returns_borderinfo(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        border = xlrd_adapter.read_cell_border(wb, "Data", "A1")
+        assert isinstance(border, BorderInfo)
+        xlrd_adapter.close_workbook(wb)
+
+    def test_tier2_returns_empty(self, xlrd_adapter, sample_xls):
+        wb = xlrd_adapter.open_workbook(sample_xls)
+        assert xlrd_adapter.read_conditional_formats(wb, "Data") == []
+        assert xlrd_adapter.read_data_validations(wb, "Data") == []
+        assert xlrd_adapter.read_images(wb, "Data") == []
+        assert xlrd_adapter.read_pivot_tables(wb, "Data") == []
+        xlrd_adapter.close_workbook(wb)

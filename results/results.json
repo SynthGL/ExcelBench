@@ -1,7 +1,7 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-06T06:17:07.403568+00:00",
+    "run_date": "2026-02-06T07:21:25.818096+00:00",
     "excel_version": "16.105.3",
     "platform": "Darwin-arm64"
   },
@@ -37,6 +37,14 @@
       "language": "python",
       "capabilities": [
         "write",
+        "read"
+      ]
+    },
+    "xlrd": {
+      "name": "xlrd",
+      "version": "2.0.2",
+      "language": "python",
+      "capabilities": [
         "read"
       ]
     }
@@ -1500,6 +1508,249 @@
       "notes": null
     },
     {
+      "feature": "cell_values",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "string_simple": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "Hello World"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "string_unicode": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "string_empty": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "string_long": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "string_newline": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "Line 1\nLine 2\nLine 3"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "number_integer": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "number",
+              "value": 42
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "number_float": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "number",
+              "value": 3.14159265358979
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "number_negative": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "number",
+              "value": -100.5
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "number_large": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "number",
+              "value": 1234567890123456
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "number_scientific": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "number",
+              "value": 1.23e-10
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "date_standard": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "date",
+              "value": "2026-02-04"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "datetime": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "datetime",
+              "value": "2026-02-04T10:30:45"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "boolean_true": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "boolean",
+              "value": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "boolean_false": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "boolean",
+              "value": false
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "error_div0": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "error",
+              "value": "#DIV/0!"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "error_na": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "error",
+              "value": "#N/A"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "error_value": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "error",
+              "value": "#VALUE!"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "blank": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "formulas",
       "library": "openpyxl",
       "scores": {
@@ -1856,6 +2107,69 @@
       "notes": null
     },
     {
+      "feature": "formulas",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "formula_sum": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "formula",
+              "formula": "=SUM(1,2,3)"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "formula_cell_ref": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "formula",
+              "formula": "=A3*2"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "formula_concat": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "formula",
+              "formula": "=A4&\" \"&A5"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "formula_cross_sheet": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "formula",
+              "formula": "='References'!B2"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "text_formatting",
       "library": "openpyxl",
       "scores": {
@@ -3153,6 +3467,236 @@
       "notes": null
     },
     {
+      "feature": "text_formatting",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "bold": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bold": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "italic": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "italic": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "underline_single": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "underline": "single"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "underline_double": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "underline": "double"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "strikethrough": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "strikethrough": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "bold_italic": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bold": true,
+              "italic": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_size_8": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_size": 8
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_size_14": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_size": 14
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_size_24": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_size": 24
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_size_36": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_size": 36
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_arial": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_name": "Arial"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_times": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_name": "Times New Roman"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "font_courier": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_name": "Courier New"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_red": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_blue": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_color": "#0000FF"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_green": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_color": "#00FF00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_custom": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "font_color": "#8B4513"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "combined": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bold": true,
+              "font_size": 16,
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "background_colors",
       "library": "openpyxl",
       "scores": {
@@ -3439,6 +3983,65 @@
             },
             "actual": {},
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "bg_red": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bg_color": "#FF0000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "bg_blue": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bg_color": "#0000FF"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "bg_green": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bg_color": "#00FF00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "bg_custom": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "bg_color": "#8B4513"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -3809,20 +4412,93 @@
       "notes": null
     },
     {
+      "feature": "number_formats",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "numfmt_currency": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "number_format": "$#,##0.00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "numfmt_percent": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "number_format": "0.00%"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "numfmt_date": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "number_format": "yyyy-mm-dd"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "numfmt_scientific": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "number_format": "0.00E+00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "numfmt_custom_text": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "number_format": "\"USD\" 0.00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "alignment",
       "library": "openpyxl",
       "scores": {
-        "read": 1,
+        "read": 3,
         "write": 3
       },
       "test_cases": {
         "h_left": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "h_align": "left"
             },
-            "actual": {},
+            "actual": {
+              "h_align": "left"
+            },
             "notes": null
           },
           "write": {
@@ -3838,11 +4514,13 @@
         },
         "h_center": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "h_align": "center"
             },
-            "actual": {},
+            "actual": {
+              "h_align": "center"
+            },
             "notes": null
           },
           "write": {
@@ -3858,11 +4536,13 @@
         },
         "h_right": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "h_align": "right"
             },
-            "actual": {},
+            "actual": {
+              "h_align": "right"
+            },
             "notes": null
           },
           "write": {
@@ -3878,11 +4558,13 @@
         },
         "v_top": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "v_align": "top"
             },
-            "actual": {},
+            "actual": {
+              "v_align": "top"
+            },
             "notes": null
           },
           "write": {
@@ -3898,11 +4580,13 @@
         },
         "v_center": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "v_align": "center"
             },
-            "actual": {},
+            "actual": {
+              "v_align": "center"
+            },
             "notes": null
           },
           "write": {
@@ -3918,11 +4602,13 @@
         },
         "v_bottom": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {},
+            "actual": {
+              "v_align": "bottom"
+            },
             "notes": null
           },
           "write": {
@@ -3960,11 +4646,13 @@
         },
         "rotation_45": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "rotation": 45
             },
-            "actual": {},
+            "actual": {
+              "rotation": 45
+            },
             "notes": null
           },
           "write": {
@@ -3980,11 +4668,13 @@
         },
         "indent_2": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "indent": 2
             },
-            "actual": {},
+            "actual": {
+              "indent": 2.0
+            },
             "notes": null
           },
           "write": {
@@ -4234,8 +4924,10 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4252,8 +4944,10 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4270,8 +4964,10 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4288,8 +4984,10 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4306,8 +5004,10 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4324,8 +5024,10 @@
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4342,8 +5044,10 @@
             "expected": {
               "wrap": true
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4360,8 +5064,10 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4378,8 +5084,10 @@
             "expected": {
               "indent": 2
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -4388,6 +5096,125 @@
             },
             "actual": {},
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "h_left": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "h_align": "left"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "h_center": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "h_align": "center"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "h_right": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "h_align": "right"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "v_top": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "v_align": "top"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "v_center": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "v_align": "center"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "v_bottom": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "v_align": "bottom"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "wrap_text": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "wrap": true
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "rotation_45": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "rotation": 45
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "indent_2": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "indent": 2
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -5958,10 +6785,291 @@
       "notes": null
     },
     {
+      "feature": "borders",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "thin_all": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "medium_all": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "medium",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "thick_all": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "thick",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "double": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "double",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dashed": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "dashed",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dotted": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "dotted",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dash_dot": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "dashDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dash_dot_dot": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "dashDotDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "top_only": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top": "thin",
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "bottom_only": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top": null,
+              "border_bottom": "thin",
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "left_only": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": "thin",
+              "border_right": null
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "right_only": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": "thin"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "diagonal_up": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_diagonal_up": "thin"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "diagonal_down": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "diagonal_both": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_diagonal_up": "thin",
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_red": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#FF0000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_blue": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#0000FF"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "color_custom": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#8B4513"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "mixed_styles": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top": "thick",
+              "border_bottom": "thin",
+              "border_left": "medium",
+              "border_right": "dashed"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "mixed_colors": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "border_top_color": "#FF0000",
+              "border_bottom_color": "#00FF00",
+              "border_left_color": "#0000FF",
+              "border_right_color": "#FFFF00"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "dimensions",
       "library": "openpyxl",
       "scores": {
-        "read": 1,
+        "read": 3,
         "write": 3
       },
       "test_cases": {
@@ -6011,12 +7119,12 @@
         },
         "col_width_20": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "column_width": 20
             },
             "actual": {
-              "column_width": 20.83203125
+              "column_width": 20.0
             },
             "notes": null
           },
@@ -6033,12 +7141,12 @@
         },
         "col_width_8": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "column_width": 8
             },
             "actual": {
-              "column_width": 8.83203125
+              "column_width": 8.0
             },
             "notes": null
           },
@@ -6274,6 +7382,65 @@
       "notes": null
     },
     {
+      "feature": "dimensions",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "row_height_30": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "row_height": 30
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "row_height_45": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "row_height": 45
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "col_width_20": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "column_width": 20
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "col_width_8": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "column_width": 8
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "multiple_sheets",
       "library": "openpyxl",
       "scores": {
@@ -6668,6 +7835,72 @@
               "value": "Gamma"
             },
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "multiple_sheets",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "sheet_names": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "sheet_names": [
+                "Alpha",
+                "Beta",
+                "Gamma"
+              ]
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "value_alpha": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "Alpha"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "value_beta": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "Beta"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "value_gamma": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "type": "string",
+              "value": "Gamma"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -7038,6 +8271,71 @@
               "merged_range": null
             },
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "merged_cells",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "merge_horizontal": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "merged_range": "B2:D2",
+              "top_left_value": "Merged"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "merge_vertical": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "merged_range": "B3:B5",
+              "top_left_value": "Vertical"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "merge_value_off_top_left": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "merged_range": "B6:D6",
+              "top_left_value": "OffTop",
+              "non_top_left_nonempty": 0
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "merge_top_left_fill": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "merged_range": "B7:D7",
+              "top_left_value": "Fill",
+              "top_left_bg_color": "#FF0000"
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -7048,7 +8346,7 @@
       "library": "openpyxl",
       "scores": {
         "read": 3,
-        "write": 0
+        "write": 3
       },
       "test_cases": {
         "cf_cell_gt": {
@@ -7081,7 +8379,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B2:B6",
@@ -7095,9 +8393,18 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "priority": 1,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         },
         "cf_formula_cross_sheet": {
@@ -7128,7 +8435,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B2:B6",
@@ -7141,9 +8448,17 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "priority": 2,
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         },
         "cf_text_contains": {
@@ -7174,7 +8489,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B2:B6",
@@ -7187,9 +8502,17 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "priority": 3,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         },
         "cf_data_bar": {
@@ -7212,7 +8535,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B2:B6",
@@ -7221,9 +8544,13 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar",
+                "priority": 4
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         },
         "cf_color_scale": {
@@ -7246,7 +8573,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B2:B6",
@@ -7255,9 +8582,13 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale",
+                "priority": 5
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         },
         "cf_stop_if_true": {
@@ -7292,7 +8623,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "cf_rule": {
                 "range": "B7:B9",
@@ -7307,9 +8638,19 @@
               }
             },
             "actual": {
-              "error": "cannot import name 'DifferentialStyle' from 'openpyxl.styles' (/Users/wolfgangschoenberger/Projects/ExcelBench/.venv/lib/python3.12/site-packages/openpyxl/styles/__init__.py)"
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "priority": 1,
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
             },
-            "notes": "Write failed: ImportError"
+            "notes": null
           }
         }
       },
@@ -7790,6 +9131,132 @@
             },
             "actual": {},
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "conditional_formatting",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "cf_cell_gt": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "priority": 1,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "cf_formula_cross_sheet": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "priority": 2,
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "cf_text_contains": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "priority": 3,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "cf_data_bar": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar",
+                "priority": 4
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "cf_color_scale": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale",
+                "priority": 5
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "cf_stop_if_true": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "priority": 1,
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -8394,10 +9861,107 @@
       "notes": null
     },
     {
+      "feature": "data_validation",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "dv_list_csv": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "validation": {
+                "range": "B2",
+                "validation_type": "list",
+                "formula1": "\"Red,Green,Blue\"",
+                "allow_blank": true
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dv_list_range": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "validation": {
+                "range": "B3",
+                "validation_type": "list",
+                "formula1": "=$D$2:$D$4"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dv_cross_sheet": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "validation": {
+                "range": "B4",
+                "validation_type": "list",
+                "formula1": "=RegionList"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dv_custom_formula": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "validation": {
+                "range": "B5",
+                "validation_type": "custom",
+                "formula1": "=B5>C5"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "dv_whole_between": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "validation": {
+                "range": "B6",
+                "validation_type": "whole",
+                "operator": "between",
+                "formula1": "1",
+                "formula2": "10",
+                "allow_blank": false,
+                "error_title": "Invalid",
+                "error": "Enter 1-10"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "hyperlinks",
       "library": "openpyxl",
       "scores": {
-        "read": 1,
+        "read": 3,
         "write": 3
       },
       "test_cases": {
@@ -8449,7 +10013,7 @@
         },
         "link_internal": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "hyperlink": {
                 "cell": "B3",
@@ -8459,7 +10023,15 @@
                 "internal": true
               }
             },
-            "actual": {},
+            "actual": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
             "notes": null
           },
           "write": {
@@ -8487,7 +10059,7 @@
         },
         "link_mailto": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "hyperlink": {
                 "cell": "B4",
@@ -8497,7 +10069,15 @@
                 "internal": false
               }
             },
-            "actual": {},
+            "actual": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
             "notes": null
           },
           "write": {
@@ -8525,7 +10105,7 @@
         },
         "link_long": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "hyperlink": {
                 "cell": "B5",
@@ -8535,7 +10115,15 @@
                 "internal": false
               }
             },
-            "actual": {},
+            "actual": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
             "notes": null
           },
           "write": {
@@ -8766,8 +10354,10 @@
                 "internal": false
               }
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -8796,8 +10386,10 @@
                 "internal": true
               }
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -8826,8 +10418,10 @@
                 "internal": false
               }
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -8856,8 +10450,10 @@
                 "internal": false
               }
             },
-            "actual": {},
-            "notes": null
+            "actual": {
+              "error": "expected string or bytes-like object, got 'NoneType'"
+            },
+            "notes": "Failed to open workbook"
           },
           "write": {
             "passed": false,
@@ -8878,6 +10474,89 @@
       "notes": null
     },
     {
+      "feature": "hyperlinks",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "link_external": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "hyperlink": {
+                "cell": "B2",
+                "target": "https://example.com/docs",
+                "display": "Example Docs",
+                "tooltip": "Go to docs",
+                "internal": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "link_internal": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "link_mailto": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "link_long": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "images",
       "library": "openpyxl",
       "scores": {
@@ -9122,6 +10801,49 @@
       "notes": null
     },
     {
+      "feature": "images",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "image_one_cell": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "image": {
+                "cell": "B2",
+                "path": "/Users/wolfgangschoenberger/Projects/ExcelBench/fixtures/images/sample.png",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "image_two_cell_offset": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "image": {
+                "cell": "D6",
+                "path": "/Users/wolfgangschoenberger/Projects/ExcelBench/fixtures/images/sample.jpg",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
       "feature": "pivot_tables",
       "library": "openpyxl",
       "scores": {
@@ -9154,6 +10876,16 @@
     {
       "feature": "pivot_tables",
       "library": "pylightxl",
+      "scores": {
+        "read": null,
+        "write": null
+      },
+      "test_cases": {},
+      "notes": "Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx)."
+    },
+    {
+      "feature": "pivot_tables",
+      "library": "xlrd",
       "scores": {
         "read": null,
         "write": null
@@ -9494,6 +11226,65 @@
             },
             "actual": {},
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "comments",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "comment_legacy": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "comment": {
+                "cell": "B2",
+                "text": "Legacy note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "comment_threaded": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "comment": {
+                "cell": "B3",
+                "text": "Threaded fallback",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "comment_author": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "comment": {
+                "cell": "B4",
+                "text": "Another note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
@@ -9504,7 +11295,7 @@
       "library": "openpyxl",
       "scores": {
         "read": 3,
-        "write": 0
+        "write": 3
       },
       "test_cases": {
         "freeze_b2": {
@@ -9525,7 +11316,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "freeze": {
                 "mode": "freeze",
@@ -9533,9 +11324,12 @@
               }
             },
             "actual": {
-              "error": "'NoneType' object has no attribute 'xSplit'"
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
             },
-            "notes": "Write failed: AttributeError"
+            "notes": null
           }
         },
         "freeze_d5": {
@@ -9556,7 +11350,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "freeze": {
                 "mode": "freeze",
@@ -9564,9 +11358,12 @@
               }
             },
             "actual": {
-              "error": "'NoneType' object has no attribute 'xSplit'"
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
             },
-            "notes": "Write failed: AttributeError"
+            "notes": null
           }
         },
         "split_2x1": {
@@ -9589,7 +11386,7 @@
             "notes": null
           },
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "freeze": {
                 "mode": "split",
@@ -9598,9 +11395,13 @@
               }
             },
             "actual": {
-              "error": "'NoneType' object has no attribute 'xSplit'"
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
             },
-            "notes": "Write failed: AttributeError"
+            "notes": null
           }
         }
       },
@@ -9842,6 +11643,63 @@
               }
             },
             "notes": null
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "freeze_panes",
+      "library": "xlrd",
+      "scores": {
+        "read": 0,
+        "write": null
+      },
+      "test_cases": {
+        "freeze_b2": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "freeze_d5": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
+          }
+        },
+        "split_2x1": {
+          "read": {
+            "passed": false,
+            "expected": {
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
+            },
+            "actual": {
+              "error": "Excel xlsx file; not supported"
+            },
+            "notes": "Failed to open workbook"
           }
         }
       },
