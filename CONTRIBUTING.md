@@ -38,3 +38,5 @@ pytest
 ruff check
 mypy
 ```
+
+`mypy` uses the target set in `pyproject.toml` (`[tool.mypy].files`).
