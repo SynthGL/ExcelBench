@@ -1,6 +1,6 @@
 # ExcelBench Results
 
-*Generated: 2026-02-06 07:50 UTC*
+*Generated: 2026-02-06 09:19 UTC*
 *Excel Version: 16.105.3*
 *Platform: Darwin-arm64*
 
@@ -28,7 +28,7 @@
 | dimensions | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 |
 | formulas | 🟢 3 | 🟢 3 | 🔴 0 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 |
 | freeze_panes | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟡 2 |
-| hyperlinks | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟡 2 |
+| hyperlinks | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 |
 | images | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 |
 | merged_cells | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 |
 | multiple_sheets | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🟢 3 |
@@ -459,9 +459,7 @@ Notes:
   - link_long (read)
 
 **xlsxwriter**
-- Write: 🟡 2 (2/3)
-- Failed tests (1):
-  - link_long (write)
+- Write: 🟢 3 (3/3)
 
 ### images
 

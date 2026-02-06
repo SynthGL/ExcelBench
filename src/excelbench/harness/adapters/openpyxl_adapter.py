@@ -382,14 +382,25 @@ class OpenpyxlAdapter(ExcelAdapter):
         for row in ws.iter_rows():
             for cell in row:
                 if cell.hyperlink:
-                    target = cell.hyperlink.target or cell.hyperlink.location
+                    h = cell.hyperlink
+                    # xlsx stores URL and fragment separately (target + location).
+                    # Recombine when both exist (e.g. https://...#section-2).
+                    if h.target and h.location:
+                        target = f"{h.target}#{h.location}"
+                        internal = False
+                    elif h.target:
+                        target = h.target
+                        internal = False
+                    else:
+                        target = h.location
+                        internal = True
                     links.append(
                         {
                             "cell": cell.coordinate,
                             "target": target,
                             "display": cell.value,
-                            "tooltip": cell.hyperlink.tooltip,
-                            "internal": bool(cell.hyperlink.location) if cell.hyperlink else False,
+                            "tooltip": h.tooltip,
+                            "internal": internal,
                         }
                     )
         return links

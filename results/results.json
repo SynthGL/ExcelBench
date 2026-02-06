@@ -1,7 +1,7 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-06T07:50:05.271776+00:00",
+    "run_date": "2026-02-06T09:19:26.204449+00:00",
     "excel_version": "16.105.3",
     "platform": "Darwin-arm64"
   },
@@ -11,8 +11,8 @@
       "version": "3.1.5",
       "language": "python",
       "capabilities": [
-        "write",
-        "read"
+        "read",
+        "write"
       ]
     },
     "xlsxwriter": {
@@ -36,8 +36,8 @@
       "version": "1.61",
       "language": "python",
       "capabilities": [
-        "write",
-        "read"
+        "read",
+        "write"
       ]
     },
     "xlrd": {
@@ -10280,7 +10280,7 @@
       "library": "xlsxwriter",
       "scores": {
         "read": null,
-        "write": 2
+        "write": 3
       },
       "test_cases": {
         "link_external": {
@@ -10357,7 +10357,7 @@
         },
         "link_long": {
           "write": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "hyperlink": {
                 "cell": "B5",
@@ -10370,10 +10370,10 @@
             "actual": {
               "hyperlink": {
                 "cell": "B5",
-                "target": "https://example.com/search?q=excel%20bench&sort=desc",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
                 "display": "Search",
                 "tooltip": "Encoded URL",
-                "internal": true
+                "internal": false
               }
             },
             "notes": null

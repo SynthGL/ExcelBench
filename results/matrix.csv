@@ -60,7 +60,7 @@ python-calamine,data_validation,0,
 pylightxl,data_validation,0,0
 xlrd,data_validation,0,
 openpyxl,hyperlinks,3,3
-xlsxwriter,hyperlinks,,2
+xlsxwriter,hyperlinks,,3
 python-calamine,hyperlinks,0,
 pylightxl,hyperlinks,0,0
 xlrd,hyperlinks,0,
