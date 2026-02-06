@@ -1,5 +1,8 @@
 """Generator for alignment test cases."""
 
+import sys
+from pathlib import Path
+
 import xlwings as xw
 
 from excelbench.generator.base import FeatureGenerator
@@ -24,6 +27,10 @@ class AlignmentGenerator(FeatureGenerator):
     feature_name = "alignment"
     tier = 1
     filename = "06_alignment.xlsx"
+
+    def __init__(self) -> None:
+        self._use_openpyxl = sys.platform == "darwin"
+        self._ops: list[dict[str, object]] = []
 
     def generate(self, sheet: xw.Sheet) -> list[TestCase]:
         self.setup_header(sheet)
@@ -72,7 +79,10 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = label
-        self._set_horizontal_alignment(cell, value)
+        if self._use_openpyxl:
+            self._ops.append({"cell": f"B{row}", "horizontal": expected})
+        else:
+            self._set_horizontal_alignment(cell, value)
         return TestCase(id=f"h_{expected}", label=label, row=row, expected=exp)
 
     def _test_v_align(
@@ -87,7 +97,10 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = label
-        self._set_vertical_alignment(cell, value)
+        if self._use_openpyxl:
+            self._ops.append({"cell": f"B{row}", "vertical": expected})
+        else:
+            self._set_vertical_alignment(cell, value)
         return TestCase(id=f"v_{expected}", label=label, row=row, expected=exp)
 
     def _test_wrap(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -96,7 +109,10 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Line 1\nLine 2"
-        self._set_wrap(cell, True)
+        if self._use_openpyxl:
+            self._ops.append({"cell": f"B{row}", "wrapText": True})
+        else:
+            self._set_wrap(cell, True)
         return TestCase(id="wrap_text", label=label, row=row, expected=exp)
 
     def _test_rotation(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -105,7 +121,10 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Rotated"
-        self._set_orientation(cell, 45)
+        if self._use_openpyxl:
+            self._ops.append({"cell": f"B{row}", "textRotation": 45})
+        else:
+            self._set_orientation(cell, 45)
         return TestCase(id="rotation_45", label=label, row=row, expected=exp)
 
     def _test_indent(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -114,8 +133,24 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Indented"
-        self._set_indent(cell, 2)
+        if self._use_openpyxl:
+            self._ops.append({"cell": f"B{row}", "indent": 2})
+        else:
+            self._set_indent(cell, 2)
         return TestCase(id="indent_2", label=label, row=row, expected=exp)
+
+    def post_process(self, output_path: Path) -> None:
+        if not self._use_openpyxl or not self._ops:
+            return
+        from openpyxl import load_workbook
+        from openpyxl.styles import Alignment
+
+        wb = load_workbook(output_path)
+        ws = wb[self.feature_name]
+        for op in self._ops:
+            cell_ref = op.pop("cell")
+            ws[cell_ref].alignment = Alignment(**op)
+        wb.save(output_path)
 
     @staticmethod
     def _set_horizontal_alignment(cell: xw.Range, value: int) -> None:

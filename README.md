@@ -49,10 +49,10 @@ Charts, named ranges, complex conditional formatting, tables, print settings, pr
 uv sync
 
 # Generate canonical fixtures (requires Excel installed)
-uv run excelbench generate --output fixtures/excel
+uv run excelbench generate --output test_files
 
 # Run benchmark
-uv run excelbench benchmark --tests fixtures/excel --output results
+uv run excelbench benchmark --tests test_files --output results
 
 # View results
 cat results/README.md

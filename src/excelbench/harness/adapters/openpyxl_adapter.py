@@ -281,7 +281,16 @@ class OpenpyxlAdapter(ExcelAdapter):
         column: str,
     ) -> float | None:
         ws = workbook[sheet]
-        return ws.column_dimensions[column].width
+        width = ws.column_dimensions[column].width
+        if width is None:
+            return None
+        # Excel stores column width as display_width + 0.83203125 padding
+        # (for Calibri 11pt default font). Strip the padding to return
+        # the display character width that matches Excel's UI value.
+        frac = width % 1
+        if abs(frac - 0.83203125) < 0.001:
+            width = width - 0.83203125
+        return width
 
     # =========================================================================
     # Tier 2 Read Operations
