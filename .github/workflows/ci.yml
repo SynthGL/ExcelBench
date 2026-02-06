@@ -34,3 +34,4 @@ jobs:
         with:
           name: excelbench-results
           path: /tmp/excelbench-results/results.json
+          if-no-files-found: ignore
