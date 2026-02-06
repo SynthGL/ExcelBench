@@ -39,4 +39,5 @@ ruff check
 mypy
 ```
 
-`mypy` uses the target set in `pyproject.toml` (`[tool.mypy].files`).
+`mypy` uses the target set in `pyproject.toml` (`[tool.mypy].files`). CI currently checks a
+small, strictly-typed subset; expand it incrementally as typing coverage improves.

@@ -47,6 +47,7 @@ class BorderStyle(StrEnum):
 @dataclass
 class CellValue:
     """Represents a cell's value and type."""
+
     type: CellType
     value: Any = None
     formula: str | None = None  # If type is FORMULA, this holds the formula string
@@ -55,6 +56,7 @@ class CellValue:
 @dataclass
 class CellFormat:
     """Represents text formatting for a cell."""
+
     bold: bool | None = None
     italic: bool | None = None
     underline: str | None = None  # "single", "double", etc.
@@ -74,6 +76,7 @@ class CellFormat:
 @dataclass
 class BorderEdge:
     """Represents one edge of a cell border."""
+
     style: BorderStyle = BorderStyle.NONE
     color: str = "#000000"
 
@@ -81,6 +84,7 @@ class BorderEdge:
 @dataclass
 class BorderInfo:
     """Represents all borders of a cell."""
+
     top: BorderEdge | None = None
     bottom: BorderEdge | None = None
     left: BorderEdge | None = None
@@ -92,6 +96,7 @@ class BorderInfo:
 @dataclass
 class TestCase:
     """A single test case within a feature test file."""
+
     id: str
     label: str
     row: int
@@ -104,6 +109,7 @@ class TestCase:
 @dataclass
 class TestFile:
     """Metadata for a generated test file."""
+
     path: str
     feature: str
     tier: int
@@ -114,6 +120,7 @@ class TestFile:
 @dataclass
 class Manifest:
     """Index of all generated test files."""
+
     generated_at: datetime
     excel_version: str
     generator_version: str
@@ -124,6 +131,7 @@ class Manifest:
 @dataclass
 class TestResult:
     """Result of testing a single test case."""
+
     test_case_id: str
     operation: OperationType
     passed: bool
@@ -142,6 +150,7 @@ class TestResult:
 @dataclass
 class MergeSpec:
     """Represents a merged cell range and expectations."""
+
     range: str
     top_left_value: Any | None = None
     non_top_left_nonempty: int | None = None
@@ -166,6 +175,7 @@ class MergeSpec:
 @dataclass
 class ConditionalFormatSpec:
     """Represents a conditional formatting rule expectation."""
+
     range: str
     rule_type: str
     operator: str | None = None
@@ -197,6 +207,7 @@ class ConditionalFormatSpec:
 @dataclass
 class DataValidationSpec:
     """Represents a data validation rule expectation."""
+
     range: str
     validation_type: str
     operator: str | None = None
@@ -244,6 +255,7 @@ class DataValidationSpec:
 @dataclass
 class HyperlinkSpec:
     """Represents a hyperlink expectation."""
+
     cell: str
     target: str
     display: str | None = None
@@ -251,7 +263,7 @@ class HyperlinkSpec:
     internal: bool | None = None
 
     def to_expected(self) -> dict[str, Any]:
-        expected = {
+        expected: dict[str, Any] = {
             "hyperlink": {
                 "cell": self.cell,
                 "target": self.target,
@@ -269,6 +281,7 @@ class HyperlinkSpec:
 @dataclass
 class ImageSpec:
     """Represents an image expectation."""
+
     cell: str
     path: str
     anchor: str | None = None
@@ -276,7 +289,7 @@ class ImageSpec:
     alt_text: str | None = None
 
     def to_expected(self) -> dict[str, Any]:
-        expected = {
+        expected: dict[str, Any] = {
             "image": {
                 "cell": self.cell,
                 "path": self.path,
@@ -294,6 +307,7 @@ class ImageSpec:
 @dataclass
 class PivotSpec:
     """Represents a pivot table expectation."""
+
     name: str
     source_range: str
     target_cell: str
@@ -321,13 +335,14 @@ class PivotSpec:
 @dataclass
 class CommentSpec:
     """Represents a comment/note expectation."""
+
     cell: str
     text: str
     author: str | None = None
     threaded: bool | None = None
 
     def to_expected(self) -> dict[str, Any]:
-        expected = {
+        expected: dict[str, Any] = {
             "comment": {
                 "cell": self.cell,
                 "text": self.text,
@@ -343,6 +358,7 @@ class CommentSpec:
 @dataclass
 class FreezePaneSpec:
     """Represents freeze/split panes expectation."""
+
     mode: str
     top_left_cell: str | None = None
     x_split: int | None = None
@@ -350,7 +366,7 @@ class FreezePaneSpec:
     active_pane: str | None = None
 
     def to_expected(self) -> dict[str, Any]:
-        expected = {
+        expected: dict[str, Any] = {
             "freeze": {
                 "mode": self.mode,
             }
@@ -369,6 +385,7 @@ class FreezePaneSpec:
 @dataclass
 class FeatureScore:
     """Fidelity score for a feature."""
+
     feature: str
     library: str
     read_score: int | None = None  # 0-3, None if not applicable
@@ -380,6 +397,7 @@ class FeatureScore:
 @dataclass
 class LibraryInfo:
     """Information about a library being tested."""
+
     name: str
     version: str
     language: str  # "python" or "rust"
@@ -389,6 +407,7 @@ class LibraryInfo:
 @dataclass
 class BenchmarkMetadata:
     """Metadata about a benchmark run."""
+
     benchmark_version: str
     run_date: datetime
     excel_version: str
@@ -399,6 +418,7 @@ class BenchmarkMetadata:
 @dataclass
 class BenchmarkResults:
     """Complete benchmark results."""
+
     metadata: BenchmarkMetadata
     libraries: dict[str, LibraryInfo] = field(default_factory=dict)
     scores: list[FeatureScore] = field(default_factory=list)

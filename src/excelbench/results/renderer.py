@@ -3,6 +3,7 @@
 import json
 import subprocess
 from pathlib import Path
+from typing import Any
 
 from excelbench.models import BenchmarkResults, FeatureScore, OperationType, TestResult
 
@@ -109,8 +110,8 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
     libraries = sorted(results.libraries.keys())
 
     score_lookup: dict[tuple[str, str], FeatureScore] = {}
-    for score in results.scores:
-        score_lookup[(score.feature, score.library)] = score
+    for score_entry in results.scores:
+        score_lookup[(score_entry.feature, score_entry.library)] = score_entry
 
     # Summary table — grouped by tier
     lines.append("## Summary")
@@ -132,9 +133,9 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
 
     # Group features by tier
     tier_features: dict[int, list[str]] = {0: [], 1: [], 2: []}
-    for f in features:
-        tier = _FEATURE_TIERS.get(f, (2, "Advanced"))[0]
-        tier_features[tier].append(f)
+    for feature_name in features:
+        tier = _FEATURE_TIERS.get(feature_name, (2, "Advanced"))[0]
+        tier_features[tier].append(feature_name)
 
     for tier_num in sorted(tier_features.keys()):
         tier_list = tier_features[tier_num]
@@ -164,10 +165,10 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
         lines.append("")
 
     # Notes
-    notes = []
-    for score in results.scores:
-        if score.notes:
-            notes.append(f"- {score.feature}: {score.notes}")
+    notes: list[str] = []
+    for score_entry in results.scores:
+        if score_entry.notes:
+            notes.append(f"- {score_entry.feature}: {score_entry.notes}")
     if notes:
         lines.append("Notes:")
         lines.extend(sorted(notes))
@@ -215,9 +216,7 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
             failed = [tr for tr in score.test_results if not tr.passed]
             if failed:
                 lines.append("")
-                lines.extend(
-                    _render_per_test_table(score)
-                )
+                lines.extend(_render_per_test_table(score))
 
             lines.append("")
 
@@ -225,8 +224,8 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
     lines.append("---")
     lines.append(f"*Benchmark version: {results.metadata.benchmark_version}*")
 
-    with open(path, "w") as f:
-        f.write("\n".join(lines))
+    with open(path, "w") as fp:
+        fp.write("\n".join(lines))
 
 
 def _render_statistics(
@@ -366,8 +365,8 @@ def score_emoji(score: int | None) -> str:
         return "🔴 0"
 
 
-def _group_test_cases(test_results: list) -> dict:
-    grouped: dict[str, dict] = {}
+def _group_test_cases(test_results: list[TestResult]) -> dict[str, Any]:
+    grouped: dict[str, Any] = {}
     for tr in test_results:
         entry = grouped.setdefault(tr.test_case_id, {})
         entry[tr.operation.value] = {

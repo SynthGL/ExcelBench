@@ -60,7 +60,7 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.mypy]
 python_version = "3.11"
 strict = true
-files = ["src/excelbench/__init__.py"]
+files = ["src/excelbench/models.py", "src/excelbench/results/renderer.py"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
