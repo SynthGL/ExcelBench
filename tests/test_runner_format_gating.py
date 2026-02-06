@@ -7,7 +7,9 @@ from openpyxl import Workbook
 from excelbench.generator.generate import write_manifest
 from excelbench.harness.adapters import XlrdAdapter
 from excelbench.harness.runner import run_benchmark
-from excelbench.models import Importance, Manifest, TestCase as BenchCase, TestFile as BenchFile
+from excelbench.models import Importance, Manifest
+from excelbench.models import TestCase as BenchCase
+from excelbench.models import TestFile as BenchFile
 
 
 def _write_single_case_manifest(test_dir: Path, filename: str, file_format: str) -> None:

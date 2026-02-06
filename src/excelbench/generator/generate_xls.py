@@ -80,13 +80,23 @@ def _generate_cell_values(output_dir: Path) -> TestFile:
     add_case("number_large", "Number - large", 10, {"type": "number", "value": 1234567890123456})
     ws.write(9, 1, 1234567890123456)
 
-    add_case("number_scientific", "Number - scientific notation", 11, {"type": "number", "value": 1.23e-10})
+    add_case(
+        "number_scientific",
+        "Number - scientific notation",
+        11,
+        {"type": "number", "value": 1.23e-10},
+    )
     ws.write(10, 1, 1.23e-10)
 
     add_case("date_standard", "Date - standard", 12, {"type": "date", "value": "2026-02-04"})
     ws.write(11, 1, date(2026, 2, 4), date_style)
 
-    add_case("datetime", "DateTime - with time", 13, {"type": "datetime", "value": "2026-02-04T10:30:45"})
+    add_case(
+        "datetime",
+        "DateTime - with time",
+        13,
+        {"type": "datetime", "value": "2026-02-04T10:30:45"},
+    )
     ws.write(12, 1, datetime(2026, 2, 4, 10, 30, 45), datetime_style)
 
     add_case("boolean_true", "Boolean - TRUE", 14, {"type": "boolean", "value": True})
@@ -128,7 +138,14 @@ def _generate_alignment(output_dir: Path) -> TestFile:
 
     test_cases: list[TestCase] = []
 
-    def add_case(case_id: str, label: str, row: int, expected: dict, style: xlwt.XFStyle, value: str) -> None:
+    def add_case(
+        case_id: str,
+        label: str,
+        row: int,
+        expected: dict,
+        style: xlwt.XFStyle,
+        value: str,
+    ) -> None:
         ws.write(row - 1, 0, label)
         ws.write(row - 1, 1, value, style)
         _write_expected(ws, row, expected)
@@ -390,4 +407,3 @@ def generate_xls(
     )
     write_manifest(manifest, output_dir / "manifest.json")
     return manifest
-

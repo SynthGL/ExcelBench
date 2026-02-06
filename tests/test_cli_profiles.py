@@ -7,7 +7,9 @@ from openpyxl import Workbook
 
 from excelbench.cli import benchmark, benchmark_profiles
 from excelbench.generator.generate import write_manifest
-from excelbench.models import Importance, Manifest, TestCase as BenchCase, TestFile as BenchFile
+from excelbench.models import Importance, Manifest
+from excelbench.models import TestCase as BenchCase
+from excelbench.models import TestFile as BenchFile
 
 
 def _write_cell_values_suite(test_dir: Path, extension: str, file_format: str) -> None:

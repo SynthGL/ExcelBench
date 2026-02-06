@@ -11,8 +11,8 @@ from openpyxl.comments import Comment
 from openpyxl.drawing.image import Image
 from openpyxl.formatting.rule import ColorScaleRule, DataBarRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
-from openpyxl.worksheet.hyperlink import Hyperlink
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.hyperlink import Hyperlink
 
 from excelbench.harness.adapters.base import ExcelAdapter
 from excelbench.models import (
@@ -449,7 +449,11 @@ class OpenpyxlAdapter(ExcelAdapter):
             cache_source = getattr(cache, "cacheSource", None) if cache is not None else None
             if cache_source is not None:
                 worksheet_source = getattr(cache_source, "worksheetSource", None)
-                ref = getattr(worksheet_source, "ref", None) if worksheet_source is not None else None
+                ref = (
+                    getattr(worksheet_source, "ref", None)
+                    if worksheet_source is not None
+                    else None
+                )
                 source_sheet = (
                     getattr(worksheet_source, "sheet", None)
                     if worksheet_source is not None
@@ -520,15 +524,15 @@ class OpenpyxlAdapter(ExcelAdapter):
             #   y_twips = 20 * rows + 300,  x_twips = 180 * cols + 390
             # Convert back to logical row/col counts when values exceed a threshold
             # (logical values are small integers; twip values start at >=300).
-            TWIPS_X_OFFSET = 390
-            TWIPS_X_FACTOR = 180
-            TWIPS_Y_OFFSET = 300
-            TWIPS_Y_FACTOR = 20
-            TWIPS_CONVERSION_THRESHOLD = 100
-            if x_val is not None and x_val > TWIPS_CONVERSION_THRESHOLD:
-                x_val = round((x_val - TWIPS_X_OFFSET) / TWIPS_X_FACTOR)
-            if y_val is not None and y_val > TWIPS_CONVERSION_THRESHOLD:
-                y_val = round((y_val - TWIPS_Y_OFFSET) / TWIPS_Y_FACTOR)
+            twips_x_offset = 390
+            twips_x_factor = 180
+            twips_y_offset = 300
+            twips_y_factor = 20
+            twips_conversion_threshold = 100
+            if x_val is not None and x_val > twips_conversion_threshold:
+                x_val = round((x_val - twips_x_offset) / twips_x_factor)
+            if y_val is not None and y_val > twips_conversion_threshold:
+                y_val = round((y_val - twips_y_offset) / twips_y_factor)
             result["x_split"] = x_val
             result["y_split"] = y_val
             if pane.topLeftCell:

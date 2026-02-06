@@ -1,7 +1,7 @@
 """Generator for images/embedded objects test cases (Tier 2)."""
 
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import xlwings as xw
 

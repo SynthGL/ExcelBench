@@ -176,28 +176,32 @@ def _annotate_known_limitations(score: FeatureScore) -> FeatureScore:
             "alignment",
         ): (
             "read",
-            "Known limitation: python-calamine alignment read is limited because its API does not expose style/alignment metadata.",
+            "Known limitation: python-calamine alignment read is limited because "
+            "its API does not expose style/alignment metadata.",
         ),
         (
             "python-calamine",
             "cell_values",
         ): (
             "read",
-            "Known limitation: python-calamine can surface formula error cells as blank values in current API responses.",
+            "Known limitation: python-calamine can surface formula error cells as "
+            "blank values in current API responses.",
         ),
         (
             "pylightxl",
             "alignment",
         ): (
             "write",
-            "Known limitation: pylightxl alignment write is a no-op because the library does not support formatting writes.",
+            "Known limitation: pylightxl alignment write is a no-op because the "
+            "library does not support formatting writes.",
         ),
         (
             "pylightxl",
             "cell_values",
         ): (
             "write",
-            "Known limitation: pylightxl cell-values write has date/boolean/error fidelity limits due to writer encoding behavior.",
+            "Known limitation: pylightxl cell-values write has date/boolean/error "
+            "fidelity limits due to writer encoding behavior.",
         ),
     }
     key = (score.library, score.feature)
@@ -205,9 +209,19 @@ def _annotate_known_limitations(score: FeatureScore) -> FeatureScore:
     if limitation is None:
         return score
     side, note = limitation
-    if side == "read" and score.read_score is not None and score.read_score < 3 and not score.notes:
+    if (
+        side == "read"
+        and score.read_score is not None
+        and score.read_score < 3
+        and not score.notes
+    ):
         score.notes = note
-    if side == "write" and score.write_score is not None and score.write_score < 3 and not score.notes:
+    if (
+        side == "write"
+        and score.write_score is not None
+        and score.write_score < 3
+        and not score.notes
+    ):
         score.notes = note
     return score
 
@@ -243,6 +257,7 @@ def test_read(
                     actual={"error": str(e)},
                     notes="Failed to open workbook",
                     importance=tc.importance,
+                    label=tc.label,
                 )
             )
         return results
@@ -276,6 +291,7 @@ def test_read(
                         actual={"error": str(e)},
                         notes=f"Exception: {type(e).__name__}",
                         importance=tc.importance,
+                        label=tc.label,
                     )
                 )
     finally:
@@ -316,6 +332,7 @@ def test_read_case(
             expected=expected,
             actual=actual,
             importance=test_case.importance,
+            label=test_case.label,
         )
 
     sheet = test_case.sheet or feature or default_sheet
@@ -375,6 +392,7 @@ def test_read_case(
             expected=expected,
             actual=actual,
             importance=test_case.importance,
+            label=test_case.label,
         )
 
     except Exception as e:
@@ -386,6 +404,7 @@ def test_read_case(
             actual={"error": str(e)},
             notes=f"Exception: {type(e).__name__}",
             importance=test_case.importance,
+            label=test_case.label,
         )
 
 
@@ -746,7 +765,11 @@ def read_pivot_actual(
         value = str(normalized["target_cell"]).replace("$", "").replace("'", "")
         if ":" in value:
             value = value.split(":", 1)[0]
-        if "!" not in value and expected_rule.get("target_cell") and "!" in expected_rule["target_cell"]:
+        if (
+            "!" not in value
+            and expected_rule.get("target_cell")
+            and "!" in expected_rule["target_cell"]
+        ):
             value = f"{expected_rule['target_cell'].split('!', 1)[0]}!{value}"
         normalized["target_cell"] = value
     return {"pivot": _project_rule(normalized, expected_rule)}
@@ -801,12 +824,13 @@ def test_write(
     """
     results: list[TestResult] = []
 
-    verifier = get_write_verifier_for_feature(test_file.feature)
+    ext = adapter.output_extension
+    verifier = get_write_verifier_for_adapter(adapter, test_file.feature)
 
     with tempfile.TemporaryDirectory() as tmpdir:
         output_dir = Path(tmpdir) / adapter.name
         output_dir.mkdir(parents=True, exist_ok=True)
-        output_path = output_dir / f"{test_file.feature}.xlsx"
+        output_path = output_dir / f"{test_file.feature}{ext}"
 
         try:
             workbook = adapter.create_workbook()
@@ -904,6 +928,7 @@ def test_write(
                         actual={"error": str(e)},
                         notes=f"Write failed: {type(e).__name__}",
                         importance=tc.importance,
+                        label=tc.label,
                     )
                 )
             return results
@@ -921,6 +946,7 @@ def test_write(
                         actual={"error": str(e)},
                         notes="Failed to open workbook for verification",
                         importance=tc.importance,
+                        label=tc.label,
                     )
                 )
             return results
@@ -950,6 +976,7 @@ def test_write(
                             actual={"error": str(e)},
                             notes=f"Verification failed: {type(e).__name__}",
                             importance=tc.importance,
+                            label=tc.label,
                         )
                     )
         finally:
@@ -1040,6 +1067,18 @@ def get_write_verifier_for_feature(feature: str) -> ExcelAdapter:
     if feature in complex_features and _excel_available():
         return ExcelOracleAdapter()
     return OpenpyxlAdapter()
+
+
+def get_write_verifier_for_adapter(adapter: ExcelAdapter, feature: str) -> ExcelAdapter:
+    """Choose verifier based on adapter output format and feature.
+
+    .xls output must be verified with xlrd (openpyxl can't read .xls).
+    .xlsx output uses the existing feature-based verifier selection.
+    """
+    if adapter.output_extension == ".xls":
+        from excelbench.harness.adapters.xlrd_adapter import XlrdAdapter
+        return XlrdAdapter()
+    return get_write_verifier_for_feature(feature)
 
 
 def _excel_available() -> bool:

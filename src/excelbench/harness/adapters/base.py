@@ -39,6 +39,11 @@ class ExcelAdapter(ABC):
         return "write" in self.capabilities
 
     @property
+    def output_extension(self) -> str:
+        """File extension for written output (default '.xlsx')."""
+        return ".xlsx"
+
+    @property
     def supported_read_extensions(self) -> set[str]:
         """File extensions this adapter can consume as benchmark inputs."""
         return {".xlsx"}

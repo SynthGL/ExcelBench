@@ -19,6 +19,14 @@ try:
     from excelbench.harness.adapters.xlrd_adapter import XlrdAdapter
 except ImportError:
     XlrdAdapter = None
+try:
+    from excelbench.harness.adapters.pyexcel_adapter import PyexcelAdapter
+except ImportError:
+    PyexcelAdapter = None
+try:
+    from excelbench.harness.adapters.xlwt_adapter import XlwtAdapter
+except ImportError:
+    XlwtAdapter = None
 from excelbench.harness.adapters.xlwings_oracle_adapter import ExcelOracleAdapter
 
 __all__ = [
@@ -36,6 +44,10 @@ if PylightxlAdapter is not None:
     __all__.append("PylightxlAdapter")
 if XlrdAdapter is not None:
     __all__.append("XlrdAdapter")
+if PyexcelAdapter is not None:
+    __all__.append("PyexcelAdapter")
+if XlwtAdapter is not None:
+    __all__.append("XlwtAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -49,4 +61,8 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(PylightxlAdapter())
     if XlrdAdapter is not None:
         adapters.append(XlrdAdapter())
+    if PyexcelAdapter is not None:
+        adapters.append(PyexcelAdapter())
+    if XlwtAdapter is not None:
+        adapters.append(XlwtAdapter())
     return adapters

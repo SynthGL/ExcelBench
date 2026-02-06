@@ -8,8 +8,8 @@ from excelbench.generator.features.comments import CommentsGenerator
 from excelbench.generator.features.conditional_formatting import ConditionalFormattingGenerator
 from excelbench.generator.features.data_validation import DataValidationGenerator
 from excelbench.generator.features.dimensions import DimensionsGenerator
-from excelbench.generator.features.freeze_panes import FreezePanesGenerator
 from excelbench.generator.features.formulas import FormulasGenerator
+from excelbench.generator.features.freeze_panes import FreezePanesGenerator
 from excelbench.generator.features.hyperlinks import HyperlinksGenerator
 from excelbench.generator.features.images import ImagesGenerator
 from excelbench.generator.features.merged_cells import MergedCellsGenerator

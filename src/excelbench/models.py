@@ -131,6 +131,7 @@ class TestResult:
     actual: dict[str, Any]
     notes: str | None = None
     importance: Importance | None = None
+    label: str | None = None
 
 
 # =============================================================================
