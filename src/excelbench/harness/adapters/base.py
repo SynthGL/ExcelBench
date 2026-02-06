@@ -153,6 +153,50 @@ class ExcelAdapter(ABC):
         ...
 
     # =========================================================================
+    # Tier 2 Read Operations
+    # =========================================================================
+
+    @abstractmethod
+    def read_merged_ranges(self, workbook: Any, sheet: str) -> list[str]:
+        """Read merged cell ranges in a sheet (e.g., ["A1:C1"])."""
+        ...
+
+    @abstractmethod
+    def read_conditional_formats(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read conditional formatting rules in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_data_validations(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read data validation rules in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_hyperlinks(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read hyperlinks in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_images(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read images/embedded objects in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_pivot_tables(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read pivot table definitions in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_comments(self, workbook: Any, sheet: str) -> list[dict]:
+        """Read comments/notes in a sheet."""
+        ...
+
+    @abstractmethod
+    def read_freeze_panes(self, workbook: Any, sheet: str) -> dict:
+        """Read freeze/split pane settings in a sheet."""
+        ...
+
+    # =========================================================================
     # Write Operations
     # =========================================================================
 
@@ -251,6 +295,50 @@ class ExcelAdapter(ABC):
         """Set the width of a column by letter (e.g., "A")."""
         ...
 
+    # =========================================================================
+    # Tier 2 Write Operations
+    # =========================================================================
+
+    @abstractmethod
+    def merge_cells(self, workbook: Any, sheet: str, cell_range: str) -> None:
+        """Merge a range of cells (e.g., "A1:C1")."""
+        ...
+
+    @abstractmethod
+    def add_conditional_format(self, workbook: Any, sheet: str, rule: dict) -> None:
+        """Add a conditional formatting rule to a sheet."""
+        ...
+
+    @abstractmethod
+    def add_data_validation(self, workbook: Any, sheet: str, validation: dict) -> None:
+        """Add a data validation rule to a sheet."""
+        ...
+
+    @abstractmethod
+    def add_hyperlink(self, workbook: Any, sheet: str, link: dict) -> None:
+        """Add a hyperlink to a sheet."""
+        ...
+
+    @abstractmethod
+    def add_image(self, workbook: Any, sheet: str, image: dict) -> None:
+        """Add an image/embedded object to a sheet."""
+        ...
+
+    @abstractmethod
+    def add_pivot_table(self, workbook: Any, sheet: str, pivot: dict) -> None:
+        """Add a pivot table to a sheet."""
+        ...
+
+    @abstractmethod
+    def add_comment(self, workbook: Any, sheet: str, comment: dict) -> None:
+        """Add a comment/note to a sheet."""
+        ...
+
+    @abstractmethod
+    def set_freeze_panes(self, workbook: Any, sheet: str, settings: dict) -> None:
+        """Set freeze/split pane settings in a sheet."""
+        ...
+
     @abstractmethod
     def save_workbook(self, workbook: Any, path: Path) -> None:
         """Save a workbook to a file.
@@ -323,6 +411,30 @@ class ReadOnlyAdapter(ExcelAdapter):
     ) -> None:
         raise NotImplementedError(f"{self.name} is read-only")
 
+    def merge_cells(self, workbook: Any, sheet: str, cell_range: str) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_conditional_format(self, workbook: Any, sheet: str, rule: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_data_validation(self, workbook: Any, sheet: str, validation: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_hyperlink(self, workbook: Any, sheet: str, link: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_image(self, workbook: Any, sheet: str, image: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_pivot_table(self, workbook: Any, sheet: str, pivot: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def add_comment(self, workbook: Any, sheet: str, comment: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
+    def set_freeze_panes(self, workbook: Any, sheet: str, settings: dict) -> None:
+        raise NotImplementedError(f"{self.name} is read-only")
+
 
 class WriteOnlyAdapter(ExcelAdapter):
     """Base class for write-only adapters.
@@ -378,4 +490,28 @@ class WriteOnlyAdapter(ExcelAdapter):
         sheet: str,
         column: str,
     ) -> float | None:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_merged_ranges(self, workbook: Any, sheet: str) -> list[str]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_conditional_formats(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_data_validations(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_hyperlinks(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_images(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_pivot_tables(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_comments(self, workbook: Any, sheet: str) -> list[dict]:
+        raise NotImplementedError(f"{self.name} is write-only")
+
+    def read_freeze_panes(self, workbook: Any, sheet: str) -> dict:
         raise NotImplementedError(f"{self.name} is write-only")

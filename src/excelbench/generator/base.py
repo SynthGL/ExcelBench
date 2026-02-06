@@ -74,7 +74,11 @@ class FeatureGenerator(ABC):
         sheet.range(f"A{row}").value = label
         sheet.range(f"C{row}").value = json.dumps(expected)
 
-    def create_workbook(self, output_dir: Path) -> tuple[xw.Book, Path]:
+    def create_workbook(
+        self,
+        output_dir: Path,
+        app: xw.App | None = None,
+    ) -> tuple[xw.Book, Path]:
         """Create a new workbook for this feature.
 
         Args:
@@ -87,7 +91,12 @@ class FeatureGenerator(ABC):
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
         # Create new workbook
-        wb = xw.Book()
+        owned_app = False
+        if app is None:
+            app = xw.App(visible=False, add_book=False)
+            owned_app = True
+        wb = app.books.add()
+        wb._excelbench_owned_app = app if owned_app else None
 
         # Rename first sheet to feature name
         wb.sheets[0].name = self.feature_name
@@ -101,5 +110,38 @@ class FeatureGenerator(ABC):
             wb: The workbook to save.
             output_path: Path to save to.
         """
-        wb.save(str(output_path))
-        wb.close()
+        output_path = output_path.resolve()
+        lock_path = output_path.with_name(f"~${output_path.name}")
+        for path in (lock_path, output_path):
+            try:
+                path.unlink()
+            except FileNotFoundError:
+                pass
+        try:
+            wb.save(str(output_path))
+        except Exception:
+            try:
+                import os
+
+                from xlwings._xlmac import kw, posix_to_hfs_path
+
+                hfs_path = posix_to_hfs_path(os.path.realpath(str(output_path)))
+                try:
+                    wb.api.save_workbook_as(filename=hfs_path, overwrite=kw.yes)
+                except Exception:
+                    wb.api.save_workbook_as(
+                        filename=hfs_path,
+                        overwrite=kw.yes,
+                        file_format=kw.Excel_XML_file_format,
+                    )
+            except Exception:
+                raise
+        finally:
+            wb.close()
+            owned_app = getattr(wb, "_excelbench_owned_app", None)
+            if owned_app is not None:
+                owned_app.quit()
+
+    def post_process(self, output_path: Path) -> None:
+        """Hook for generators needing post-save tweaks."""
+        return None

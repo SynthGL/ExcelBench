@@ -17,8 +17,15 @@ console = Console()
 def generate(
     output_dir: Path = typer.Option(
         Path("test_files"),
-        "--output", "-o",
+        "--output",
+        "-o",
         help="Directory to save generated test files.",
+    ),
+    features: list[str] | None = typer.Option(
+        None,
+        "--feature",
+        "-f",
+        help="Generate only the specified feature(s).",
     ),
 ):
     """Generate test Excel files using xlwings.
@@ -32,7 +39,7 @@ def generate(
     console.print()
 
     try:
-        manifest = generate_all(output_dir)
+        manifest = generate_all(output_dir, features=features)
 
         console.print()
         console.print(f"[green]✓ Generated {len(manifest.files)} test files[/green]")
@@ -57,13 +64,27 @@ def generate(
 def benchmark(
     test_dir: Path = typer.Option(
         Path("test_files"),
-        "--tests", "-t",
+        "--tests",
+        "-t",
         help="Directory containing test files and manifest.json.",
     ),
     output_dir: Path = typer.Option(
         Path("results"),
-        "--output", "-o",
+        "--output",
+        "-o",
         help="Directory to save benchmark results.",
+    ),
+    features: list[str] | None = typer.Option(
+        None,
+        "--feature",
+        "-f",
+        help="Run benchmark only for specified feature(s).",
+    ),
+    append_results: bool = typer.Option(
+        False,
+        "--append",
+        "--append-results",
+        help="Append into existing results.json if present.",
     ),
 ):
     """Run benchmark against all adapters.
@@ -72,6 +93,7 @@ def benchmark(
     tests each library adapter against them.
     """
     from excelbench.harness.runner import run_benchmark
+    from excelbench.models import BenchmarkResults
     from excelbench.results import render_results
 
     console.print("[bold]Running benchmark...[/bold]")
@@ -80,7 +102,24 @@ def benchmark(
     console.print()
 
     try:
-        results = run_benchmark(test_dir)
+        results = run_benchmark(test_dir, features=features)
+
+        if append_results:
+            import json
+
+            results_path = Path(output_dir) / "results.json"
+            if results_path.exists():
+                with open(results_path) as f:
+                    data = json.load(f)
+                existing = _results_from_json(data)
+                merged_scores = {(s.feature, s.library): s for s in existing.scores}
+                for score in results.scores:
+                    merged_scores[(score.feature, score.library)] = score
+                results = BenchmarkResults(
+                    metadata=results.metadata,
+                    libraries={**existing.libraries, **results.libraries},
+                    scores=list(merged_scores.values()),
+                )
 
         console.print()
         console.print("[bold]Rendering results...[/bold]")
@@ -106,24 +145,7 @@ def benchmark(
         raise typer.Exit(1)
 
 
-@app.command()
-def report(
-    results_path: Path = typer.Option(
-        Path("results/results.json"),
-        "--input", "-i",
-        help="Path to results.json file.",
-    ),
-    output_dir: Path = typer.Option(
-        Path("results"),
-        "--output", "-o",
-        help="Directory to save regenerated reports.",
-    ),
-):
-    """Regenerate reports from existing results.json.
-
-    Useful for updating markdown/CSV without re-running the benchmark.
-    """
-    import json
+def _results_from_json(data: dict) -> "BenchmarkResults":
     from datetime import datetime
 
     from excelbench.models import (
@@ -134,6 +156,110 @@ def report(
         OperationType,
         TestResult,
     )
+
+    metadata = BenchmarkMetadata(
+        benchmark_version=data["metadata"]["benchmark_version"],
+        run_date=datetime.fromisoformat(data["metadata"]["run_date"]),
+        excel_version=data["metadata"]["excel_version"],
+        platform=data["metadata"]["platform"],
+    )
+
+    libraries = {
+        name: LibraryInfo(
+            name=info["name"],
+            version=info["version"],
+            language=info["language"],
+            capabilities=set(info["capabilities"]),
+        )
+        for name, info in data["libraries"].items()
+    }
+
+    scores = []
+    for s in data["results"]:
+        test_results = []
+        for tc_id, tc in s.get("test_cases", {}).items():
+            # New schema: { "read": {...}, "write": {...} }
+            if isinstance(tc, dict) and ("read" in tc or "write" in tc):
+                for op_key in ("read", "write"):
+                    if op_key not in tc:
+                        continue
+                    op_data = tc[op_key]
+                    test_results.append(
+                        TestResult(
+                            test_case_id=tc_id,
+                            operation=OperationType(op_key),
+                            passed=op_data["passed"],
+                            expected=op_data["expected"],
+                            actual=op_data["actual"],
+                            notes=op_data.get("notes"),
+                        )
+                    )
+            else:
+                # Legacy schema: flat per test case, assume read
+                test_results.append(
+                    TestResult(
+                        test_case_id=tc_id,
+                        operation=OperationType.READ,
+                        passed=tc["passed"],
+                        expected=tc["expected"],
+                        actual=tc["actual"],
+                        notes=tc.get("notes"),
+                    )
+                )
+        scores.append(
+            FeatureScore(
+                feature=s["feature"],
+                library=s["library"],
+                read_score=s["scores"].get("read"),
+                write_score=s["scores"].get("write"),
+                test_results=test_results,
+                notes=s.get("notes"),
+            )
+        )
+
+    for score in scores:
+        if score.notes:
+            continue
+        if (
+            score.feature == "pivot_tables"
+            and metadata.platform.startswith("Darwin")
+            and score.read_score is None
+            and score.write_score is None
+        ):
+            score.notes = (
+                "Unsupported on macOS without a Windows-generated pivot fixture "
+                "(fixtures/excel/tier2/15_pivot_tables.xlsx)."
+            )
+
+    return BenchmarkResults(
+        metadata=metadata,
+        libraries=libraries,
+        scores=scores,
+    )
+
+
+@app.command()
+def report(
+    results_path: Path = typer.Option(
+        Path("results/results.json"),
+        "--input",
+        "-i",
+        help="Path to results.json file.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results"),
+        "--output",
+        "-o",
+        help="Directory to save regenerated reports.",
+    ),
+):
+    """Regenerate reports from existing results.json.
+
+    Useful for updating markdown/CSV without re-running the benchmark.
+    """
+    import json
+
+    from excelbench.models import BenchmarkResults
     from excelbench.results import render_csv, render_markdown
 
     console.print(f"[bold]Regenerating reports from {results_path}...[/bold]")
@@ -142,66 +268,7 @@ def report(
         with open(results_path) as f:
             data = json.load(f)
 
-        # Reconstruct results object
-        metadata = BenchmarkMetadata(
-            benchmark_version=data["metadata"]["benchmark_version"],
-            run_date=datetime.fromisoformat(data["metadata"]["run_date"]),
-            excel_version=data["metadata"]["excel_version"],
-            platform=data["metadata"]["platform"],
-        )
-
-        libraries = {
-            name: LibraryInfo(
-                name=info["name"],
-                version=info["version"],
-                language=info["language"],
-                capabilities=set(info["capabilities"]),
-            )
-            for name, info in data["libraries"].items()
-        }
-
-        scores = []
-        for s in data["results"]:
-            test_results = []
-            for tc_id, tc in s.get("test_cases", {}).items():
-                # New schema: { "read": {...}, "write": {...} }
-                if isinstance(tc, dict) and ("read" in tc or "write" in tc):
-                    for op_key in ("read", "write"):
-                        if op_key not in tc:
-                            continue
-                        op_data = tc[op_key]
-                        test_results.append(TestResult(
-                            test_case_id=tc_id,
-                            operation=OperationType(op_key),
-                            passed=op_data["passed"],
-                            expected=op_data["expected"],
-                            actual=op_data["actual"],
-                            notes=op_data.get("notes"),
-                        ))
-                else:
-                    # Legacy schema: flat per test case, assume read
-                    test_results.append(TestResult(
-                        test_case_id=tc_id,
-                        operation=OperationType.READ,
-                        passed=tc["passed"],
-                        expected=tc["expected"],
-                        actual=tc["actual"],
-                        notes=tc.get("notes"),
-                    ))
-            scores.append(FeatureScore(
-                feature=s["feature"],
-                library=s["library"],
-                read_score=s["scores"].get("read"),
-                write_score=s["scores"].get("write"),
-                test_results=test_results,
-                notes=s.get("notes"),
-            ))
-
-        results = BenchmarkResults(
-            metadata=metadata,
-            libraries=libraries,
-            scores=scores,
-        )
+        results = _results_from_json(data)
 
         # Regenerate reports
         output_dir = Path(output_dir)

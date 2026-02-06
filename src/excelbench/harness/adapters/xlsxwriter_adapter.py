@@ -55,6 +55,13 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
             "sheets": {},  # sheet_name -> list of (cell, value, format)
             "row_heights": {},  # sheet_name -> {row_index: height}
             "col_widths": {},  # sheet_name -> {col_index: width}
+            "merges": {},  # sheet_name -> list of merge ranges
+            "conditional_formats": {},  # sheet_name -> list of rules
+            "data_validations": {},  # sheet_name -> list of validations
+            "hyperlinks": {},  # sheet_name -> list of hyperlinks
+            "images": {},  # sheet_name -> list of images
+            "comments": {},  # sheet_name -> list of comments
+            "freeze": {},  # sheet_name -> freeze/split settings
             "path": None,
             "workbook": None,
         }
@@ -73,6 +80,20 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
             workbook["row_heights"][sheet] = {}
         if sheet not in workbook["col_widths"]:
             workbook["col_widths"][sheet] = {}
+        if sheet not in workbook["merges"]:
+            workbook["merges"][sheet] = []
+        if sheet not in workbook["conditional_formats"]:
+            workbook["conditional_formats"][sheet] = []
+        if sheet not in workbook["data_validations"]:
+            workbook["data_validations"][sheet] = []
+        if sheet not in workbook["hyperlinks"]:
+            workbook["hyperlinks"][sheet] = []
+        if sheet not in workbook["images"]:
+            workbook["images"][sheet] = []
+        if sheet not in workbook["comments"]:
+            workbook["comments"][sheet] = []
+        if sheet not in workbook["freeze"]:
+            workbook["freeze"][sheet] = None
 
     def _parse_cell(self, cell: str) -> tuple[int, int]:
         """Parse cell reference like 'A1' to (row, col) tuple."""
@@ -281,6 +302,21 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
                 for col_index, width in workbook["col_widths"].get(sheet_name, {}).items():
                     ws.set_column(col_index, col_index, width)
 
+                # Freeze/split panes
+                freeze = workbook["freeze"].get(sheet_name)
+                if freeze:
+                    cfg = freeze.get("freeze", freeze)
+                    mode = cfg.get("mode")
+                    if mode == "freeze" and cfg.get("top_left_cell"):
+                        r, c = self._parse_cell(cfg["top_left_cell"])
+                        ws.freeze_panes(r, c)
+                    elif mode == "split":
+                        ws.split_panes(cfg.get("y_split", 0), cfg.get("x_split", 0))
+
+                # Merged ranges
+                for cell_range in workbook["merges"].get(sheet_name, []):
+                    ws.merge_range(cell_range, "")
+
                 # Group operations by cell to merge formats
                 cell_ops: dict[tuple[int, int], dict] = {}
 
@@ -351,6 +387,131 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
                         # Write blank with format
                         ws.write_blank(row, col, None, fmt)
 
+                # Conditional formats
+                for rule in workbook["conditional_formats"].get(sheet_name, []):
+                    cf = rule.get("cf_rule", rule)
+                    rng = cf.get("range")
+                    rule_type = cf.get("rule_type")
+                    operator = cf.get("operator")
+                    formula = cf.get("formula")
+                    fmt = cf.get("format") or {}
+
+                    options: dict[str, Any] = {}
+                    if rule_type in ("cellIs", "cellIsRule"):
+                        op_map = {
+                            "greaterThan": ">",
+                            "lessThan": "<",
+                            "between": "between",
+                            "equal": "==",
+                            "notEqual": "!=",
+                            "greaterThanOrEqual": ">=",
+                            "lessThanOrEqual": "<=",
+                        }
+                        options["type"] = "cell"
+                        options["criteria"] = op_map.get(operator, operator)
+                        options["value"] = formula
+                    elif rule_type in ("expression", "formula"):
+                        options["type"] = "formula"
+                        options["criteria"] = formula
+                    elif rule_type == "colorScale":
+                        options["type"] = "3_color_scale"
+                    elif rule_type == "dataBar":
+                        options["type"] = "data_bar"
+
+                    if fmt.get("bg_color"):
+                        options["format"] = wb.add_format({"bg_color": fmt["bg_color"]})
+                    if options and rng:
+                        ws.conditional_format(rng, options)
+
+                # Data validations
+                for validation in workbook["data_validations"].get(sheet_name, []):
+                    v = validation.get("validation", validation)
+                    cell_range = v.get("range")
+                    vtype = v.get("validation_type")
+                    vop = v.get("operator")
+                    options: dict[str, Any] = {}
+                    type_map = {
+                        "list": "list",
+                        "whole": "integer",
+                        "custom": "custom",
+                        "decimal": "decimal",
+                        "date": "date",
+                        "time": "time",
+                        "textLength": "length",
+                    }
+                    options["validate"] = type_map.get(vtype, vtype)
+                    if vop:
+                        options["criteria"] = vop
+                    if v.get("formula1"):
+                        if options["validate"] == "list":
+                            source = v.get("formula1")
+                            if isinstance(source, str):
+                                if source.startswith('"') and source.endswith('"'):
+                                    source = source[1:-1]
+                            options["source"] = source
+                        else:
+                            options["value"] = v.get("formula1")
+                    if v.get("formula2"):
+                        options["maximum"] = v.get("formula2")
+                    if v.get("allow_blank") is not None:
+                        options["ignore_blank"] = bool(v.get("allow_blank"))
+                    if v.get("prompt_title"):
+                        options["input_title"] = v.get("prompt_title")
+                    if v.get("prompt"):
+                        options["input_message"] = v.get("prompt")
+                    if v.get("error_title"):
+                        options["error_title"] = v.get("error_title")
+                    if v.get("error"):
+                        options["error_message"] = v.get("error")
+                    if cell_range and options:
+                        ws.data_validation(cell_range, options)
+
+                # Hyperlinks
+                for link in workbook["hyperlinks"].get(sheet_name, []):
+                    data = link.get("hyperlink", link)
+                    cell = data.get("cell")
+                    target = data.get("target")
+                    display = data.get("display")
+                    tooltip = data.get("tooltip")
+                    internal = data.get("internal")
+                    if not cell or not target:
+                        continue
+                    url = target
+                    if internal:
+                        url = f"internal:{str(target).lstrip('#')}"
+                    r, c = self._parse_cell(cell)
+                    opts = {}
+                    if tooltip:
+                        opts["tip"] = tooltip
+                    ws.write_url(r, c, url, string=display, **opts)
+
+                # Images
+                for image in workbook["images"].get(sheet_name, []):
+                    data = image.get("image", image)
+                    cell = data.get("cell")
+                    path = data.get("path")
+                    if not cell or not path:
+                        continue
+                    r, c = self._parse_cell(cell)
+                    opts = {}
+                    if data.get("offset"):
+                        opts["x_offset"] = data["offset"][0]
+                        opts["y_offset"] = data["offset"][1]
+                    ws.insert_image(r, c, path, opts)
+
+                # Comments
+                for comment in workbook["comments"].get(sheet_name, []):
+                    data = comment.get("comment", comment)
+                    cell = data.get("cell")
+                    text = data.get("text")
+                    if not cell or text is None:
+                        continue
+                    r, c = self._parse_cell(cell)
+                    opts = {}
+                    if data.get("author"):
+                        opts["author"] = data.get("author")
+                    ws.write_comment(r, c, text, opts)
+
         finally:
             wb.close()
 
@@ -374,3 +535,38 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
         self._ensure_sheet(workbook, sheet)
         col_index = self._col_to_index(column)
         workbook["col_widths"][sheet][col_index] = width
+
+    # =========================================================================
+    # Tier 2 Write Operations
+    # =========================================================================
+
+    def merge_cells(self, workbook: dict, sheet: str, cell_range: str) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["merges"][sheet].append(cell_range)
+
+    def add_conditional_format(self, workbook: dict, sheet: str, rule: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["conditional_formats"][sheet].append(rule)
+
+    def add_data_validation(self, workbook: dict, sheet: str, validation: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["data_validations"][sheet].append(validation)
+
+    def add_hyperlink(self, workbook: dict, sheet: str, link: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["hyperlinks"][sheet].append(link)
+
+    def add_image(self, workbook: dict, sheet: str, image: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["images"][sheet].append(image)
+
+    def add_pivot_table(self, workbook: dict, sheet: str, pivot: dict) -> None:
+        raise NotImplementedError("xlsxwriter pivot tables are not supported in this adapter")
+
+    def add_comment(self, workbook: dict, sheet: str, comment: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["comments"][sheet].append(comment)
+
+    def set_freeze_panes(self, workbook: dict, sheet: str, settings: dict) -> None:
+        self._ensure_sheet(workbook, sheet)
+        workbook["freeze"][sheet] = settings

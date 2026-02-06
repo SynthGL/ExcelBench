@@ -151,6 +151,15 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
 
     lines.append("")
 
+    notes = []
+    for score in results.scores:
+        if score.notes:
+            notes.append(f"- {score.feature}: {score.notes}")
+    if notes:
+        lines.append("Notes:")
+        lines.extend(sorted(notes))
+        lines.append("")
+
     # Library details
     lines.append("## Libraries Tested")
     lines.append("")
@@ -178,6 +187,8 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
                 lines.append(f"- Read: {score_emoji(score.read_score)} ({score.read_score}/3)")
             if score.write_score is not None:
                 lines.append(f"- Write: {score_emoji(score.write_score)} ({score.write_score}/3)")
+            if score.notes:
+                lines.append(f"- Notes: {score.notes}")
 
             # Show failed tests
             failed = [tr for tr in score.test_results if not tr.passed]

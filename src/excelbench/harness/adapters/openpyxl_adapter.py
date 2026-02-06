@@ -7,7 +7,12 @@ from typing import Any
 import openpyxl
 from openpyxl import Workbook
 from openpyxl.cell import Cell
+from openpyxl.comments import Comment
+from openpyxl.drawing.image import Image
+from openpyxl.formatting.rule import ColorScaleRule, DataBarRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.worksheet.hyperlink import Hyperlink
+from openpyxl.worksheet.datavalidation import DataValidation
 
 from excelbench.harness.adapters.base import ExcelAdapter
 from excelbench.models import (
@@ -26,6 +31,14 @@ ERROR_FORMULA_MAP = {
     "=NA()": "#N/A",
     '="text"+1': "#VALUE!",
 }
+
+
+def _col_letter(index: int) -> str:
+    result = ""
+    while index > 0:
+        index, rem = divmod(index - 1, 26)
+        result = chr(65 + rem) + result
+    return result
 
 
 def _get_version() -> str:
@@ -271,6 +284,180 @@ class OpenpyxlAdapter(ExcelAdapter):
         return ws.column_dimensions[column].width
 
     # =========================================================================
+    # Tier 2 Read Operations
+    # =========================================================================
+
+    def read_merged_ranges(self, workbook: Workbook, sheet: str) -> list[str]:
+        ws = workbook[sheet]
+        return [str(rng) for rng in ws.merged_cells.ranges]
+
+    def read_conditional_formats(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        rules: list[dict] = []
+        cf_rules = getattr(ws.conditional_formatting, "_cf_rules", {})
+        for sqref, rule_list in cf_rules.items():
+            range_value = None
+            if hasattr(sqref, "sqref"):
+                range_value = str(sqref.sqref)
+            else:
+                range_value = str(sqref)
+                if range_value.startswith("<ConditionalFormatting"):
+                    range_value = (
+                        range_value.replace("<ConditionalFormatting", "").replace(">", "").strip()
+                    )
+            for rule in rule_list:
+                entry: dict[str, Any] = {
+                    "range": range_value,
+                    "rule_type": getattr(rule, "type", None),
+                    "operator": getattr(rule, "operator", None),
+                    "formula": None,
+                    "priority": getattr(rule, "priority", None),
+                    "stop_if_true": getattr(rule, "stopIfTrue", None),
+                    "format": {},
+                }
+                if getattr(rule, "formula", None):
+                    entry["formula"] = rule.formula[0] if rule.formula else None
+                dxf = getattr(rule, "dxf", None)
+                if dxf and dxf.fill and dxf.fill.fgColor and dxf.fill.fgColor.rgb:
+                    rgb = dxf.fill.fgColor.rgb
+                    if len(rgb) == 8:
+                        entry["format"]["bg_color"] = f"#{rgb[2:]}"
+                    elif len(rgb) == 6:
+                        entry["format"]["bg_color"] = f"#{rgb}"
+                if dxf and dxf.font and dxf.font.color and dxf.font.color.rgb:
+                    rgb = dxf.font.color.rgb
+                    if len(rgb) == 8:
+                        entry["format"]["font_color"] = f"#{rgb[2:]}"
+                    elif len(rgb) == 6:
+                        entry["format"]["font_color"] = f"#{rgb}"
+                rules.append(entry)
+        return rules
+
+    def read_data_validations(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        validations: list[dict] = []
+        dv = getattr(ws, "data_validations", None)
+        if not dv:
+            return validations
+        for entry in dv.dataValidation:
+            validations.append(
+                {
+                    "range": str(entry.sqref),
+                    "validation_type": entry.type,
+                    "operator": entry.operator,
+                    "formula1": entry.formula1,
+                    "formula2": entry.formula2,
+                    "allow_blank": entry.allow_blank,
+                    "show_input": entry.showInputMessage,
+                    "show_error": entry.showErrorMessage,
+                    "prompt_title": entry.promptTitle,
+                    "prompt": entry.prompt,
+                    "error_title": entry.errorTitle,
+                    "error": entry.error,
+                }
+            )
+        return validations
+
+    def read_hyperlinks(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        links: list[dict] = []
+        for row in ws.iter_rows():
+            for cell in row:
+                if cell.hyperlink:
+                    target = cell.hyperlink.target or cell.hyperlink.location
+                    links.append(
+                        {
+                            "cell": cell.coordinate,
+                            "target": target,
+                            "display": cell.value,
+                            "tooltip": cell.hyperlink.tooltip,
+                            "internal": bool(cell.hyperlink.location) if cell.hyperlink else False,
+                        }
+                    )
+        return links
+
+    def read_images(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        images: list[dict] = []
+        for img in getattr(ws, "_images", []):
+            anchor = getattr(img, "anchor", None)
+            anchor_type = None
+            cell = None
+            offset = None
+            if isinstance(anchor, str):
+                anchor_type = "oneCell"
+                cell = anchor
+            if anchor is not None and hasattr(anchor, "_from"):
+                anchor_type = "oneCell"
+                cell = f"{_col_letter(anchor._from.col + 1)}{anchor._from.row + 1}"
+                offset = [anchor._from.colOff, anchor._from.rowOff]
+            if anchor is not None and hasattr(anchor, "_to"):
+                anchor_type = "twoCell"
+            images.append(
+                {
+                    "cell": cell,
+                    "path": getattr(img, "path", None) or getattr(img, "_path", None),
+                    "anchor": anchor_type,
+                    "offset": offset,
+                    "alt_text": getattr(img, "title", None),
+                }
+            )
+        return images
+
+    def read_pivot_tables(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        pivots: list[dict] = []
+        pivot_list = getattr(ws, "_pivots", []) or []
+        for pivot in pivot_list:
+            pivots.append(
+                {
+                    "name": getattr(pivot, "name", None),
+                    "source_range": getattr(pivot, "cache", None).cacheSource
+                    if getattr(pivot, "cache", None)
+                    else None,
+                    "target_cell": getattr(pivot, "location", None),
+                }
+            )
+        return pivots
+
+    def read_comments(self, workbook: Workbook, sheet: str) -> list[dict]:
+        ws = workbook[sheet]
+        comments: list[dict] = []
+        for row in ws.iter_rows():
+            for cell in row:
+                if cell.comment:
+                    comments.append(
+                        {
+                            "cell": cell.coordinate,
+                            "text": cell.comment.text,
+                            "author": cell.comment.author,
+                            "threaded": False,
+                        }
+                    )
+        return comments
+
+    def read_freeze_panes(self, workbook: Workbook, sheet: str) -> dict:
+        ws = workbook[sheet]
+        result: dict[str, Any] = {}
+        if ws.freeze_panes:
+            result["mode"] = "freeze"
+            result["top_left_cell"] = (
+                ws.freeze_panes.coordinate
+                if hasattr(ws.freeze_panes, "coordinate")
+                else str(ws.freeze_panes)
+            )
+        pane = getattr(ws.sheet_view, "pane", None)
+        if pane and pane.state == "split" and (pane.xSplit or pane.ySplit):
+            result["mode"] = "split"
+            result["x_split"] = int(pane.xSplit) if pane.xSplit is not None else None
+            result["y_split"] = int(pane.ySplit) if pane.ySplit is not None else None
+            if pane.topLeftCell:
+                result["top_left_cell"] = pane.topLeftCell
+            if pane.activePane:
+                result["active_pane"] = pane.activePane
+        return result
+
+    # =========================================================================
     # Write Operations
     # =========================================================================
 
@@ -345,6 +532,7 @@ class OpenpyxlAdapter(ExcelAdapter):
             font_kwargs["size"] = format.font_size
         if format.font_color is not None:
             from openpyxl.styles import Color
+
             # Remove # prefix if present
             hex_color = format.font_color.lstrip("#")
             font_kwargs["color"] = Color(rgb=f"FF{hex_color}")
@@ -417,6 +605,7 @@ class OpenpyxlAdapter(ExcelAdapter):
 
             hex_color = edge.color.lstrip("#")
             from openpyxl.styles import Color
+
             return Side(style=style, color=Color(rgb=f"FF{hex_color}"))
 
         # Determine diagonal settings
@@ -464,3 +653,146 @@ class OpenpyxlAdapter(ExcelAdapter):
     ) -> None:
         ws = workbook[sheet]
         ws.column_dimensions[column].width = width
+
+    # =========================================================================
+    # Tier 2 Write Operations
+    # =========================================================================
+
+    def merge_cells(self, workbook: Workbook, sheet: str, cell_range: str) -> None:
+        ws = workbook[sheet]
+        ws.merge_cells(cell_range)
+
+    def add_conditional_format(self, workbook: Workbook, sheet: str, rule: dict) -> None:
+        ws = workbook[sheet]
+        cf = rule.get("cf_rule", rule)
+        range_ref = cf.get("range")
+        rule_type = cf.get("rule_type")
+        formula = cf.get("formula")
+        operator = cf.get("operator")
+        fmt = cf.get("format") or {}
+
+        dxf = None
+        if fmt:
+            fill = None
+            font = None
+            if fmt.get("bg_color"):
+                hex_color = fmt["bg_color"].lstrip("#")
+                fill = PatternFill(
+                    start_color=f"FF{hex_color}", end_color=f"FF{hex_color}", fill_type="solid"
+                )
+            if fmt.get("font_color"):
+                hex_color = fmt["font_color"].lstrip("#")
+                font = Font(color=f"FF{hex_color}")
+            if fill or font:
+                from openpyxl.styles import DifferentialStyle
+
+                dxf = DifferentialStyle(fill=fill, font=font)
+
+        if rule_type in ("cellIs", "cellIsRule"):
+            op_map = {
+                "greaterThan": "greaterThan",
+                "lessThan": "lessThan",
+                "between": "between",
+                "equal": "equal",
+                "notEqual": "notEqual",
+                "greaterThanOrEqual": "greaterThanOrEqual",
+                "lessThanOrEqual": "lessThanOrEqual",
+            }
+            op = op_map.get(operator, operator)
+            from openpyxl.formatting.rule import CellIsRule
+
+            rule_obj = CellIsRule(operator=op, formula=[formula], dxf=dxf)
+            ws.conditional_formatting.add(range_ref, rule_obj)
+        elif rule_type in ("expression", "formula"):
+            rule_obj = FormulaRule(formula=[formula], dxf=dxf)
+            ws.conditional_formatting.add(range_ref, rule_obj)
+        elif rule_type == "colorScale":
+            rule_obj = ColorScaleRule(
+                start_type="min",
+                start_color="FFAA0000",
+                mid_type="percentile",
+                mid_value=50,
+                mid_color="FFFFFF00",
+                end_type="max",
+                end_color="FF00AA00",
+            )
+            ws.conditional_formatting.add(range_ref, rule_obj)
+        elif rule_type == "dataBar":
+            rule_obj = DataBarRule(
+                start_type="min", end_type="max", color="FF638EC6", showValue=True
+            )
+            ws.conditional_formatting.add(range_ref, rule_obj)
+
+    def add_data_validation(self, workbook: Workbook, sheet: str, validation: dict) -> None:
+        ws = workbook[sheet]
+        v = validation.get("validation", validation)
+        dv = DataValidation(
+            type=v.get("validation_type"),
+            operator=v.get("operator"),
+            formula1=v.get("formula1"),
+            formula2=v.get("formula2"),
+            allow_blank=v.get("allow_blank"),
+            showInputMessage=v.get("show_input"),
+            showErrorMessage=v.get("show_error"),
+            promptTitle=v.get("prompt_title"),
+            prompt=v.get("prompt"),
+            errorTitle=v.get("error_title"),
+            error=v.get("error"),
+        )
+        ws.add_data_validation(dv)
+        dv.add(v.get("range"))
+
+    def add_hyperlink(self, workbook: Workbook, sheet: str, link: dict) -> None:
+        ws = workbook[sheet]
+        data = link.get("hyperlink", link)
+        cell = data.get("cell")
+        target = data.get("target")
+        display = data.get("display")
+        tooltip = data.get("tooltip")
+        internal = data.get("internal")
+        c = ws[cell]
+        if display is not None:
+            c.value = display
+        if internal:
+            location = target.lstrip("#") if target else target
+            c.hyperlink = Hyperlink(ref=cell, location=location)
+        else:
+            c.hyperlink = target
+        if c.hyperlink and tooltip is not None:
+            c.hyperlink.tooltip = tooltip
+
+    def add_image(self, workbook: Workbook, sheet: str, image: dict) -> None:
+        ws = workbook[sheet]
+        data = image.get("image", image)
+        path = data.get("path")
+        cell = data.get("cell")
+        if not path or not cell:
+            return
+        img = Image(path)
+        ws.add_image(img, cell)
+
+    def add_pivot_table(self, workbook: Workbook, sheet: str, pivot: dict) -> None:
+        raise NotImplementedError("openpyxl does not support pivot table creation")
+
+    def add_comment(self, workbook: Workbook, sheet: str, comment: dict) -> None:
+        ws = workbook[sheet]
+        data = comment.get("comment", comment)
+        cell = data.get("cell")
+        text = data.get("text")
+        author = data.get("author") or ""
+        if cell and text is not None:
+            ws[cell].comment = Comment(text, author)
+
+    def set_freeze_panes(self, workbook: Workbook, sheet: str, settings: dict) -> None:
+        ws = workbook[sheet]
+        cfg = settings.get("freeze", settings)
+        mode = cfg.get("mode")
+        if mode == "freeze":
+            ws.freeze_panes = cfg.get("top_left_cell")
+        elif mode == "split":
+            ws.freeze_panes = None
+            pane = ws.sheet_view.pane
+            pane.xSplit = cfg.get("x_split")
+            pane.ySplit = cfg.get("y_split")
+            pane.topLeftCell = cfg.get("top_left_cell")
+            pane.activePane = cfg.get("active_pane")

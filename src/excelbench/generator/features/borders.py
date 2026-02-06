@@ -1,5 +1,8 @@
 """Generator for border test cases."""
 
+import sys
+from pathlib import Path
+
 import xlwings as xw
 
 from excelbench.generator.base import FeatureGenerator
@@ -45,6 +48,10 @@ class BordersGenerator(FeatureGenerator):
     feature_name = "borders"
     tier = 1
     filename = "07_borders.xlsx"
+
+    def __init__(self) -> None:
+        self._use_openpyxl = sys.platform == "darwin"
+        self._border_ops: list[dict[str, object]] = []
 
     def generate(self, sheet: xw.Sheet) -> list[TestCase]:
         """Generate border test cases."""
@@ -128,17 +135,13 @@ class BordersGenerator(FeatureGenerator):
         color: tuple[int, int, int] | None = None,
     ) -> None:
         """Set all four edges of a cell border."""
-        for edge in [
-            XlBordersIndex.EDGE_TOP,
-            XlBordersIndex.EDGE_BOTTOM,
-            XlBordersIndex.EDGE_LEFT,
-            XlBordersIndex.EDGE_RIGHT,
-        ]:
-            border = cell.api.Borders(edge)
-            border.LineStyle = line_style
-            border.Weight = weight
-            if color:
-                border.Color = self._rgb_to_int(color)
+        edges = {
+            "top": {"line_style": line_style, "weight": weight, "color": color},
+            "bottom": {"line_style": line_style, "weight": weight, "color": color},
+            "left": {"line_style": line_style, "weight": weight, "color": color},
+            "right": {"line_style": line_style, "weight": weight, "color": color},
+        }
+        self._apply_border_edges(cell, edges)
 
     def _rgb_to_int(self, rgb: tuple[int, int, int]) -> int:
         """Convert RGB tuple to Excel color integer."""
@@ -244,9 +247,10 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Top Only"
-        border = cell.api.Borders(XlBordersIndex.EDGE_TOP)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {"top": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THIN}},
+        )
 
         return TestCase(id="top_only", label=label, row=row, expected=expected)
 
@@ -262,9 +266,10 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Bottom Only"
-        border = cell.api.Borders(XlBordersIndex.EDGE_BOTTOM)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {"bottom": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THIN}},
+        )
 
         return TestCase(id="bottom_only", label=label, row=row, expected=expected)
 
@@ -280,9 +285,10 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Left Only"
-        border = cell.api.Borders(XlBordersIndex.EDGE_LEFT)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {"left": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THIN}},
+        )
 
         return TestCase(id="left_only", label=label, row=row, expected=expected)
 
@@ -298,9 +304,10 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Right Only"
-        border = cell.api.Borders(XlBordersIndex.EDGE_RIGHT)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {"right": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THIN}},
+        )
 
         return TestCase(id="right_only", label=label, row=row, expected=expected)
 
@@ -311,9 +318,15 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Diag Up"
-        border = cell.api.Borders(XlBordersIndex.DIAGONAL_UP)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {
+                "diagonal_up": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                }
+            },
+        )
 
         return TestCase(id="diagonal_up", label=label, row=row, expected=expected)
 
@@ -324,9 +337,15 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Diag Down"
-        border = cell.api.Borders(XlBordersIndex.DIAGONAL_DOWN)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {
+                "diagonal_down": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                }
+            },
+        )
 
         return TestCase(id="diagonal_down", label=label, row=row, expected=expected)
 
@@ -337,10 +356,19 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Both Diag"
-        for diag in [XlBordersIndex.DIAGONAL_UP, XlBordersIndex.DIAGONAL_DOWN]:
-            border = cell.api.Borders(diag)
-            border.LineStyle = XlLineStyle.CONTINUOUS
-            border.Weight = XlBorderWeight.THIN
+        self._apply_border_edges(
+            cell,
+            {
+                "diagonal_up": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                },
+                "diagonal_down": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                },
+            },
+        )
 
         return TestCase(id="diagonal_both", label=label, row=row, expected=expected)
 
@@ -389,25 +417,15 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Mixed Styles"
-
-        # Top - thick
-        border = cell.api.Borders(XlBordersIndex.EDGE_TOP)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THICK
-
-        # Bottom - thin
-        border = cell.api.Borders(XlBordersIndex.EDGE_BOTTOM)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.THIN
-
-        # Left - medium
-        border = cell.api.Borders(XlBordersIndex.EDGE_LEFT)
-        border.LineStyle = XlLineStyle.CONTINUOUS
-        border.Weight = XlBorderWeight.MEDIUM
-
-        # Right - dashed
-        border = cell.api.Borders(XlBordersIndex.EDGE_RIGHT)
-        border.LineStyle = XlLineStyle.DASH
+        self._apply_border_edges(
+            cell,
+            {
+                "top": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THICK},
+                "bottom": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.THIN},
+                "left": {"line_style": XlLineStyle.CONTINUOUS, "weight": XlBorderWeight.MEDIUM},
+                "right": {"line_style": XlLineStyle.DASH, "weight": XlBorderWeight.THIN},
+            },
+        )
 
         return TestCase(id="mixed_styles", label=label, row=row, expected=expected)
 
@@ -423,18 +441,135 @@ class BordersGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Mixed Colors"
-
-        colors = [
-            (XlBordersIndex.EDGE_TOP, (255, 0, 0)),      # Red
-            (XlBordersIndex.EDGE_BOTTOM, (0, 255, 0)),   # Green
-            (XlBordersIndex.EDGE_LEFT, (0, 0, 255)),     # Blue
-            (XlBordersIndex.EDGE_RIGHT, (255, 255, 0)),  # Yellow
-        ]
-
-        for edge, color in colors:
-            border = cell.api.Borders(edge)
-            border.LineStyle = XlLineStyle.CONTINUOUS
-            border.Weight = XlBorderWeight.THIN
-            border.Color = self._rgb_to_int(color)
+        self._apply_border_edges(
+            cell,
+            {
+                "top": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                    "color": (255, 0, 0),
+                },
+                "bottom": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                    "color": (0, 255, 0),
+                },
+                "left": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                    "color": (0, 0, 255),
+                },
+                "right": {
+                    "line_style": XlLineStyle.CONTINUOUS,
+                    "weight": XlBorderWeight.THIN,
+                    "color": (255, 255, 0),
+                },
+            },
+        )
 
         return TestCase(id="mixed_colors", label=label, row=row, expected=expected)
+
+    def _edge_index(self, name: str) -> int:
+        mapping = {
+            "top": XlBordersIndex.EDGE_TOP,
+            "bottom": XlBordersIndex.EDGE_BOTTOM,
+            "left": XlBordersIndex.EDGE_LEFT,
+            "right": XlBordersIndex.EDGE_RIGHT,
+            "diagonal_up": XlBordersIndex.DIAGONAL_UP,
+            "diagonal_down": XlBordersIndex.DIAGONAL_DOWN,
+        }
+        return mapping[name]
+
+    def _apply_border_edges(self, cell: xw.Range, edges: dict[str, dict[str, object]]) -> None:
+        if self._use_openpyxl:
+            self._border_ops.append({"row": cell.row, "edges": edges})
+            return
+        for edge_name, spec in edges.items():
+            border = cell.api.Borders(self._edge_index(edge_name))
+            line_style = spec.get("line_style", XlLineStyle.CONTINUOUS)
+            border.LineStyle = line_style
+            weight = spec.get("weight")
+            if weight is not None:
+                border.Weight = weight
+            color = spec.get("color")
+            if color is not None:
+                border.Color = self._rgb_to_int(color)  # type: ignore[arg-type]
+
+    def _openpyxl_style(self, line_style: int | None, weight: int | None) -> str | None:
+        if line_style in (None, XlLineStyle.NONE):
+            return None
+        if line_style == XlLineStyle.CONTINUOUS:
+            if weight == XlBorderWeight.THICK:
+                return "thick"
+            if weight == XlBorderWeight.MEDIUM:
+                return "medium"
+            if weight == XlBorderWeight.HAIRLINE:
+                return "hair"
+            return "thin"
+        if line_style == XlLineStyle.DOUBLE:
+            return "double"
+        if line_style == XlLineStyle.DASH:
+            return "dashed"
+        if line_style == XlLineStyle.DOT:
+            return "dotted"
+        if line_style == XlLineStyle.DASH_DOT:
+            return "dashDot"
+        if line_style == XlLineStyle.DASH_DOT_DOT:
+            return "dashDotDot"
+        if line_style == XlLineStyle.SLANT_DASH_DOT:
+            return "slantDashDot"
+        return "thin"
+
+    def _rgb_to_hex(self, rgb: tuple[int, int, int]) -> str:
+        return f"{rgb[0]:02X}{rgb[1]:02X}{rgb[2]:02X}"
+
+    def post_process(self, output_path: Path) -> None:
+        if not self._use_openpyxl or not self._border_ops:
+            return
+        from openpyxl import load_workbook
+        from openpyxl.styles import Border, Side
+
+        wb = load_workbook(output_path)
+        ws = wb[self.feature_name]
+
+        for op in self._border_ops:
+            row = op["row"]
+            edges = op["edges"]
+
+            def side_for(name: str) -> Side | None:
+                spec = edges.get(name)
+                if not spec:
+                    return None
+                style = self._openpyxl_style(spec.get("line_style"), spec.get("weight"))
+                if style is None:
+                    return None
+                color = spec.get("color")
+                if isinstance(color, tuple):
+                    return Side(style=style, color=self._rgb_to_hex(color))
+                return Side(style=style)
+
+            diag_up = edges.get("diagonal_up")
+            diag_down = edges.get("diagonal_down")
+            diag_spec = diag_up or diag_down
+            diag_side = None
+            if diag_spec:
+                style = self._openpyxl_style(diag_spec.get("line_style"), diag_spec.get("weight"))
+                if style is not None:
+                    color = diag_spec.get("color")
+                    if isinstance(color, tuple):
+                        diag_side = Side(style=style, color=self._rgb_to_hex(color))
+                    else:
+                        diag_side = Side(style=style)
+
+            border = Border(
+                left=side_for("left"),
+                right=side_for("right"),
+                top=side_for("top"),
+                bottom=side_for("bottom"),
+                diagonal=diag_side,
+                diagonalUp=diag_up is not None,
+                diagonalDown=diag_down is not None,
+            )
+            ws[f"B{row}"].border = border
+
+        wb.save(output_path)

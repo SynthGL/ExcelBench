@@ -114,7 +114,7 @@ class TextFormattingGenerator(FeatureGenerator):
         cell = sheet.range(f"B{row}")
         cell.value = "Underlined Text"
         # xlwings uses 2 for single underline
-        cell.api.Font.Underline = 2  # xlUnderlineStyleSingle
+        self._set_underline(cell, 2)  # xlUnderlineStyleSingle
 
         return TestCase(id="underline_single", label=label, row=row, expected=expected)
 
@@ -126,7 +126,7 @@ class TextFormattingGenerator(FeatureGenerator):
         cell = sheet.range(f"B{row}")
         cell.value = "Double Underlined"
         # xlwings uses -4119 for double underline
-        cell.api.Font.Underline = -4119  # xlUnderlineStyleDouble
+        self._set_underline(cell, -4119)  # xlUnderlineStyleDouble
 
         return TestCase(id="underline_double", label=label, row=row, expected=expected)
 
@@ -137,7 +137,7 @@ class TextFormattingGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, expected)
         cell = sheet.range(f"B{row}")
         cell.value = "Strikethrough Text"
-        cell.api.Font.Strikethrough = True
+        self._set_strikethrough(cell, True)
 
         return TestCase(id="strikethrough", label=label, row=row, expected=expected)
 
@@ -286,3 +286,17 @@ class TextFormattingGenerator(FeatureGenerator):
         cell.font.color = (255, 0, 0)
 
         return TestCase(id="combined", label=label, row=row, expected=expected)
+
+    @staticmethod
+    def _set_underline(cell: xw.Range, value: int | bool) -> None:
+        try:
+            cell.api.Font.Underline = value
+        except Exception:
+            cell.api.font_object.underline.set(value)
+
+    @staticmethod
+    def _set_strikethrough(cell: xw.Range, value: bool) -> None:
+        try:
+            cell.api.Font.Strikethrough = value
+        except Exception:
+            cell.api.font_object.strikethrough.set(value)

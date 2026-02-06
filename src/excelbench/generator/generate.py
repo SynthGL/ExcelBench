@@ -12,10 +12,18 @@ from excelbench.generator.features import (
     BackgroundColorsGenerator,
     BordersGenerator,
     CellValuesGenerator,
+    CommentsGenerator,
+    ConditionalFormattingGenerator,
+    DataValidationGenerator,
     DimensionsGenerator,
+    FreezePanesGenerator,
     FormulasGenerator,
+    HyperlinksGenerator,
+    ImagesGenerator,
+    MergedCellsGenerator,
     MultipleSheetsGenerator,
     NumberFormatsGenerator,
+    PivotTablesGenerator,
     TextFormattingGenerator,
 )
 from excelbench.models import Importance, Manifest, TestFile
@@ -36,20 +44,41 @@ def get_all_generators() -> list[FeatureGenerator]:
         BordersGenerator(),
         DimensionsGenerator(),
         MultipleSheetsGenerator(),
+        MergedCellsGenerator(),
+        ConditionalFormattingGenerator(),
+        DataValidationGenerator(),
+        HyperlinksGenerator(),
+        ImagesGenerator(),
+        PivotTablesGenerator(),
+        CommentsGenerator(),
+        FreezePanesGenerator(),
     ]
 
 
-def get_excel_version() -> str:
+def filter_generators(
+    generators: list[FeatureGenerator],
+    features: list[str] | None,
+) -> list[FeatureGenerator]:
+    if not features:
+        return generators
+    normalized = {f.strip().lower() for f in features if f.strip()}
+    selected = [g for g in generators if g.feature_name in normalized]
+    missing = normalized - {g.feature_name for g in selected}
+    if missing:
+        missing_list = ", ".join(sorted(missing))
+        raise ValueError(f"Unknown features: {missing_list}")
+    return selected
+
+
+def get_excel_version(app: xw.App | None = None) -> str:
     """Get the version of Excel being used."""
     try:
-        app = xw.apps.active
-        if app is None:
-            # Start Excel temporarily to get version
-            app = xw.App(visible=False)
-            version = app.version
-            app.quit()
-            return version
-        return app.version
+        if app is not None:
+            return str(app.version)
+        active_app = xw.apps.active
+        if active_app is None:
+            return "unknown"
+        return str(active_app.version)
     except Exception:
         return "unknown"
 
@@ -57,6 +86,7 @@ def get_excel_version() -> str:
 def generate_test_file(
     generator: FeatureGenerator,
     output_dir: Path,
+    app: xw.App | None = None,
 ) -> TestFile:
     """Generate a single test file using the given generator.
 
@@ -70,7 +100,7 @@ def generate_test_file(
     print(f"Generating {generator.feature_name}...")
 
     # Create workbook
-    wb, output_path = generator.create_workbook(output_dir)
+    wb, output_path = generator.create_workbook(output_dir, app=app)
 
     try:
         # Get the sheet and generate test cases
@@ -79,6 +109,7 @@ def generate_test_file(
 
         # Save and close
         generator.save_and_close(wb, output_path)
+        generator.post_process(output_path)
 
         print(f"  Created {output_path} with {len(test_cases)} test cases")
 
@@ -101,6 +132,7 @@ def generate_test_file(
 def generate_all(
     output_dir: Path,
     generators: list[FeatureGenerator] | None = None,
+    features: list[str] | None = None,
 ) -> Manifest:
     """Generate all test files.
 
@@ -112,19 +144,23 @@ def generate_all(
         Manifest describing all generated files.
     """
     if generators is None:
-        generators = get_all_generators()
+        generators = filter_generators(get_all_generators(), features)
 
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    app = xw.apps.active
+    if app is None:
+        raise RuntimeError("No active Excel instance found. Open Excel and retry generation.")
+
     # Get Excel version before generating
-    excel_version = get_excel_version()
+    excel_version = get_excel_version(app)
     print(f"Using Excel version: {excel_version}")
 
     # Generate each test file
     test_files: list[TestFile] = []
     for generator in generators:
-        test_file = generate_test_file(generator, output_dir)
+        test_file = generate_test_file(generator, output_dir, app=app)
         test_files.append(test_file)
 
     # Create manifest

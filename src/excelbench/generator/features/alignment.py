@@ -31,17 +31,13 @@ class AlignmentGenerator(FeatureGenerator):
         test_cases: list[TestCase] = []
         row = 2
 
-        test_cases.append(
-            self._test_h_align(sheet, row, "Align - left", XlHAlign.LEFT, "left")
-        )
+        test_cases.append(self._test_h_align(sheet, row, "Align - left", XlHAlign.LEFT, "left"))
         row += 1
         test_cases.append(
             self._test_h_align(sheet, row, "Align - center", XlHAlign.CENTER, "center")
         )
         row += 1
-        test_cases.append(
-            self._test_h_align(sheet, row, "Align - right", XlHAlign.RIGHT, "right")
-        )
+        test_cases.append(self._test_h_align(sheet, row, "Align - right", XlHAlign.RIGHT, "right"))
         row += 1
 
         test_cases.append(self._test_v_align(sheet, row, "Align - top", XlVAlign.TOP, "top"))
@@ -51,9 +47,7 @@ class AlignmentGenerator(FeatureGenerator):
         )
         row += 1
         test_cases.append(
-            self._test_v_align(
-                sheet, row, "Align - bottom", XlVAlign.BOTTOM, "bottom"
-            )
+            self._test_v_align(sheet, row, "Align - bottom", XlVAlign.BOTTOM, "bottom")
         )
         row += 1
 
@@ -78,7 +72,7 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = label
-        cell.api.HorizontalAlignment = value
+        self._set_horizontal_alignment(cell, value)
         return TestCase(id=f"h_{expected}", label=label, row=row, expected=exp)
 
     def _test_v_align(
@@ -93,7 +87,7 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = label
-        cell.api.VerticalAlignment = value
+        self._set_vertical_alignment(cell, value)
         return TestCase(id=f"v_{expected}", label=label, row=row, expected=exp)
 
     def _test_wrap(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -102,7 +96,7 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Line 1\nLine 2"
-        cell.api.WrapText = True
+        self._set_wrap(cell, True)
         return TestCase(id="wrap_text", label=label, row=row, expected=exp)
 
     def _test_rotation(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -111,7 +105,7 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Rotated"
-        cell.api.Orientation = 45
+        self._set_orientation(cell, 45)
         return TestCase(id="rotation_45", label=label, row=row, expected=exp)
 
     def _test_indent(self, sheet: xw.Sheet, row: int) -> TestCase:
@@ -120,5 +114,40 @@ class AlignmentGenerator(FeatureGenerator):
         self.write_test_case(sheet, row, label, exp)
         cell = sheet.range(f"B{row}")
         cell.value = "Indented"
-        cell.api.IndentLevel = 2
+        self._set_indent(cell, 2)
         return TestCase(id="indent_2", label=label, row=row, expected=exp)
+
+    @staticmethod
+    def _set_horizontal_alignment(cell: xw.Range, value: int) -> None:
+        try:
+            cell.api.HorizontalAlignment = value
+        except Exception:
+            cell.api.horizontal_alignment.set(value)
+
+    @staticmethod
+    def _set_vertical_alignment(cell: xw.Range, value: int) -> None:
+        try:
+            cell.api.VerticalAlignment = value
+        except Exception:
+            cell.api.vertical_alignment.set(value)
+
+    @staticmethod
+    def _set_wrap(cell: xw.Range, value: bool) -> None:
+        try:
+            cell.api.WrapText = value
+        except Exception:
+            cell.api.wrap_text.set(value)
+
+    @staticmethod
+    def _set_orientation(cell: xw.Range, value: int) -> None:
+        try:
+            cell.api.Orientation = value
+        except Exception:
+            cell.api.text_orientation.set(value)
+
+    @staticmethod
+    def _set_indent(cell: xw.Range, value: int) -> None:
+        try:
+            cell.api.IndentLevel = value
+        except Exception:
+            cell.api.indent_level.set(value)
