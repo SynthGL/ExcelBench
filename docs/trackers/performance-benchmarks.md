@@ -132,3 +132,8 @@ Template:
 - Worked on: PB-030 (bulk read workload)
 - Notes: added `bulk_sheet_values` workload op and read-only workload support (`operations: [read]`); generated bulk-read scenarios and ran openpyxl baseline.
 - Next: add bulk implementations for one more adapter (e.g., pandas/polars) or clearly mark unsupported in reports.
+
+### 02/08/2026 03:08 PM PST (via pst-timestamp)
+- Worked on: PB-030 (bulk read implementations)
+- Notes: implemented `read_sheet_values` for pandas/polars/tablib/openpyxl-readonly and ran a multi-adapter bulk-read baseline.
+- Next: add a bulk write workload (write a full grid in one API call where supported).
