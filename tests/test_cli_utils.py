@@ -291,3 +291,392 @@ class TestShowSummary:
         ]
         result = _results_from_json(data)
         show_summary(result)
+
+    def test_missing_score_for_rw_lib(self) -> None:
+        """When a RW lib has a feature scored by another lib but not itself, show ➖."""
+        data = _minimal_results_json()
+        data["libraries"]["calamine"] = {
+            "name": "calamine",
+            "version": "0.6.0",
+            "language": "python",
+            "capabilities": ["read"],
+        }
+        data["results"] = [
+            {
+                "feature": "cell_values",
+                "library": "openpyxl",
+                "scores": {"read": 3, "write": 2},
+                "test_cases": {},
+            },
+            {
+                "feature": "borders",
+                "library": "calamine",
+                "scores": {"read": 1},
+                "test_cases": {},
+            },
+        ]
+        result = _results_from_json(data)
+        # openpyxl has no score for "borders" → read/write ➖ (lines 478, 484)
+        # calamine has no score for "cell_values" → read ➖ (line 478)
+        show_summary(result)
+
+    def test_score_with_none_read_score(self) -> None:
+        """A RW lib with write_score only → read column shows ➖."""
+        data = _minimal_results_json()
+        data["results"] = [
+            {
+                "feature": "cell_values",
+                "library": "openpyxl",
+                "scores": {"write": 2},  # no read score
+                "test_cases": {},
+            }
+        ]
+        result = _results_from_json(data)
+        show_summary(result)
+
+    def test_score_with_none_write_score(self) -> None:
+        """A RW lib with read_score only → write column shows ➖."""
+        data = _minimal_results_json()
+        data["results"] = [
+            {
+                "feature": "cell_values",
+                "library": "openpyxl",
+                "scores": {"read": 3},  # no write score
+                "test_cases": {},
+            }
+        ]
+        result = _results_from_json(data)
+        show_summary(result)
+
+
+# ═════════════════════════════════════════════════
+# CLI commands via typer CliRunner
+# ═════════════════════════════════════════════════
+
+
+class TestGenerateCommand:
+    def test_success(self, tmp_path: Path) -> None:
+        from datetime import datetime
+        from unittest.mock import MagicMock, patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+        from excelbench.models import Manifest
+
+        manifest = Manifest(
+            generated_at=datetime(2026, 1, 1),
+            excel_version="16.0",
+            generator_version="0.1",
+            files=[
+                MagicMock(path="cell_values.xlsx", feature="cell_values", test_cases=[]),
+            ],
+        )
+        runner = CliRunner()
+        with patch(
+            "excelbench.generator.generate.generate_all", return_value=manifest
+        ):
+            result = runner.invoke(app, ["generate", "--output", str(tmp_path)])
+        assert result.exit_code == 0
+        assert "Generated 1 test files" in result.output
+
+    def test_error(self, tmp_path: Path) -> None:
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        runner = CliRunner()
+        with patch(
+            "excelbench.generator.generate.generate_all",
+            side_effect=RuntimeError("Excel not available"),
+        ):
+            result = runner.invoke(app, ["generate", "--output", str(tmp_path)])
+        assert result.exit_code == 1
+
+
+class TestBenchmarkCommand:
+    def test_invalid_profile(self, tmp_path: Path) -> None:
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(
+            app, ["benchmark", "--profile", "csv", "--tests", str(tmp_path)]
+        )
+        assert result.exit_code == 1
+        assert "xlsx, xls" in result.output
+
+
+class TestReportCommand:
+    def test_missing_file(self, tmp_path: Path) -> None:
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        runner = CliRunner()
+        result = runner.invoke(
+            app,
+            ["report", "--input", str(tmp_path / "nonexistent.json")],
+        )
+        assert result.exit_code == 1
+
+    def test_success(self, tmp_path: Path) -> None:
+        import json
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        results_file = tmp_path / "results.json"
+        results_file.write_text(json.dumps(_minimal_results_json()))
+
+        runner = CliRunner()
+        output_dir = tmp_path / "output"
+        with (
+            patch("excelbench.results.render_markdown"),
+            patch("excelbench.results.render_csv"),
+        ):
+            result = runner.invoke(
+                app,
+                [
+                    "report",
+                    "--input",
+                    str(results_file),
+                    "--output",
+                    str(output_dir),
+                ],
+            )
+        assert result.exit_code == 0
+        assert "Reports regenerated" in result.output
+
+
+class TestGenerateXlsCommand:
+    def test_success(self, tmp_path: Path) -> None:
+        from datetime import datetime
+        from unittest.mock import MagicMock, patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+        from excelbench.models import Manifest
+
+        manifest = Manifest(
+            generated_at=datetime(2026, 1, 1),
+            excel_version="16.0",
+            generator_version="0.1",
+            files=[
+                MagicMock(path="cell_values.xls", feature="cell_values", test_cases=[]),
+            ],
+        )
+        runner = CliRunner()
+        with patch(
+            "excelbench.generator.generate_xls.generate_xls",
+            return_value=manifest,
+        ):
+            result = runner.invoke(
+                app, ["generate-xls", "--output", str(tmp_path)]
+            )
+        assert result.exit_code == 0
+        assert "Generated 1 .xls files" in result.output
+
+    def test_error(self, tmp_path: Path) -> None:
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        runner = CliRunner()
+        with patch(
+            "excelbench.generator.generate_xls.generate_xls",
+            side_effect=ImportError("xlwt not available"),
+        ):
+            result = runner.invoke(
+                app, ["generate-xls", "--output", str(tmp_path)]
+            )
+        assert result.exit_code == 1
+
+
+class TestBenchmarkAppendResults:
+    def test_append_merges_existing(self, tmp_path: Path) -> None:
+        """--append should merge new scores into existing results.json."""
+        import json
+        from datetime import datetime
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+        from excelbench.models import BenchmarkMetadata, BenchmarkResults, FeatureScore, LibraryInfo
+
+        # Write existing results.json
+        results_dir = tmp_path / "results"
+        results_dir.mkdir()
+        existing = _minimal_results_json(
+            extra_results=[
+                {
+                    "feature": "cell_values",
+                    "library": "openpyxl",
+                    "scores": {"read": 2},
+                    "test_cases": {},
+                }
+            ]
+        )
+        (results_dir / "results.json").write_text(json.dumps(existing))
+
+        # Mock run_benchmark to return new results
+        new_results = BenchmarkResults(
+            metadata=BenchmarkMetadata(
+                benchmark_version="0.1.0",
+                run_date=datetime(2026, 1, 2),
+                excel_version="16.0",
+                platform="Darwin-arm64",
+                profile="xlsx",
+            ),
+            libraries={
+                "openpyxl": LibraryInfo(
+                    name="openpyxl",
+                    version="3.1.0",
+                    language="python",
+                    capabilities={"read", "write"},
+                )
+            },
+            scores=[
+                FeatureScore(
+                    feature="cell_values",
+                    library="openpyxl",
+                    read_score=3,
+                    write_score=2,
+                ),
+            ],
+        )
+
+        # Create test_dir with a fake manifest
+        test_dir = tmp_path / "tests"
+        test_dir.mkdir()
+
+        runner = CliRunner()
+        with (
+            patch("excelbench.harness.runner.run_benchmark", return_value=new_results),
+            patch("excelbench.results.render_results"),
+        ):
+            result = runner.invoke(
+                app,
+                [
+                    "benchmark",
+                    "--tests",
+                    str(test_dir),
+                    "--output",
+                    str(results_dir),
+                    "--append",
+                ],
+            )
+        assert result.exit_code == 0
+        assert "Results written" in result.output
+
+    def test_append_profile_mismatch(self, tmp_path: Path) -> None:
+        """--append should fail if existing profile differs from new."""
+        import json
+        from datetime import datetime
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+        from excelbench.models import BenchmarkMetadata, BenchmarkResults, LibraryInfo
+
+        # Existing results with profile=xls
+        results_dir = tmp_path / "results"
+        results_dir.mkdir()
+        existing = _minimal_results_json(profile="xls")
+        (results_dir / "results.json").write_text(json.dumps(existing))
+
+        # New results with profile=xlsx (mismatch)
+        new_results = BenchmarkResults(
+            metadata=BenchmarkMetadata(
+                benchmark_version="0.1.0",
+                run_date=datetime(2026, 1, 2),
+                excel_version="16.0",
+                platform="Darwin-arm64",
+                profile="xlsx",
+            ),
+            libraries={
+                "openpyxl": LibraryInfo(
+                    name="openpyxl",
+                    version="3.1.0",
+                    language="python",
+                    capabilities={"read", "write"},
+                )
+            },
+            scores=[],
+        )
+
+        test_dir = tmp_path / "tests"
+        test_dir.mkdir()
+
+        runner = CliRunner()
+        with patch("excelbench.harness.runner.run_benchmark", return_value=new_results):
+            result = runner.invoke(
+                app,
+                [
+                    "benchmark",
+                    "--tests",
+                    str(test_dir),
+                    "--output",
+                    str(results_dir),
+                    "--append",
+                ],
+            )
+        # ValueError caught by the except block → exit 1
+        assert result.exit_code == 1
+
+
+class TestBenchmarkExceptionHandling:
+    def test_file_not_found(self, tmp_path: Path) -> None:
+        """FileNotFoundError should suggest running generate first."""
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        test_dir = tmp_path / "tests"
+        test_dir.mkdir()
+
+        runner = CliRunner()
+        with patch(
+            "excelbench.harness.runner.run_benchmark",
+            side_effect=FileNotFoundError("manifest not found"),
+        ):
+            result = runner.invoke(
+                app,
+                ["benchmark", "--tests", str(test_dir)],
+            )
+        assert result.exit_code == 1
+        assert "generate" in result.output.lower()
+
+    def test_generic_exception(self, tmp_path: Path) -> None:
+        """Generic exceptions should show error and exit 1."""
+        from unittest.mock import patch
+
+        from typer.testing import CliRunner
+
+        from excelbench.cli import app
+
+        test_dir = tmp_path / "tests"
+        test_dir.mkdir()
+
+        runner = CliRunner()
+        with patch(
+            "excelbench.harness.runner.run_benchmark",
+            side_effect=RuntimeError("adapter crashed"),
+        ):
+            result = runner.invoke(
+                app,
+                ["benchmark", "--tests", str(test_dir)],
+            )
+        assert result.exit_code == 1
