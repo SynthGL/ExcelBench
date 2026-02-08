@@ -1,0 +1,343 @@
+from datetime import UTC, datetime
+from pathlib import Path
+
+from openpyxl import Workbook
+from openpyxl.styles import Border, PatternFill, Side
+
+from excelbench.generator.generate import write_manifest
+from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
+from excelbench.models import Importance, Manifest, TestCase, TestFile
+from excelbench.perf.runner import run_perf
+
+
+def test_perf_workload_cell_values_records_op_count(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    # Create a small input workbook for the read workload.
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+    for r in range(1, 4):
+        for c in range(1, 4):
+            ws.cell(row=r, column=c, value=r * 10 + c)
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_cell_values_9.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "cell_values_9",
+        "op": "cell_value",
+        "sheet": "S1",
+        "range": "A1:C3",
+        "start": 1,
+        "step": 1,
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/00_cell_values_9.xlsx",
+                feature="cell_values_9",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="cell_values_9",
+                        label="Throughput: 9 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=True,
+    )
+
+    row = results.results[0]
+    assert row.feature == "cell_values_9"
+    assert row.library == "openpyxl"
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    assert row.perf["read"].op_count == 9
+    assert row.perf["read"].op_unit == "cells"
+    assert row.perf["write"].op_count == 9
+    assert row.perf["write"].op_unit == "cells"
+
+
+def test_perf_workload_bg_color_records_op_count(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+
+    fill = PatternFill(start_color="FFFF0000", end_color="FFFF0000", fill_type="solid")
+    for r in range(1, 3):
+        for c in range(1, 3):
+            cell = ws.cell(row=r, column=c, value="Color")
+            cell.fill = fill
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_bg_4.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "bg_4",
+        "op": "bg_color",
+        "sheet": "S1",
+        "range": "A1:B2",
+        "palette": ["#FF0000"],
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/00_bg_4.xlsx",
+                feature="bg_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="bg_4",
+                        label="Throughput: bg 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+
+    row = results.results[0]
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    assert row.perf["read"].op_count == 4
+    assert row.perf["write"].op_count == 4
+
+
+def test_perf_workload_number_format_records_op_count(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+    for r in range(1, 3):
+        for c in range(1, 3):
+            cell = ws.cell(row=r, column=c, value=1.25)
+            cell.number_format = "0.00%"
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_numfmt_4.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "numfmt_4",
+        "op": "number_format",
+        "sheet": "S1",
+        "range": "A1:B2",
+        "number_format": "0.00%",
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/00_numfmt_4.xlsx",
+                feature="numfmt_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="numfmt_4",
+                        label="Throughput: number format 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+    row = results.results[0]
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    assert row.perf["read"].op_count == 4
+    assert row.perf["write"].op_count == 4
+
+
+def test_perf_workload_alignment_records_op_count(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+    for r in range(1, 3):
+        for c in range(1, 3):
+            ws.cell(row=r, column=c, value="Align")
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_align_4.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "align_4",
+        "op": "alignment",
+        "sheet": "S1",
+        "range": "A1:B2",
+        "h_align": "center",
+        "v_align": "top",
+        "wrap": True,
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/00_align_4.xlsx",
+                feature="align_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="align_4",
+                        label="Throughput: alignment 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+    row = results.results[0]
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    assert row.perf["read"].op_count == 4
+    assert row.perf["write"].op_count == 4
+
+
+def test_perf_workload_border_records_op_count(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+
+    side = Side(style="thin", color="FF000000")
+    border = Border(left=side, right=side, top=side, bottom=side)
+    for r in range(1, 3):
+        for c in range(1, 3):
+            cell = ws.cell(row=r, column=c, value="Border")
+            cell.border = border
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_border_4.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "border_4",
+        "op": "border",
+        "sheet": "S1",
+        "range": "A1:B2",
+        "border_style": "thin",
+        "border_color": "#000000",
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/00_border_4.xlsx",
+                feature="border_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="border_4",
+                        label="Throughput: border 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+    row = results.results[0]
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    assert row.perf["read"].op_count == 4
+    assert row.perf["write"].op_count == 4

@@ -19,6 +19,7 @@ app = typer.Typer(
 console = Console()
 XLS_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel_xls")
 XLSX_PROFILE_DEFAULT_TEST_DIR = Path("test_files")
+PERF_XLSX_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel")
 
 
 @app.command()
@@ -178,6 +179,122 @@ def benchmark(
     except FileNotFoundError as e:
         console.print(f"[red]Error: {e}[/red]")
         console.print("[yellow]Did you run 'excelbench generate' first?[/yellow]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def perf(
+    test_dir: Path = typer.Option(
+        PERF_XLSX_PROFILE_DEFAULT_TEST_DIR,
+        "--tests",
+        "-t",
+        help="Directory containing test files and manifest.json.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results"),
+        "--output",
+        "-o",
+        help="Root directory to save performance results (writes into <output>/perf).",
+    ),
+    features: list[str] | None = typer.Option(
+        None,
+        "--feature",
+        "-f",
+        help="Run performance benchmark only for specified feature(s).",
+    ),
+    adapters: list[str] | None = typer.Option(
+        None,
+        "--adapter",
+        "-a",
+        help="Run only specified adapter(s) by name (repeatable).",
+    ),
+    warmup: int = typer.Option(
+        3,
+        "--warmup",
+        help="Warmup iterations to discard per (library, feature, operation).",
+    ),
+    iters: int = typer.Option(
+        25,
+        "--iters",
+        help="Recorded iterations per (library, feature, operation).",
+    ),
+    breakdown: bool = typer.Option(
+        False,
+        "--breakdown",
+        help="Collect phase breakdown timings (open/exercise/save, etc.).",
+    ),
+    profile: str = typer.Option(
+        "xlsx",
+        "--profile",
+        help="Benchmark profile: xlsx (default) or xls.",
+    ),
+) -> None:
+    """Run performance benchmarks (speed + best-effort memory).
+
+    This command measures the library under test only. In particular, write timings
+    do NOT include oracle verification.
+    """
+
+    from excelbench.harness.adapters import get_all_adapters
+    from excelbench.perf import render_perf_results, run_perf
+
+    profile = profile.strip().lower()
+    if profile not in {"xlsx", "xls"}:
+        console.print("[red]Error: profile must be one of: xlsx, xls[/red]")
+        raise typer.Exit(1)
+
+    if profile == "xls" and test_dir.resolve() == PERF_XLSX_PROFILE_DEFAULT_TEST_DIR.resolve():
+        test_dir = XLS_PROFILE_DEFAULT_TEST_DIR
+
+    available = get_all_adapters()
+    selected = available
+
+    if adapters:
+        wanted = [a.strip() for a in adapters if a.strip()]
+        by_name = {a.name: a for a in available}
+        missing = [a for a in wanted if a not in by_name]
+        if missing:
+            console.print(f"[red]Error: Unknown adapters: {', '.join(missing)}[/red]")
+            console.print(
+                f"[yellow]Available adapters: {', '.join(sorted(by_name.keys()))}[/yellow]"
+            )
+            raise typer.Exit(1)
+        selected = [by_name[name] for name in wanted]
+
+    console.print("[bold]Running performance benchmark...[/bold]")
+    console.print(f"  Profile: {profile}")
+    console.print(f"  Test files: {test_dir}")
+    console.print(f"  Output: {output_dir}/perf")
+    console.print(f"  Warmup: {warmup}")
+    console.print(f"  Iterations: {iters}")
+    console.print(f"  Breakdown: {breakdown}")
+    if adapters:
+        console.print(f"  Adapters: {', '.join([a.name for a in selected])}")
+    console.print()
+
+    try:
+        perf_results = run_perf(
+            test_dir,
+            adapters=selected,
+            features=features,
+            profile=profile,
+            warmup=warmup,
+            iters=iters,
+            breakdown=breakdown,
+        )
+        render_perf_results(perf_results, output_dir)
+
+        console.print(f"[green]✓ Performance results written to {output_dir}/perf[/green]")
+        console.print(f"  - {output_dir}/perf/results.json")
+        console.print(f"  - {output_dir}/perf/README.md")
+        console.print(f"  - {output_dir}/perf/matrix.csv")
+        console.print(f"  - {output_dir}/perf/history.jsonl")
+
+    except FileNotFoundError as e:
+        console.print(f"[red]Error: {e}[/red]")
         raise typer.Exit(1)
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
