@@ -22,6 +22,7 @@ dependencies = [
     "python-calamine>=0.2.0",
     "pyexcel>=0.7.0",
     "pyexcel-xlsx>=0.6.0",
+    "pandas>=2.0",
     # Core utilities
     "pydantic>=2.0",
     "rich>=13.0",
@@ -80,10 +81,26 @@ module = [
     "xlwt.*",
     "xlwings",
     "xlwings.*",
+    "pandas",
+    "pandas.*",
+]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = [
     "excelbench_rust",
     "excelbench_rust.*",
 ]
-ignore_missing_imports = true
+disable_error_code = ["import-untyped"]
+
+[[tool.mypy.overrides]]
+module = [
+    "excelbench.harness.adapters.rust_adapter_utils",
+    "excelbench.harness.adapters.rust_calamine_adapter",
+    "excelbench.harness.adapters.rust_xlsxwriter_adapter",
+    "excelbench.harness.adapters.umya_adapter",
+]
+disable_error_code = ["import-untyped"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

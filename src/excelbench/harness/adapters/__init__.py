@@ -71,6 +71,12 @@ except ImportError:
     XlwtAdapter: AdapterClass | None = None
 else:
     XlwtAdapter = _XlwtAdapter
+try:
+    from excelbench.harness.adapters.pandas_adapter import PandasAdapter as _PandasAdapter
+except ImportError:
+    PandasAdapter: AdapterClass | None = None
+else:
+    PandasAdapter = _PandasAdapter
 
 try:
     from excelbench.harness.adapters.xlwings_oracle_adapter import (
@@ -107,6 +113,8 @@ if PyexcelAdapter is not None:
     __all__.append("PyexcelAdapter")
 if XlwtAdapter is not None:
     __all__.append("XlwtAdapter")
+if PandasAdapter is not None:
+    __all__.append("PandasAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -130,4 +138,6 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(PyexcelAdapter())
     if XlwtAdapter is not None:
         adapters.append(XlwtAdapter())
+    if PandasAdapter is not None:
+        adapters.append(PandasAdapter())
     return adapters
