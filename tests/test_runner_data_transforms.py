@@ -10,14 +10,20 @@ from excelbench.harness.runner import (
     _cell_format_from_expected,
     _cell_value_from_expected,
     _cell_value_from_raw,
+    _collect_sheet_names,
     _extract_formula_sheet_names,
     _find_rule,
+    _find_validation,
     _normalize_formula,
     _normalize_number_format,
     _normalize_sheet_quotes,
     _project_rule,
+    _strip_cf_priority,
+    get_write_verifier,
+    get_write_verifier_for_adapter,
+    get_write_verifier_for_feature,
 )
-from excelbench.models import CellType
+from excelbench.models import CellType, TestCase, TestFile
 
 JSONDict = dict[str, Any]
 
@@ -377,3 +383,227 @@ class TestBorderFromExpected:
         assert border.top is not None
         assert border.top.style.value == "thin"
         assert border.top.color == "#FF0000"
+
+
+# ═════════════════════════════════════════════════
+# _strip_cf_priority
+# ═════════════════════════════════════════════════
+
+
+class TestStripCfPriority:
+    def test_no_cf_rule(self) -> None:
+        d: JSONDict = {"range": "A1:A5"}
+        assert _strip_cf_priority(d) is d  # returns same object
+
+    def test_cf_rule_not_dict(self) -> None:
+        d: JSONDict = {"cf_rule": "not_a_dict"}
+        assert _strip_cf_priority(d) is d
+
+    def test_strips_priority(self) -> None:
+        d: JSONDict = {"cf_rule": {"range": "A1:A5", "priority": 1, "rule_type": "cellIs"}}
+        result = _strip_cf_priority(d)
+        assert "priority" not in result["cf_rule"]
+        assert result["cf_rule"]["range"] == "A1:A5"
+        assert result["cf_rule"]["rule_type"] == "cellIs"
+
+    def test_preserves_original(self) -> None:
+        d: JSONDict = {"cf_rule": {"priority": 1, "x": 2}}
+        _strip_cf_priority(d)
+        assert "priority" in d["cf_rule"]  # original not mutated
+
+    def test_no_priority_in_rule(self) -> None:
+        d: JSONDict = {"cf_rule": {"rule_type": "cellIs"}}
+        result = _strip_cf_priority(d)
+        assert result["cf_rule"] == {"rule_type": "cellIs"}
+
+
+# ═════════════════════════════════════════════════
+# _find_validation
+# ═════════════════════════════════════════════════
+
+
+class TestFindValidation:
+    def test_match_by_range(self) -> None:
+        validations: list[JSONDict] = [
+            {"range": "A1:A5", "validation_type": "list"},
+            {"range": "B1:B5", "validation_type": "whole"},
+        ]
+        result = _find_validation(validations, {"range": "B1:B5"})
+        assert result is not None
+        assert result["validation_type"] == "whole"
+
+    def test_match_by_validation_type(self) -> None:
+        validations: list[JSONDict] = [
+            {"range": "A1:A5", "validation_type": "list"},
+            {"range": "A1:A5", "validation_type": "whole"},
+        ]
+        result = _find_validation(
+            validations, {"range": "A1:A5", "validation_type": "whole"}
+        )
+        assert result is not None
+        assert result["validation_type"] == "whole"
+
+    def test_match_by_formula1(self) -> None:
+        validations: list[JSONDict] = [
+            {"range": "A1:A5", "formula1": "=10"},
+            {"range": "A1:A5", "formula1": "=20"},
+        ]
+        result = _find_validation(validations, {"range": "A1:A5", "formula1": "=10"})
+        assert result is not None
+        assert result["formula1"] == "=10"
+
+    def test_no_match(self) -> None:
+        validations: list[JSONDict] = [{"range": "A1:A5"}]
+        assert _find_validation(validations, {"range": "Z1:Z5"}) is None
+
+    def test_empty(self) -> None:
+        assert _find_validation([], {"range": "A1:A5"}) is None
+
+    def test_range_normalization(self) -> None:
+        validations: list[JSONDict] = [{"range": "$A$1:$A$5"}]
+        result = _find_validation(validations, {"range": "A1:A5"})
+        assert result is not None
+
+
+# ═════════════════════════════════════════════════
+# _collect_sheet_names
+# ═════════════════════════════════════════════════
+
+
+def _tc(
+    tc_id: str,
+    expected: JSONDict,
+    *,
+    sheet: str | None = None,
+) -> TestCase:
+    """Shortcut to build a TestCase for _collect_sheet_names tests."""
+    return TestCase(
+        id=tc_id, label=tc_id, row=1, expected=expected, sheet=sheet
+    )
+
+
+class TestCollectSheetNames:
+    def test_empty_test_cases(self) -> None:
+        tf = TestFile(path="a.xlsx", feature="cell_values", tier=1, test_cases=[])
+        result = _collect_sheet_names(tf)
+        assert result == ["cell_values"]
+
+    def test_explicit_sheet_names(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="multiple_sheets",
+            tier=1,
+            test_cases=[_tc("t1", {"sheet_names": ["Sheet1", "Sheet2"]})],
+        )
+        result = _collect_sheet_names(tf)
+        assert result == ["Sheet1", "Sheet2"]
+
+    def test_formula_sheet_extraction(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="formulas",
+            tier=1,
+            test_cases=[_tc("t1", {"formula": "='Data'!A1"})],
+        )
+        result = _collect_sheet_names(tf)
+        assert "formulas" in result
+        assert "Data" in result
+
+    def test_cf_formula_sheet_extraction(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="conditional_formatting",
+            tier=1,
+            test_cases=[
+                _tc("t1", {"cf_rule": {"formula": "='Ref'!A1>0"}})
+            ],
+        )
+        result = _collect_sheet_names(tf)
+        assert "Ref" in result
+
+    def test_dv_formula_sheet_extraction(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="data_validation",
+            tier=1,
+            test_cases=[
+                _tc("t1", {"validation": {"formula1": "='Lists'!A1:A5"}})
+            ],
+        )
+        result = _collect_sheet_names(tf)
+        assert "Lists" in result
+
+    def test_feature_prepended(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="borders",
+            tier=1,
+            test_cases=[_tc("t1", {"border_style": "thin"})],
+        )
+        result = _collect_sheet_names(tf)
+        assert result[0] == "borders"
+
+    def test_explicit_sheet_on_tc(self) -> None:
+        tf = TestFile(
+            path="a.xlsx",
+            feature="cell_values",
+            tier=1,
+            test_cases=[_tc("t1", {"type": "string"}, sheet="Custom")],
+        )
+        result = _collect_sheet_names(tf)
+        assert "Custom" in result
+        assert "cell_values" in result
+
+
+# ═════════════════════════════════════════════════
+# get_write_verifier / get_write_verifier_for_feature
+# ═════════════════════════════════════════════════
+
+
+class TestGetWriteVerifier:
+    def test_openpyxl_env(self, monkeypatch: Any) -> None:
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "openpyxl")
+        v = get_write_verifier()
+        assert v.name == "openpyxl"
+
+    def test_default_returns_adapter(self, monkeypatch: Any) -> None:
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "auto")
+        v = get_write_verifier()
+        assert v.name  # returns some adapter
+
+    def test_excel_env(self, monkeypatch: Any) -> None:
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "excel")
+        v = get_write_verifier()
+        # Returns excel_oracle if xlwings available, else openpyxl
+        assert v.name in {"openpyxl", "excel_oracle"}
+
+
+class TestGetWriteVerifierForFeature:
+    def test_openpyxl_env_override(self, monkeypatch: Any) -> None:
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "openpyxl")
+        v = get_write_verifier_for_feature("images")
+        assert v.name == "openpyxl"
+
+    def test_simple_feature_on_darwin(self, monkeypatch: Any) -> None:
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "auto")
+        v = get_write_verifier_for_feature("cell_values")
+        assert v.name  # returns valid adapter
+
+
+class TestGetWriteVerifierForAdapter:
+    def test_xls_adapter_uses_xlrd(self) -> None:
+        from unittest.mock import MagicMock
+
+        adapter = MagicMock()
+        adapter.output_extension = ".xls"
+        v = get_write_verifier_for_adapter(adapter, "cell_values")
+        assert v.name == "xlrd"
+
+    def test_xlsx_adapter_uses_feature_verifier(self, monkeypatch: Any) -> None:
+        from unittest.mock import MagicMock
+
+        monkeypatch.setenv("EXCELBENCH_WRITE_ORACLE", "openpyxl")
+        adapter = MagicMock()
+        adapter.output_extension = ".xlsx"
+        v = get_write_verifier_for_adapter(adapter, "cell_values")
+        assert v.name == "openpyxl"
