@@ -5,41 +5,30 @@ use pyo3::types::PyDict;
 use chrono::{NaiveDate, NaiveDateTime};
 
 pub fn a1_to_row_col(a1: &str) -> Result<(u32, u32), String> {
-    let raw = a1;
-    let a1 = a1.trim();
-    if a1.is_empty() {
-        return Err(format!("Invalid cell reference: {raw}"));
-    }
-
     let mut col: u32 = 0;
     let mut row_digits = String::new();
-    let mut seen_digit: bool = false;
 
     for ch in a1.chars() {
         if ch.is_ascii_alphabetic() {
-            if seen_digit {
-                return Err(format!("Invalid cell reference: {raw}"));
-            }
             let uc = ch.to_ascii_uppercase() as u8;
             let val = (uc - b'A' + 1) as u32;
             col = col * 26 + val;
         } else if ch.is_ascii_digit() {
-            seen_digit = true;
             row_digits.push(ch);
         } else {
-            return Err(format!("Invalid cell reference: {raw}"));
+            return Err(format!("Invalid cell reference: {a1}"));
         }
     }
 
     if col == 0 || row_digits.is_empty() {
-        return Err(format!("Invalid cell reference: {raw}"));
+        return Err(format!("Invalid cell reference: {a1}"));
     }
 
     let row_1: u32 = row_digits
         .parse()
-        .map_err(|_| format!("Invalid cell reference: {raw}"))?;
+        .map_err(|_| format!("Invalid cell reference: {a1}"))?;
     if row_1 == 0 {
-        return Err(format!("Invalid cell reference: {raw}"));
+        return Err(format!("Invalid cell reference: {a1}"));
     }
 
     Ok((row_1 - 1, col - 1))

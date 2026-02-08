@@ -81,10 +81,10 @@ def test_rust_xlsxwriter_preserves_sheet_insertion_order() -> None:
     if "rust_xlsxwriter" not in enabled:
         pytest.skip("excelbench_rust compiled without rust_xlsxwriter backend")
 
-    import openpyxl
-
     from excelbench.harness.adapters.rust_xlsxwriter_adapter import RustXlsxWriterAdapter
     from excelbench.models import CellType, CellValue
+
+    import openpyxl
 
     f = tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False)
     path = Path(f.name)
@@ -114,10 +114,10 @@ def test_rust_xlsxwriter_error_tokens_write_expected_formula() -> None:
     if "rust_xlsxwriter" not in enabled:
         pytest.skip("excelbench_rust compiled without rust_xlsxwriter backend")
 
-    import openpyxl
-
     from excelbench.harness.adapters.rust_xlsxwriter_adapter import RustXlsxWriterAdapter
     from excelbench.models import CellType, CellValue
+
+    import openpyxl
 
     f = tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False)
     path = Path(f.name)
@@ -144,10 +144,10 @@ def test_rust_xlsxwriter_writes_dates_as_excel_dates() -> None:
     if "rust_xlsxwriter" not in enabled:
         pytest.skip("excelbench_rust compiled without rust_xlsxwriter backend")
 
-    import openpyxl
-
     from excelbench.harness.adapters.rust_xlsxwriter_adapter import RustXlsxWriterAdapter
     from excelbench.models import CellType, CellValue
+
+    import openpyxl
 
     f = tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False)
     path = Path(f.name)
@@ -182,10 +182,10 @@ def test_umya_write_date_datetime_and_error_encodings() -> None:
     if "umya-spreadsheet" not in enabled:
         pytest.skip("excelbench_rust compiled without umya backend")
 
-    import openpyxl
-
     from excelbench.harness.adapters.umya_adapter import UmyaAdapter
     from excelbench.models import CellType, CellValue
+
+    import openpyxl
 
     f = tempfile.NamedTemporaryFile(suffix=".xlsx", delete=False)
     path = Path(f.name)

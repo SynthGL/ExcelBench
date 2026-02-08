@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Any
 
-from excelbench.models import BorderInfo, CellFormat, CellType, CellValue
+from excelbench.models import CellType, CellValue
 
 
 def get_rust_backend_version(backend_key: str) -> str:
@@ -18,8 +18,7 @@ def get_rust_backend_version(backend_key: str) -> str:
     try:
         import excelbench_rust
 
-        m: Any = excelbench_rust
-        info = m.build_info()
+        info = excelbench_rust.build_info()
         if isinstance(info, dict):
             backend_versions = info.get("backend_versions")
             if isinstance(backend_versions, dict) and backend_versions.get(backend_key):
@@ -88,61 +87,3 @@ def cell_value_from_payload(payload: dict[str, Any]) -> CellValue:
         return CellValue(type=CellType.DATETIME, value=value)
 
     return CellValue(type=CellType.STRING, value=str(value) if value is not None else None)
-
-
-def payload_from_cell_format(fmt: CellFormat) -> dict[str, Any]:
-    payload: dict[str, Any] = {}
-    if fmt.bold is not None:
-        payload["bold"] = bool(fmt.bold)
-    if fmt.italic is not None:
-        payload["italic"] = bool(fmt.italic)
-    if fmt.underline is not None:
-        payload["underline"] = str(fmt.underline)
-    if fmt.strikethrough is not None:
-        payload["strikethrough"] = bool(fmt.strikethrough)
-    if fmt.font_name is not None:
-        payload["font_name"] = str(fmt.font_name)
-    if fmt.font_size is not None:
-        payload["font_size"] = float(fmt.font_size)
-    if fmt.font_color is not None:
-        payload["font_color"] = str(fmt.font_color)
-    if fmt.bg_color is not None:
-        payload["bg_color"] = str(fmt.bg_color)
-    if fmt.number_format is not None:
-        payload["number_format"] = str(fmt.number_format)
-    if fmt.h_align is not None:
-        payload["h_align"] = str(fmt.h_align)
-    if fmt.v_align is not None:
-        payload["v_align"] = str(fmt.v_align)
-    if fmt.wrap is not None:
-        payload["wrap"] = bool(fmt.wrap)
-    if fmt.rotation is not None:
-        payload["rotation"] = int(fmt.rotation)
-    if fmt.indent is not None:
-        payload["indent"] = int(fmt.indent)
-    return payload
-
-
-def payload_from_border_info(border: BorderInfo) -> dict[str, Any]:
-    def edge_payload(edge: Any) -> dict[str, Any] | None:
-        if edge is None:
-            return None
-        return {
-            "style": str(edge.style),
-            "color": str(edge.color),
-        }
-
-    payload: dict[str, Any] = {}
-    for key in (
-        "top",
-        "bottom",
-        "left",
-        "right",
-        "diagonal_up",
-        "diagonal_down",
-    ):
-        val = getattr(border, key)
-        e = edge_payload(val)
-        if e is not None:
-            payload[key] = e
-    return payload

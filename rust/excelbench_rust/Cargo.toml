@@ -13,7 +13,7 @@ crate-type = ["cdylib"]
 default = []
 calamine = ["dep:calamine", "dep:chrono"]
 rust_xlsxwriter = ["dep:rust_xlsxwriter", "dep:indexmap", "dep:chrono"]
-umya = ["dep:umya-spreadsheet", "dep:chrono", "dep:zip", "dep:quick-xml"]
+umya = ["dep:umya-spreadsheet", "dep:chrono"]
 
 [dependencies]
 pyo3 = { version = "0.22", features = ["extension-module"] }
@@ -21,14 +21,8 @@ pyo3 = { version = "0.22", features = ["extension-module"] }
 # Optional backend dependencies (enabled via crate features)
 calamine = { version = "0.25", optional = true, features = ["dates"] }
 rust_xlsxwriter = { version = "0.79", optional = true, features = ["chrono"] }
-umya-spreadsheet = { version = "2.3.3", optional = true }
+umya-spreadsheet = { version = "2.2", optional = true }
 indexmap = { version = "2.2", optional = true }
-
-# Used by umya backend post-processing of written .xlsx files.
-zip = { version = "0.6", optional = true }
-
-# Used by the umya backend to patch hyperlink tooltip attributes robustly.
-quick-xml = { version = "0.37", optional = true }
 
 # Used for parsing/formatting calamine date/datetime values.
 chrono = { version = "0.4", optional = true }
