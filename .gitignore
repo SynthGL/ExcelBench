@@ -35,6 +35,7 @@ test_files/
 
 # Results - regenerated on demand (but we may want to commit some)
 # results/
+results_dev*/
 
 # IDE
 .idea/
@@ -51,6 +52,7 @@ test_files/
 # Rust
 target/
 Cargo.lock
+!rust/**/Cargo.lock
 
 # Jupyter
 .ipynb_checkpoints/

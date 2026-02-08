@@ -21,6 +21,32 @@ except ImportError:
     CalamineAdapter: AdapterClass | None = None
 else:
     CalamineAdapter = _CalamineAdapter
+
+try:
+    from excelbench.harness.adapters.rust_calamine_adapter import (
+        RustCalamineAdapter as _RustCalamineAdapter,
+    )
+except ImportError:
+    RustCalamineAdapter: AdapterClass | None = None
+else:
+    RustCalamineAdapter = _RustCalamineAdapter
+
+try:
+    from excelbench.harness.adapters.rust_xlsxwriter_adapter import (
+        RustXlsxWriterAdapter as _RustXlsxWriterAdapter,
+    )
+except ImportError:
+    RustXlsxWriterAdapter: AdapterClass | None = None
+else:
+    RustXlsxWriterAdapter = _RustXlsxWriterAdapter
+
+try:
+    from excelbench.harness.adapters.umya_adapter import UmyaAdapter as _UmyaAdapter
+except ImportError:
+    UmyaAdapter: AdapterClass | None = None
+else:
+    UmyaAdapter = _UmyaAdapter
+
 try:
     from excelbench.harness.adapters.pylightxl_adapter import PylightxlAdapter as _PylightxlAdapter
 except ImportError:
@@ -67,6 +93,12 @@ if XlsxwriterAdapter is not None:
     __all__.append("XlsxwriterAdapter")
 if CalamineAdapter is not None:
     __all__.append("CalamineAdapter")
+if RustCalamineAdapter is not None:
+    __all__.append("RustCalamineAdapter")
+if RustXlsxWriterAdapter is not None:
+    __all__.append("RustXlsxWriterAdapter")
+if UmyaAdapter is not None:
+    __all__.append("UmyaAdapter")
 if PylightxlAdapter is not None:
     __all__.append("PylightxlAdapter")
 if XlrdAdapter is not None:
@@ -84,6 +116,12 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(XlsxwriterAdapter())
     if CalamineAdapter is not None:
         adapters.append(CalamineAdapter())
+    if RustCalamineAdapter is not None:
+        adapters.append(RustCalamineAdapter())
+    if RustXlsxWriterAdapter is not None:
+        adapters.append(RustXlsxWriterAdapter())
+    if UmyaAdapter is not None:
+        adapters.append(UmyaAdapter())
     if PylightxlAdapter is not None:
         adapters.append(PylightxlAdapter())
     if XlrdAdapter is not None:

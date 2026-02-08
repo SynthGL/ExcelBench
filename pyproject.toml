@@ -80,6 +80,8 @@ module = [
     "xlwt.*",
     "xlwings",
     "xlwings.*",
+    "excelbench_rust",
+    "excelbench_rust.*",
 ]
 ignore_missing_imports = true
 

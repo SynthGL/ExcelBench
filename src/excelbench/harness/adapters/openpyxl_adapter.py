@@ -11,6 +11,7 @@ from openpyxl.comments import Comment
 from openpyxl.drawing.image import Image
 from openpyxl.formatting.rule import ColorScaleRule, DataBarRule, FormulaRule
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.styles import colors as _openpyxl_colors
 from openpyxl.worksheet.datavalidation import DataValidation
 from openpyxl.worksheet.hyperlink import Hyperlink
 
@@ -33,6 +34,44 @@ ERROR_FORMULA_MAP = {
     "=NA()": "#N/A",
     '="text"+1': "#VALUE!",
 }
+
+
+_COLOR_INDEX = getattr(_openpyxl_colors, "COLOR_INDEX", None)
+
+
+def _openpyxl_color_to_hex(color: Any) -> str | None:
+    if not color:
+        return None
+
+    rgb = getattr(color, "rgb", None)
+    rgb_str: str | None = None
+    if isinstance(rgb, str):
+        rgb_str = rgb
+    elif isinstance(rgb, (bytes, bytearray)):
+        try:
+            rgb_str = bytes(rgb).decode("ascii", errors="ignore")
+        except Exception:
+            rgb_str = None
+    else:
+        value = getattr(rgb, "value", None)
+        if isinstance(value, str):
+            rgb_str = value
+
+    if isinstance(rgb_str, str) and len(rgb_str) >= 6:
+        if len(rgb_str) == 8:
+            return f"#{rgb_str[2:]}"  # Skip alpha (ARGB)
+        return f"#{rgb_str}"
+
+    indexed = getattr(color, "indexed", None)
+    if isinstance(indexed, int) and _COLOR_INDEX is not None:
+        try:
+            argb = _COLOR_INDEX[indexed]
+            if isinstance(argb, str) and len(argb) == 8:
+                return f"#{argb[2:]}"
+        except Exception:
+            return None
+
+    return None
 
 
 def _col_letter(index: int) -> str:
@@ -155,29 +194,16 @@ class OpenpyxlAdapter(ExcelAdapter):
         """Read the formatting of a cell."""
         ws = workbook[sheet]
         c: Cell = ws[cell]
-        font: Font = c.font
+        font = c.font
 
         # Convert color to hex
-        font_color = None
-        if font.color and font.color.rgb:
-            rgb = font.color.rgb
-            if isinstance(rgb, str) and len(rgb) >= 6:
-                # Handle ARGB format (8 chars) or RGB format (6 chars)
-                if len(rgb) == 8:
-                    font_color = f"#{rgb[2:]}"  # Skip alpha
-                else:
-                    font_color = f"#{rgb}"
+        font_color = _openpyxl_color_to_hex(getattr(font, "color", None))
 
         # Get background color
         bg_color = None
         fill = c.fill
-        if fill and fill.patternType == "solid" and fill.fgColor and fill.fgColor.rgb:
-            rgb = fill.fgColor.rgb
-            if isinstance(rgb, str) and len(rgb) >= 6:
-                if len(rgb) == 8:
-                    bg_color = f"#{rgb[2:]}"
-                else:
-                    bg_color = f"#{rgb}"
+        if fill and getattr(fill, "patternType", None) == "solid":
+            bg_color = _openpyxl_color_to_hex(getattr(fill, "fgColor", None))
 
         # Map underline
         underline = None
@@ -227,7 +253,7 @@ class OpenpyxlAdapter(ExcelAdapter):
         """Read the border information of a cell."""
         ws = workbook[sheet]
         c: Cell = ws[cell]
-        border: Border = c.border
+        border = c.border
 
         def parse_side(side: Side | None) -> BorderEdge | None:
             if side is None or side.style is None:
@@ -253,14 +279,7 @@ class OpenpyxlAdapter(ExcelAdapter):
             style = style_map.get(side.style, BorderStyle.THIN)
 
             # Get color
-            color = "#000000"
-            if side.color and side.color.rgb:
-                rgb = side.color.rgb
-                if isinstance(rgb, str) and len(rgb) >= 6:
-                    if len(rgb) == 8:
-                        color = f"#{rgb[2:]}"
-                    else:
-                        color = f"#{rgb}"
+            color = _openpyxl_color_to_hex(getattr(side, "color", None)) or "#000000"
 
             return BorderEdge(style=style, color=color)
 
@@ -345,18 +364,14 @@ class OpenpyxlAdapter(ExcelAdapter):
                 if getattr(rule, "formula", None):
                     entry["formula"] = rule.formula[0] if rule.formula else None
                 dxf = getattr(rule, "dxf", None)
-                if dxf and dxf.fill and dxf.fill.fgColor and dxf.fill.fgColor.rgb:
-                    rgb = dxf.fill.fgColor.rgb
-                    if len(rgb) == 8:
-                        entry["format"]["bg_color"] = f"#{rgb[2:]}"
-                    elif len(rgb) == 6:
-                        entry["format"]["bg_color"] = f"#{rgb}"
-                if dxf and dxf.font and dxf.font.color and dxf.font.color.rgb:
-                    rgb = dxf.font.color.rgb
-                    if len(rgb) == 8:
-                        entry["format"]["font_color"] = f"#{rgb[2:]}"
-                    elif len(rgb) == 6:
-                        entry["format"]["font_color"] = f"#{rgb}"
+                if dxf and getattr(dxf, "fill", None) and getattr(dxf.fill, "fgColor", None):
+                    bg = _openpyxl_color_to_hex(dxf.fill.fgColor)
+                    if bg:
+                        entry["format"]["bg_color"] = bg
+                if dxf and getattr(dxf, "font", None) and getattr(dxf.font, "color", None):
+                    fc = _openpyxl_color_to_hex(dxf.font.color)
+                    if fc:
+                        entry["format"]["font_color"] = fc
                 rules.append(entry)
         return rules
 
@@ -429,11 +444,19 @@ class OpenpyxlAdapter(ExcelAdapter):
             if isinstance(anchor, str):
                 anchor_type = "oneCell"
                 cell = anchor
-            if anchor is not None and hasattr(anchor, "_from"):
+            from_anchor = getattr(anchor, "_from", None)
+            if from_anchor is not None:
                 anchor_type = "oneCell"
-                cell = f"{_col_letter(anchor._from.col + 1)}{anchor._from.row + 1}"
-                offset = [anchor._from.colOff, anchor._from.rowOff]
-            if anchor is not None and hasattr(anchor, "_to"):
+                col = getattr(from_anchor, "col", None)
+                row = getattr(from_anchor, "row", None)
+                if isinstance(col, int) and isinstance(row, int):
+                    cell = f"{_col_letter(col + 1)}{row + 1}"
+                col_off = getattr(from_anchor, "colOff", None)
+                row_off = getattr(from_anchor, "rowOff", None)
+                if col_off is not None and row_off is not None:
+                    offset = [col_off, row_off]
+
+            if getattr(anchor, "_to", None) is not None:
                 anchor_type = "twoCell"
             images.append(
                 {
@@ -514,12 +537,10 @@ class OpenpyxlAdapter(ExcelAdapter):
         ws = workbook[sheet]
         result: JSONDict = {}
         if ws.freeze_panes:
+            freeze = ws.freeze_panes
             result["mode"] = "freeze"
-            result["top_left_cell"] = (
-                ws.freeze_panes.coordinate
-                if hasattr(ws.freeze_panes, "coordinate")
-                else str(ws.freeze_panes)
-            )
+            coord = getattr(freeze, "coordinate", None)
+            result["top_left_cell"] = coord if coord else str(freeze)
         pane = getattr(ws.sheet_view, "pane", None)
         if pane and pane.state == "split" and (pane.xSplit or pane.ySplit):
             result["mode"] = "split"
@@ -556,7 +577,8 @@ class OpenpyxlAdapter(ExcelAdapter):
         # Remove default sheet to allow explicit sheet creation
         if wb.sheetnames:
             default_sheet = wb.active
-            wb.remove(default_sheet)
+            if default_sheet is not None:
+                wb.remove(default_sheet)
         return wb
 
     def add_sheet(self, workbook: Workbook, name: str) -> None:
@@ -838,7 +860,15 @@ class OpenpyxlAdapter(ExcelAdapter):
         display = data.get("display")
         tooltip = data.get("tooltip")
         internal = data.get("internal")
-        c = ws[cell]
+        c_obj = ws[cell]
+        if isinstance(c_obj, tuple):
+            first = c_obj[0]
+            if isinstance(first, tuple):
+                c = first[0]
+            else:
+                c = first
+        else:
+            c = c_obj
         if display is not None:
             c.value = display
         if internal:
@@ -869,7 +899,16 @@ class OpenpyxlAdapter(ExcelAdapter):
         text = data.get("text")
         author = data.get("author") or ""
         if cell and text is not None:
-            ws[cell].comment = Comment(text, author)
+            c_obj = ws[cell]
+            if isinstance(c_obj, tuple):
+                first = c_obj[0]
+                if isinstance(first, tuple):
+                    c = first[0]
+                else:
+                    c = first
+            else:
+                c = c_obj
+            c.comment = Comment(text, author)
 
     def set_freeze_panes(self, workbook: Workbook, sheet: str, settings: JSONDict) -> None:
         ws = workbook[sheet]

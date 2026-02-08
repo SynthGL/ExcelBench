@@ -92,6 +92,41 @@ To regenerate canonical fixtures from scratch (requires Excel installed):
 uv run excelbench generate --output fixtures/excel
 ```
 
+## Optional: Rust Backends (PyO3)
+
+ExcelBench can optionally load additional adapters backed by Rust libraries via a
+local PyO3 extension module (`excelbench_rust`). This is intentionally kept as a
+separate crate so the main `excelbench` package remains pure-Python.
+
+Prereqs:
+- Rust toolchain (`rustup`, `cargo`)
+
+Build + install the extension into the active venv:
+
+```bash
+# Install maturin + other optional deps
+uv sync --extra rust
+
+# Build/editable-install the PyO3 module
+uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml \
+  --features calamine,rust_xlsxwriter,umya
+
+# Sanity check
+uv run python -c "import excelbench_rust; print(excelbench_rust.build_info())"
+```
+
+Notes:
+- `uv sync` may uninstall the locally-built extension module; rerun `maturin develop` if Rust adapters disappear.
+- You can build subsets (faster iteration):
+  - `--features calamine`
+  - `--features rust_xlsxwriter`
+  - `--features umya`
+
+Once installed, additional adapters may appear in `get_all_adapters()`:
+- `calamine` (Rust, read-only)
+- `rust_xlsxwriter` (Rust, write-only)
+- `umya-spreadsheet` (Rust, read+write)
+
 ## Detailed Results
 
 - **[XLSX detailed results](results/xlsx/README.md)** — per-library, per-test-case breakdowns
