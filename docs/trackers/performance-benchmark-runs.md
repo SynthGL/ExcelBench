@@ -1,0 +1,243 @@
+# Performance Benchmark Runs - Log
+
+Created: 02/08/2026 05:07 AM PST (via pst-timestamp)
+
+Use this to record baseline perf runs (machine conditions, command, output paths, quick notes).
+
+## Run Template
+
+```text
+### MM/DD/YYYY HH:MM AM/PM PST/PDT (via pst-timestamp)
+
+Git:
+- commit: <short sha>
+- branch: <name>
+
+Environment:
+- OS: <...>
+- CPU: <...>
+- RAM: <...>
+- Python (uv): <...>
+- Power: <AC/Battery>
+- Notes: <background load, thermal state, etc>
+
+Command:
+- `uv run excelbench perf ...`
+
+Outputs:
+- JSON: <path>
+- Markdown: <path>
+- CSV: <path>
+- History: <path>
+
+Observations:
+- <outliers, regressions, variance>
+```
+
+## Runs
+
+### 02/08/2026 05:08 AM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Tier 1 only; breakdown enabled.
+
+Command:
+- `uv run excelbench perf --tests fixtures/excel --output results_dev_perf_baseline_tier1 --feature cell_values --feature formulas --feature text_formatting --feature background_colors --feature number_formats --feature alignment --feature borders --feature dimensions --feature multiple_sheets --warmup 2 --iters 10 --breakdown`
+
+Outputs:
+- JSON: `results_dev_perf_baseline_tier1/perf/results.json`
+- Markdown: `results_dev_perf_baseline_tier1/perf/README.md`
+- CSV: `results_dev_perf_baseline_tier1/perf/matrix.csv`
+- History: `results_dev_perf_baseline_tier1/perf/history.jsonl`
+
+Observations:
+- 10 libraries x 9 features = 90 result rows.
+
+### 02/08/2026 01:50 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Full xlsx feature set; breakdown enabled; warmup=1 iters=5.
+
+Command:
+- `uv run excelbench perf --tests fixtures/excel --output results_dev_perf_baseline_full_xlsx --warmup 1 --iters 5 --breakdown`
+
+Outputs:
+- JSON: `results_dev_perf_baseline_full_xlsx/perf/results.json`
+- Markdown: `results_dev_perf_baseline_full_xlsx/perf/README.md`
+- CSV: `results_dev_perf_baseline_full_xlsx/perf/matrix.csv`
+- History: `results_dev_perf_baseline_full_xlsx/perf/history.jsonl`
+
+Observations:
+- 10 libraries x 17 features = 170 result rows.
+
+### 02/08/2026 02:00 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: xls profile fixtures (4 features); breakdown enabled; warmup=1 iters=5; adapters restricted to xls-relevant set.
+
+Command:
+- `uv run excelbench perf --profile xls --tests fixtures/excel_xls --output results_dev_perf_baseline_full_xls --warmup 1 --iters 5 --breakdown --adapter xlrd --adapter python-calamine --adapter xlwt`
+
+Outputs:
+- JSON: `results_dev_perf_baseline_full_xls/perf/results.json`
+- Markdown: `results_dev_perf_baseline_full_xls/perf/README.md`
+- CSV: `results_dev_perf_baseline_full_xls/perf/matrix.csv`
+- History: `results_dev_perf_baseline_full_xls/perf/history.jsonl`
+
+Observations:
+- 3 libraries x 4 features = 12 result rows.
+
+### 02/08/2026 02:08 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Throughput fixture (cell_values_10k); adapters restricted to openpyxl; breakdown enabled; warmup=1 iters=3.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_openpyxl --warmup 1 --iters 3 --breakdown --adapter openpyxl`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_openpyxl/perf/results.json`
+- Markdown: `results_dev_perf_throughput_openpyxl/perf/README.md`
+- CSV: `results_dev_perf_throughput_openpyxl/perf/matrix.csv`
+- History: `results_dev_perf_throughput_openpyxl/perf/history.jsonl`
+
+Observations:
+- Workload op_count: 10,000 cells (read + write).
+
+### 02/08/2026 02:16 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Throughput fixtures (cell_values_10k + formulas_10k); adapters restricted to openpyxl; breakdown enabled; warmup=1 iters=2.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_openpyxl --warmup 1 --iters 2 --breakdown --adapter openpyxl`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_openpyxl/perf/results.json`
+- Markdown: `results_dev_perf_throughput_openpyxl/perf/README.md`
+- CSV: `results_dev_perf_throughput_openpyxl/perf/matrix.csv`
+- History: `results_dev_perf_throughput_openpyxl/perf/history.jsonl`
+
+Observations:
+- Workload op_count: 10,000 cells (read + write) for both scenarios.
+
+### 02/08/2026 02:18 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Throughput fixtures (cell_values_10k + formulas_10k); batch run with common adapters; warmup=0 iters=1.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_batch1 --warmup 0 --iters 1 --adapter openpyxl --adapter xlsxwriter --adapter pylightxl --adapter pyexcel --adapter python-calamine`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_batch1/perf/results.json`
+- Markdown: `results_dev_perf_throughput_batch1/perf/README.md`
+- CSV: `results_dev_perf_throughput_batch1/perf/matrix.csv`
+- History: `results_dev_perf_throughput_batch1/perf/history.jsonl`
+
+Observations:
+- python-calamine per-cell reads were extremely slow on these 10k scenarios (~39s p50 for read).
+
+### 02/08/2026 02:21 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Throughput fixtures updated to include `background_colors_1k`; openpyxl only; warmup=0 iters=1.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_openpyxl --warmup 0 --iters 1 --adapter openpyxl`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_openpyxl/perf/results.json`
+- Markdown: `results_dev_perf_throughput_openpyxl/perf/README.md`
+- CSV: `results_dev_perf_throughput_openpyxl/perf/matrix.csv`
+- History: `results_dev_perf_throughput_openpyxl/perf/history.jsonl`
+
+Observations:
+- Workload op_count: 10,000 cells for `cell_values_10k` and `formulas_10k`; 1,000 cells for `background_colors_1k`.
+
+### 02/08/2026 02:23 PM PST (via pst-timestamp)
+
+Git:
+- commit: c2cab42
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Throughput fixtures expanded (adds `number_formats_1k` and `alignment_1k`); openpyxl only; warmup=0 iters=1.
+
+Command:
+- `uv run python scripts/generate_throughput_fixtures.py`
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_openpyxl --warmup 0 --iters 1 --adapter openpyxl`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_openpyxl/perf/results.json`
+- Markdown: `results_dev_perf_throughput_openpyxl/perf/README.md`
+- CSV: `results_dev_perf_throughput_openpyxl/perf/matrix.csv`
+- History: `results_dev_perf_throughput_openpyxl/perf/history.jsonl`
