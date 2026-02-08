@@ -346,3 +346,26 @@ Outputs:
 
 Observations:
 - Workload is read-only (`operations: [read]`); write is skipped.
+
+### 02/08/2026 03:08 PM PST (via pst-timestamp)
+
+Git:
+- commit: 4704676
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Bulk read scenarios executed across openpyxl + dataframe/dataset adapters; warmup=0 iters=1.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_bulk_multi --warmup 0 --iters 1 --adapter openpyxl --adapter pandas --adapter polars --adapter tablib --adapter openpyxl-readonly --feature cell_values_10k_bulk_read --feature cell_values_1k_bulk_read`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_bulk_multi/perf/results.json`
+- Markdown: `results_dev_perf_throughput_bulk_multi/perf/README.md`
+- CSV: `results_dev_perf_throughput_bulk_multi/perf/matrix.csv`
+- History: `results_dev_perf_throughput_bulk_multi/perf/history.jsonl`

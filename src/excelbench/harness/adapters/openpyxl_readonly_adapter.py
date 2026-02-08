@@ -62,6 +62,54 @@ class OpenpyxlReadonlyAdapter(ReadOnlyAdapter):
     def get_sheet_names(self, workbook: Any) -> list[str]:
         return [str(name) for name in workbook.sheetnames]
 
+    def read_sheet_values(
+        self,
+        workbook: Any,
+        sheet: str,
+        cell_range: str | None = None,
+    ) -> list[list[CellValue]]:
+        """Bulk read a range of values in streaming mode.
+
+        Optional helper used by performance workloads.
+        """
+        ws = workbook[sheet]
+
+        if cell_range:
+            import re
+
+            clean = cell_range.replace("$", "").upper()
+            if ":" in clean:
+                a, b = clean.split(":", 1)
+            else:
+                a, b = clean, clean
+
+            def _cell_to_rc(cell: str) -> tuple[int, int]:
+                m = re.match(r"([A-Z]+)(\d+)", cell)
+                if not m:
+                    return 1, 1
+                col_str, row_str = m.groups()
+                row = int(row_str)
+                col = 0
+                for ch in col_str:
+                    col = col * 26 + (ord(ch) - ord("A") + 1)
+                return row, col
+
+            r0, c0 = _cell_to_rc(a)
+            r1, c1 = _cell_to_rc(b)
+            if r1 < r0:
+                r0, r1 = r1, r0
+            if c1 < c0:
+                c0, c1 = c1, c0
+
+            rows = ws.iter_rows(min_row=r0, max_row=r1, min_col=c0, max_col=c1)
+        else:
+            rows = ws.iter_rows()
+
+        out: list[list[CellValue]] = []
+        for row in rows:
+            out.append([self._classify_value(c) for c in row])
+        return out
+
     def read_cell_value(
         self,
         workbook: Any,
@@ -86,8 +134,10 @@ class OpenpyxlReadonlyAdapter(ReadOnlyAdapter):
 
         # iter_rows with specific range for efficiency
         for row in ws.iter_rows(
-            min_row=target_row, max_row=target_row,
-            min_col=target_col, max_col=target_col,
+            min_row=target_row,
+            max_row=target_row,
+            min_col=target_col,
+            max_col=target_col,
         ):
             if row:
                 c = row[0]
@@ -137,9 +187,7 @@ class OpenpyxlReadonlyAdapter(ReadOnlyAdapter):
                     '="text"+1': "#VALUE!",
                 }
                 if formula_str in error_formula_map:
-                    return CellValue(
-                        type=CellType.ERROR, value=error_formula_map[formula_str]
-                    )
+                    return CellValue(type=CellType.ERROR, value=error_formula_map[formula_str])
                 return CellValue(type=CellType.FORMULA, value=value, formula=formula_str)
 
             return CellValue(type=CellType.STRING, value=value)
