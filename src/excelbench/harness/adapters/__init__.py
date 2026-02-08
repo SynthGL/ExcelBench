@@ -79,6 +79,35 @@ else:
     PandasAdapter = _PandasAdapter
 
 try:
+    from excelbench.harness.adapters.xlsxwriter_constmem_adapter import (
+        XlsxwriterConstmemAdapter as _XlsxwriterConstmemAdapter,
+    )
+except ImportError:
+    XlsxwriterConstmemAdapter: AdapterClass | None = None
+else:
+    XlsxwriterConstmemAdapter = _XlsxwriterConstmemAdapter
+try:
+    from excelbench.harness.adapters.openpyxl_readonly_adapter import (
+        OpenpyxlReadonlyAdapter as _OpenpyxlReadonlyAdapter,
+    )
+except ImportError:
+    OpenpyxlReadonlyAdapter: AdapterClass | None = None
+else:
+    OpenpyxlReadonlyAdapter = _OpenpyxlReadonlyAdapter
+try:
+    from excelbench.harness.adapters.polars_adapter import PolarsAdapter as _PolarsAdapter
+except ImportError:
+    PolarsAdapter: AdapterClass | None = None
+else:
+    PolarsAdapter = _PolarsAdapter
+try:
+    from excelbench.harness.adapters.tablib_adapter import TablibAdapter as _TablibAdapter
+except ImportError:
+    TablibAdapter: AdapterClass | None = None
+else:
+    TablibAdapter = _TablibAdapter
+
+try:
     from excelbench.harness.adapters.xlwings_oracle_adapter import (
         ExcelOracleAdapter as _ExcelOracleAdapter,
     )
@@ -115,6 +144,14 @@ if XlwtAdapter is not None:
     __all__.append("XlwtAdapter")
 if PandasAdapter is not None:
     __all__.append("PandasAdapter")
+if XlsxwriterConstmemAdapter is not None:
+    __all__.append("XlsxwriterConstmemAdapter")
+if OpenpyxlReadonlyAdapter is not None:
+    __all__.append("OpenpyxlReadonlyAdapter")
+if PolarsAdapter is not None:
+    __all__.append("PolarsAdapter")
+if TablibAdapter is not None:
+    __all__.append("TablibAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -140,4 +177,12 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(XlwtAdapter())
     if PandasAdapter is not None:
         adapters.append(PandasAdapter())
+    if XlsxwriterConstmemAdapter is not None:
+        adapters.append(XlsxwriterConstmemAdapter())
+    if OpenpyxlReadonlyAdapter is not None:
+        adapters.append(OpenpyxlReadonlyAdapter())
+    if PolarsAdapter is not None:
+        adapters.append(PolarsAdapter())
+    if TablibAdapter is not None:
+        adapters.append(TablibAdapter())
     return adapters
