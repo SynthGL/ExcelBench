@@ -364,7 +364,15 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
                             for r_off, row_vals in enumerate(grid):
                                 if not isinstance(row_vals, list):
                                     continue
-                                ws.write_row(start_row + r_off, start_col, row_vals)
+                                # If a row contains None values, treat them as "skip" to better
+                                # model sparse bulk writes.
+                                if None not in row_vals:
+                                    ws.write_row(start_row + r_off, start_col, row_vals)
+                                else:
+                                    for c_off, v in enumerate(row_vals):
+                                        if v is None:
+                                            continue
+                                        ws.write(start_row + r_off, start_col + c_off, v)
                         continue
 
                     key = (op["row"], op["col"])

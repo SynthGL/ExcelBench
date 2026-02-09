@@ -622,6 +622,9 @@ class OpenpyxlAdapter(ExcelAdapter):
 
         for r, row_vals in enumerate(values):
             for c, v in enumerate(row_vals):
+                # Treat None as "not present" to better model sparse bulk writes.
+                if v is None:
+                    continue
                 ws.cell(row=start_row + r, column=start_col + c, value=v)
 
     def write_cell_value(

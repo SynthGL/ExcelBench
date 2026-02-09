@@ -57,7 +57,7 @@ def main() -> None:
     parser.add_argument(
         "--include-100k",
         action="store_true",
-        help="Include ~100k cell fixture generation (not used by default batches).",
+        help="Include ~100k cell fixture generation and run 100k bulk batches.",
     )
     args = parser.parse_args()
 
@@ -103,8 +103,16 @@ def main() -> None:
             "features": [
                 "cell_values_1k_bulk_read",
                 "cell_values_10k_bulk_read",
+                "cell_values_10k_1000x10_bulk_read",
+                "cell_values_10k_10x1000_bulk_read",
                 "formulas_1k_bulk_read",
                 "formulas_10k_bulk_read",
+                "strings_unique_1k_bulk_read",
+                "strings_unique_10k_bulk_read",
+                "strings_repeated_10k_bulk_read",
+                "strings_unique_1k_len64_bulk_read",
+                "strings_unique_1k_len256_bulk_read",
+                "strings_repeated_1k_len256_bulk_read",
             ],
         }
     )
@@ -116,6 +124,15 @@ def main() -> None:
             "features": [
                 "cell_values_1k_bulk_write",
                 "cell_values_10k_bulk_write",
+                "cell_values_10k_1000x10_bulk_write",
+                "cell_values_10k_10x1000_bulk_write",
+                "cell_values_10k_sparse_1pct_bulk_write",
+                "strings_unique_1k_bulk_write",
+                "strings_unique_10k_bulk_write",
+                "strings_repeated_10k_bulk_write",
+                "strings_unique_1k_len64_bulk_write",
+                "strings_unique_1k_len256_bulk_write",
+                "strings_repeated_1k_len256_bulk_write",
             ],
         }
     )
@@ -145,6 +162,26 @@ def main() -> None:
                 "features": [
                     "cell_values_1k",
                     "formulas_1k",
+                ],
+            }
+        )
+
+    if args.include_100k:
+        jobs.append(
+            {
+                "name": "bulk_read_100k",
+                "adapters": ["openpyxl", "openpyxl-readonly", "pandas", "polars", "tablib"],
+                "features": [
+                    "cell_values_100k_bulk_read",
+                ],
+            }
+        )
+        jobs.append(
+            {
+                "name": "bulk_write_100k",
+                "adapters": ["xlsxwriter", "openpyxl", "pandas", "tablib"],
+                "features": [
+                    "cell_values_100k_bulk_write",
                 ],
             }
         )

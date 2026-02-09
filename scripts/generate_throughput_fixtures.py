@@ -60,6 +60,34 @@ def _generate_cell_values_grid(
                 value += step
 
 
+def _generate_strings_grid(
+    *,
+    path: Path,
+    sheet: str,
+    rows: int,
+    cols: int,
+    prefix: str = "V",
+    repeated: bool = False,
+    repeated_value: str = "X",
+    length: int | None = None,
+) -> None:
+    with _xlsx_workbook(path, sheet) as (_wb, ws):
+        value = 1
+        for r in range(rows):
+            for c in range(cols):
+                if repeated:
+                    s = repeated_value
+                else:
+                    s = f"{prefix}{value}"
+                if length is not None and length > 0:
+                    if len(s) < length:
+                        s = s + ("x" * (length - len(s)))
+                    else:
+                        s = s[:length]
+                ws.write_string(r, c, s)
+                value += 1
+
+
 def _generate_formulas_grid(
     *,
     path: Path,
@@ -253,6 +281,36 @@ def main() -> None:
                             "range": rng,
                             "start": 1,
                             "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # Bulk write sparse variant: fill 1% of cells (still 10k range)
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_sparse_1pct_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_sparse_1pct_bulk_write",
+                    label="Throughput: cell values bulk write (10k range, sparse 1%)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_sparse_1pct_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "start": 1,
+                            "step": 1,
+                            "sparse_every": 100,
                         }
                     },
                     importance=Importance.BASIC,
@@ -462,6 +520,7 @@ def main() -> None:
     )
 
     # Bulk read variant (same file, bulk API if adapter supports it)
+
     files.append(
         TestFile(
             path=f"tier0/{filename}",
@@ -488,6 +547,463 @@ def main() -> None:
         )
     )
 
+    # 10k cell values, tall (1000x10) — bulk read/write
+    sheet = "S1"
+    rows, cols = 1000, 10
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    filename = "00_cell_values_10k_1000x10.xlsx"
+    _generate_cell_values_grid(path=tier_dir / filename, sheet=sheet, rows=rows, cols=cols)
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_1000x10_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_1000x10_bulk_read",
+                    label="Throughput: cell values bulk read (10k cells, 1000x10)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_1000x10_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_1000x10_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_1000x10_bulk_write",
+                    label="Throughput: cell values bulk write (10k cells, 1000x10)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_1000x10_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 10k cell values, wide (10x1000) — bulk read/write
+    sheet = "S1"
+    rows, cols = 10, 1000
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    filename = "00_cell_values_10k_10x1000.xlsx"
+    _generate_cell_values_grid(path=tier_dir / filename, sheet=sheet, rows=rows, cols=cols)
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_10x1000_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_10x1000_bulk_read",
+                    label="Throughput: cell values bulk read (10k cells, 10x1000)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_10x1000_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_10x1000_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_10x1000_bulk_write",
+                    label="Throughput: cell values bulk write (10k cells, 10x1000)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_10x1000_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 1k strings, unique (40x25) — bulk read/write
+    sheet = "S1"
+    rows, cols = 40, 25
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    filename = "00_strings_unique_1k.xlsx"
+    _generate_strings_grid(path=tier_dir / filename, sheet=sheet, rows=rows, cols=cols, prefix="V")
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_unique_1k_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_unique_1k_bulk_read",
+                    label="Throughput: strings bulk read (1k cells, unique)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_unique_1k_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_unique_1k_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_unique_1k_bulk_write",
+                    label="Throughput: strings bulk write (1k cells, unique)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_unique_1k_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "value_type": "string",
+                            "string_prefix": "V",
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 1k strings, long payload (unique) — bulk read/write
+    sheet = "S1"
+    rows, cols = 40, 25
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    for length in (64, 256):
+        filename = f"00_strings_unique_1k_len{length}.xlsx"
+        _generate_strings_grid(
+            path=tier_dir / filename,
+            sheet=sheet,
+            rows=rows,
+            cols=cols,
+            prefix="V",
+            length=length,
+        )
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature=f"strings_unique_1k_len{length}_bulk_read",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id=f"strings_unique_1k_len{length}_bulk_read",
+                        label=f"Throughput: strings bulk read (1k cells, unique, len {length})",
+                        row=1,
+                        expected={
+                            "workload": {
+                                "scenario": f"strings_unique_1k_len{length}_bulk_read",
+                                "op": "bulk_sheet_values",
+                                "operations": ["read"],
+                                "sheet": sheet,
+                                "range": rng,
+                            }
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature=f"strings_unique_1k_len{length}_bulk_write",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id=f"strings_unique_1k_len{length}_bulk_write",
+                        label=f"Throughput: strings bulk write (1k cells, unique, len {length})",
+                        row=1,
+                        expected={
+                            "workload": {
+                                "scenario": f"strings_unique_1k_len{length}_bulk_write",
+                                "op": "bulk_write_grid",
+                                "operations": ["write"],
+                                "sheet": sheet,
+                                "range": rng,
+                                "value_type": "string",
+                                "string_prefix": "V",
+                                "string_length": length,
+                                "start": 1,
+                                "step": 1,
+                            }
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+
+    # 1k strings, long payload (repeated) — bulk read/write
+    sheet = "S1"
+    rows, cols = 40, 25
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    length = 256
+    filename = f"00_strings_repeated_1k_len{length}.xlsx"
+    _generate_strings_grid(
+        path=tier_dir / filename,
+        sheet=sheet,
+        rows=rows,
+        cols=cols,
+        repeated=True,
+        repeated_value="X",
+        length=length,
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature=f"strings_repeated_1k_len{length}_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id=f"strings_repeated_1k_len{length}_bulk_read",
+                    label=f"Throughput: strings bulk read (1k cells, repeated, len {length})",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": f"strings_repeated_1k_len{length}_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature=f"strings_repeated_1k_len{length}_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id=f"strings_repeated_1k_len{length}_bulk_write",
+                    label=f"Throughput: strings bulk write (1k cells, repeated, len {length})",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": f"strings_repeated_1k_len{length}_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "value_type": "string",
+                            "string_mode": "repeated",
+                            "string_value": "X",
+                            "string_length": length,
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 10k strings, unique (100x100) — bulk read/write
+    sheet = "S1"
+    rows, cols = 100, 100
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    filename = "00_strings_unique_10k.xlsx"
+    _generate_strings_grid(path=tier_dir / filename, sheet=sheet, rows=rows, cols=cols, prefix="V")
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_unique_10k_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_unique_10k_bulk_read",
+                    label="Throughput: strings bulk read (10k cells, unique)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_unique_10k_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_unique_10k_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_unique_10k_bulk_write",
+                    label="Throughput: strings bulk write (10k cells, unique)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_unique_10k_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "value_type": "string",
+                            "string_prefix": "V",
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 10k strings, repeated (100x100) — bulk read/write
+    sheet = "S1"
+    rows, cols = 100, 100
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    filename = "00_strings_repeated_10k.xlsx"
+    _generate_strings_grid(
+        path=tier_dir / filename,
+        sheet=sheet,
+        rows=rows,
+        cols=cols,
+        repeated=True,
+        repeated_value="X",
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_repeated_10k_bulk_read",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_repeated_10k_bulk_read",
+                    label="Throughput: strings bulk read (10k cells, repeated)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_repeated_10k_bulk_read",
+                            "op": "bulk_sheet_values",
+                            "operations": ["read"],
+                            "sheet": sheet,
+                            "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="strings_repeated_10k_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="strings_repeated_10k_bulk_write",
+                    label="Throughput: strings bulk write (10k cells, repeated)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "strings_repeated_10k_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "value_type": "string",
+                            "string_mode": "repeated",
+                            "string_value": "X",
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
     # 1k background fills = 40x25
     scenario = "background_colors_1k"
     sheet = "S1"
@@ -679,6 +1195,60 @@ def main() -> None:
                             "workload": {
                                 "scenario": scenario,
                                 "op": "cell_value",
+                                "sheet": sheet,
+                                "range": rng,
+                                "start": 1,
+                                "step": 1,
+                            }
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+
+        # Bulk read/write variants for the ~100k fixture.
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature="cell_values_100k_bulk_read",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="cell_values_100k_bulk_read",
+                        label="Throughput: cell values bulk read (~100k cells)",
+                        row=1,
+                        expected={
+                            "workload": {
+                                "scenario": "cell_values_100k_bulk_read",
+                                "op": "bulk_sheet_values",
+                                "operations": ["read"],
+                                "sheet": sheet,
+                                "range": rng,
+                            }
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature="cell_values_100k_bulk_write",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="cell_values_100k_bulk_write",
+                        label="Throughput: cell values bulk write (~100k cells)",
+                        row=1,
+                        expected={
+                            "workload": {
+                                "scenario": "cell_values_100k_bulk_write",
+                                "op": "bulk_write_grid",
+                                "operations": ["write"],
                                 "sheet": sheet,
                                 "range": rng,
                                 "start": 1,

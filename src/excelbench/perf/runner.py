@@ -553,6 +553,11 @@ def _bench_write_workload(
 
     cells = _cells_from_range(workload["range"])
     op_count = len(cells)
+    if str(workload.get("op") or "") == "bulk_write_grid":
+        sparse_every = workload.get("sparse_every")
+        if isinstance(sparse_every, int) and sparse_every > 1:
+            # Count only the filled cells for throughput reporting.
+            op_count = (op_count + sparse_every - 1) // sparse_every
 
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
@@ -818,14 +823,51 @@ def _run_workload_write(
         rows = r1 - r0 + 1
         cols = c1 - c0 + 1
 
+        value_type = str(workload.get("value_type") or "number").strip().lower()
+
         start = int(workload.get("start") or 1)
         step = int(workload.get("step") or 1)
+
+        string_prefix = str(workload.get("string_prefix") or "V")
+        string_mode = str(workload.get("string_mode") or "unique").strip().lower()
+        string_value = str(workload.get("string_value") or "X")
+        string_length_raw = workload.get("string_length")
+        string_length = int(string_length_raw) if isinstance(string_length_raw, int) else None
+
+        sparse_every = workload.get("sparse_every")
+        if not isinstance(sparse_every, int) or sparse_every < 1:
+            sparse_every = 1
+
         values: list[list[Any]] = []
         v = start
+        linear_idx = 0
         for _r in range(rows):
             row_vals: list[Any] = []
             for _c in range(cols):
-                row_vals.append(v)
+                filled = (linear_idx % sparse_every) == 0
+                linear_idx += 1
+
+                if not filled:
+                    row_vals.append(None)
+                    v += step
+                    continue
+
+                if value_type == "number":
+                    row_vals.append(v)
+                elif value_type == "string":
+                    if string_mode == "repeated":
+                        s = string_value
+                    else:
+                        s = f"{string_prefix}{v}"
+                    if string_length is not None and string_length > 0:
+                        if len(s) < string_length:
+                            s = s + ("x" * (string_length - len(s)))
+                        else:
+                            s = s[:string_length]
+                    row_vals.append(s)
+                else:
+                    raise ValueError(f"Unsupported bulk_write_grid value_type: {value_type}")
+
                 v += step
             values.append(row_vals)
 
