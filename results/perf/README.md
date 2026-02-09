@@ -1,11 +1,11 @@
 # ExcelBench Performance Results
 
-*Generated: 2026-02-08T23:00:06.370307+00:00*
+*Generated: 2026-02-08T23:42:28.484726+00:00*
 *Profile: xlsx*
 *Platform: Darwin-arm64*
 *Python: 3.12.3*
-*Commit: 83df991*
-*Config: warmup=3 iters=25 breakdown=True*
+*Commit: 2129abe*
+*Config: warmup=1 iters=5 breakdown=True*
 
 ## Notes
 
@@ -13,61 +13,138 @@ These numbers measure only the library under test. Write timings do NOT include 
 
 ## Summary (p50 wall time)
 
-**Tier 0 — Basic Values**
-
-| Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | openpyxl-readonly (R p50 ms) | pandas (R p50 ms) | pandas (W p50 ms) | polars (R p50 ms) | pyexcel (R p50 ms) | pyexcel (W p50 ms) | pylightxl (R p50 ms) | pylightxl (W p50 ms) | python-calamine (R p50 ms) | tablib (R p50 ms) | tablib (W p50 ms) | xlrd (R p50 ms) | xlsxwriter (W p50 ms) | xlsxwriter-constmem (W p50 ms) | xlwt (W p50 ms) |
-|---------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
-| cell_values | 1.42 | 1.91 | 5.14 | 1.87 | 1.83 | 0.39 | 1.66 | 1.66 | 1.46 | 0.42 | 0.95 | 1.41 | 1.58 | — | 2.62 | 2.16 | 0.26 |
-| formulas | 1.24 | 1.65 | 1.47 | 1.74 | 2.00 | 0.44 | 1.31 | 1.77 | 1.22 | 0.31 | 0.16 | 1.19 | 1.63 | — | 2.02 | 2.19 | 0.29 |
-| multiple_sheets | 1.27 | 1.92 | 1.08 | 1.76 | 2.48 | 0.61 | 1.42 | 2.02 | 1.37 | 0.36 | 0.07 | 1.34 | 2.06 | — | 2.29 | 2.93 | 0.19 |
-
-**Tier 1 — Formatting**
-
-| Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | openpyxl-readonly (R p50 ms) | pandas (R p50 ms) | pandas (W p50 ms) | polars (R p50 ms) | pyexcel (R p50 ms) | pyexcel (W p50 ms) | pylightxl (R p50 ms) | pylightxl (W p50 ms) | python-calamine (R p50 ms) | tablib (R p50 ms) | tablib (W p50 ms) | xlrd (R p50 ms) | xlsxwriter (W p50 ms) | xlsxwriter-constmem (W p50 ms) | xlwt (W p50 ms) |
-|---------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
-| alignment | 1.25 | 1.55 | 1.01 | 1.49 | 1.66 | 0.25 | 1.35 | 1.41 | — | 0.33 | 0.06 | 1.32 | 1.56 | — | 2.11 | 2.09 | 0.25 |
-| background_colors | 1.08 | 1.52 | 0.93 | 1.31 | 1.64 | 0.23 | 1.17 | 1.38 | 1.02 | 0.29 | 0.06 | 1.10 | 1.38 | — | 2.22 | 2.07 | 0.20 |
-| borders | 2.08 | 2.46 | 1.31 | 1.98 | 1.70 | 0.29 | 1.86 | 1.46 | — | 0.43 | 0.07 | 1.77 | 1.48 | — | 2.46 | 2.48 | 0.44 |
-| dimensions | 0.98 | 1.36 | 0.85 | 1.19 | 1.34 | 0.32 | 1.03 | 1.26 | 0.96 | 0.25 | 0.06 | 0.95 | 1.22 | — | 1.69 | 1.91 | 0.14 |
-| number_formats | 1.14 | 1.48 | 0.90 | 1.27 | 1.54 | 0.26 | 1.16 | 1.41 | 1.02 | 0.31 | 0.07 | 1.08 | 1.35 | — | 1.87 | 2.16 | 0.21 |
-| text_formatting | 1.83 | 2.11 | 1.55 | 2.01 | 1.77 | 0.35 | 1.81 | 1.49 | 1.64 | 0.42 | 0.09 | 1.80 | 1.55 | — | 2.49 | 2.45 | 0.36 |
-
 **Tier 2 — Advanced**
 
 | Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | openpyxl-readonly (R p50 ms) | pandas (R p50 ms) | pandas (W p50 ms) | polars (R p50 ms) | pyexcel (R p50 ms) | pyexcel (W p50 ms) | pylightxl (R p50 ms) | pylightxl (W p50 ms) | python-calamine (R p50 ms) | tablib (R p50 ms) | tablib (W p50 ms) | xlrd (R p50 ms) | xlsxwriter (W p50 ms) | xlsxwriter-constmem (W p50 ms) | xlwt (W p50 ms) |
 |---------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|--------------|
-| comments | 1.14 | 1.55 | 0.91 | 1.20 | 1.35 | 0.24 | 1.21 | 1.31 | 1.21 | 0.24 | 0.06 | 1.02 | 1.24 | — | 2.24 | 1.84 | 0.14 |
-| conditional_formatting | 1.51 | 1.95 | 0.95 | 1.68 | 1.87 | 0.37 | 1.69 | 1.69 | — | 0.29 | 0.06 | 1.40 | 1.54 | — | 2.22 | 2.30 | 0.16 |
-| data_validation | 1.26 | 1.40 | 0.90 | 1.62 | 1.38 | 0.48 | 1.42 | 1.33 | — | 0.26 | 0.06 | 1.26 | 1.25 | — | 1.86 | 1.86 | 0.15 |
-| freeze_panes | 1.39 | 2.22 | 1.00 | 1.77 | 2.34 | 0.42 | 1.50 | 2.18 | — | 0.31 | 0.06 | 1.35 | 2.11 | — | 2.41 | 2.62 | 0.20 |
-| hyperlinks | 1.23 | 1.39 | 0.89 | 1.52 | 1.35 | 0.37 | 1.29 | 1.24 | — | 0.24 | 0.06 | 1.20 | 1.22 | — | 2.18 | 2.04 | 0.13 |
-| images | 1.22 | 1.83 | 0.83 | 1.17 | 1.34 | 0.24 | 1.30 | 1.26 | — | 0.24 | 0.06 | 0.96 | 1.22 | — | 2.91 | 1.79 | 0.13 |
-| merged_cells | 1.27 | 1.59 | 0.98 | 1.33 | 1.62 | 0.31 | 1.38 | 1.33 | 1.06 | 0.31 | 0.07 | 1.07 | 1.35 | — | 2.00 | 2.10 | 0.21 |
-| pivot_tables | 0.89 | 1.26 | 0.80 | 1.11 | 1.37 | 0.24 | 0.94 | 1.27 | 0.86 | 0.25 | 0.06 | 0.87 | 1.22 | — | 1.74 | 1.80 | 0.13 |
+| alignment_1k | 11.18 | 17.62 | 1.52 | 7.56 | 8.13 | 1.31 | 7.54 | 5.84 | — | 3.69 | 0.33 | 6.58 | 6.60 | — | 11.82 | 13.37 | 8.49 |
+| background_colors_1k | 10.62 | 20.85 | 1.60 | 7.36 | 7.66 | 1.30 | 7.33 | 5.55 | — | 3.71 | 0.28 | 6.87 | 6.64 | — | 12.50 | 13.47 | 9.33 |
+| borders_200 | 2.92 | 11.28 | 1.19 | 2.70 | 2.78 | 0.54 | 2.30 | 2.10 | — | 0.95 | 0.10 | 2.34 | 2.28 | — | 5.02 | 4.97 | 2.22 |
+| cell_values_10k | 40.27 | 40.70 | 108559.13 | 88.60 | 47.48 | 38.29 | 162.56 | 32.67 | — | 32.14 | 38735.74 | 31.49 | 44.61 | — | 47.17 | 34.09 | 20.58 |
+| cell_values_10k_bulk_read | 29.68 | — | 26.21 | 25.81 | — | 7.67 | — | — | — | — | — | 22.56 | — | — | — | — | — |
+| cell_values_10k_bulk_write | — | 28.24 | — | — | 39.98 | — | — | — | — | — | — | — | 36.54 | — | 18.76 | 2.13 | — |
+| cell_values_1k | 4.84 | 4.92 | 1459.52 | 10.43 | 6.38 | 2.79 | 8.49 | 4.42 | — | 3.48 | 395.17 | 4.41 | 5.76 | — | 4.43 | 4.80 | 2.19 |
+| cell_values_1k_bulk_read | 3.68 | — | 3.78 | 4.17 | — | 1.43 | — | — | — | — | — | 3.58 | — | — | — | — | — |
+| cell_values_1k_bulk_write | — | 4.04 | — | — | 5.38 | — | — | — | — | — | — | — | 4.72 | — | 3.78 | 2.01 | — |
+| formulas_10k | 43.74 | 39.28 | — | 33.44 | 52.14 | — | 47.07 | 32.38 | — | 30.78 | 38940.36 | — | 48.92 | — | 81.69 | 85.79 | 177.36 |
+| formulas_1k | 5.36 | 5.60 | 1739.55 | 4.67 | 6.89 | 2.49 | 5.53 | 4.40 | — | 3.18 | 410.70 | 4.61 | 5.77 | — | 9.98 | 9.98 | 15.06 |
+| number_formats_1k | 8.23 | 7.71 | 1.76 | 4.63 | 6.56 | 1.49 | 4.79 | 4.54 | — | 3.67 | 0.30 | 4.18 | 6.24 | — | 11.46 | 11.73 | 8.14 |
+
+## Throughput (derived from p50)
+
+Computed as: op_count * 1000 / p50_wall_ms
+
+| Scenario | op_count | op_unit | openpyxl (R units/s) | openpyxl (W units/s) | openpyxl-readonly (R units/s) | pandas (R units/s) | pandas (W units/s) | polars (R units/s) | pyexcel (R units/s) | pyexcel (W units/s) | pylightxl (R units/s) | pylightxl (W units/s) | python-calamine (R units/s) | tablib (R units/s) | tablib (W units/s) | xlrd (R units/s) | xlsxwriter (W units/s) | xlsxwriter-constmem (W units/s) | xlwt (W units/s) |
+|----------|----------|---------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|----------------|
+| alignment_1k | 1000 | cells | 89.47K | 56.74K | 656.62K | 132.34K | 122.94K | 762.34K | 132.55K | 171.33K | — | 270.98K | 3.08M | 152.01K | 151.53K | — | 84.62K | 74.77K | 117.83K |
+| background_colors_1k | 1000 | cells | 94.16K | 47.97K | 626.17K | 135.93K | 130.62K | 769.70K | 136.47K | 180.02K | — | 269.23K | 3.51M | 145.62K | 150.56K | — | 80.00K | 74.22K | 107.20K |
+| borders_200 | 200 | cells | 68.38K | 17.72K | 168.78K | 74.21K | 72.02K | 367.70K | 87.11K | 95.08K | — | 210.45K | 2.00M | 85.57K | 87.89K | — | 39.81K | 40.23K | 89.96K |
+| cell_values_10k | 10000 | cells | 248.35K | 245.72K | 92.12 | 112.86K | 210.61K | 261.17K | 61.52K | 306.09K | — | 311.14K | 258.16 | 317.58K | 224.15K | — | 212.02K | 293.34K | 485.97K |
+| cell_values_10k_bulk_read | 10000 | cells | 336.94K | — | 381.49K | 387.38K | — | 1.30M | — | — | — | — | — | 443.17K | — | — | — | — | — |
+| cell_values_10k_bulk_write | 10000 | cells | — | 354.15K | — | — | 250.15K | — | — | — | — | — | — | — | 273.69K | — | 532.95K | 4.69M | — |
+| cell_values_1k | 1000 | cells | 206.81K | 203.26K | 685.16 | 95.89K | 156.69K | 358.78K | 117.74K | 226.27K | — | 287.29K | 2.53K | 226.71K | 173.66K | — | 225.88K | 208.34K | 457.18K |
+| cell_values_1k_bulk_read | 1000 | cells | 271.82K | — | 264.34K | 239.66K | — | 698.28K | — | — | — | — | — | 278.99K | — | — | — | — | — |
+| cell_values_1k_bulk_write | 1000 | cells | — | 247.72K | — | — | 185.96K | — | — | — | — | — | — | — | 211.95K | — | 264.42K | 496.86K | — |
+| formulas_10k | 10000 | cells | 228.60K | 254.58K | — | 299.04K | 191.79K | — | 212.45K | 308.81K | — | 324.84K | 256.80 | — | 204.43K | — | 122.42K | 116.56K | 56.38K |
+| formulas_1k | 1000 | cells | 186.72K | 178.62K | 574.86 | 214.15K | 145.04K | 401.38K | 180.72K | 227.28K | — | 314.08K | 2.43K | 216.86K | 173.23K | — | 100.25K | 100.23K | 66.40K |
+| number_formats_1k | 1000 | cells | 121.45K | 129.78K | 569.57K | 215.89K | 152.52K | 672.27K | 208.87K | 220.25K | — | 272.60K | 3.36M | 239.06K | 160.19K | — | 87.26K | 85.26K | 122.89K |
 
 ## Run Issues
 
-- alignment / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- alignment / xlrd: Read not applicable: xlrd does not support .xlsx input
-- background_colors / xlrd: Read not applicable: xlrd does not support .xlsx input
-- borders / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- borders / xlrd: Read not applicable: xlrd does not support .xlsx input
-- cell_values / xlrd: Read not applicable: xlrd does not support .xlsx input
-- comments / xlrd: Read not applicable: xlrd does not support .xlsx input
-- conditional_formatting / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- conditional_formatting / xlrd: Read not applicable: xlrd does not support .xlsx input
-- data_validation / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- data_validation / xlrd: Read not applicable: xlrd does not support .xlsx input
-- dimensions / xlrd: Read not applicable: xlrd does not support .xlsx input
-- formulas / xlrd: Read not applicable: xlrd does not support .xlsx input
-- freeze_panes / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- freeze_panes / xlrd: Read not applicable: xlrd does not support .xlsx input
-- hyperlinks / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- hyperlinks / xlrd: Read not applicable: xlrd does not support .xlsx input
-- images / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
-- images / xlrd: Read not applicable: xlrd does not support .xlsx input
-- merged_cells / xlrd: Read not applicable: xlrd does not support .xlsx input
-- multiple_sheets / xlrd: Read not applicable: xlrd does not support .xlsx input
-- number_formats / xlrd: Read not applicable: xlrd does not support .xlsx input
-- pivot_tables / xlrd: Read not applicable: xlrd does not support .xlsx input
-- text_formatting / xlrd: Read not applicable: xlrd does not support .xlsx input
+- alignment_1k / openpyxl-readonly: Write unsupported
+- alignment_1k / polars: Write unsupported
+- alignment_1k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- alignment_1k / python-calamine: Write unsupported
+- alignment_1k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- alignment_1k / xlsxwriter-constmem: Read unsupported
+- alignment_1k / xlsxwriter: Read unsupported
+- alignment_1k / xlwt: Read unsupported
+- background_colors_1k / openpyxl-readonly: Write unsupported
+- background_colors_1k / polars: Write unsupported
+- background_colors_1k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- background_colors_1k / python-calamine: Write unsupported
+- background_colors_1k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- background_colors_1k / xlsxwriter-constmem: Read unsupported
+- background_colors_1k / xlsxwriter: Read unsupported
+- background_colors_1k / xlwt: Read unsupported
+- borders_200 / openpyxl-readonly: Write unsupported
+- borders_200 / polars: Write unsupported
+- borders_200 / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- borders_200 / python-calamine: Write unsupported
+- borders_200 / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- borders_200 / xlsxwriter-constmem: Read unsupported
+- borders_200 / xlsxwriter: Read unsupported
+- borders_200 / xlwt: Read unsupported
+- cell_values_10k / openpyxl-readonly: Write unsupported
+- cell_values_10k / polars: Write unsupported
+- cell_values_10k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- cell_values_10k / python-calamine: Write unsupported
+- cell_values_10k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- cell_values_10k / xlsxwriter-constmem: Read unsupported
+- cell_values_10k / xlsxwriter: Read unsupported
+- cell_values_10k / xlwt: Read unsupported
+- cell_values_10k_bulk_read / pyexcel: Read failed: ValueError: Adapter does not support bulk sheet reads: pyexcel
+- cell_values_10k_bulk_read / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- cell_values_10k_bulk_read / python-calamine: Read failed: ValueError: Adapter does not support bulk sheet reads: python-calamine
+- cell_values_10k_bulk_read / xlrd: Read not applicable: xlrd does not support .xlsx input
+- cell_values_10k_bulk_read / xlsxwriter-constmem: Read unsupported
+- cell_values_10k_bulk_read / xlsxwriter: Read unsupported
+- cell_values_10k_bulk_read / xlwt: Read unsupported
+- cell_values_10k_bulk_write / openpyxl-readonly: Write unsupported
+- cell_values_10k_bulk_write / polars: Write unsupported
+- cell_values_10k_bulk_write / pyexcel: Write failed: ValueError: Adapter does not support bulk sheet writes: pyexcel
+- cell_values_10k_bulk_write / pylightxl: Write failed: ValueError: Adapter does not support bulk sheet writes: pylightxl
+- cell_values_10k_bulk_write / python-calamine: Write unsupported
+- cell_values_10k_bulk_write / xlrd: Write unsupported
+- cell_values_10k_bulk_write / xlwt: Write failed: ValueError: Adapter does not support bulk sheet writes: xlwt
+- cell_values_1k / openpyxl-readonly: Write unsupported
+- cell_values_1k / polars: Write unsupported
+- cell_values_1k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- cell_values_1k / python-calamine: Write unsupported
+- cell_values_1k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- cell_values_1k / xlsxwriter-constmem: Read unsupported
+- cell_values_1k / xlsxwriter: Read unsupported
+- cell_values_1k / xlwt: Read unsupported
+- cell_values_1k_bulk_read / pyexcel: Read failed: ValueError: Adapter does not support bulk sheet reads: pyexcel
+- cell_values_1k_bulk_read / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- cell_values_1k_bulk_read / python-calamine: Read failed: ValueError: Adapter does not support bulk sheet reads: python-calamine
+- cell_values_1k_bulk_read / xlrd: Read not applicable: xlrd does not support .xlsx input
+- cell_values_1k_bulk_read / xlsxwriter-constmem: Read unsupported
+- cell_values_1k_bulk_read / xlsxwriter: Read unsupported
+- cell_values_1k_bulk_read / xlwt: Read unsupported
+- cell_values_1k_bulk_write / openpyxl-readonly: Write unsupported
+- cell_values_1k_bulk_write / polars: Write unsupported
+- cell_values_1k_bulk_write / pyexcel: Write failed: ValueError: Adapter does not support bulk sheet writes: pyexcel
+- cell_values_1k_bulk_write / pylightxl: Write failed: ValueError: Adapter does not support bulk sheet writes: pylightxl
+- cell_values_1k_bulk_write / python-calamine: Write unsupported
+- cell_values_1k_bulk_write / xlrd: Write unsupported
+- cell_values_1k_bulk_write / xlwt: Write failed: ValueError: Adapter does not support bulk sheet writes: xlwt
+- formulas_10k / openpyxl-readonly: Write unsupported; Read failed: EOFError: 
+- formulas_10k / polars: Write unsupported; Read failed: CalamineError: calamine error: Xlsx error: Zip error: invalid Zip archive: Could not find EOCD
+Context:
+    0: Could not open workbook at test_files/throughput_xlsx/tier0/00_formulas_10k.xlsx
+    1: could not load excel file at test_files/throughput_xlsx/tier0/00_formulas_10k.xlsx
+
+- formulas_10k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- formulas_10k / python-calamine: Write unsupported
+- formulas_10k / tablib: Read failed: BadZipFile: File is not a zip file
+- formulas_10k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- formulas_10k / xlsxwriter-constmem: Read unsupported
+- formulas_10k / xlsxwriter: Read unsupported
+- formulas_10k / xlwt: Read unsupported
+- formulas_1k / openpyxl-readonly: Write unsupported
+- formulas_1k / polars: Write unsupported
+- formulas_1k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- formulas_1k / python-calamine: Write unsupported
+- formulas_1k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- formulas_1k / xlsxwriter-constmem: Read unsupported
+- formulas_1k / xlsxwriter: Read unsupported
+- formulas_1k / xlwt: Read unsupported
+- number_formats_1k / openpyxl-readonly: Write unsupported
+- number_formats_1k / polars: Write unsupported
+- number_formats_1k / pylightxl: Read failed: TypeError: expected string or bytes-like object, got 'NoneType'
+- number_formats_1k / python-calamine: Write unsupported
+- number_formats_1k / xlrd: Write unsupported; Read not applicable: xlrd does not support .xlsx input
+- number_formats_1k / xlsxwriter-constmem: Read unsupported
+- number_formats_1k / xlsxwriter: Read unsupported
+- number_formats_1k / xlwt: Read unsupported
