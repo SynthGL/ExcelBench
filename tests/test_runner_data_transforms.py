@@ -23,7 +23,9 @@ from excelbench.harness.runner import (
     get_write_verifier_for_adapter,
     get_write_verifier_for_feature,
 )
-from excelbench.models import CellType, TestCase, TestFile
+from excelbench.models import CellType
+from excelbench.models import TestCase as BenchCase
+from excelbench.models import TestFile as BenchFile
 
 JSONDict = dict[str, Any]
 
@@ -221,9 +223,7 @@ class TestCellValueFromExpected:
         assert isinstance(cv.value, date)
 
     def test_datetime_string(self) -> None:
-        cv = _cell_value_from_expected(
-            {"type": "datetime", "value": "2026-01-15T10:30:00"}
-        )
+        cv = _cell_value_from_expected({"type": "datetime", "value": "2026-01-15T10:30:00"})
         assert cv.type == CellType.DATETIME
         assert isinstance(cv.value, datetime)
 
@@ -233,9 +233,7 @@ class TestCellValueFromExpected:
         assert cv.value == "#DIV/0!"
 
     def test_formula(self) -> None:
-        cv = _cell_value_from_expected(
-            {"type": "formula", "formula": "=SUM(A1:A5)", "value": "15"}
-        )
+        cv = _cell_value_from_expected({"type": "formula", "formula": "=SUM(A1:A5)", "value": "15"})
         assert cv.type == CellType.FORMULA
         assert cv.formula == "=SUM(A1:A5)"
 
@@ -338,9 +336,7 @@ class TestBorderFromExpected:
         assert border.top.color == "#000000"
 
     def test_custom_color(self) -> None:
-        border = _border_from_expected(
-            {"border_style": "thin", "border_color": "#FF0000"}
-        )
+        border = _border_from_expected({"border_style": "thin", "border_color": "#FF0000"})
         assert border.top is not None
         assert border.top.color == "#FF0000"
 
@@ -351,9 +347,7 @@ class TestBorderFromExpected:
         assert border.top.color == "#0000FF"
 
     def test_per_edge(self) -> None:
-        border = _border_from_expected(
-            {"border_top": "thick", "border_bottom": "thin"}
-        )
+        border = _border_from_expected({"border_top": "thick", "border_bottom": "thin"})
         assert border.top is not None
         assert border.top.style.value == "thick"
         assert border.bottom is not None
@@ -437,9 +431,7 @@ class TestFindValidation:
             {"range": "A1:A5", "validation_type": "list"},
             {"range": "A1:A5", "validation_type": "whole"},
         ]
-        result = _find_validation(
-            validations, {"range": "A1:A5", "validation_type": "whole"}
-        )
+        result = _find_validation(validations, {"range": "A1:A5", "validation_type": "whole"})
         assert result is not None
         assert result["validation_type"] == "whole"
 
@@ -475,21 +467,19 @@ def _tc(
     expected: JSONDict,
     *,
     sheet: str | None = None,
-) -> TestCase:
+) -> BenchCase:
     """Shortcut to build a TestCase for _collect_sheet_names tests."""
-    return TestCase(
-        id=tc_id, label=tc_id, row=1, expected=expected, sheet=sheet
-    )
+    return BenchCase(id=tc_id, label=tc_id, row=1, expected=expected, sheet=sheet)
 
 
 class TestCollectSheetNames:
     def test_empty_test_cases(self) -> None:
-        tf = TestFile(path="a.xlsx", feature="cell_values", tier=1, test_cases=[])
+        tf = BenchFile(path="a.xlsx", feature="cell_values", tier=1, test_cases=[])
         result = _collect_sheet_names(tf)
         assert result == ["cell_values"]
 
     def test_explicit_sheet_names(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="multiple_sheets",
             tier=1,
@@ -499,7 +489,7 @@ class TestCollectSheetNames:
         assert result == ["Sheet1", "Sheet2"]
 
     def test_formula_sheet_extraction(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="formulas",
             tier=1,
@@ -510,31 +500,27 @@ class TestCollectSheetNames:
         assert "Data" in result
 
     def test_cf_formula_sheet_extraction(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="conditional_formatting",
             tier=1,
-            test_cases=[
-                _tc("t1", {"cf_rule": {"formula": "='Ref'!A1>0"}})
-            ],
+            test_cases=[_tc("t1", {"cf_rule": {"formula": "='Ref'!A1>0"}})],
         )
         result = _collect_sheet_names(tf)
         assert "Ref" in result
 
     def test_dv_formula_sheet_extraction(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="data_validation",
             tier=1,
-            test_cases=[
-                _tc("t1", {"validation": {"formula1": "='Lists'!A1:A5"}})
-            ],
+            test_cases=[_tc("t1", {"validation": {"formula1": "='Lists'!A1:A5"}})],
         )
         result = _collect_sheet_names(tf)
         assert "Lists" in result
 
     def test_feature_prepended(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="borders",
             tier=1,
@@ -544,7 +530,7 @@ class TestCollectSheetNames:
         assert result[0] == "borders"
 
     def test_explicit_sheet_on_tc(self) -> None:
-        tf = TestFile(
+        tf = BenchFile(
             path="a.xlsx",
             feature="cell_values",
             tier=1,
