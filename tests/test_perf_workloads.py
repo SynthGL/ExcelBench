@@ -6,6 +6,8 @@ from openpyxl.styles import Border, PatternFill, Side
 
 from excelbench.generator.generate import write_manifest
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
+from excelbench.harness.adapters.pandas_adapter import PandasAdapter
+from excelbench.harness.adapters.tablib_adapter import TablibAdapter
 from excelbench.models import Importance, Manifest, TestCase, TestFile
 from excelbench.perf.runner import run_perf
 
@@ -406,3 +408,115 @@ def test_perf_workload_bulk_read_skips_write(tmp_path: Path) -> None:
     assert row.perf["read"].op_count == 4
     assert row.perf["write"] is None
     assert row.notes is None
+
+
+def test_perf_workload_bulk_write_skips_read(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    # No input workbook needed for write-only workloads.
+
+    workload = {
+        "scenario": "bulk_write_4",
+        "op": "bulk_write_grid",
+        "operations": ["write"],
+        "sheet": "S1",
+        "range": "A1:B2",
+        "start": 1,
+        "step": 1,
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/does_not_matter.xlsx",
+                feature="bulk_write_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="bulk_write_4",
+                        label="Throughput: bulk write 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+
+    row = results.results[0]
+    assert row.perf["read"] is None
+    assert row.perf["write"] is not None
+    assert row.perf["write"].op_count == 4
+    assert row.notes is None
+
+
+def test_perf_workload_bulk_write_works_for_pandas_and_tablib(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+
+    workload = {
+        "scenario": "bulk_write_4",
+        "op": "bulk_write_grid",
+        "operations": ["write"],
+        "sheet": "S1",
+        "range": "A1:B2",
+        "start": 1,
+        "step": 1,
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            TestFile(
+                path="tier0/does_not_matter.xlsx",
+                feature="bulk_write_4",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id="bulk_write_4",
+                        label="Throughput: bulk write 4 cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[PandasAdapter(), TablibAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+
+    assert len(results.results) == 2
+    for row in results.results:
+        assert row.perf["read"] is None
+        assert row.perf["write"] is not None
+        assert row.perf["write"].op_count == 4

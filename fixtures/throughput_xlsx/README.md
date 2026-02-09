@@ -17,8 +17,10 @@ Currently generated scenarios:
 
 - `cell_values_1k`
 - `cell_values_1k_bulk_read`
+- `cell_values_1k_bulk_write`
 - `cell_values_10k`
 - `cell_values_10k_bulk_read`
+- `cell_values_10k_bulk_write`
 - `formulas_1k`
 - `formulas_10k`
 - `background_colors_1k`

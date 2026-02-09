@@ -252,6 +252,35 @@ def main() -> None:
         )
     )
 
+    # Bulk write variant (create -> bulk write -> save)
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_10k_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_10k_bulk_write",
+                    label="Throughput: cell values bulk write (10k cells)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_10k_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
     # 1k = 40x25 (useful for very slow per-cell readers)
     scenario = "cell_values_1k"
     sheet = "S1"
@@ -306,6 +335,35 @@ def main() -> None:
                             "operations": ["read"],
                             "sheet": sheet,
                             "range": rng,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # Bulk write variant (create -> bulk write -> save)
+    files.append(
+        TestFile(
+            path=f"tier0/{filename}",
+            feature="cell_values_1k_bulk_write",
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id="cell_values_1k_bulk_write",
+                    label="Throughput: cell values bulk write (1k cells)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": "cell_values_1k_bulk_write",
+                            "op": "bulk_write_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "start": 1,
+                            "step": 1,
                         }
                     },
                     importance=Importance.BASIC,

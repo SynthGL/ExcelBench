@@ -137,3 +137,13 @@ Template:
 - Worked on: PB-030 (bulk read implementations)
 - Notes: implemented `read_sheet_values` for pandas/polars/tablib/openpyxl-readonly and ran a multi-adapter bulk-read baseline.
 - Next: add a bulk write workload (write a full grid in one API call where supported).
+
+### 02/08/2026 03:13 PM PST (via pst-timestamp)
+- Worked on: PB-030 (bulk write workload)
+- Notes: added `bulk_write_grid` workload op and generated `cell_values_*_bulk_write` scenarios; implemented bulk write for openpyxl and xlsxwriter and ran a baseline.
+- Next: implement `write_sheet_values` for pandas/tablib (DataFrame/dataset export) and compare.
+
+### 02/08/2026 03:16 PM PST (via pst-timestamp)
+- Worked on: PB-030 (bulk write implementations)
+- Notes: implemented `write_sheet_values` for pandas and tablib; ran multi-adapter bulk write baseline.
+- Next: add bulk write for styles (format/border) if we want to measure style throughput beyond cell values.

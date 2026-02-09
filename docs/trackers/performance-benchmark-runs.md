@@ -369,3 +369,50 @@ Outputs:
 - Markdown: `results_dev_perf_throughput_bulk_multi/perf/README.md`
 - CSV: `results_dev_perf_throughput_bulk_multi/perf/matrix.csv`
 - History: `results_dev_perf_throughput_bulk_multi/perf/history.jsonl`
+
+### 02/08/2026 03:13 PM PST (via pst-timestamp)
+
+Git:
+- commit: 4704676
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Bulk write workload op (`bulk_write_grid`) added; openpyxl + xlsxwriter only; warmup=0 iters=1.
+
+Command:
+- `uv run python scripts/generate_throughput_fixtures.py`
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_bulk_write --warmup 0 --iters 1 --adapter openpyxl --adapter xlsxwriter --feature cell_values_1k_bulk_write --feature cell_values_10k_bulk_write`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_bulk_write/perf/results.json`
+- Markdown: `results_dev_perf_throughput_bulk_write/perf/README.md`
+- CSV: `results_dev_perf_throughput_bulk_write/perf/matrix.csv`
+- History: `results_dev_perf_throughput_bulk_write/perf/history.jsonl`
+
+### 02/08/2026 03:16 PM PST (via pst-timestamp)
+
+Git:
+- commit: 4704676
+- branch: master
+
+Environment:
+- OS: macOS 26.2 (25C5031i)
+- CPU: Apple M4 Pro
+- RAM: 24 GB
+- Python (uv): 3.12.3
+- Power: (not recorded)
+- Notes: Bulk write scenarios executed across multiple adapters; warmup=0 iters=1.
+
+Command:
+- `uv run excelbench perf --tests test_files/throughput_xlsx --output results_dev_perf_throughput_bulk_write_multi --warmup 0 --iters 1 --adapter openpyxl --adapter xlsxwriter --adapter pandas --adapter tablib --feature cell_values_1k_bulk_write --feature cell_values_10k_bulk_write`
+
+Outputs:
+- JSON: `results_dev_perf_throughput_bulk_write_multi/perf/results.json`
+- Markdown: `results_dev_perf_throughput_bulk_write_multi/perf/README.md`
+- CSV: `results_dev_perf_throughput_bulk_write_multi/perf/matrix.csv`
+- History: `results_dev_perf_throughput_bulk_write_multi/perf/history.jsonl`
