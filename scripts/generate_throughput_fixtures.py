@@ -10,13 +10,27 @@ Default output is under `test_files/` so it stays gitignored.
 from __future__ import annotations
 
 import argparse
+from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Iterator
 
 import xlsxwriter
 
 from excelbench.generator.generate import write_manifest
 from excelbench.models import Importance, Manifest, TestCase, TestFile
+
+
+@contextmanager
+def _xlsx_workbook(path: Path, sheet: str) -> Iterator[tuple[xlsxwriter.Workbook, object]]:
+    """Create an xlsxwriter workbook with a single worksheet, ensuring close on exit."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    wb = xlsxwriter.Workbook(str(path))
+    try:
+        ws = wb.add_worksheet(sheet)
+        yield wb, ws
+    finally:
+        wb.close()
 
 
 def _coord_to_cell(row: int, col: int) -> str:
@@ -37,17 +51,12 @@ def _generate_cell_values_grid(
     start: int = 1,
     step: int = 1,
 ) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    wb = xlsxwriter.Workbook(str(path))
-    try:
-        ws = wb.add_worksheet(sheet)
+    with _xlsx_workbook(path, sheet) as (_wb, ws):
         value = start
         for r in range(rows):
             for c in range(cols):
                 ws.write_number(r, c, value)
                 value += step
-    finally:
-        wb.close()
 
 
 def _generate_formulas_grid(
@@ -708,7 +717,7 @@ def main() -> None:
 
     manifest = Manifest(
         generated_at=datetime.now(UTC),
-        excel_version="openpyxl-generated",
+        excel_version="xlsxwriter-generated",
         generator_version="throughput-0.1.0",
         file_format="xlsx",
         files=files,
