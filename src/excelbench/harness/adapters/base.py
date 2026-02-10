@@ -4,9 +4,37 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any
 
-from excelbench.models import BorderInfo, CellFormat, CellValue, LibraryInfo
+from excelbench.models import (
+    BorderInfo,
+    CellFormat,
+    CellValue,
+    Diagnostic,
+    DiagnosticCategory,
+    DiagnosticLocation,
+    DiagnosticSeverity,
+    LibraryInfo,
+    OperationType,
+)
 
 JSONDict = dict[str, Any]
+
+
+def _infer_diagnostic_category(exc: Exception) -> DiagnosticCategory:
+    name = type(exc).__name__.lower()
+    message = str(exc).lower()
+    if isinstance(exc, (FileNotFoundError, PermissionError, IsADirectoryError, OSError)):
+        if "format" in message or "zip" in message or "corrupt" in message:
+            return DiagnosticCategory.PARSE
+        return DiagnosticCategory.FILE_IO
+    if isinstance(exc, (ValueError, TypeError, KeyError)):
+        return DiagnosticCategory.INVALID_INPUT
+    if isinstance(exc, NotImplementedError):
+        return DiagnosticCategory.UNSUPPORTED_FEATURE
+    if "not supported" in message or "unsupported" in message:
+        return DiagnosticCategory.UNSUPPORTED_FEATURE
+    if "parse" in name or "parse" in message:
+        return DiagnosticCategory.PARSE
+    return DiagnosticCategory.INTERNAL
 
 
 class ExcelAdapter(ABC):
@@ -54,6 +82,68 @@ class ExcelAdapter(ABC):
         """Return whether this adapter supports reading the given file path."""
         suffix = path.suffix.lower()
         return suffix in self.supported_read_extensions
+
+
+    def map_error_to_diagnostic(
+        self,
+        *,
+        exc: Exception,
+        feature: str,
+        operation: OperationType,
+        test_case_id: str | None = None,
+        sheet: str | None = None,
+        cell: str | None = None,
+        probable_cause: str | None = None,
+    ) -> Diagnostic:
+        """Normalize adapter/runtime exceptions into a typed diagnostic."""
+        category = _infer_diagnostic_category(exc)
+        severity = (
+            DiagnosticSeverity.WARNING
+            if category == DiagnosticCategory.UNSUPPORTED_FEATURE
+            else DiagnosticSeverity.ERROR
+        )
+        return Diagnostic(
+            category=category,
+            severity=severity,
+            location=DiagnosticLocation(
+                feature=feature,
+                operation=operation,
+                test_case_id=test_case_id,
+                sheet=sheet,
+                cell=cell,
+            ),
+            adapter_message=f"{type(exc).__name__}: {exc}",
+            probable_cause=probable_cause,
+        )
+
+    def build_mismatch_diagnostic(
+        self,
+        *,
+        feature: str,
+        operation: OperationType,
+        test_case_id: str,
+        expected: JSONDict,
+        actual: JSONDict,
+        sheet: str | None = None,
+        cell: str | None = None,
+    ) -> Diagnostic:
+        """Create a normalized diagnostic for failed expected-vs-actual comparisons."""
+        return Diagnostic(
+            category=DiagnosticCategory.DATA_MISMATCH,
+            severity=DiagnosticSeverity.ERROR,
+            location=DiagnosticLocation(
+                feature=feature,
+                operation=operation,
+                test_case_id=test_case_id,
+                sheet=sheet,
+                cell=cell,
+            ),
+            adapter_message=(
+                "Expected values did not match actual values: "
+                f"expected={expected}, actual={actual}"
+            ),
+            probable_cause="Adapter returned a value that differs from benchmark expectations.",
+        )
 
     # =========================================================================
     # Read Operations

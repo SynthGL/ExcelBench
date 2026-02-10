@@ -23,6 +23,7 @@ from excelbench.models import (
     CellFormat,
     CellType,
     CellValue,
+    Diagnostic,
     FeatureScore,
     Importance,
     OperationType,
@@ -34,6 +35,69 @@ from excelbench.models import (
 BENCHMARK_VERSION = "0.1.0"
 
 JSONDict = dict[str, Any]
+
+
+def _build_exception_diagnostic(
+    adapter: ExcelAdapter,
+    *,
+    exc: Exception,
+    feature: str,
+    operation: OperationType,
+    test_case: TestCase | None = None,
+    sheet: str | None = None,
+    cell: str | None = None,
+    probable_cause: str | None = None,
+) -> Diagnostic:
+    tc_id = test_case.id if test_case else None
+    tc_sheet = sheet if sheet is not None else (test_case.sheet if test_case else None)
+    tc_cell = cell if cell is not None else (test_case.cell if test_case else None)
+    return adapter.map_error_to_diagnostic(
+        exc=exc,
+        feature=feature,
+        operation=operation,
+        test_case_id=tc_id,
+        sheet=tc_sheet,
+        cell=tc_cell,
+        probable_cause=probable_cause,
+    )
+
+
+def _failure_diagnostics(
+    adapter: ExcelAdapter,
+    *,
+    feature: str,
+    operation: OperationType,
+    test_case: TestCase,
+    expected: JSONDict,
+    actual: JSONDict,
+    sheet: str | None = None,
+    cell: str | None = None,
+) -> list[Diagnostic]:
+    if "error" in actual:
+        err = RuntimeError(str(actual.get("error")))
+        return [
+            _build_exception_diagnostic(
+                adapter,
+                exc=err,
+                feature=feature,
+                operation=operation,
+                test_case=test_case,
+                sheet=sheet,
+                cell=cell,
+                probable_cause="Adapter could not return a comparable value for this assertion.",
+            )
+        ]
+    return [
+        adapter.build_mismatch_diagnostic(
+            feature=feature,
+            operation=operation,
+            test_case_id=test_case.id,
+            expected=expected,
+            actual=actual,
+            sheet=sheet,
+            cell=cell,
+        )
+    ]
 
 
 def run_benchmark(
@@ -253,6 +317,16 @@ def test_read(
                     expected=tc.expected,
                     actual={"error": str(e)},
                     notes="Failed to open workbook",
+                    diagnostics=[
+                        _build_exception_diagnostic(
+                            adapter,
+                            exc=e,
+                            feature=test_file.feature,
+                            operation=OperationType.READ,
+                            test_case=tc,
+                            probable_cause="Input workbook could not be opened by this adapter.",
+                        )
+                    ],
                     importance=tc.importance,
                     label=tc.label,
                 )
@@ -287,6 +361,18 @@ def test_read(
                         expected=tc.expected,
                         actual={"error": str(e)},
                         notes=f"Exception: {type(e).__name__}",
+                        diagnostics=[
+                            _build_exception_diagnostic(
+                                adapter,
+                                exc=e,
+                                feature=test_file.feature,
+                                operation=OperationType.READ,
+                                test_case=tc,
+                                probable_cause=(
+                                    "Workbook inspection failed before per-case checks could run."
+                                ),
+                            )
+                        ],
                         importance=tc.importance,
                         label=tc.label,
                     )
@@ -319,6 +405,9 @@ def test_read_case(
     """
     expected = test_case.expected
 
+    sheet = test_case.sheet or feature or default_sheet
+    cell = test_case.cell or f"B{test_case.row}"
+
     if feature == "multiple_sheets" and "sheet_names" in expected:
         actual = read_sheet_names_actual(adapter, workbook)
         passed = compare_results(expected, actual)
@@ -328,12 +417,23 @@ def test_read_case(
             passed=passed,
             expected=expected,
             actual=actual,
+            diagnostics=(
+                []
+                if passed
+                else _failure_diagnostics(
+                    adapter,
+                    feature=feature,
+                    operation=operation,
+                    test_case=test_case,
+                    expected=expected,
+                    actual=actual,
+                    sheet=sheet,
+                    cell=cell,
+                )
+            ),
             importance=test_case.importance,
             label=test_case.label,
         )
-
-    sheet = test_case.sheet or feature or default_sheet
-    cell = test_case.cell or f"B{test_case.row}"
 
     try:
         if feature == "cell_values":
@@ -388,6 +488,20 @@ def test_read_case(
             passed=passed,
             expected=expected,
             actual=actual,
+            diagnostics=(
+                []
+                if passed
+                else _failure_diagnostics(
+                    adapter,
+                    feature=feature,
+                    operation=operation,
+                    test_case=test_case,
+                    expected=expected,
+                    actual=actual,
+                    sheet=sheet,
+                    cell=cell,
+                )
+            ),
             importance=test_case.importance,
             label=test_case.label,
         )
@@ -400,6 +514,18 @@ def test_read_case(
             expected=expected,
             actual={"error": str(e)},
             notes=f"Exception: {type(e).__name__}",
+            diagnostics=[
+                _build_exception_diagnostic(
+                    adapter,
+                    exc=e,
+                    feature=feature,
+                    operation=operation,
+                    test_case=test_case,
+                    sheet=sheet,
+                    cell=cell,
+                    probable_cause="Adapter raised an exception while evaluating this test case.",
+                )
+            ],
             importance=test_case.importance,
             label=test_case.label,
         )
@@ -928,6 +1054,18 @@ def test_write(
                         expected=tc.expected,
                         actual={"error": str(e)},
                         notes=f"Write failed: {type(e).__name__}",
+                        diagnostics=[
+                            _build_exception_diagnostic(
+                                adapter,
+                                exc=e,
+                                feature=test_file.feature,
+                                operation=OperationType.WRITE,
+                                test_case=tc,
+                                probable_cause=(
+                                    "Adapter could not create or save a workbook for this feature."
+                                ),
+                            )
+                        ],
                         importance=tc.importance,
                         label=tc.label,
                     )
@@ -946,6 +1084,18 @@ def test_write(
                         expected=tc.expected,
                         actual={"error": str(e)},
                         notes="Failed to open workbook for verification",
+                        diagnostics=[
+                            _build_exception_diagnostic(
+                                verifier,
+                                exc=e,
+                                feature=test_file.feature,
+                                operation=OperationType.WRITE,
+                                test_case=tc,
+                                probable_cause=(
+                                    "Output workbook could not be reopened for verification."
+                                ),
+                            )
+                        ],
                         importance=tc.importance,
                         label=tc.label,
                     )
@@ -976,6 +1126,18 @@ def test_write(
                             expected=tc.expected,
                             actual={"error": str(e)},
                             notes=f"Verification failed: {type(e).__name__}",
+                            diagnostics=[
+                                _build_exception_diagnostic(
+                                    verifier,
+                                    exc=e,
+                                    feature=test_file.feature,
+                                    operation=OperationType.WRITE,
+                                    test_case=tc,
+                                    probable_cause=(
+                                        "Verifier failed while reading the generated workbook."
+                                    ),
+                                )
+                            ],
                             importance=tc.importance,
                             label=tc.label,
                         )

@@ -27,6 +27,25 @@ class Importance(StrEnum):
     EDGE = "edge"
 
 
+class DiagnosticCategory(StrEnum):
+    """Normalized categories for adapter/runtime failures."""
+
+    UNSUPPORTED_FEATURE = "unsupported_feature"
+    FILE_IO = "file_io"
+    INVALID_INPUT = "invalid_input"
+    PARSE = "parse"
+    DATA_MISMATCH = "data_mismatch"
+    INTERNAL = "internal"
+
+
+class DiagnosticSeverity(StrEnum):
+    """Severity levels for benchmark diagnostics."""
+
+    INFO = "info"
+    WARNING = "warning"
+    ERROR = "error"
+
+
 class BorderStyle(StrEnum):
     NONE = "none"
     THIN = "thin"
@@ -138,8 +157,31 @@ class TestResult:
     expected: dict[str, Any]
     actual: dict[str, Any]
     notes: str | None = None
+    diagnostics: list["Diagnostic"] = field(default_factory=list)
     importance: Importance | None = None
     label: str | None = None
+
+
+@dataclass
+class DiagnosticLocation:
+    """Location metadata for a diagnostic event."""
+
+    feature: str
+    operation: OperationType
+    test_case_id: str | None = None
+    sheet: str | None = None
+    cell: str | None = None
+
+
+@dataclass
+class Diagnostic:
+    """Normalized diagnostic information attached to failed checks."""
+
+    category: DiagnosticCategory
+    severity: DiagnosticSeverity
+    location: DiagnosticLocation
+    adapter_message: str
+    probable_cause: str | None = None
 
 
 # =============================================================================

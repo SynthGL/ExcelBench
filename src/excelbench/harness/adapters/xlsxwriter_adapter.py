@@ -15,7 +15,9 @@ from excelbench.models import (
     CellFormat,
     CellType,
     CellValue,
+    Diagnostic,
     LibraryInfo,
+    OperationType,
 )
 
 JSONDict = dict[str, Any]
@@ -37,6 +39,33 @@ class XlsxwriterAdapter(WriteOnlyAdapter):
 
     def __init__(self) -> None:
         self._workbooks: dict[int, WorkbookData] = {}  # wb id -> {sheets, formats, path}
+
+    def map_error_to_diagnostic(
+        self,
+        *,
+        exc: Exception,
+        feature: str,
+        operation: OperationType,
+        test_case_id: str | None = None,
+        sheet: str | None = None,
+        cell: str | None = None,
+        probable_cause: str | None = None,
+    ) -> Diagnostic:
+        diagnostic = super().map_error_to_diagnostic(
+            exc=exc,
+            feature=feature,
+            operation=operation,
+            test_case_id=test_case_id,
+            sheet=sheet,
+            cell=cell,
+            probable_cause=probable_cause,
+        )
+        if feature == "pivot_tables" and isinstance(exc, NotImplementedError):
+            if not diagnostic.probable_cause:
+                diagnostic.probable_cause = (
+                    "xlsxwriter cannot generate pivot tables via this adapter implementation."
+                )
+        return diagnostic
 
     @property
     def info(self) -> LibraryInfo:

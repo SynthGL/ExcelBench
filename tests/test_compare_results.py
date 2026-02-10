@@ -36,3 +36,9 @@ def test_compare_results_nested_dicts() -> None:
     expected: JSONDict = {"rule": {"range": "B2:B6", "type": "cellIs"}}
     actual: JSONDict = {"rule": {"range": "B2:B6", "type": "cellIs", "priority": 1}}
     assert compare_results(expected, actual)
+
+
+def test_compare_results_error_payload_fails() -> None:
+    expected: JSONDict = {"type": "string", "value": "x"}
+    actual: JSONDict = {"error": "boom"}
+    assert not compare_results(expected, actual)
