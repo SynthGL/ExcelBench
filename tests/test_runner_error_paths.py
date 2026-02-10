@@ -134,6 +134,7 @@ class TestReadExceptionPaths:
         assert len(results) == 1
         assert results[0].passed is False
         assert "Failed to open workbook" in (results[0].notes or "")
+        assert results[0].diagnostics
 
     def test_get_sheet_names_empty(self, tmp_path: Path) -> None:
         """When get_sheet_names returns empty list, should raise ValueError."""
@@ -195,6 +196,7 @@ class TestReadCaseEdgeCases:
         )
         assert result.passed is False
         assert "Exception" in (result.notes or "")
+        assert result.diagnostics
 
 
 # ═════════════════════════════════════════════════
@@ -232,6 +234,7 @@ class TestWriteExceptionPaths:
         assert len(results) == 1
         assert results[0].passed is False
         assert "Write failed" in (results[0].notes or "")
+        assert results[0].diagnostics
 
     def test_write_verification_open_failure(self, tmp_path: Path) -> None:
         """When verifier.open_workbook raises after write, TCs get error results."""
@@ -253,6 +256,7 @@ class TestWriteExceptionPaths:
         assert len(results) == 1
         assert results[0].passed is False
         assert "Failed to open workbook" in (results[0].notes or "")
+        assert results[0].diagnostics
 
 
 # ═════════════════════════════════════════════════
@@ -310,3 +314,14 @@ class TestReadBorderActualDiagonal:
         result = read_border_actual(adapter, MagicMock(), "Sheet1", "B2")
         assert result["border_diagonal_up"] == "thin"
         assert result["border_diagonal_down"] == "medium"
+
+
+def test_failed_assertion_has_data_mismatch_diagnostic() -> None:
+    adapter = _mock_adapter()
+    adapter.read_cell_value.return_value = CellValue(type=CellType.STRING, value="y")
+    wb = MagicMock()
+    tc = _tc("t1", {"type": "string", "value": "x"})
+    result = _test_read_case(adapter, wb, "Sheet1", tc, "cell_values", OperationType.READ)
+    assert result.passed is False
+    assert result.diagnostics
+    adapter.build_mismatch_diagnostic.assert_called_once()

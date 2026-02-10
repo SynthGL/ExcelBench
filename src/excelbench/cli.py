@@ -396,6 +396,10 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
     from excelbench.models import (
         BenchmarkMetadata,
         BenchmarkResults,
+        Diagnostic,
+        DiagnosticCategory,
+        DiagnosticLocation,
+        DiagnosticSeverity,
         FeatureScore,
         Importance,
         LibraryInfo,
@@ -439,6 +443,22 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
                             expected=op_data["expected"],
                             actual=op_data["actual"],
                             notes=op_data.get("notes"),
+                            diagnostics=[
+                                Diagnostic(
+                                    category=DiagnosticCategory(d["category"]),
+                                    severity=DiagnosticSeverity(d["severity"]),
+                                    location=DiagnosticLocation(
+                                        feature=d["location"]["feature"],
+                                        operation=OperationType(d["location"]["operation"]),
+                                        test_case_id=d["location"].get("test_case_id"),
+                                        sheet=d["location"].get("sheet"),
+                                        cell=d["location"].get("cell"),
+                                    ),
+                                    adapter_message=d["adapter_message"],
+                                    probable_cause=d.get("probable_cause"),
+                                )
+                                for d in op_data.get("diagnostics", [])
+                            ],
                             importance=(
                                 Importance(op_data["importance"])
                                 if op_data.get("importance")
@@ -457,6 +477,7 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
                         expected=tc["expected"],
                         actual=tc["actual"],
                         notes=tc.get("notes"),
+                        diagnostics=[],
                         importance=(Importance(tc["importance"]) if tc.get("importance") else None),
                         label=tc.get("label"),
                     )

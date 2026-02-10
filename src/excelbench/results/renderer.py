@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 from typing import Any
 
-from excelbench.models import BenchmarkResults, FeatureScore, OperationType, TestResult
+from excelbench.models import BenchmarkResults, Diagnostic, FeatureScore, OperationType, TestResult
 
 # Feature tier assignments
 _FEATURE_TIERS: dict[str, tuple[int, str]] = {
@@ -147,7 +147,7 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
         lines.append(separator)
 
         for feature in tier_list:
-            row = f"| {feature} |"
+            row = f"| [{feature}](#{feature}-details) |"
             for lib in libraries:
                 score = score_lookup.get((feature, lib))
                 caps = results.libraries[lib].capabilities
@@ -185,12 +185,17 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
         lines.append(f"- **{name}** v{info.version} ({info.language}) - {caps_str}")
     lines.append("")
 
+    # Diagnostic summaries
+    lines.append("## Diagnostics Summary")
+    lines.append("")
+    lines.extend(_render_diagnostics_summary(results))
+
     # Detailed results per feature
     lines.append("## Detailed Results")
     lines.append("")
 
     for feature in features:
-        lines.append(f"### {feature}")
+        lines.append(f"### {feature} {{#{feature}-details}}")
         lines.append("")
 
         for lib in libraries:
@@ -374,6 +379,7 @@ def _group_test_cases(test_results: list[TestResult]) -> dict[str, Any]:
             "expected": tr.expected,
             "actual": tr.actual,
             "notes": tr.notes,
+            "diagnostics": [_diagnostic_to_json(d) for d in tr.diagnostics],
             "importance": tr.importance.value if tr.importance else None,
             "label": tr.label,
         }
@@ -416,3 +422,57 @@ def _append_history(results: BenchmarkResults, output_dir: Path) -> None:
 
     with open(history_path, "a") as f:
         f.write(json.dumps(entry) + "\n")
+
+
+def _diagnostic_to_json(diagnostic: Diagnostic) -> dict[str, Any]:
+    return {
+        "category": diagnostic.category.value,
+        "severity": diagnostic.severity.value,
+        "location": {
+            "feature": diagnostic.location.feature,
+            "operation": diagnostic.location.operation.value,
+            "test_case_id": diagnostic.location.test_case_id,
+            "sheet": diagnostic.location.sheet,
+            "cell": diagnostic.location.cell,
+        },
+        "adapter_message": diagnostic.adapter_message,
+        "probable_cause": diagnostic.probable_cause,
+    }
+
+
+def _render_diagnostics_summary(results: BenchmarkResults) -> list[str]:
+    diagnostics: list[Diagnostic] = []
+    for score in results.scores:
+        for tr in score.test_results:
+            diagnostics.extend(tr.diagnostics)
+
+    if not diagnostics:
+        return ["No diagnostics recorded.", ""]
+
+    by_category: dict[str, int] = {}
+    by_severity: dict[str, int] = {}
+    for item in diagnostics:
+        by_category[item.category.value] = by_category.get(item.category.value, 0) + 1
+        by_severity[item.severity.value] = by_severity.get(item.severity.value, 0) + 1
+
+    lines = ["| Group | Value | Count |", "|-------|-------|-------|"]
+    for key in sorted(by_category):
+        lines.append(f"| category | {key} | {by_category[key]} |")
+    for key in sorted(by_severity):
+        lines.append(f"| severity | {key} | {by_severity[key]} |")
+    lines.append("")
+    lines.append("### Diagnostic Details")
+    lines.append("")
+    lines.append("| Feature | Library | Test Case | Operation | Category | Severity | Message |")
+    lines.append("|---------|---------|-----------|-----------|----------|----------|---------|")
+    for score in results.scores:
+        for tr in score.test_results:
+            for item in tr.diagnostics:
+                lines.append(
+                    "| "
+                    f"{score.feature} | {score.library} | {tr.test_case_id} | "
+                    f"{tr.operation.value} | {item.category.value} | "
+                    f"{item.severity.value} | {item.adapter_message} |"
+                )
+    lines.append("")
+    return lines

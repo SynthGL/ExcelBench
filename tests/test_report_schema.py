@@ -40,11 +40,13 @@ def test_report_new_schema(tmp_path: Path) -> None:
                         "passed": True,
                         "expected": {"type": "string"},
                         "actual": {"type": "string"},
+                        "diagnostics": [],
                     },
                     "write": {
                         "passed": True,
                         "expected": {"type": "string"},
                         "actual": {"type": "string"},
+                        "diagnostics": [],
                     },
                 }
             },
@@ -103,3 +105,47 @@ def test_results_from_json_profile_reads_explicit_value() -> None:
     data["results"] = []
     parsed = _results_from_json(data)
     assert parsed.metadata.profile == "xls"
+
+
+def test_report_new_schema_with_diagnostics(tmp_path: Path) -> None:
+    data = _base_results()
+    data["results"] = [
+        {
+            "feature": "cell_values",
+            "library": "openpyxl",
+            "scores": {"read": 1, "write": None},
+            "test_cases": {
+                "case1": {
+                    "read": {
+                        "passed": False,
+                        "expected": {"type": "string", "value": "x"},
+                        "actual": {"type": "string", "value": "y"},
+                        "diagnostics": [
+                            {
+                                "category": "data_mismatch",
+                                "severity": "error",
+                                "location": {
+                                    "feature": "cell_values",
+                                    "operation": "read",
+                                    "test_case_id": "case1",
+                                    "sheet": "cell_values",
+                                    "cell": "B2",
+                                },
+                                "adapter_message": "Expected values did not match actual values",
+                                "probable_cause": "Adapter returned a different value",
+                            }
+                        ],
+                    }
+                }
+            },
+            "notes": None,
+        }
+    ]
+
+    parsed = _results_from_json(data)
+    assert parsed.scores[0].test_results[0].diagnostics
+    report_path = tmp_path / "results.json"
+    report_path.write_text(json.dumps(data))
+    output_dir = tmp_path / "out-diagnostics"
+    report(results_path=report_path, output_dir=output_dir)
+    assert "Diagnostics Summary" in (output_dir / "README.md").read_text()

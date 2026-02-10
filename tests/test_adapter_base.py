@@ -8,7 +8,15 @@ from typing import Any
 import pytest
 
 from excelbench.harness.adapters.base import ReadOnlyAdapter, WriteOnlyAdapter
-from excelbench.models import BorderInfo, CellFormat, CellType, CellValue, LibraryInfo
+from excelbench.models import (
+    BorderInfo,
+    CellFormat,
+    CellType,
+    CellValue,
+    DiagnosticCategory,
+    LibraryInfo,
+    OperationType,
+)
 
 JSONDict = dict[str, Any]
 
@@ -299,3 +307,28 @@ class TestAdapterCapabilities:
         a = ConcreteWriteOnly()
         assert a.supports_read_path(Path("test.xlsx")) is True
         assert a.supports_read_path(Path("test.csv")) is False
+
+
+def test_map_error_to_diagnostic() -> None:
+    adapter = ConcreteReadOnly()
+    diag = adapter.map_error_to_diagnostic(
+        exc=NotImplementedError("unsupported"),
+        feature="pivot_tables",
+        operation=OperationType.READ,
+        test_case_id="t1",
+    )
+    assert diag.category == DiagnosticCategory.UNSUPPORTED_FEATURE
+    assert diag.location.feature == "pivot_tables"
+
+
+def test_build_mismatch_diagnostic() -> None:
+    adapter = ConcreteReadOnly()
+    diag = adapter.build_mismatch_diagnostic(
+        feature="cell_values",
+        operation=OperationType.READ,
+        test_case_id="t1",
+        expected={"value": "x"},
+        actual={"value": "y"},
+    )
+    assert diag.category == DiagnosticCategory.DATA_MISMATCH
+    assert "expected" in diag.adapter_message
