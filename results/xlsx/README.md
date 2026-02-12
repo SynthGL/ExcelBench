@@ -5,83 +5,111 @@
 *Excel Version: 16.105.3*
 *Platform: Darwin-arm64*
 
+## Overview
+
+> Condensed view — shows the **best score** across read/write for each library. See [Full Results Matrix](#full-results-matrix) for the complete R/W breakdown.
+
+**Tier 0 — Basic Values**
+
+| Feature | openpyxl | opxl-readonly | pandas | polars | pyexcel | pylightxl | calamine | tablib | xlsxwriter | xlsx-constmem | xlwt |
+|---------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Cell Values | 🟢 | 🟢 | 🟢 | 🟠 | 🟢 | 🟢 | 🟠 | 🟢 | 🟢 | 🟢 | 🟢 |
+| Formulas | 🟢 | 🟢 | 🟢 | 🔴 | 🟢 | 🟢 | 🔴 | 🟢 | 🟢 | 🟢 | 🔴 |
+| Sheets | 🟢 | 🟢 | 🟢 | 🟠 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 | 🟢 |
+
+**Tier 1 — Formatting**
+
+| Feature | openpyxl | opxl-readonly | pandas | polars | pyexcel | pylightxl | calamine | tablib | xlsxwriter | xlsx-constmem | xlwt |
+|---------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Alignment | 🟢 | 🟠 | 🟠 | 🟠 | 🟠 | 🟠 | 🟠 | 🟠 | 🟢 | 🟢 | 🟢 |
+| Bg Colors | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🟠 |
+| Borders | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🟠 |
+| Dimensions | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟠 | 🟠 |
+| Num Fmt | 🟢 | 🔴 | 🔴 | 🔴 | 🟠 | 🔴 | 🔴 | 🟠 | 🟢 | 🟢 | 🟢 |
+| Text Fmt | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🟠 |
+
+**Tier 2 — Advanced**
+
+| Feature | openpyxl | opxl-readonly | pandas | polars | pyexcel | pylightxl | calamine | tablib | xlsxwriter | xlsx-constmem | xlwt |
+|---------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Comments | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 |
+| Cond Fmt | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 |
+| Validation | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 |
+| Freeze | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 |
+| Hyperlinks | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 |
+| Images | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 |
+| Merged | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 |
+
+## Library Tiers
+
+> Libraries ranked by their best capability (max of read/write green features).
+
+| Tier | Library | Caps | Green Features | Summary |
+|:----:|---------|:----:|:--------------:|---------|
+| **S** | openpyxl | R+W | 16/16 | Reference adapter — full read + write fidelity |
+| **S** | xlsxwriter | W | 16/16 | Best write-only option — full formatting support |
+| **A** | xlsxwriter-constmem | W | 13/16 | Memory-optimized write — loses images, comments, row height |
+| **B** | xlwt | W | 4/16 | Legacy .xls writer — basic formatting subset |
+| **C** | openpyxl-readonly | R | 3/16 | Streaming read — loses all formatting metadata |
+| **C** | pandas | R+W | 3/16 | DataFrame abstraction — errors coerced to NaN on read |
+| **C** | pyexcel | R+W | 3/16 | Meta-library wrapping openpyxl — preserves error values |
+| **C** | tablib | R+W | 3/16 | Dataset wrapper — matches pyexcel on fidelity |
+| **C** | pylightxl | R+W | 2/16 | Lightweight — basic values, no formatting API |
+| **C** | python-calamine | R | 1/16 | Fast Rust-backed reader — cell values + sheet names only |
+| **D** | polars | R | 0/16 | Rust DataFrame reader — columnar type coercion drops fidelity |
+
 ## Score Legend
 
 | Score | Meaning |
 |-------|---------|
-| 🟢 3 | Complete - full fidelity |
-| 🟡 2 | Functional - works for common cases |
-| 🟠 1 | Minimal - basic recognition only |
-| 🔴 0 | Unsupported - errors or data loss |
-| ➖ | Not applicable (library doesn't support this operation) |
+| 🟢 3 | Complete — full fidelity |
+| 🟡 2 | Functional — works for common cases |
+| 🟠 1 | Minimal — basic recognition only |
+| 🔴 0 | Unsupported — errors or data loss |
+| ➖ | Not applicable |
 
-## Summary
+## Full Results Matrix
 
 **Tier 0 — Basic Values**
 
 | Feature | openpyxl (R) | openpyxl (W) | openpyxl-readonly (R) | pandas (R) | pandas (W) | polars (R) | pyexcel (R) | pyexcel (W) | pylightxl (R) | pylightxl (W) | python-calamine (R) | tablib (R) | tablib (W) | xlrd (R) | xlsxwriter (W) | xlsxwriter-constmem (W) | xlwt (W) |
 |---------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| cell_values | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟢 3 | 🟠 1 | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟠 1 | 🟢 3 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
-| formulas | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 | 🔴 0 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| multiple_sheets | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
+| [cell_values](#cell_values-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟢 3 | 🟠 1 | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟠 1 | 🟢 3 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
+| [formulas](#formulas-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 | 🔴 0 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [multiple_sheets](#multiple_sheets-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
 
 **Tier 1 — Formatting**
 
 | Feature | openpyxl (R) | openpyxl (W) | openpyxl-readonly (R) | pandas (R) | pandas (W) | polars (R) | pyexcel (R) | pyexcel (W) | pylightxl (R) | pylightxl (W) | python-calamine (R) | tablib (R) | tablib (W) | xlrd (R) | xlsxwriter (W) | xlsxwriter-constmem (W) | xlwt (W) |
 |---------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| alignment | 🟢 3 | 🟢 3 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🔴 0 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
-| background_colors | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
-| borders | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
-| dimensions | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟠 1 | 🟠 1 |
-| number_formats | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟠 1 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟠 1 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
-| text_formatting | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
+| [alignment](#alignment-details) | 🟢 3 | 🟢 3 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | 🔴 0 | 🟠 1 | 🟠 1 | 🟠 1 | 🟠 1 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
+| [background_colors](#background_colors-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
+| [borders](#borders-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
+| [dimensions](#dimensions-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟠 1 | 🟠 1 |
+| [number_formats](#number_formats-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟠 1 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟠 1 | ➖ | 🟢 3 | 🟢 3 | 🟢 3 |
+| [text_formatting](#text_formatting-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🟠 1 |
 
 **Tier 2 — Advanced**
 
 | Feature | openpyxl (R) | openpyxl (W) | openpyxl-readonly (R) | pandas (R) | pandas (W) | polars (R) | pyexcel (R) | pyexcel (W) | pylightxl (R) | pylightxl (W) | python-calamine (R) | tablib (R) | tablib (W) | xlrd (R) | xlsxwriter (W) | xlsxwriter-constmem (W) | xlwt (W) |
 |---------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
-| comments | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🔴 0 | 🔴 0 |
-| conditional_formatting | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| data_validation | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| freeze_panes | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| hyperlinks | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| images | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🔴 0 | 🔴 0 |
-| merged_cells | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
-| pivot_tables | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+| [comments](#comments-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🔴 0 | 🔴 0 |
+| [conditional_formatting](#conditional_formatting-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [data_validation](#data_validation-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [freeze_panes](#freeze_panes-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [hyperlinks](#hyperlinks-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [images](#images-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🔴 0 | 🔴 0 |
+| [merged_cells](#merged_cells-details) | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
+| [pivot_tables](#pivot_tables-details) | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 
-Notes:
-- alignment: Known limitation: pylightxl alignment write is a no-op because the library does not support formatting writes.
-- alignment: Known limitation: python-calamine alignment read is limited because its API does not expose style/alignment metadata.
-- alignment: Not applicable: xlrd does not support .xlsx input
-- background_colors: Not applicable: xlrd does not support .xlsx input
-- borders: Not applicable: xlrd does not support .xlsx input
-- cell_values: Known limitation: pylightxl cell-values write has date/boolean/error fidelity limits due to writer encoding behavior.
-- cell_values: Known limitation: python-calamine can surface formula error cells as blank values in current API responses.
-- cell_values: Not applicable: xlrd does not support .xlsx input
-- comments: Not applicable: xlrd does not support .xlsx input
-- conditional_formatting: Not applicable: xlrd does not support .xlsx input
-- data_validation: Not applicable: xlrd does not support .xlsx input
-- dimensions: Not applicable: xlrd does not support .xlsx input
-- formulas: Not applicable: xlrd does not support .xlsx input
-- freeze_panes: Not applicable: xlrd does not support .xlsx input
-- hyperlinks: Not applicable: xlrd does not support .xlsx input
-- images: Not applicable: xlrd does not support .xlsx input
-- merged_cells: Not applicable: xlrd does not support .xlsx input
-- multiple_sheets: Not applicable: xlrd does not support .xlsx input
-- number_formats: Not applicable: xlrd does not support .xlsx input
-- pivot_tables: Not applicable: xlrd does not support .xlsx input
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- pivot_tables: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
-- text_formatting: Not applicable: xlrd does not support .xlsx input
+## Notes
+
+- **alignment**: Known limitation: pylightxl alignment write is a no-op because the library does not support formatting writes.
+- **cell_values**: Known limitation: pylightxl cell-values write has date/boolean/error fidelity limits due to writer encoding behavior.
+- **alignment**: Known limitation: python-calamine alignment read is limited because its API does not expose style/alignment metadata.
+- **cell_values**: Known limitation: python-calamine can surface formula error cells as blank values in current API responses.
+- **cell_values, formulas, ... (17 features)**: Not applicable: xlrd does not support .xlsx input
+- **pivot_tables**: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
 ## Statistics
 
@@ -119,8 +147,13 @@ Notes:
 - **xlsxwriter-constmem** v3.2.9 (python) - write
 - **xlwt** v1.3.0 (python) - write
 
+## Diagnostics Summary
+
+No diagnostics recorded.
+
 ## Detailed Results
 
+<a id="alignment-details"></a>
 ### alignment
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -234,6 +267,7 @@ Notes:
 
 **xlwt** — Write: 🟢 3
 
+<a id="background_colors-details"></a>
 ### background_colors
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -317,6 +351,7 @@ Notes:
 | Background - green | basic | ❌ |
 | Background - custom (#8B4513) | basic | ❌ |
 
+<a id="borders-details"></a>
 ### borders
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -528,6 +563,7 @@ Notes:
 | Border - mixed styles per edge | basic | ✅ |
 | Border - mixed colors per edge | basic | ❌ |
 
+<a id="cell_values-details"></a>
 ### cell_values
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -641,6 +677,7 @@ Notes:
 
 **xlwt** — Write: 🟢 3
 
+<a id="comments-details"></a>
 ### comments
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -722,6 +759,7 @@ Notes:
 | Comment: threaded | edge | ❌ |
 | Comment: second author | edge | ❌ |
 
+<a id="conditional_formatting-details"></a>
 ### conditional_formatting
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -821,6 +859,7 @@ Notes:
 | CF: 3-color scale | edge | ❌ |
 | CF: stop-if-true priority | edge | ❌ |
 
+<a id="data_validation-details"></a>
 ### data_validation
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -912,6 +951,7 @@ Notes:
 | DV: custom formula | edge | ❌ |
 | DV: whole number with error | basic | ❌ |
 
+<a id="dimensions-details"></a>
 ### dimensions
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1002,6 +1042,7 @@ Notes:
 | Column width - D = 20 | basic | ✅ |
 | Column width - E = 8 | basic | ✅ |
 
+<a id="formulas-details"></a>
 ### formulas
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1078,6 +1119,7 @@ Notes:
 | Formula - concat | basic | ❌ |
 | Formula - cross sheet | basic | ❌ |
 
+<a id="freeze_panes-details"></a>
 ### freeze_panes
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1153,6 +1195,7 @@ Notes:
 | Freeze panes at D5 | edge | ❌ |
 | Split panes row=2 col=1 | edge | ❌ |
 
+<a id="hyperlinks-details"></a>
 ### hyperlinks
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1236,6 +1279,7 @@ Notes:
 | Hyperlink: mailto | basic | ❌ |
 | Hyperlink: long encoded URL | edge | ❌ |
 
+<a id="images-details"></a>
 ### images
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1308,6 +1352,7 @@ Notes:
 | Image: one-cell anchor | basic | ❌ |
 | Image: two-cell anchor with offset | edge | ❌ |
 
+<a id="merged_cells-details"></a>
 ### merged_cells
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1391,6 +1436,7 @@ Notes:
 | Merge with non-top-left value | edge | ❌ |
 | Merge with top-left fill | edge | ❌ |
 
+<a id="multiple_sheets-details"></a>
 ### multiple_sheets
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1425,6 +1471,7 @@ Notes:
 
 **xlwt** — Write: 🟢 3
 
+<a id="number_formats-details"></a>
 ### number_formats
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3
@@ -1508,6 +1555,7 @@ Notes:
 
 **xlwt** — Write: 🟢 3
 
+<a id="pivot_tables-details"></a>
 ### pivot_tables
 
 **openpyxl**
@@ -1546,6 +1594,7 @@ Notes:
 **xlwt**
 - Notes: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
+<a id="text_formatting-details"></a>
 ### text_formatting
 
 **openpyxl** — Read: 🟢 3 | Write: 🟢 3

@@ -577,6 +577,72 @@ def report(
         raise typer.Exit(1)
 
 
+@app.command()
+def heatmap(
+    results_path: Path = typer.Option(
+        Path("results/xlsx/results.json"),
+        "--input",
+        "-i",
+        help="Path to fidelity results.json file.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results/xlsx"),
+        "--output",
+        "-o",
+        help="Directory to save heatmap images.",
+    ),
+) -> None:
+    """Generate heatmap visualization (PNG + SVG) from fidelity results."""
+    from excelbench.results.heatmap import render_heatmap
+
+    console.print(f"[bold]Generating heatmap from {results_path}...[/bold]")
+
+    try:
+        paths = render_heatmap(results_path, output_dir)
+        for p in paths:
+            console.print(f"  [green]✓[/green] {p}")
+        if not paths:
+            console.print("[yellow]No scored results found — nothing to render.[/yellow]")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def dashboard(
+    fidelity_path: Path = typer.Option(
+        Path("results/xlsx/results.json"),
+        "--fidelity",
+        "-f",
+        help="Path to fidelity results.json.",
+    ),
+    perf_path: Path = typer.Option(
+        Path("results/perf/results.json"),
+        "--perf",
+        "-p",
+        help="Path to performance results.json (optional).",
+    ),
+    output_path: Path = typer.Option(
+        Path("results/DASHBOARD.md"),
+        "--output",
+        "-o",
+        help="Output markdown file path.",
+    ),
+) -> None:
+    """Generate combined fidelity + performance dashboard."""
+    from excelbench.results.dashboard import render_dashboard
+
+    console.print("[bold]Generating dashboard...[/bold]")
+
+    try:
+        perf = perf_path if perf_path.exists() else None
+        render_dashboard(fidelity_path, perf, output_path)
+        console.print(f"  [green]✓[/green] {output_path}")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
 def show_summary(results: "BenchmarkResults") -> None:
     """Show a quick summary table of results."""
     from excelbench.results.renderer import score_emoji

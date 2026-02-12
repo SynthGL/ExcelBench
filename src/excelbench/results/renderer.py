@@ -37,6 +37,45 @@ _TIER_LABELS = {
     3: "Tier 3 — Workbook Metadata",
 }
 
+# Short display names for headline matrix
+_SHORT_NAMES: dict[str, str] = {
+    "openpyxl": "openpyxl",
+    "xlsxwriter": "xlsxwriter",
+    "xlsxwriter-constmem": "xlsx-constmem",
+    "openpyxl-readonly": "opxl-readonly",
+    "python-calamine": "calamine",
+    "pylightxl": "pylightxl",
+    "pyexcel": "pyexcel",
+    "pandas": "pandas",
+    "polars": "polars",
+    "tablib": "tablib",
+    "xlrd": "xlrd",
+    "xlwt": "xlwt",
+}
+
+# Short display names for features in headline matrix
+_SHORT_FEATURE_NAMES: dict[str, str] = {
+    "cell_values": "Cell Values",
+    "formulas": "Formulas",
+    "multiple_sheets": "Sheets",
+    "text_formatting": "Text Fmt",
+    "background_colors": "Bg Colors",
+    "number_formats": "Num Fmt",
+    "alignment": "Alignment",
+    "borders": "Borders",
+    "dimensions": "Dimensions",
+    "merged_cells": "Merged",
+    "conditional_formatting": "Cond Fmt",
+    "data_validation": "Validation",
+    "hyperlinks": "Hyperlinks",
+    "images": "Images",
+    "comments": "Comments",
+    "freeze_panes": "Freeze",
+    "pivot_tables": "Pivots",
+    "named_ranges": "Named Ranges",
+    "tables": "Tables",
+}
+
 
 def render_results(results: BenchmarkResults, output_dir: Path) -> None:
     """Render results to all output formats."""
@@ -100,19 +139,7 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
     lines.append(f"*Platform: {results.metadata.platform}*")
     lines.append("")
 
-    # Legend
-    lines.append("## Score Legend")
-    lines.append("")
-    lines.append("| Score | Meaning |")
-    lines.append("|-------|---------|")
-    lines.append("| 🟢 3 | Complete - full fidelity |")
-    lines.append("| 🟡 2 | Functional - works for common cases |")
-    lines.append("| 🟠 1 | Minimal - basic recognition only |")
-    lines.append("| 🔴 0 | Unsupported - errors or data loss |")
-    lines.append("| ➖ | Not applicable (library doesn't support this operation) |")
-    lines.append("")
-
-    # Build lookups
+    # Build lookups used across sections
     features = sorted(set(s.feature for s in results.scores))
     libraries = sorted(results.libraries.keys())
 
@@ -120,8 +147,26 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
     for score_entry in results.scores:
         score_lookup[(score_entry.feature, score_entry.library)] = score_entry
 
-    # Summary table — grouped by tier
-    lines.append("## Summary")
+    # ── T0-1: Headline matrix (condensed) ──
+    lines.extend(_render_headline_matrix(features, libraries, score_lookup))
+
+    # ── T0-2: Library tier list ──
+    lines.extend(_render_tier_list(results, features, libraries, score_lookup))
+
+    # Legend
+    lines.append("## Score Legend")
+    lines.append("")
+    lines.append("| Score | Meaning |")
+    lines.append("|-------|---------|")
+    lines.append("| 🟢 3 | Complete — full fidelity |")
+    lines.append("| 🟡 2 | Functional — works for common cases |")
+    lines.append("| 🟠 1 | Minimal — basic recognition only |")
+    lines.append("| 🔴 0 | Unsupported — errors or data loss |")
+    lines.append("| ➖ | Not applicable |")
+    lines.append("")
+
+    # Full summary table — grouped by tier (unchanged structure)
+    lines.append("## Full Results Matrix")
     lines.append("")
 
     header = "| Feature |"
@@ -171,15 +216,8 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
             lines.append(row)
         lines.append("")
 
-    # Notes
-    notes: list[str] = []
-    for score_entry in results.scores:
-        if score_entry.notes:
-            notes.append(f"- {score_entry.feature}: {score_entry.notes}")
-    if notes:
-        lines.append("Notes:")
-        lines.extend(sorted(notes))
-        lines.append("")
+    # ── T0-3: Deduplicated notes ──
+    lines.extend(_render_notes_deduped(results))
 
     # Statistics section
     lines.extend(_render_statistics(results, libraries, features, score_lookup))
@@ -241,6 +279,245 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
         fp.write("\n".join(lines))
 
 
+# ── T0-1: Headline matrix ──────────────────────────────────────────────────
+
+
+def _render_headline_matrix(
+    features: list[str],
+    libraries: list[str],
+    score_lookup: dict[tuple[str, str], FeatureScore],
+) -> list[str]:
+    """Render a condensed overview matrix: one column per library, best of R/W."""
+    lines: list[str] = []
+
+    # Filter out libraries that have NO scored features (e.g. xlrd on xlsx profile)
+    scored_libs: list[str] = []
+    for lib in libraries:
+        has_score = any(
+            (s := score_lookup.get((f, lib)))
+            and (s.read_score is not None or s.write_score is not None)
+            for f in features
+        )
+        if has_score:
+            scored_libs.append(lib)
+
+    # Filter out features where every library is N/A (e.g. pivot_tables)
+    scored_features: list[str] = []
+    for feat in features:
+        has_score = any(
+            (s := score_lookup.get((feat, lib)))
+            and (s.read_score is not None or s.write_score is not None)
+            for lib in scored_libs
+        )
+        if has_score:
+            scored_features.append(feat)
+
+    if not scored_libs or not scored_features:
+        return lines
+
+    lines.append("## Overview")
+    lines.append("")
+    lines.append(
+        "> Condensed view — shows the **best score** across read/write for each library. "
+        "See [Full Results Matrix](#full-results-matrix) for the complete R/W breakdown."
+    )
+    lines.append("")
+
+    # Build header with short names
+    header = "| Feature |"
+    sep = "|---------|"
+    for lib in scored_libs:
+        short = _SHORT_NAMES.get(lib, lib)
+        header += f" {short} |"
+        sep += ":-:|"
+
+    # Group features by tier
+    tier_features: dict[int, list[str]] = {0: [], 1: [], 2: [], 3: []}
+    for feat in scored_features:
+        tier = _FEATURE_TIERS.get(feat, (2, "Advanced"))[0]
+        tier_features[tier].append(feat)
+
+    for tier_num in sorted(tier_features.keys()):
+        tier_list = tier_features[tier_num]
+        if not tier_list:
+            continue
+        lines.append(f"**{_TIER_LABELS[tier_num]}**")
+        lines.append("")
+        lines.append(header)
+        lines.append(sep)
+
+        for feat in tier_list:
+            short_feat = _SHORT_FEATURE_NAMES.get(feat, feat)
+            row = f"| {short_feat} |"
+            for lib in scored_libs:
+                score = score_lookup.get((feat, lib))
+                best = _best_score(score)
+                row += f" {_score_icon(best)} |"
+            lines.append(row)
+        lines.append("")
+
+    return lines
+
+
+def _best_score(score: FeatureScore | None) -> int | None:
+    """Return the best (max) of read and write scores, or None if both missing."""
+    if score is None:
+        return None
+    r = score.read_score
+    w = score.write_score
+    if r is not None and w is not None:
+        return max(r, w)
+    return r if r is not None else w
+
+
+def _score_icon(score: int | None) -> str:
+    """Compact emoji-only score (no number) for headline matrix."""
+    if score is None:
+        return "➖"
+    if score == 3:
+        return "🟢"
+    if score == 2:
+        return "🟡"
+    if score == 1:
+        return "🟠"
+    return "🔴"
+
+
+# ── T0-2: Library tier list ────────────────────────────────────────────────
+
+
+def _render_tier_list(
+    results: BenchmarkResults,
+    features: list[str],
+    libraries: list[str],
+    score_lookup: dict[tuple[str, str], FeatureScore],
+) -> list[str]:
+    """Render a tier list grouping libraries by capability level."""
+    lines: list[str] = []
+
+    # Compute stats per library: best green features (max of R green, W green)
+    lib_stats: list[tuple[str, int, int, str]] = []  # (lib, best_green, total_scored, caps_str)
+    for lib in libraries:
+        caps = results.libraries[lib].capabilities
+        has_rw = "read" in caps and "write" in caps
+        caps_label = "R+W" if has_rw else ("R" if "read" in caps else "W")
+
+        r_green = 0
+        w_green = 0
+        r_scored = 0
+        w_scored = 0
+        for feat in features:
+            score = score_lookup.get((feat, lib))
+            if not score:
+                continue
+            if score.read_score is not None:
+                r_scored += 1
+                if score.read_score == 3:
+                    r_green += 1
+            if score.write_score is not None:
+                w_scored += 1
+                if score.write_score == 3:
+                    w_green += 1
+
+        best_green = max(r_green, w_green)
+        total_scored = max(r_scored, w_scored)
+        if total_scored == 0:
+            continue
+        lib_stats.append((lib, best_green, total_scored, caps_label))
+
+    if not lib_stats:
+        return lines
+
+    # Sort by best_green descending
+    lib_stats.sort(key=lambda x: (-x[1], x[0]))
+
+    # Assign tiers
+    tier_defs = [
+        ("S", "Full Fidelity", lambda g, t: g >= t and t > 0),
+        ("A", "Near-Complete", lambda g, t: g >= t * 0.8 and g < t),
+        ("B", "Partial", lambda g, _t: g >= 4),
+        ("C", "Basic", lambda g, _t: g >= 1),
+        ("D", "Values Only", lambda g, _t: g == 0),
+    ]
+
+    lines.append("## Library Tiers")
+    lines.append("")
+    lines.append(
+        "> Libraries ranked by their best capability (max of read/write green features)."
+    )
+    lines.append("")
+    lines.append("| Tier | Library | Caps | Green Features | Summary |")
+    lines.append("|:----:|---------|:----:|:--------------:|---------|")
+
+    for lib, best_green, total_scored, caps_label in lib_stats:
+        tier_label = "D"
+        for t_label, _, predicate in tier_defs:
+            if predicate(best_green, total_scored):
+                tier_label = t_label
+                break
+        summary = _lib_summary(lib, best_green, total_scored)
+        lines.append(
+            f"| **{tier_label}** | {lib} | {caps_label} | "
+            f"{best_green}/{total_scored} | {summary} |"
+        )
+
+    lines.append("")
+    return lines
+
+
+def _lib_summary(lib: str, green: int, total: int) -> str:
+    """One-line summary for tier list."""
+    summaries: dict[str, str] = {
+        "openpyxl": "Reference adapter — full read + write fidelity",
+        "xlsxwriter": "Best write-only option — full formatting support",
+        "xlsxwriter-constmem": "Memory-optimized write — loses images, comments, row height",
+        "openpyxl-readonly": "Streaming read — loses all formatting metadata",
+        "python-calamine": "Fast Rust-backed reader — cell values + sheet names only",
+        "pylightxl": "Lightweight — basic values, no formatting API",
+        "pyexcel": "Meta-library wrapping openpyxl — preserves error values",
+        "pandas": "DataFrame abstraction — errors coerced to NaN on read",
+        "polars": "Rust DataFrame reader — columnar type coercion drops fidelity",
+        "tablib": "Dataset wrapper — matches pyexcel on fidelity",
+        "xlrd": "Legacy .xls reader — not applicable to .xlsx",
+        "xlwt": "Legacy .xls writer — basic formatting subset",
+    }
+    return summaries.get(lib, f"{green}/{total} features with full fidelity")
+
+
+# ── T0-3: Deduplicated notes ──────────────────────────────────────────────
+
+
+def _render_notes_deduped(results: BenchmarkResults) -> list[str]:
+    """Render notes section with deduplication: group repeated note texts."""
+    lines: list[str] = []
+
+    # Collect (note_text -> set of features)
+    note_features: dict[str, list[str]] = {}
+    for score_entry in results.scores:
+        if score_entry.notes:
+            text = score_entry.notes
+            note_features.setdefault(text, [])
+            if score_entry.feature not in note_features[text]:
+                note_features[text].append(score_entry.feature)
+
+    if not note_features:
+        return lines
+
+    lines.append("## Notes")
+    lines.append("")
+    for text, feats in sorted(note_features.items(), key=lambda x: x[0]):
+        if len(feats) <= 3:
+            feat_str = ", ".join(feats)
+        else:
+            feat_str = f"{feats[0]}, {feats[1]}, ... ({len(feats)} features)"
+        lines.append(f"- **{feat_str}**: {text}")
+    lines.append("")
+    return lines
+
+
+# ── Statistics ─────────────────────────────────────────────────────────────
+
+
 def _render_statistics(
     results: BenchmarkResults,
     libraries: list[str],
@@ -290,6 +567,9 @@ def _render_statistics(
             )
     lines.append("")
     return lines
+
+
+# ── Per-test table ─────────────────────────────────────────────────────────
 
 
 def _render_per_test_table(score: FeatureScore) -> list[str]:
@@ -351,6 +631,9 @@ def _render_per_test_table(score: FeatureScore) -> list[str]:
     return lines
 
 
+# ── CSV ────────────────────────────────────────────────────────────────────
+
+
 def render_csv(results: BenchmarkResults, path: Path) -> None:
     """Render results to CSV."""
     lines = ["library,feature,read_score,write_score"]
@@ -362,6 +645,9 @@ def render_csv(results: BenchmarkResults, path: Path) -> None:
 
     with open(path, "w") as f:
         f.write("\n".join(lines))
+
+
+# ── Utilities ──────────────────────────────────────────────────────────────
 
 
 def score_emoji(score: int | None) -> str:
