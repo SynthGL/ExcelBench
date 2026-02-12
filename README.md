@@ -4,74 +4,96 @@
 
 Most Excel library comparisons focus on speed. ExcelBench answers the question developers actually have: **"Can this library handle my complex spreadsheet?"**
 
-We test 17 features — from cell values to conditional formatting to images — across 5 mainstream Python libraries, scoring each on a 0–3 fidelity scale against real Excel-generated reference files.
+We test 16 features across 12 Python adapters, scoring each on a 0-3 fidelity scale against real Excel-generated reference files.
 
 ## Results at a Glance
 
-> Last run: 2026-02-06 &bull; Excel 16.105.3 &bull; macOS (Apple Silicon)
+> Last run: 2026-02-08 | Excel 16.105.3 | macOS (Apple Silicon) | [Full results](results/xlsx/README.md)
 
-### XLSX Profile
+![ExcelBench Heatmap](results/xlsx/heatmap.png)
 
-| Feature | openpyxl | | xlsxwriter | python-calamine | pylightxl | |
-|:--------|:--------:|:--------:|:----------:|:---------------:|:---------:|:---------:|
-| | **Read** | **Write** | **Write** | **Read** | **Read** | **Write** |
-| **Tier 1 — Essential** | | | | | | |
-| Cell values | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🟢 3 | 🟠 1 |
-| Formulas | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🟢 3 |
-| Text formatting | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Background colors | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Number formats | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Alignment | 🟢 3 | 🟢 3 | 🟢 3 | 🟠 1 | 🔴 0 | 🟠 1 |
-| Borders | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Dimensions | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Multiple sheets | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
-| **Tier 2 — Standard** | | | | | | |
-| Merged cells | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Conditional formatting | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Data validation | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Hyperlinks | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Images | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Comments | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Freeze panes | 🟢 3 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 |
-| Pivot tables | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
+**The story:** openpyxl and xlsxwriter achieve full fidelity across all 16 features. Once you move past basic cell values, nearly every other library drops to zero. Formatting, comments, hyperlinks, images, merged cells, conditional formatting -- all red.
 
-**xlrd** is omitted from the XLSX table — it only supports the legacy `.xls` format (see [XLS results](#xls-profile) below).
+### Library Tiers
 
-### XLS Profile
+| Tier | Library | Green Features | Summary |
+|:----:|---------|:--------------:|---------|
+| **S** | openpyxl | 16/16 | Reference adapter -- full read + write fidelity |
+| **S** | xlsxwriter | 16/16 | Best write-only option -- full formatting support |
+| **A** | xlsxwriter-constmem | 13/16 | Memory-optimized write -- loses images, comments, row height |
+| **B** | xlwt | 4/16 | Legacy .xls writer -- basic formatting subset |
+| **C** | openpyxl-readonly, pandas, pyexcel, tablib | 2-3/16 | Values + basic formatting only |
+| **D** | polars | 0/16 | Columnar type coercion drops all fidelity |
 
-| Feature | xlrd (Read) | python-calamine (Read) |
-|:--------|:-----------:|:----------------------:|
-| Cell values | 🟢 3 | 🟢 3 |
-| Alignment | 🟢 3 | 🟠 1 |
-| Dimensions | 🟢 3 | 🔴 0 |
-| Multiple sheets | 🟢 3 | 🟢 3 |
+### Key Findings
+
+- **The abstraction tax is real**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion (errors become NaN)
+- **Speed vs fidelity tradeoff**: xlsxwriter-constmem writes at 4.7M cells/s but loses 3 features; polars reads at 1.3M cells/s but scores 0/16 green
+- **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
+
+See the [full dashboard](results/DASHBOARD.md) for the combined fidelity + performance comparison.
 
 ### Score Legend
 
 | Score | Meaning |
 |:------|:--------|
-| 🟢 3 | **Complete** — full fidelity, indistinguishable from Excel |
-| 🟡 2 | **Functional** — works for common cases, some edge-case failures |
-| 🟠 1 | **Minimal** — basic recognition but significant limitations |
-| 🔴 0 | **Unsupported** — errors, corruption, or complete data loss |
-| ➖ | Not applicable (library doesn't support this format/operation) |
+| 🟢 3 | **Complete** -- full fidelity, indistinguishable from Excel |
+| 🟡 2 | **Functional** -- works for common cases, some edge-case failures |
+| 🟠 1 | **Minimal** -- basic recognition but significant limitations |
+| 🔴 0 | **Unsupported** -- errors, corruption, or complete data loss |
 
 ## Libraries Tested
 
-| Library | Version | Lang | Capabilities | Notes |
-|:--------|:--------|:-----|:-------------|:------|
-| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | Read + Write | Full-featured, pure Python |
-| [XlsxWriter](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | Write only | Write-optimized, excellent formatting |
-| [python-calamine](https://github.com/dimastbk/python-calamine) | 0.6.1 | Rust | Read only | Fast reads via Rust `calamine` crate |
-| [pylightxl](https://github.com/PydPiper/pylightxl) | 1.61 | Python | Read + Write | Zero-dependency, lightweight |
-| [xlrd](https://github.com/python-excel/xlrd) | 2.0.2 | Python | Read only | Legacy `.xls` format only |
+### XLSX Profile (12 adapters)
+
+| Library | Version | Lang | Caps | Green Features |
+|:--------|:--------|:-----|:-----|:--------------:|
+| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | 16/16 |
+| [XlsxWriter](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 16/16 |
+| [xlsxwriter-constmem](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 13/16 |
+| [openpyxl-readonly](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R | 3/16 |
+| [pandas](https://pandas.pydata.org/) | 3.0.0 | Python | R+W | 3/16 |
+| [pyexcel](https://github.com/pyexcel/pyexcel) | 0.7.4 | Python | R+W | 3/16 |
+| [tablib](https://tablib.readthedocs.io/) | 3.9.0 | Python | R+W | 3/16 |
+| [pylightxl](https://github.com/PydPiper/pylightxl) | 1.61 | Python | R+W | 2/16 |
+| [python-calamine](https://github.com/dimastbk/python-calamine) | 0.6.1 | Rust | R | 1/16 |
+| [polars](https://pola.rs/) | 1.38.1 | Rust | R | 0/16 |
+| [xlwt](https://github.com/python-excel/xlwt) | 1.3.0 | Python | W | 4/16 |
+| [xlrd](https://github.com/python-excel/xlrd) | 2.0.2 | Python | R | .xls only |
+
+### XLS Profile (2 adapters)
+
+| Library | Green Features | Notes |
+|:--------|:--------------:|:------|
+| xlrd | 4/4 | Full .xls read fidelity |
+| python-calamine | 2/4 | Cross-format reader |
+
+### Optional: Rust Backends (PyO3)
+
+Three additional adapters via a local PyO3 extension module:
+
+| Library | Caps | Notes |
+|:--------|:-----|:------|
+| calamine (Rust) | R | Direct Rust calamine bindings |
+| rust_xlsxwriter | W | Rust write bindings |
+| umya-spreadsheet | R+W | Rust read + write |
+
+```bash
+uv sync --extra rust
+uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml \
+  --features calamine,rust_xlsxwriter,umya
+```
+
+> `uv sync` may uninstall the locally-built extension; rerun `maturin develop` after.
 
 ## How It Works
 
-1. **Generate reference files** — [xlwings](https://www.xlwings.org/) drives real Excel to produce canonical `.xlsx`/`.xls` test files with known features.
-2. **Read tests** — each library reads the Excel-generated file; extracted values are compared to the expected manifest.
-3. **Write tests** — each library writes a new file from the same spec; the output is verified by re-reading with a trusted oracle (Excel via xlwings, or openpyxl in CI).
-4. **Score** — pass rates map to the 0–3 fidelity scale per feature.
+1. **Generate reference files** -- [xlwings](https://www.xlwings.org/) drives real Excel to produce canonical `.xlsx`/`.xls` test files with known features.
+2. **Read tests** -- each library reads the Excel-generated file; extracted values are compared to the expected manifest.
+3. **Write tests** -- each library writes a new file from the same spec; the output is verified by a trusted oracle (Excel via xlwings, or openpyxl in CI).
+4. **Score** -- pass rates map to the 0-3 fidelity scale per feature.
+
+Full methodology: [METHODOLOGY.md](METHODOLOGY.md)
 
 ## Quick Start
 
@@ -82,8 +104,14 @@ uv sync
 # Run the benchmark against pre-built fixtures (no Excel required)
 uv run excelbench benchmark --tests fixtures/excel --output results
 
+# Generate the heatmap
+uv run excelbench heatmap
+
+# Generate the combined fidelity + performance dashboard
+uv run excelbench dashboard
+
 # View results
-cat results/xlsx/README.md
+open results/xlsx/README.md
 ```
 
 To regenerate canonical fixtures from scratch (requires Excel installed):
@@ -92,80 +120,39 @@ To regenerate canonical fixtures from scratch (requires Excel installed):
 uv run excelbench generate --output fixtures/excel
 ```
 
-## Optional: Rust Backends (PyO3)
-
-ExcelBench can optionally load additional adapters backed by Rust libraries via a
-local PyO3 extension module (`excelbench_rust`). This is intentionally kept as a
-separate crate so the main `excelbench` package remains pure-Python.
-
-Prereqs:
-- Rust toolchain (`rustup`, `cargo`)
-
-Build + install the extension into the active venv:
-
-```bash
-# Install maturin + other optional deps
-uv sync --extra rust
-
-# Build/editable-install the PyO3 module
-uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml \
-  --features calamine,rust_xlsxwriter,umya
-
-# Sanity check
-uv run python -c "import excelbench_rust; print(excelbench_rust.build_info())"
-```
-
-Notes:
-- `uv sync` may uninstall the locally-built extension module; rerun `maturin develop` if Rust adapters disappear.
-- You can build subsets (faster iteration):
-  - `--features calamine`
-  - `--features rust_xlsxwriter`
-  - `--features umya`
-
-Once installed, additional adapters may appear in `get_all_adapters()`:
-- `calamine` (Rust, read-only)
-- `rust_xlsxwriter` (Rust, write-only)
-- `umya-spreadsheet` (Rust, read+write)
-
-## Detailed Results
-
-- **[XLSX detailed results](results/xlsx/README.md)** — per-library, per-test-case breakdowns
-- **[XLS detailed results](results/xls/README.md)** — legacy format results
-- **[CSV export](results/matrix.csv)** — machine-readable flat file
-- **[Run history](results/history.jsonl)** — append-only log of scores across runs
-
-## Methodology
-
-- **Real Excel as source of truth** — test fixtures are generated by Excel itself via xlwings, not hand-crafted XML
-- **Independent Read/Write scores** — because library capabilities often differ
-- **Detailed scoring rubrics** — objective 0–3 criteria for each feature ([rubrics](rubrics/fidelity-rubrics.md))
-- **Reproducible** — canonical fixtures are tracked in git; CI runs the full benchmark on every push
-
-Full methodology: [METHODOLOGY.md](METHODOLOGY.md)
-
 ## Feature Coverage
 
-### Implemented (Tier 1 + 2)
+### Scored (16 features)
 
 | Tier | Features |
 |:-----|:---------|
-| **Tier 1** — Essential | Cell values, formulas, text formatting, background colors, number formats, alignment, borders, dimensions, multiple sheets |
-| **Tier 2** — Standard | Merged cells, conditional formatting, data validation, hyperlinks, images, pivot tables*, comments, freeze panes |
+| **Tier 0** -- Basic Values | Cell values, formulas, multiple sheets |
+| **Tier 1** -- Formatting | Text formatting, background colors, number formats, alignment, borders, dimensions |
+| **Tier 2** -- Advanced | Merged cells, conditional formatting, data validation, hyperlinks, images, comments, freeze panes |
 
-\* Pivot tables require a Windows-generated fixture; macOS support is limited.
+### In Progress (Tier 3)
 
-### Planned (Tier 3)
+Named ranges and tables have generators and tests but are not yet in the official scored results.
 
-Charts, named ranges, complex conditional formatting, tables (structured references), print settings, protection.
+### Planned
+
+Charts, print settings, protection.
+
+> Pivot tables have a generator but require a Windows-generated fixture (macOS Excel limitation).
+
+## Detailed Results
+
+- **[XLSX results](results/xlsx/README.md)** -- per-library, per-test-case breakdowns with tier list
+- **[XLS results](results/xls/README.md)** -- legacy format results
+- **[Performance results](results/perf/README.md)** -- throughput benchmarks (cells/s)
+- **[Dashboard](results/DASHBOARD.md)** -- combined fidelity + performance comparison
+- **[Heatmap (PNG)](results/xlsx/heatmap.png)** | **[SVG](results/xlsx/heatmap.svg)** -- visual score matrix
 
 ## Project Status
 
-**v0.1.0** — Tier 1 + Tier 2 complete for 5 Python libraries. CI green. Actively maintained.
+**v0.1.0** -- 16 scored features, 12 Python xlsx adapters + 2 xls + 3 Rust/PyO3.
 
-Roadmap:
-- Rust library integration (rust_xlsxwriter, umya-spreadsheet) via PyO3
-- Tier 3 features (charts, named ranges, protection)
-- Interactive web viewer for results
+1084 tests passing. Actively maintained.
 
 ## Contributing
 
