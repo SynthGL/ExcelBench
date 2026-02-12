@@ -1,8 +1,7 @@
 """Adapter for umya-spreadsheet via excelbench_rust (PyO3).
 
-This adapter is read/write (xlsx).
-
-Current scope: Tier 1 cell values + formulas.
+This adapter is read/write (xlsx). Supports Tier 0/1 cell values, formulas,
+and formatting (text, background, borders, alignment, number formats, dimensions).
 """
 
 from pathlib import Path
@@ -10,7 +9,11 @@ from typing import Any
 
 from excelbench.harness.adapters.base import ExcelAdapter
 from excelbench.harness.adapters.rust_adapter_utils import (
+    border_to_dict,
     cell_value_from_payload,
+    dict_to_border,
+    dict_to_format,
+    format_to_dict,
     get_rust_backend_version,
     payload_from_cell_value,
 )
@@ -72,16 +75,22 @@ class UmyaAdapter(ExcelAdapter):
         return cell_value_from_payload(payload)
 
     def read_cell_format(self, workbook: Any, sheet: str, cell: str) -> CellFormat:
-        return CellFormat()
+        d = workbook.read_cell_format(sheet, cell)
+        if not isinstance(d, dict) or not d:
+            return CellFormat()
+        return dict_to_format(d)
 
     def read_cell_border(self, workbook: Any, sheet: str, cell: str) -> BorderInfo:
-        return BorderInfo()
+        d = workbook.read_cell_border(sheet, cell)
+        if not isinstance(d, dict) or not d:
+            return BorderInfo()
+        return dict_to_border(d)
 
     def read_row_height(self, workbook: Any, sheet: str, row: int) -> float | None:
-        return None
+        return workbook.read_row_height(sheet, row - 1)
 
     def read_column_width(self, workbook: Any, sheet: str, column: str) -> float | None:
-        return None
+        return workbook.read_column_width(sheet, column)
 
     def read_merged_ranges(self, workbook: Any, sheet: str) -> list[str]:
         return []
@@ -125,16 +134,20 @@ class UmyaAdapter(ExcelAdapter):
         workbook.write_cell_value(sheet, cell, payload_from_cell_value(value))
 
     def write_cell_format(self, workbook: Any, sheet: str, cell: str, format: CellFormat) -> None:
-        return
+        d = format_to_dict(format)
+        if d:
+            workbook.write_cell_format(sheet, cell, d)
 
     def write_cell_border(self, workbook: Any, sheet: str, cell: str, border: BorderInfo) -> None:
-        return
+        d = border_to_dict(border)
+        if d:
+            workbook.write_cell_border(sheet, cell, d)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
-        return
+        workbook.set_row_height(sheet, row - 1, height)
 
     def set_column_width(self, workbook: Any, sheet: str, column: str, width: float) -> None:
-        return
+        workbook.set_column_width(sheet, column, width)
 
     def merge_cells(self, workbook: Any, sheet: str, cell_range: str) -> None:
         return

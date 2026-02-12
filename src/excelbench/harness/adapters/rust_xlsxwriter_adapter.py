@@ -1,7 +1,7 @@
 """Adapter for rust_xlsxwriter via excelbench_rust (PyO3).
 
-Initial implementation focuses on Tier 1 cell values + formulas. Formatting/borders
-are currently treated as no-ops.
+Supports Tier 0/1 cell values, formulas, and formatting (text, background,
+borders, alignment, number formats, dimensions).
 """
 
 from pathlib import Path
@@ -9,6 +9,8 @@ from typing import Any
 
 from excelbench.harness.adapters.base import WriteOnlyAdapter
 from excelbench.harness.adapters.rust_adapter_utils import (
+    border_to_dict,
+    format_to_dict,
     get_rust_backend_version,
     payload_from_cell_value,
 )
@@ -65,8 +67,9 @@ class RustXlsxWriterAdapter(WriteOnlyAdapter):
         cell: str,
         format: CellFormat,
     ) -> None:
-        # TODO: implement formats in Rust binding.
-        return
+        d = format_to_dict(format)
+        if d:
+            workbook.write_cell_format(sheet, cell, d)
 
     def write_cell_border(
         self,
@@ -75,14 +78,15 @@ class RustXlsxWriterAdapter(WriteOnlyAdapter):
         cell: str,
         border: BorderInfo,
     ) -> None:
-        # TODO: implement borders in Rust binding.
-        return
+        d = border_to_dict(border)
+        if d:
+            workbook.write_cell_border(sheet, cell, d)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
-        return
+        workbook.set_row_height(sheet, row - 1, height)
 
     def set_column_width(self, workbook: Any, sheet: str, column: str, width: float) -> None:
-        return
+        workbook.set_column_width(sheet, column, width)
 
     # =========================================================================
     # Tier 2 Write Operations
