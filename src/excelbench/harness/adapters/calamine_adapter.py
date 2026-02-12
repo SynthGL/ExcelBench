@@ -43,6 +43,55 @@ def _parse_cell_ref(cell: str) -> tuple[int, int]:
     return row, col
 
 
+def _convert_value(value: Any) -> CellValue:
+    """Convert a raw calamine Python value to a CellValue."""
+    if value is None or value == "":
+        return CellValue(type=CellType.BLANK)
+
+    # Check bool BEFORE int (bool is subclass of int in Python)
+    if isinstance(value, bool):
+        return CellValue(type=CellType.BOOLEAN, value=value)
+
+    if isinstance(value, (int, float)):
+        return CellValue(type=CellType.NUMBER, value=value)
+
+    # Check date before datetime (date is not a subclass of datetime,
+    # but calamine may return either)
+    if isinstance(value, datetime):
+        is_midnight = (
+            value.hour == 0
+            and value.minute == 0
+            and value.second == 0
+            and value.microsecond == 0
+        )
+        if is_midnight:
+            return CellValue(type=CellType.DATE, value=value.date())
+        return CellValue(type=CellType.DATETIME, value=value)
+
+    if isinstance(value, date) and not isinstance(value, datetime):
+        return CellValue(type=CellType.DATE, value=value)
+
+    if isinstance(value, time):
+        return CellValue(type=CellType.DATETIME, value=datetime.combine(date.today(), value))
+
+    if isinstance(value, str):
+        # Error values — includes #N/A (no trailing !)
+        if value in ("#N/A", "#NULL!", "#NAME?", "#REF!"):
+            return CellValue(type=CellType.ERROR, value=value)
+        if value.startswith("#") and value.endswith("!"):
+            return CellValue(type=CellType.ERROR, value=value)
+
+        # Formulas — calamine generally evaluates formulas and returns
+        # computed values, but if a string starts with = it's a formula
+        if value.startswith("="):
+            return CellValue(type=CellType.FORMULA, value=value, formula=value)
+
+        return CellValue(type=CellType.STRING, value=value)
+
+    # Fallback
+    return CellValue(type=CellType.STRING, value=str(value))
+
+
 class CalamineAdapter(ReadOnlyAdapter):
     """Adapter for python-calamine library (read-only).
 
@@ -94,57 +143,42 @@ class CalamineAdapter(ReadOnlyAdapter):
         if col_idx >= len(row):
             return CellValue(type=CellType.BLANK)
 
-        value = row[col_idx]
+        return _convert_value(row[col_idx])
 
-        if value is None:
-            return CellValue(type=CellType.BLANK)
+    def read_sheet_values(
+        self,
+        workbook: CalamineWorkbook,
+        sheet: str,
+        cell_range: str | None = None,
+    ) -> list[list[CellValue]]:
+        """Bulk read all values from a sheet (or a rectangular sub-range).
 
-        # calamine returns "" for empty cells within the data range
-        if value == "":
-            return CellValue(type=CellType.BLANK)
+        Optional helper used by performance workloads.  Calls to_python()
+        once and converts the entire grid, avoiding the per-cell overhead
+        of read_cell_value().
+        """
+        sheet_data = workbook.get_sheet_by_name(sheet)
+        rows = sheet_data.to_python()
 
-        # Check bool BEFORE int (bool is subclass of int in Python)
-        if isinstance(value, bool):
-            return CellValue(type=CellType.BOOLEAN, value=value)
+        if cell_range:
+            clean = cell_range.replace("$", "").upper()
+            if ":" in clean:
+                a, b = clean.split(":", 1)
+            else:
+                a, b = clean, clean
+            r0, c0 = _parse_cell_ref(a)
+            r1, c1 = _parse_cell_ref(b)
+            if r1 < r0:
+                r0, r1 = r1, r0
+            if c1 < c0:
+                c0, c1 = c1, c0
+            rows = [
+                row[c0: c1 + 1]
+                for row in rows[r0: r1 + 1]
+                if len(row) > c0
+            ]
 
-        if isinstance(value, (int, float)):
-            return CellValue(type=CellType.NUMBER, value=value)
-
-        # Check date before datetime (date is not a subclass of datetime,
-        # but calamine may return either)
-        if isinstance(value, datetime):
-            is_midnight = (
-                value.hour == 0
-                and value.minute == 0
-                and value.second == 0
-                and value.microsecond == 0
-            )
-            if is_midnight:
-                return CellValue(type=CellType.DATE, value=value.date())
-            return CellValue(type=CellType.DATETIME, value=value)
-
-        if isinstance(value, date) and not isinstance(value, datetime):
-            return CellValue(type=CellType.DATE, value=value)
-
-        if isinstance(value, time):
-            return CellValue(type=CellType.DATETIME, value=datetime.combine(date.today(), value))
-
-        if isinstance(value, str):
-            # Error values — includes #N/A (no trailing !)
-            if value in ("#N/A", "#NULL!", "#NAME?", "#REF!"):
-                return CellValue(type=CellType.ERROR, value=value)
-            if value.startswith("#") and value.endswith("!"):
-                return CellValue(type=CellType.ERROR, value=value)
-
-            # Formulas — calamine generally evaluates formulas and returns
-            # computed values, but if a string starts with = it's a formula
-            if value.startswith("="):
-                return CellValue(type=CellType.FORMULA, value=value, formula=value)
-
-            return CellValue(type=CellType.STRING, value=value)
-
-        # Fallback
-        return CellValue(type=CellType.STRING, value=str(value))
+        return [[_convert_value(v) for v in row] for row in rows]
 
     def read_cell_format(
         self,

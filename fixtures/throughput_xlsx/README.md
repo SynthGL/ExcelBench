@@ -24,7 +24,7 @@ Run the standard dashboard batches:
 uv run python scripts/run_throughput_dashboard.py --warmup 0 --iters 1
 ```
 
-Include the slow per-cell reader (python-calamine) using only the 1k scenarios:
+Include python-calamine per-cell scenarios (1k only; bulk reads run by default):
 
 ```bash
 uv run python scripts/run_throughput_dashboard.py --warmup 0 --iters 1 --include-slow

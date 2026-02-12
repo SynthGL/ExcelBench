@@ -52,7 +52,7 @@ def main() -> None:
     parser.add_argument(
         "--include-slow",
         action="store_true",
-        help="Include slow per-cell readers (python-calamine) using 1k scenarios.",
+        help="Include python-calamine per-cell scenarios (1k only; bulk reads run by default).",
     )
     parser.add_argument(
         "--include-100k",
@@ -99,7 +99,14 @@ def main() -> None:
     jobs.append(
         {
             "name": "bulk_read_multi",
-            "adapters": ["openpyxl", "openpyxl-readonly", "pandas", "polars", "tablib"],
+            "adapters": [
+                "openpyxl",
+                "openpyxl-readonly",
+                "pandas",
+                "polars",
+                "python-calamine",
+                "tablib",
+            ],
             "features": [
                 "cell_values_1k_bulk_read",
                 "cell_values_10k_bulk_read",
@@ -170,7 +177,14 @@ def main() -> None:
         jobs.append(
             {
                 "name": "bulk_read_100k",
-                "adapters": ["openpyxl", "openpyxl-readonly", "pandas", "polars", "tablib"],
+                "adapters": [
+                    "openpyxl",
+                    "openpyxl-readonly",
+                    "pandas",
+                    "polars",
+                    "python-calamine",
+                    "tablib",
+                ],
                 "features": [
                     "cell_values_100k_bulk_read",
                 ],

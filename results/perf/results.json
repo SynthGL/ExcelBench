@@ -567,10 +567,25 @@
       "feature": "cell_values_10k_bulk_read",
       "library": "python-calamine",
       "perf": {
-        "read": null,
+        "read": {
+          "wall_ms": {
+            "min": 6.137791,
+            "p50": 6.163417,
+            "p95": 6.244667
+          },
+          "cpu_ms": {
+            "min": 6.134,
+            "p50": 6.138,
+            "p95": 6.238
+          },
+          "rss_peak_mb": 185.296875,
+          "breakdown_ms": null,
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
         "write": null
       },
-      "notes": "Read failed: ValueError: Adapter does not support bulk sheet reads: python-calamine"
+      "notes": null
     },
     {
       "feature": "cell_values_10k_bulk_read",
@@ -1391,10 +1406,25 @@
       "feature": "cell_values_1k_bulk_read",
       "library": "python-calamine",
       "perf": {
-        "read": null,
+        "read": {
+          "wall_ms": {
+            "min": 0.637625,
+            "p50": 0.667459,
+            "p95": 0.730875
+          },
+          "cpu_ms": {
+            "min": 0.638,
+            "p50": 0.668,
+            "p95": 0.731
+          },
+          "rss_peak_mb": 186.15625,
+          "breakdown_ms": null,
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
         "write": null
       },
-      "notes": "Read failed: ValueError: Adapter does not support bulk sheet reads: python-calamine"
+      "notes": null
     },
     {
       "feature": "cell_values_1k_bulk_read",

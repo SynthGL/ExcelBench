@@ -28,7 +28,7 @@ We test 16 features across 12 Python adapters, scoring each on a 0-3 fidelity sc
 ### Key Findings
 
 - **The abstraction tax is real**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion (errors become NaN)
-- **Speed vs fidelity tradeoff**: xlsxwriter-constmem writes at 4.7M cells/s but loses 3 features; polars reads at 1.3M cells/s but scores 0/16 green
+- **Speed vs fidelity tradeoff**: xlsxwriter-constmem writes at 4.7M cells/s but loses 3 features; python-calamine reads at 1.6M cells/s but scores 1/16 green
 - **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
 
 See the [full dashboard](results/DASHBOARD.md) for the combined fidelity + performance comparison.

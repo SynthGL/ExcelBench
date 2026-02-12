@@ -18,13 +18,13 @@
 | pyexcel | R+W | 3/16 | 23% | 62K | 306K | Multi-format compatibility layer |
 | tablib | R+W | 3/16 | 23% | 443K | 274K | Dataset export/import workflows |
 | pylightxl | R+W | 2/16 | 20% | — | 311K | Lightweight value extraction |
-| python-calamine | R | 1/16 | 18% | 258 | — | Fast bulk value reads |
+| python-calamine | R | 1/16 | 18% | 1.6M | — | Fast bulk value reads |
 | polars | R | 0/16 | 16% | 1.3M | — | High-performance DataFrames (values only) |
 
 ## Key Insights
 
 - **Fidelity leaders**: openpyxl, xlsxwriter (16/16 green features)
-- **Fastest reader**: polars (1.3M cells/s on cell_values)
+- **Fastest reader**: python-calamine (1.6M cells/s on cell_values)
 - **Fastest writer**: xlsxwriter-constmem (4.7M cells/s on cell_values)
 - **Abstraction cost**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion
 - **Optimization cost**: xlsxwriter constant_memory mode loses 3 green features for lower memory usage
