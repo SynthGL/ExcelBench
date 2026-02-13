@@ -643,6 +643,92 @@ def dashboard(
         raise typer.Exit(1)
 
 
+@app.command("html")
+def html_dashboard(
+    fidelity_path: Path = typer.Option(
+        Path("results/xlsx/results.json"),
+        "--fidelity",
+        "-f",
+        help="Path to fidelity results.json.",
+    ),
+    perf_path: Path = typer.Option(
+        Path("results/perf/results.json"),
+        "--perf",
+        "-p",
+        help="Path to performance results.json.",
+    ),
+    output_path: Path = typer.Option(
+        Path("results/dashboard.html"),
+        "--output",
+        "-o",
+        help="Output HTML file path.",
+    ),
+    scatter_dir: Path = typer.Option(
+        Path("results/xlsx"),
+        "--scatter-dir",
+        help="Directory with scatter/heatmap SVGs to embed.",
+    ),
+) -> None:
+    """Generate a single-file interactive HTML dashboard with all results."""
+    from excelbench.results.html_dashboard import render_html_dashboard
+
+    console.print("[bold]Generating HTML dashboard...[/bold]")
+
+    try:
+        perf = perf_path if perf_path.exists() else None
+        sdir = scatter_dir if scatter_dir.exists() else None
+        render_html_dashboard(fidelity_path, perf, output_path, sdir)
+        console.print(f"  [green]✓[/green] {output_path}")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def scatter(
+    fidelity_path: Path = typer.Option(
+        Path("results/xlsx/results.json"),
+        "--fidelity",
+        "-f",
+        help="Path to fidelity results.json.",
+    ),
+    perf_path: Path = typer.Option(
+        Path("results/perf/results.json"),
+        "--perf",
+        "-p",
+        help="Path to performance results.json.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results/xlsx"),
+        "--output",
+        "-o",
+        help="Directory to save scatter-plot images.",
+    ),
+) -> None:
+    """Generate fidelity-vs-throughput scatter plots (PNG + SVG).
+
+    Produces two figures:
+      scatter_tiers    — 1×3 grid grouped by feature tier
+      scatter_features — 2×3 grid for individual features with perf data
+    """
+    from excelbench.results.scatter import render_scatter_features, render_scatter_tiers
+
+    console.print("[bold]Generating scatter plots...[/bold]")
+
+    if not perf_path.exists():
+        console.print(f"[red]Error: perf results not found at {perf_path}[/red]")
+        raise typer.Exit(1)
+
+    try:
+        paths = render_scatter_tiers(fidelity_path, perf_path, output_dir)
+        paths += render_scatter_features(fidelity_path, perf_path, output_dir)
+        for p in paths:
+            console.print(f"  [green]✓[/green] {p}")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
 def show_summary(results: "BenchmarkResults") -> None:
     """Show a quick summary table of results."""
     from excelbench.results.renderer import score_emoji
