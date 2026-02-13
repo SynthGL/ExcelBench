@@ -31,6 +31,12 @@ uv run excelbench heatmap
 # Generate combined fidelity + performance dashboard
 uv run excelbench dashboard
 
+# Generate single-file interactive HTML dashboard
+uv run excelbench html
+
+# Generate fidelity-vs-throughput scatter plots
+uv run excelbench scatter
+
 # Lint + typecheck
 uv run ruff check
 uv run mypy
@@ -80,6 +86,8 @@ src/excelbench/
     renderer.py             # Perf results to markdown/CSV/JSON
   results/
     renderer.py             # Fidelity results to markdown/CSV/JSON
+    html_dashboard.py       # Single-file interactive HTML dashboard generator
+    scatter.py              # Fidelity-vs-throughput scatter plots (PNG/SVG)
 
 rust/excelbench_rust/       # Separate PyO3 crate (not part of hatchling build)
   src/lib.rs                # Module entry + build_info()
@@ -145,7 +153,8 @@ tests/                      # pytest + pytest-cov
 - **Visualizations**: Heatmap (PNG/SVG), combined fidelity+perf dashboard, tier list
 - **Rust adapters**: Built locally, not in CI benchmark; cell values only (no formatting)
 - **Tier 3 features**: named_ranges + tables have generators/tests, not yet in official scored results
-- **CLI commands**: generate, generate-xls, benchmark, benchmark-profiles, perf, report, heatmap, dashboard
+- **CLI commands**: generate, generate-xls, benchmark, benchmark-profiles, perf, report, heatmap, dashboard, html, scatter
+- **CI/CD**: GitHub Actions CI (lint/test/benchmark on all pushes) + deploy-dashboard (auto-deploys HTML to Vercel on results/generator changes)
 
 ## Trackers & Plans
 
@@ -156,6 +165,15 @@ tests/                      # pytest + pytest-cov
 - `docs/trackers/library-expansion-tracker.md` — Adapter inventory + scores
 - `docs/trackers/performance-benchmarks.md` — Perf implementation tracker
 - `docs/trackers/performance-benchmark-runs.md` — Run log
+
+## Deployment
+
+- **Dashboard URL**: https://excelbench.vercel.app
+- **Auto-deploy workflow**: `.github/workflows/deploy-dashboard.yml`
+  - Triggers on pushes to `master` that change `results/xlsx/results.json`, `results/perf/results.json`, `results/xlsx/*.svg`, or `src/excelbench/results/html_dashboard.py`
+  - Also supports manual trigger via `workflow_dispatch`
+  - Generates HTML dashboard with `uv run excelbench html --output deploy/index.html`, then deploys to Vercel
+  - Requires 3 GitHub secrets: `VERCEL_TOKEN`, `VERCEL_ORG_ID`, `VERCEL_PROJECT_ID`
 
 ## Gotchas
 
