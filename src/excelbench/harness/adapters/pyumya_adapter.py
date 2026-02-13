@@ -25,6 +25,14 @@ from excelbench.models import (
 
 JSONDict = dict[str, Any]
 
+# Font-metric padding that Excel adds to stored column widths.
+# Calibri 11pt uses 213/256 = 0.83203125; other common fonts use 182/256 = 0.7109375.
+_CALIBRI_WIDTH_PADDING = 0.83203125
+_ALT_WIDTH_PADDING = 0.7109375
+# Tight tolerance: exact font-metric fractions are powers-of-2, so 0.0005 matches
+# them precisely while rejecting legitimate decimal widths (e.g. 8.71).
+_WIDTH_TOLERANCE = 0.0005
+
 
 def _get_version() -> str:
     try:
@@ -153,13 +161,13 @@ class PyumyaAdapter(ExcelAdapter):
             v_align=getattr(align, "vertical", None),
             wrap=getattr(align, "wrap_text", None),
             rotation=(
-                getattr(align, "text_rotation", None)
-                if getattr(align, "text_rotation", None) not in (0, None)
+                _rotation
+                if (_rotation := getattr(align, "text_rotation", None)) not in (0, None)
                 else None
             ),
             indent=(
-                getattr(align, "indent", None)
-                if getattr(align, "indent", None) not in (0, None)
+                _indent
+                if (_indent := getattr(align, "indent", None)) not in (0, None)
                 else None
             ),
         )
@@ -203,14 +211,16 @@ class PyumyaAdapter(ExcelAdapter):
             return None
         try:
             width_f = float(v)
-        except Exception:
+        except (TypeError, ValueError):
             return None
         # Excel and third-party libraries add font-metric padding to stored
         # column widths (e.g. +0.83203125 for Calibri 11pt).
         frac = width_f % 1
-        for padding in (0.83203125, 0.7109375):
-            if abs(frac - padding) < 0.01:
-                width_f = width_f - padding
+        for padding in (_CALIBRI_WIDTH_PADDING, _ALT_WIDTH_PADDING):
+            if abs(frac - padding) < _WIDTH_TOLERANCE:
+                adjusted = width_f - padding
+                if adjusted >= 0:
+                    width_f = adjusted
                 break
         return round(width_f, 4)
 
