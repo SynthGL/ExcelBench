@@ -2,8 +2,9 @@
 
 This adapter is read/write (xlsx). Supports Tier 0/1 cell values, formulas,
 formatting (text, background, borders, alignment, number formats, dimensions),
-and Tier 2 features (merged cells, freeze panes, comments, hyperlinks, images,
-data validation, conditional formatting).
+Tier 2 features (merged cells, freeze panes, comments, hyperlinks, images,
+data validation, conditional formatting), and Tier 3 features (named ranges,
+tables).
 """
 
 from pathlib import Path
@@ -118,6 +119,12 @@ class UmyaAdapter(ExcelAdapter):
     def read_freeze_panes(self, workbook: Any, sheet: str) -> JSONDict:
         return workbook.read_freeze_panes(sheet)
 
+    def read_named_ranges(self, workbook: Any, sheet: str) -> list[JSONDict]:
+        return workbook.read_named_ranges(sheet)
+
+    def read_tables(self, workbook: Any, sheet: str) -> list[JSONDict]:
+        return workbook.read_tables(sheet)
+
     # =========================================================================
     # Write
     # =========================================================================
@@ -186,6 +193,16 @@ class UmyaAdapter(ExcelAdapter):
         if not settings:
             return
         workbook.set_freeze_panes(sheet, settings)
+
+    def add_named_range(self, workbook: Any, sheet: str, named_range: JSONDict) -> None:
+        if not named_range:
+            return
+        workbook.add_named_range(sheet, named_range)
+
+    def add_table(self, workbook: Any, sheet: str, table: JSONDict) -> None:
+        if not table:
+            return
+        workbook.add_table(sheet, table)
 
     def save_workbook(self, workbook: Any, path: Path) -> None:
         workbook.save(str(path))

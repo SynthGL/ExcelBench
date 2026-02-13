@@ -1,6 +1,6 @@
 # ExcelBench Results
 
-*Generated: 2026-02-13 21:21 UTC*
+*Generated: 2026-02-13 21:47 UTC*
 *Profile: xlsx*
 *Excel Version: 16.105.3*
 *Platform: Darwin-arm64*
@@ -40,27 +40,34 @@
 | Images | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 | 🟢 | 🟢 | 🔴 | 🔴 |
 | Merged | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 | 🟢 | 🟢 | 🟢 | 🔴 |
 
+**Tier 3 — Workbook Metadata**
+
+| Feature | calamine | openpyxl | opxl-readonly | pandas | polars | pyexcel | pylightxl | calamine | pyumya | rust_xlsxwriter | tablib | umya-spreadsheet | xlsxwriter | xlsx-constmem | xlwt |
+|---------|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|:-:|
+| Named Ranges | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 |
+| Tables | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🔴 | 🟢 | 🔴 | 🔴 | 🔴 |
+
 ## Library Tiers
 
 > Libraries ranked by their best capability (max of read/write green features).
 
 | Tier | Library | Caps | Green Features | Summary |
 |:----:|---------|:----:|:--------------:|---------|
-| **S** | openpyxl | R+W | 16/16 | Reference adapter — full read + write fidelity |
-| **S** | xlsxwriter | W | 16/16 | Best write-only option — full formatting support |
-| **A** | pyumya | R+W | 14/16 | 14/16 features with full fidelity |
-| **A** | xlsxwriter-constmem | W | 13/16 | Memory-optimized write — loses images, comments, row height |
-| **B** | umya-spreadsheet | R+W | 12/16 | 12/16 features with full fidelity |
-| **B** | rust_xlsxwriter | W | 8/16 | 8/16 features with full fidelity |
-| **B** | xlwt | W | 4/16 | Legacy .xls writer — basic formatting subset |
-| **C** | openpyxl-readonly | R | 3/16 | Streaming read — loses all formatting metadata |
-| **C** | pandas | R+W | 3/16 | DataFrame abstraction — errors coerced to NaN on read |
-| **C** | pyexcel | R+W | 3/16 | Meta-library wrapping openpyxl — preserves error values |
-| **C** | tablib | R+W | 3/16 | Dataset wrapper — matches pyexcel on fidelity |
-| **C** | pylightxl | R+W | 2/16 | Lightweight — basic values, no formatting API |
-| **C** | calamine | R | 1/16 | 1/16 features with full fidelity |
-| **C** | python-calamine | R | 1/16 | Fast Rust-backed reader — cell values + sheet names only |
-| **D** | polars | R | 0/16 | Rust DataFrame reader — columnar type coercion drops fidelity |
+| **S** | openpyxl | R+W | 18/18 | Reference adapter — full read + write fidelity |
+| **A** | xlsxwriter | W | 16/18 | Best write-only option — full formatting support |
+| **B** | pyumya | R+W | 14/18 | 14/18 features with full fidelity |
+| **B** | umya-spreadsheet | R+W | 14/18 | 14/18 features with full fidelity |
+| **B** | xlsxwriter-constmem | W | 13/18 | Memory-optimized write — loses images, comments, row height |
+| **B** | rust_xlsxwriter | W | 8/18 | 8/18 features with full fidelity |
+| **B** | xlwt | W | 4/18 | Legacy .xls writer — basic formatting subset |
+| **C** | openpyxl-readonly | R | 3/18 | Streaming read — loses all formatting metadata |
+| **C** | pandas | R+W | 3/18 | DataFrame abstraction — errors coerced to NaN on read |
+| **C** | pyexcel | R+W | 3/18 | Meta-library wrapping openpyxl — preserves error values |
+| **C** | tablib | R+W | 3/18 | Dataset wrapper — matches pyexcel on fidelity |
+| **C** | pylightxl | R+W | 2/18 | Lightweight — basic values, no formatting API |
+| **C** | calamine | R | 1/18 | 1/18 features with full fidelity |
+| **C** | python-calamine | R | 1/18 | Fast Rust-backed reader — cell values + sheet names only |
+| **D** | polars | R | 0/18 | Rust DataFrame reader — columnar type coercion drops fidelity |
 
 ## Score Legend
 
@@ -106,41 +113,48 @@
 | [merged_cells](#merged_cells-details) | 🔴 0 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 | 🟢 3 | ➖ | 🟢 3 | 🟢 3 | 🔴 0 |
 | [pivot_tables](#pivot_tables-details) | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ | ➖ |
 
+**Tier 3 — Workbook Metadata**
+
+| Feature | calamine (R) | openpyxl (R) | openpyxl (W) | openpyxl-readonly (R) | pandas (R) | pandas (W) | polars (R) | pyexcel (R) | pyexcel (W) | pylightxl (R) | pylightxl (W) | python-calamine (R) | pyumya (R) | pyumya (W) | rust_xlsxwriter (W) | tablib (R) | tablib (W) | umya-spreadsheet (R) | umya-spreadsheet (W) | xlrd (R) | xlsxwriter (W) | xlsxwriter-constmem (W) | xlwt (W) |
+|---------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|------------|
+| [named_ranges](#named_ranges-details) | 🔴 0 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟢 3 | 🟢 3 | ➖ | 🔴 0 | 🔴 0 | 🔴 0 |
+| [tables](#tables-details) | 🔴 0 | 🟢 3 | 🟢 3 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🔴 0 | 🟡 2 | 🟢 3 | ➖ | 🔴 0 | 🔴 0 | 🔴 0 |
+
 ## Notes
 
 - **alignment**: Known limitation: pylightxl alignment write is a no-op because the library does not support formatting writes.
 - **cell_values**: Known limitation: pylightxl cell-values write has date/boolean/error fidelity limits due to writer encoding behavior.
 - **alignment**: Known limitation: python-calamine alignment read is limited because its API does not expose style/alignment metadata.
 - **cell_values**: Known limitation: python-calamine can surface formula error cells as blank values in current API responses.
-- **cell_values, formulas, ... (17 features)**: Not applicable: xlrd does not support .xlsx input
+- **cell_values, formulas, ... (19 features)**: Not applicable: xlrd does not support .xlsx input
 - **pivot_tables**: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
 ## Statistics
 
 | Library | Mode | Tests | Passed | Failed | Pass Rate | Green Features |
 |---------|------|-------|--------|--------|-----------|----------------|
-| calamine | R | 113 | 22 | 91 | 19% | 1/16 |
-| openpyxl | R | 113 | 113 | 0 | 100% | 16/16 |
-| openpyxl | W | 113 | 113 | 0 | 100% | 16/16 |
-| openpyxl-readonly | R | 113 | 27 | 86 | 24% | 3/16 |
-| pandas | R | 113 | 20 | 93 | 18% | 1/16 |
-| pandas | W | 113 | 27 | 86 | 24% | 3/16 |
-| polars | R | 113 | 18 | 95 | 16% | 0/16 |
-| pyexcel | R | 113 | 23 | 90 | 20% | 2/16 |
-| pyexcel | W | 113 | 28 | 85 | 25% | 3/16 |
-| pylightxl | R | 113 | 22 | 91 | 19% | 2/16 |
-| pylightxl | W | 113 | 23 | 90 | 20% | 2/16 |
-| python-calamine | R | 113 | 20 | 93 | 18% | 1/16 |
-| pyumya | R | 113 | 109 | 4 | 96% | 14/16 |
-| pyumya | W | 113 | 84 | 29 | 74% | 14/16 |
-| rust_xlsxwriter | W | 113 | 85 | 28 | 75% | 8/16 |
-| tablib | R | 113 | 23 | 90 | 20% | 2/16 |
-| tablib | W | 113 | 28 | 85 | 25% | 3/16 |
-| umya-spreadsheet | R | 113 | 98 | 15 | 87% | 10/16 |
-| umya-spreadsheet | W | 113 | 99 | 14 | 88% | 12/16 |
-| xlsxwriter | W | 113 | 113 | 0 | 100% | 16/16 |
-| xlsxwriter-constmem | W | 113 | 106 | 7 | 94% | 13/16 |
-| xlwt | W | 113 | 72 | 41 | 64% | 4/16 |
+| calamine | R | 125 | 22 | 103 | 18% | 1/18 |
+| openpyxl | R | 125 | 125 | 0 | 100% | 18/18 |
+| openpyxl | W | 125 | 125 | 0 | 100% | 18/18 |
+| openpyxl-readonly | R | 125 | 27 | 98 | 22% | 3/18 |
+| pandas | R | 125 | 20 | 105 | 16% | 1/18 |
+| pandas | W | 125 | 27 | 98 | 22% | 3/18 |
+| polars | R | 125 | 18 | 107 | 14% | 0/18 |
+| pyexcel | R | 125 | 23 | 102 | 18% | 2/18 |
+| pyexcel | W | 125 | 28 | 97 | 22% | 3/18 |
+| pylightxl | R | 125 | 22 | 103 | 18% | 2/18 |
+| pylightxl | W | 125 | 23 | 102 | 18% | 2/18 |
+| python-calamine | R | 125 | 20 | 105 | 16% | 1/18 |
+| pyumya | R | 125 | 109 | 16 | 87% | 14/18 |
+| pyumya | W | 125 | 84 | 41 | 67% | 14/18 |
+| rust_xlsxwriter | W | 125 | 85 | 40 | 68% | 8/18 |
+| tablib | R | 125 | 23 | 102 | 18% | 2/18 |
+| tablib | W | 125 | 28 | 97 | 22% | 3/18 |
+| umya-spreadsheet | R | 125 | 109 | 16 | 87% | 11/18 |
+| umya-spreadsheet | W | 125 | 111 | 14 | 89% | 14/18 |
+| xlsxwriter | W | 125 | 113 | 12 | 90% | 16/18 |
+| xlsxwriter-constmem | W | 125 | 106 | 19 | 85% | 13/18 |
+| xlwt | W | 125 | 72 | 53 | 58% | 4/18 |
 
 ## Libraries Tested
 
@@ -165,10 +179,10 @@
 
 | Group | Value | Count |
 |-------|-------|-------|
-| category | data_mismatch | 1100 |
+| category | data_mismatch | 1305 |
 | category | internal | 35 |
-| category | invalid_input | 78 |
-| severity | error | 1213 |
+| category | invalid_input | 90 |
+| severity | error | 1430 |
 
 ### Diagnostic Details
 
@@ -1387,6 +1401,223 @@
 | freeze_panes | tablib | freeze_b2 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | tablib | freeze_d5 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | tablib | split_2x1 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
+| named_ranges | xlsxwriter | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | python-calamine | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | calamine | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | rust_xlsxwriter | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyumya | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_simple_cell | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_cell_range | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_formula_ref | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_sheet_scope | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_special_chars | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| named_ranges | pylightxl | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pylightxl | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pyexcel | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlwt | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | pandas | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | xlsxwriter-constmem | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | openpyxl-readonly | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | polars | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_simple_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_cell_range | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_formula_ref | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_special_chars | read | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_simple_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'SingleCell', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$2', 'value': 42}, actual={'name': 'SingleCell', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_cell_range | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'DataRange', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$3:$D$3'}, actual={'name': 'DataRange', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_formula_ref | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'TaxRate', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$4', 'value': 0.08}, actual={'name': 'TaxRate', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'OtherSheet', 'scope': 'workbook', 'refers_to': 'Targets!$A$1'}, actual={'name': 'OtherSheet', 'scope': 'not_found', 'refers_to': ''} |
+| named_ranges | tablib | nr_special_chars | write | data_mismatch | error | Expected values did not match actual values: expected={'name': '_my_range', 'scope': 'workbook', 'refers_to': 'named_ranges!$B$7'}, actual={'name': '_my_range', 'scope': 'not_found', 'refers_to': ''} |
+| tables | xlsxwriter | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | xlsxwriter | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | python-calamine | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | python-calamine | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | python-calamine | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | python-calamine | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | python-calamine | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | python-calamine | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | calamine | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | calamine | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | calamine | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | calamine | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | calamine | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | calamine | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | rust_xlsxwriter | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | rust_xlsxwriter | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | rust_xlsxwriter | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | rust_xlsxwriter | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | rust_xlsxwriter | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | rust_xlsxwriter | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | umya-spreadsheet | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': False}} |
+| tables | pyumya | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pyumya | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pyumya | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pyumya | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyumya | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pylightxl | tbl_basic | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_with_totals | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_no_style | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_single_col | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_single_row | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_autofilter | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
+| tables | pylightxl | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pylightxl | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pylightxl | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pylightxl | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pylightxl | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pylightxl | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pyexcel | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pyexcel | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pyexcel | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pyexcel | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pyexcel | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | xlwt | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlwt | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | xlwt | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlwt | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlwt | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlwt | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pandas | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pandas | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | pandas | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | pandas | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | pandas | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | xlsxwriter-constmem | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter-constmem | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | xlsxwriter-constmem | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter-constmem | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter-constmem | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | xlsxwriter-constmem | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | openpyxl-readonly | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | openpyxl-readonly | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | openpyxl-readonly | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | openpyxl-readonly | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | openpyxl-readonly | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | openpyxl-readonly | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | polars | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | polars | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | polars | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | polars | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | polars | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | polars | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | tablib | tbl_basic | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | tablib | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_single_col | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_single_row | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
+| tables | tablib | tbl_basic | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SalesData', 'ref': 'E2:G5', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Name', 'Qty', 'Price']}}, actual={'table': {'name': 'SalesData', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'totals_row_count': 0}} |
+| tables | tablib | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_single_col | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'SingleCol', 'ref': 'E18:E21', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Score']}}, actual={'table': {'name': 'SingleCol', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_single_row | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'EmptyTable', 'ref': 'E23:G23', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['A', 'B', 'C']}}, actual={'table': {'name': 'EmptyTable', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': []}} |
+| tables | tablib | tbl_autofilter | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'not_found', 'header_row': True, 'totals_row': False, 'style': None, 'columns': [], 'autofilter': False}} |
 
 ## Detailed Results
 
@@ -3119,6 +3350,159 @@
 
 **xlwt** — Write: 🟢 3
 
+<a id="named_ranges-details"></a>
+### named_ranges
+
+**calamine** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**openpyxl** — Read: 🟢 3 | Write: 🟢 3
+
+**openpyxl-readonly** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**pandas** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Named range: single cell | basic | ❌ | ❌ |
+| Named range: cell range | basic | ❌ | ❌ |
+| Named range: used in formula | basic | ❌ | ❌ |
+| Named range: sheet-scoped | edge | ❌ | ❌ |
+| Named range: cross-sheet reference | edge | ❌ | ❌ |
+| Named range: underscore name | edge | ❌ | ❌ |
+
+**polars** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**pyexcel** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Named range: single cell | basic | ❌ | ❌ |
+| Named range: cell range | basic | ❌ | ❌ |
+| Named range: used in formula | basic | ❌ | ❌ |
+| Named range: sheet-scoped | edge | ❌ | ❌ |
+| Named range: cross-sheet reference | edge | ❌ | ❌ |
+| Named range: underscore name | edge | ❌ | ❌ |
+
+**pylightxl** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Named range: single cell | basic | ❌ | ❌ |
+| Named range: cell range | basic | ❌ | ❌ |
+| Named range: used in formula | basic | ❌ | ❌ |
+| Named range: sheet-scoped | edge | ❌ | ❌ |
+| Named range: cross-sheet reference | edge | ❌ | ❌ |
+| Named range: underscore name | edge | ❌ | ❌ |
+
+**python-calamine** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**pyumya** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Named range: single cell | basic | ❌ | ❌ |
+| Named range: cell range | basic | ❌ | ❌ |
+| Named range: used in formula | basic | ❌ | ❌ |
+| Named range: sheet-scoped | edge | ❌ | ❌ |
+| Named range: cross-sheet reference | edge | ❌ | ❌ |
+| Named range: underscore name | edge | ❌ | ❌ |
+
+**rust_xlsxwriter** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**tablib** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Named range: single cell | basic | ❌ | ❌ |
+| Named range: cell range | basic | ❌ | ❌ |
+| Named range: used in formula | basic | ❌ | ❌ |
+| Named range: sheet-scoped | edge | ❌ | ❌ |
+| Named range: cross-sheet reference | edge | ❌ | ❌ |
+| Named range: underscore name | edge | ❌ | ❌ |
+
+**umya-spreadsheet** — Read: 🟢 3 | Write: 🟢 3
+
+**xlrd**
+- Notes: Not applicable: xlrd does not support .xlsx input
+
+**xlsxwriter** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**xlsxwriter-constmem** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
+**xlwt** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Named range: single cell | basic | ❌ |
+| Named range: cell range | basic | ❌ |
+| Named range: used in formula | basic | ❌ |
+| Named range: sheet-scoped | edge | ❌ |
+| Named range: cross-sheet reference | edge | ❌ |
+| Named range: underscore name | edge | ❌ |
+
 <a id="number_formats-details"></a>
 ### number_formats
 
@@ -3269,6 +3653,168 @@
 
 **xlwt**
 - Notes: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
+
+<a id="tables-details"></a>
+### tables
+
+**calamine** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**openpyxl** — Read: 🟢 3 | Write: 🟢 3
+
+**openpyxl-readonly** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**pandas** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ❌ | ❌ |
+| Table: with totals row | basic | ❌ | ❌ |
+| Table: no style | basic | ❌ | ❌ |
+| Table: single column | edge | ❌ | ❌ |
+| Table: header only (no data rows) | edge | ❌ | ❌ |
+| Table: with autoFilter | edge | ❌ | ❌ |
+
+**polars** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**pyexcel** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ❌ | ❌ |
+| Table: with totals row | basic | ❌ | ❌ |
+| Table: no style | basic | ❌ | ❌ |
+| Table: single column | edge | ❌ | ❌ |
+| Table: header only (no data rows) | edge | ❌ | ❌ |
+| Table: with autoFilter | edge | ❌ | ❌ |
+
+**pylightxl** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ❌ | ❌ |
+| Table: with totals row | basic | ❌ | ❌ |
+| Table: no style | basic | ❌ | ❌ |
+| Table: single column | edge | ❌ | ❌ |
+| Table: header only (no data rows) | edge | ❌ | ❌ |
+| Table: with autoFilter | edge | ❌ | ❌ |
+
+**python-calamine** — Read: 🔴 0
+
+| Test | Importance | Read |
+|------|-----------|------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**pyumya** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ❌ | ❌ |
+| Table: with totals row | basic | ❌ | ❌ |
+| Table: no style | basic | ❌ | ❌ |
+| Table: single column | edge | ❌ | ❌ |
+| Table: header only (no data rows) | edge | ❌ | ❌ |
+| Table: with autoFilter | edge | ❌ | ❌ |
+
+**rust_xlsxwriter** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**tablib** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ❌ | ❌ |
+| Table: with totals row | basic | ❌ | ❌ |
+| Table: no style | basic | ❌ | ❌ |
+| Table: single column | edge | ❌ | ❌ |
+| Table: header only (no data rows) | edge | ❌ | ❌ |
+| Table: with autoFilter | edge | ❌ | ❌ |
+
+**umya-spreadsheet** — Read: 🟡 2 | Write: 🟢 3
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Table: basic 3-col | basic | ✅ | ✅ |
+| Table: with totals row | basic | ✅ | ✅ |
+| Table: no style | basic | ✅ | ✅ |
+| Table: single column | edge | ✅ | ✅ |
+| Table: header only (no data rows) | edge | ✅ | ✅ |
+| Table: with autoFilter | edge | ❌ | ✅ |
+
+**xlrd**
+- Notes: Not applicable: xlrd does not support .xlsx input
+
+**xlsxwriter** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**xlsxwriter-constmem** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
+
+**xlwt** — Write: 🔴 0
+
+| Test | Importance | Write |
+|------|-----------|-------|
+| Table: basic 3-col | basic | ❌ |
+| Table: with totals row | basic | ❌ |
+| Table: no style | basic | ❌ |
+| Table: single column | edge | ❌ |
+| Table: header only (no data rows) | edge | ❌ |
+| Table: with autoFilter | edge | ❌ |
 
 <a id="text_formatting-details"></a>
 ### text_formatting

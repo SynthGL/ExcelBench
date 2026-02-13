@@ -16,6 +16,8 @@ mod freeze_panes;
 mod hyperlinks;
 mod images;
 mod merged_cells;
+mod named_ranges;
+mod tables;
 mod util;
 
 #[pyclass(unsendable)]

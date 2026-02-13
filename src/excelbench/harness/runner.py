@@ -935,12 +935,14 @@ def _normalize_named_range_refers_to(value: Any) -> str:
         return ""
     raw = str(value).lstrip("=")
     if "!" not in raw:
-        return raw
+        return raw.replace("$", "")
     sheet_part, addr = raw.split("!", 1)
     # Strip only wrapper quotes used for sheet names with spaces.
     # Preserve embedded apostrophes by unescaping doubled quotes.
     if sheet_part.startswith("'") and sheet_part.endswith("'") and len(sheet_part) >= 2:
         sheet_part = sheet_part[1:-1].replace("''", "'")
+    # Strip `$` from cell addresses so absolute/relative refs compare equal.
+    addr = addr.replace("$", "")
     return f"{sheet_part}!{addr}"
 
 

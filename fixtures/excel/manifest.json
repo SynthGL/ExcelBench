@@ -1358,6 +1358,204 @@
           "importance": "edge"
         }
       ]
+    },
+    {
+      "path": "tier3/18_named_ranges.xlsx",
+      "feature": "named_ranges",
+      "tier": 3,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "nr_simple_cell",
+          "label": "Named range: single cell",
+          "row": 2,
+          "expected": {
+            "name": "SingleCell",
+            "scope": "workbook",
+            "refers_to": "named_ranges!$B$2",
+            "value": 42
+          }
+        },
+        {
+          "id": "nr_cell_range",
+          "label": "Named range: cell range",
+          "row": 3,
+          "expected": {
+            "name": "DataRange",
+            "scope": "workbook",
+            "refers_to": "named_ranges!$B$3:$D$3"
+          }
+        },
+        {
+          "id": "nr_formula_ref",
+          "label": "Named range: used in formula",
+          "row": 4,
+          "expected": {
+            "name": "TaxRate",
+            "scope": "workbook",
+            "refers_to": "named_ranges!$B$4",
+            "value": 0.08
+          }
+        },
+        {
+          "id": "nr_sheet_scope",
+          "label": "Named range: sheet-scoped",
+          "row": 5,
+          "expected": {
+            "name": "LocalName",
+            "scope": "sheet",
+            "refers_to": "named_ranges!$B$5",
+            "value": "local"
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "nr_cross_sheet",
+          "label": "Named range: cross-sheet reference",
+          "row": 6,
+          "expected": {
+            "name": "OtherSheet",
+            "scope": "workbook",
+            "refers_to": "Targets!$A$1"
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "nr_special_chars",
+          "label": "Named range: underscore name",
+          "row": 7,
+          "expected": {
+            "name": "_my_range",
+            "scope": "workbook",
+            "refers_to": "named_ranges!$B$7"
+          },
+          "importance": "edge"
+        }
+      ]
+    },
+    {
+      "path": "tier3/19_tables.xlsx",
+      "feature": "tables",
+      "tier": 3,
+      "file_format": "xlsx",
+      "test_cases": [
+        {
+          "id": "tbl_basic",
+          "label": "Table: basic 3-col",
+          "row": 2,
+          "expected": {
+            "table": {
+              "name": "SalesData",
+              "ref": "E2:G5",
+              "header_row": true,
+              "totals_row": false,
+              "style": "TableStyleMedium9",
+              "columns": [
+                "Name",
+                "Qty",
+                "Price"
+              ]
+            }
+          }
+        },
+        {
+          "id": "tbl_with_totals",
+          "label": "Table: with totals row",
+          "row": 3,
+          "expected": {
+            "table": {
+              "name": "Summary",
+              "ref": "E7:G11",
+              "header_row": true,
+              "totals_row": true,
+              "style": "TableStyleLight1",
+              "columns": [
+                "Item",
+                "Count",
+                "Total"
+              ],
+              "totals_row_count": 1
+            }
+          }
+        },
+        {
+          "id": "tbl_no_style",
+          "label": "Table: no style",
+          "row": 4,
+          "expected": {
+            "table": {
+              "name": "PlainTable",
+              "ref": "E13:F16",
+              "header_row": true,
+              "totals_row": false,
+              "style": null,
+              "columns": [
+                "Key",
+                "Value"
+              ]
+            }
+          }
+        },
+        {
+          "id": "tbl_single_col",
+          "label": "Table: single column",
+          "row": 5,
+          "expected": {
+            "table": {
+              "name": "SingleCol",
+              "ref": "E18:E21",
+              "header_row": true,
+              "totals_row": false,
+              "style": "TableStyleMedium2",
+              "columns": [
+                "Score"
+              ]
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "tbl_single_row",
+          "label": "Table: header only (no data rows)",
+          "row": 6,
+          "expected": {
+            "table": {
+              "name": "EmptyTable",
+              "ref": "E23:G23",
+              "header_row": true,
+              "totals_row": false,
+              "style": "TableStyleMedium9",
+              "columns": [
+                "A",
+                "B",
+                "C"
+              ]
+            }
+          },
+          "importance": "edge"
+        },
+        {
+          "id": "tbl_autofilter",
+          "label": "Table: with autoFilter",
+          "row": 7,
+          "expected": {
+            "table": {
+              "name": "Filtered",
+              "ref": "E25:G28",
+              "header_row": true,
+              "totals_row": false,
+              "style": "TableStyleMedium9",
+              "columns": [
+                "Region",
+                "Sales",
+                "Year"
+              ],
+              "autofilter": true
+            }
+          },
+          "importance": "edge"
+        }
+      ]
     }
   ]
 }
