@@ -83,8 +83,12 @@ def render_results(results: BenchmarkResults, output_dir: Path) -> None:
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    previous_run = _load_previous_history_entry(
+        output_dir / "history.jsonl", results.metadata.profile
+    )
+
     render_json(results, output_dir / "results.json")
-    render_markdown(results, output_dir / "README.md")
+    render_markdown(results, output_dir / "README.md", previous_run=previous_run)
     render_csv(results, output_dir / "matrix.csv")
     _append_history(results, output_dir)
 
@@ -127,7 +131,11 @@ def render_json(results: BenchmarkResults, path: Path) -> None:
         json.dump(data, f, indent=2)
 
 
-def render_markdown(results: BenchmarkResults, path: Path) -> None:
+def render_markdown(
+    results: BenchmarkResults,
+    path: Path,
+    previous_run: dict[str, Any] | None = None,
+) -> None:
     """Render results to markdown summary."""
     lines: list[str] = []
 
@@ -219,6 +227,9 @@ def render_markdown(results: BenchmarkResults, path: Path) -> None:
 
     # ── T0-3: Deduplicated notes ──
     lines.extend(_render_notes_deduped(results))
+
+    # ── T0-4: Run-over-run delta summary ──
+    lines.extend(_render_fidelity_deltas(results, previous_run))
 
     # Statistics section
     lines.extend(_render_statistics(results, libraries, features, score_lookup))
@@ -619,15 +630,18 @@ def _render_per_test_table(score: FeatureScore) -> list[str]:
         row = f"| {label} | {importance} |"
         if has_read:
             if read_tr:
-                row += " ✅ |" if read_tr.passed else " ❌ |"
+                row += f" {_test_outcome_marker(read_tr)} |"
             else:
                 row += " — |"
         if has_write:
             if write_tr:
-                row += " ✅ |" if write_tr.passed else " ❌ |"
+                row += f" {_test_outcome_marker(write_tr)} |"
             else:
                 row += " — |"
         lines.append(row)
+
+    lines.append("")
+    lines.append("Legend: ✅ pass · 🚫 NI (not implemented) · ❌ incorrect")
 
     return lines
 
@@ -674,11 +688,116 @@ def _group_test_cases(test_results: list[TestResult]) -> dict[str, Any]:
             "expected": tr.expected,
             "actual": tr.actual,
             "notes": tr.notes,
+            "outcome": _test_outcome_kind(tr),
             "diagnostics": [_diagnostic_to_json(d) for d in tr.diagnostics],
             "importance": tr.importance.value if tr.importance else None,
             "label": tr.label,
         }
     return grouped
+
+
+def _test_outcome_kind(test_result: TestResult) -> str:
+    if test_result.passed:
+        return "pass"
+
+    if test_result.notes and "NotImplementedError" in test_result.notes:
+        return "not_implemented"
+
+    error = test_result.actual.get("error") if isinstance(test_result.actual, dict) else None
+    if isinstance(error, str) and "not implemented" in error.lower():
+        return "not_implemented"
+
+    return "incorrect"
+
+
+def _test_outcome_marker(test_result: TestResult) -> str:
+    outcome = _test_outcome_kind(test_result)
+    if outcome == "pass":
+        return "✅"
+    if outcome == "not_implemented":
+        return "🚫 NI"
+    return "❌"
+
+
+def _render_fidelity_deltas(
+    results: BenchmarkResults,
+    previous_run: dict[str, Any] | None,
+) -> list[str]:
+    lines = ["## Fidelity Deltas vs Previous Run", ""]
+    if not previous_run:
+        lines.append("No previous run found for this profile.")
+        lines.append("")
+        return lines
+
+    current_scores: dict[str, dict[str, dict[str, int | None]]] = {}
+    for score in results.scores:
+        current_scores.setdefault(score.library, {})[score.feature] = {
+            "read": score.read_score,
+            "write": score.write_score,
+        }
+
+    previous_scores = previous_run.get("scores", {})
+
+    regressions: list[str] = []
+    improvements: list[str] = []
+    unchanged = 0
+
+    libraries = sorted(set(current_scores) | set(previous_scores))
+    for lib in libraries:
+        feature_names = sorted(
+            set(current_scores.get(lib, {})) | set(previous_scores.get(lib, {}))
+        )
+        for feat in feature_names:
+            for mode in ("read", "write"):
+                before = previous_scores.get(lib, {}).get(feat, {}).get(mode)
+                after = current_scores.get(lib, {}).get(feat, {}).get(mode)
+                if before is None and after is None:
+                    continue
+                if before == after:
+                    unchanged += 1
+                    continue
+                before_label = before if before is not None else "N/A"
+                after_label = after if after is not None else "N/A"
+                detail = f"{lib} · {feat} · {mode}: {before_label} → {after_label}"
+                if before is None or (after is not None and after > before):
+                    improvements.append(detail)
+                elif after is None or (before is not None and after < before):
+                    regressions.append(detail)
+
+    if regressions:
+        lines.append("### Regressions")
+        lines.extend([f"- {item}" for item in regressions])
+        lines.append("")
+    else:
+        lines.append("### Regressions")
+        lines.append("- None")
+        lines.append("")
+
+    if improvements:
+        lines.append("### Improvements")
+        lines.extend([f"- {item}" for item in improvements])
+        lines.append("")
+
+    lines.append(f"- Unchanged scored mode entries: {unchanged}")
+    lines.append("")
+    return lines
+
+
+def _load_previous_history_entry(history_path: Path, profile: str) -> dict[str, Any] | None:
+    if not history_path.exists():
+        return None
+
+    latest: dict[str, Any] | None = None
+    for raw in history_path.read_text().splitlines():
+        if not raw.strip():
+            continue
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError:
+            continue
+        if data.get("profile") == profile:
+            latest = data
+    return latest
 
 
 def _get_git_commit() -> str | None:

@@ -18,7 +18,10 @@ from excelbench.models import (
 from excelbench.results.renderer import (
     _get_git_commit,
     _group_test_cases,
+    _load_previous_history_entry,
+    _render_fidelity_deltas,
     _render_per_test_table,
+    _test_outcome_kind,
     render_markdown,
     score_emoji,
 )
@@ -93,6 +96,20 @@ def test_group_test_cases_preserves_passed() -> None:
     results = [_make_tr("tc1", OperationType.READ, passed=False)]
     grouped = _group_test_cases(results)
     assert grouped["tc1"]["read"]["passed"] is False
+
+
+def test_group_test_cases_includes_outcome_kind() -> None:
+    tr = TestResult(
+        test_case_id="tc1",
+        operation=OperationType.READ,
+        passed=False,
+        expected={"val": 1},
+        actual={"error": "feature not implemented by adapter"},
+        notes="Exception: NotImplementedError",
+        importance=Importance.BASIC,
+    )
+    grouped = _group_test_cases([tr])
+    assert grouped["tc1"]["read"]["outcome"] == "not_implemented"
 
 
 def test_group_test_cases_includes_label() -> None:
@@ -181,6 +198,56 @@ def test_render_per_test_missing_write_dash() -> None:
     assert "—" in text  # tc2 write column is a dash
 
 
+def test_render_per_test_marks_not_implemented_vs_incorrect() -> None:
+    score = FeatureScore(
+        feature="pivot_tables",
+        library="pyumya",
+        test_results=[
+            TestResult(
+                test_case_id="tc_ni",
+                operation=OperationType.READ,
+                passed=False,
+                expected={"x": 1},
+                actual={"error": "pivot tables not implemented"},
+                notes="Exception: NotImplementedError",
+            ),
+            TestResult(
+                test_case_id="tc_bad",
+                operation=OperationType.WRITE,
+                passed=False,
+                expected={"x": 1},
+                actual={"x": 0},
+            ),
+        ],
+    )
+    text = "\n".join(_render_per_test_table(score))
+    assert "🚫 NI" in text
+    assert "❌" in text
+    assert "Legend: ✅ pass · 🚫 NI (not implemented) · ❌ incorrect" in text
+
+
+def test_test_outcome_kind_prefers_not_implemented() -> None:
+    tr = TestResult(
+        test_case_id="tc",
+        operation=OperationType.READ,
+        passed=False,
+        expected={"x": 1},
+        actual={"error": "not implemented yet"},
+    )
+    assert _test_outcome_kind(tr) == "not_implemented"
+
+
+def test_test_outcome_kind_incorrect_default() -> None:
+    tr = TestResult(
+        test_case_id="tc",
+        operation=OperationType.READ,
+        passed=False,
+        expected={"x": 1},
+        actual={"x": 2},
+    )
+    assert _test_outcome_kind(tr) == "incorrect"
+
+
 # ─────────────────────────────────────────────────
 # render_markdown edge cases
 # ─────────────────────────────────────────────────
@@ -260,3 +327,63 @@ def test_render_markdown_write_only_lib_stats(tmp_path: Path) -> None:
     content = out.read_text()
     assert "xlsxwriter" in content
     assert "Write" in content
+
+
+def test_render_fidelity_deltas_none_previous() -> None:
+    results = _make_results(
+        scores=[
+            FeatureScore(
+                feature="cell_values",
+                library="openpyxl",
+                read_score=3,
+                write_score=3,
+            )
+        ]
+    )
+    lines = _render_fidelity_deltas(results, None)
+    assert "No previous run found for this profile." in "\n".join(lines)
+
+
+def test_render_fidelity_deltas_regression_and_improvement() -> None:
+    results = _make_results(
+        scores=[
+            FeatureScore(
+                feature="cell_values",
+                library="openpyxl",
+                read_score=2,
+                write_score=3,
+            )
+        ]
+    )
+    previous = {
+        "profile": "xlsx",
+        "scores": {
+            "openpyxl": {
+                "cell_values": {
+                    "read": 3,
+                    "write": 2,
+                }
+            }
+        },
+    }
+    text = "\n".join(_render_fidelity_deltas(results, previous))
+    assert "### Regressions" in text
+    assert "openpyxl · cell_values · read: 3 → 2" in text
+    assert "### Improvements" in text
+    assert "openpyxl · cell_values · write: 2 → 3" in text
+
+
+def test_load_previous_history_entry_filters_profile(tmp_path: Path) -> None:
+    history = tmp_path / "history.jsonl"
+    history.write_text(
+        "\n".join(
+            [
+                '{"profile":"xls","scores":{"a":{}}}',
+                '{"profile":"xlsx","scores":{"openpyxl":{"cell_values":{"read":3,"write":3}}}}',
+                '{"profile":"xlsx","scores":{"openpyxl":{"cell_values":{"read":2,"write":3}}}}',
+            ]
+        )
+    )
+    latest = _load_previous_history_entry(history, "xlsx")
+    assert latest is not None
+    assert latest["scores"]["openpyxl"]["cell_values"]["read"] == 2
