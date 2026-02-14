@@ -582,3 +582,73 @@ def test_perf_workload_bulk_write_works_for_pandas_and_tablib(tmp_path: Path) ->
         assert row.perf["read"] is None
         assert row.perf["write"] is not None
         assert row.perf["write"].op_count == 4
+
+
+def test_perf_workload_standardizes_size_and_phase_attribution(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+    for r in range(1, 41):
+        for c in range(1, 26):
+            ws.cell(row=r, column=c, value=r * 100 + c)
+
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb_path = suite / "tier0" / "00_cell_values_1k.xlsx"
+    wb.save(wb_path)
+
+    workload = {
+        "scenario": "cell_values_1k",
+        "op": "cell_value",
+        "sheet": "S1",
+        "range": "A1:Y40",
+        "start": 1,
+        "step": 1,
+    }
+
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            BenchFile(
+                path="tier0/00_cell_values_1k.xlsx",
+                feature="cell_values_1k",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    BenchCase(
+                        id="cell_values_1k",
+                        label="Throughput: 1k cells",
+                        row=1,
+                        expected={"workload": workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+
+    row = results.results[0]
+    assert row.workload_size == "small"
+
+    assert row.perf["read"] is not None
+    assert row.perf["write"] is not None
+    read_phase = row.perf["read"].phase_attribution_ms
+    write_phase = row.perf["write"].phase_attribution_ms
+    assert read_phase is not None and read_phase["parse"] > 0
+    assert write_phase is not None and write_phase["write"] > 0
+    assert write_phase["verify"] == 0.0

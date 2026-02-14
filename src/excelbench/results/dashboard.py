@@ -116,6 +116,8 @@ def _build_dashboard(
     lines.extend(_generate_insights(lib_stats, lib_throughput))
     lines.append("")
 
+    lines.extend(_best_adapter_by_workload_profile(perf))
+
     return lines
 
 
@@ -269,6 +271,58 @@ def _best_for(lib: str) -> str:
     }
     return recs.get(lib, "General use")
 
+
+
+def _best_adapter_by_workload_profile(perf: dict[str, Any] | None) -> list[str]:
+    if not perf:
+        return []
+
+    results = perf.get("results", [])
+    by_size: dict[str, dict[str, tuple[str, float]]] = {
+        "small": {},
+        "medium": {},
+        "large": {},
+    }
+
+    for entry in results:
+        size = str(entry.get("workload_size") or "small").strip().lower()
+        if size not in by_size:
+            continue
+        perf_entry = entry.get("perf")
+        if not isinstance(perf_entry, dict):
+            continue
+
+        for op in ("read", "write"):
+            rate = _extract_rate(perf_entry, op)
+            if rate is None:
+                continue
+            cur = by_size[size].get(op)
+            if cur is None or rate > cur[1]:
+                by_size[size][op] = (str(entry.get("library")), rate)
+
+    lines: list[str] = []
+    lines.append("## Best Adapter by Workload Profile")
+    lines.append("")
+    lines.append("| Workload Size | Best Read Adapter | Best Write Adapter |")
+    lines.append("|---------------|-------------------|--------------------|")
+
+    has_any = False
+    for size in ("small", "medium", "large"):
+        read = by_size[size].get("read")
+        write = by_size[size].get("write")
+        if read or write:
+            has_any = True
+        read_label = f"{read[0]} ({_fmt_rate(read[1])} cells/s)" if read else "—"
+        write_label = f"{write[0]} ({_fmt_rate(write[1])} cells/s)" if write else "—"
+        lines.append(f"| {size} | {read_label} | {write_label} |")
+
+    if not has_any:
+        lines.append("| small | — | — |")
+        lines.append("| medium | — | — |")
+        lines.append("| large | — | — |")
+
+    lines.append("")
+    return lines
 
 def _generate_insights(
     stats: dict[str, dict[str, Any]],

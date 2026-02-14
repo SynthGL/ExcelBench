@@ -80,4 +80,5 @@ def test_perf_command_writes_outputs(tmp_path: Path) -> None:
     assert data["metadata"]["profile"] == "xlsx"
     assert data["metadata"]["config"]["warmup"] == 0
     assert data["metadata"]["config"]["iters"] == 1
+    assert data["metadata"]["config"]["iteration_policy"] == "fixed"
     assert "openpyxl" in data["libraries"]

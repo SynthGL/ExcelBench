@@ -18,6 +18,7 @@ from typing import Any
 class PerfConfig:
     warmup: int
     iters: int
+    iteration_policy: str
     breakdown: bool
 
 
@@ -34,6 +35,7 @@ class PerfOpResult:
     cpu_ms: PerfStats
     rss_peak_mb: float | None = None
     breakdown_ms: dict[str, float] | None = None
+    phase_attribution_ms: dict[str, float] | None = None
     op_count: int | None = None
     op_unit: str | None = None
 
@@ -42,6 +44,7 @@ class PerfOpResult:
 class PerfFeatureResult:
     feature: str
     library: str
+    workload_size: str
     perf: dict[str, PerfOpResult | None]
     notes: str | None = None
 
@@ -76,6 +79,7 @@ def run_perf(
     profile: str = "xlsx",
     warmup: int = 3,
     iters: int = 25,
+    iteration_policy: str = "fixed",
     breakdown: bool = False,
 ) -> PerfResults:
     import platform as _platform
@@ -90,6 +94,9 @@ def run_perf(
 
     if warmup < 0 or iters <= 0:
         raise ValueError("warmup must be >= 0 and iters must be > 0")
+    iteration_policy_normalized = iteration_policy.strip().lower()
+    if iteration_policy_normalized != "fixed":
+        raise ValueError("iteration_policy must be 'fixed'")
 
     manifest = load_manifest(manifest_path)
 
@@ -111,7 +118,12 @@ def run_perf(
         profile=profile,
         python=_platform.python_version(),
         commit=_get_git_commit(),
-        config=PerfConfig(warmup=warmup, iters=iters, breakdown=breakdown),
+        config=PerfConfig(
+            warmup=warmup,
+            iters=iters,
+            iteration_policy=iteration_policy_normalized,
+            breakdown=breakdown,
+        ),
     )
 
     libraries = {a.name: _library_info_dict(a.info) for a in adapters}
@@ -177,6 +189,9 @@ def run_perf(
                 PerfFeatureResult(
                     feature=test_file.feature,
                     library=adapter.name,
+                    workload_size=_standardize_workload_size(
+                        test_file=test_file, workload=workload
+                    ),
                     perf={"read": read_res, "write": write_res},
                     notes="; ".join(notes_parts) if notes_parts else None,
                 )
@@ -206,6 +221,7 @@ def _feature_result_to_dict(r: PerfFeatureResult) -> dict[str, Any]:
     return {
         "feature": r.feature,
         "library": r.library,
+        "workload_size": r.workload_size,
         "perf": {
             "read": _op_result_to_dict(r.perf.get("read")),
             "write": _op_result_to_dict(r.perf.get("write")),
@@ -222,6 +238,7 @@ def _op_result_to_dict(op: PerfOpResult | None) -> dict[str, Any] | None:
         "cpu_ms": asdict(op.cpu_ms),
         "rss_peak_mb": op.rss_peak_mb,
         "breakdown_ms": op.breakdown_ms,
+        "phase_attribution_ms": op.phase_attribution_ms,
         "op_count": op.op_count,
         "op_unit": op.op_unit,
     }
@@ -278,6 +295,7 @@ def _bench_read(
     rss_samples: list[float] = []
 
     phase_samples: dict[str, list[float]] = {"open": [], "sheets": [], "exercise": [], "close": []}
+    attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     for i in range(warmup + iters):
         m = _measure_read_iteration(
@@ -295,6 +313,9 @@ def _bench_read(
         if breakdown and m.get("breakdown_ms"):
             for k, v in m["breakdown_ms"].items():
                 phase_samples.setdefault(k, []).append(float(v))
+        coarse = _phase_attribution_from_measurement(op_kind="read", measurement=m)
+        for k, v in coarse.items():
+            attribution_samples.setdefault(k, []).append(float(v))
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -305,6 +326,7 @@ def _bench_read(
         cpu_ms=_stats(cpu_samples),
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
+        phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
     )
 
 
@@ -324,6 +346,7 @@ def _bench_read_workload(
     cpu_samples: list[float] = []
     rss_samples: list[float] = []
     phase_samples: dict[str, list[float]] = {"open": [], "sheets": [], "exercise": [], "close": []}
+    attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     for i in range(warmup + iters):
         m = _measure_read_workload_iteration(
@@ -342,6 +365,9 @@ def _bench_read_workload(
         if breakdown and m.get("breakdown_ms"):
             for k, v in m["breakdown_ms"].items():
                 phase_samples.setdefault(k, []).append(float(v))
+        coarse = _phase_attribution_from_measurement(op_kind="read", measurement=m)
+        for k, v in coarse.items():
+            attribution_samples.setdefault(k, []).append(float(v))
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -352,6 +378,7 @@ def _bench_read_workload(
         cpu_ms=_stats(cpu_samples),
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
+        phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
         op_count=op_count,
         op_unit="cells",
     )
@@ -503,6 +530,7 @@ def _bench_write(
         "exercise": [],
         "save": [],
     }
+    attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     feature_stem = Path(test_file.feature).name or "feature"
     ext = adapter.output_extension
@@ -528,6 +556,9 @@ def _bench_write(
             if breakdown and m.get("breakdown_ms"):
                 for k, v in m["breakdown_ms"].items():
                     phase_samples.setdefault(k, []).append(float(v))
+            coarse = _phase_attribution_from_measurement(op_kind="write", measurement=m)
+            for k, v in coarse.items():
+                attribution_samples.setdefault(k, []).append(float(v))
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -538,6 +569,7 @@ def _bench_write(
         cpu_ms=_stats(cpu_samples),
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
+        phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
     )
 
 
@@ -568,6 +600,7 @@ def _bench_write_workload(
         "exercise": [],
         "save": [],
     }
+    attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     feature_stem = Path(str(workload.get("scenario") or "workload")).name
     ext = adapter.output_extension
@@ -594,6 +627,9 @@ def _bench_write_workload(
             if breakdown and m.get("breakdown_ms"):
                 for k, v in m["breakdown_ms"].items():
                     phase_samples.setdefault(k, []).append(float(v))
+            coarse = _phase_attribution_from_measurement(op_kind="write", measurement=m)
+            for k, v in coarse.items():
+                attribution_samples.setdefault(k, []).append(float(v))
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -604,6 +640,7 @@ def _bench_write_workload(
         cpu_ms=_stats(cpu_samples),
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
+        phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
         op_count=op_count,
         op_unit="cells",
     )
@@ -985,6 +1022,59 @@ def _workload_operations(workload: dict[str, Any] | None) -> set[str]:
             out.add(op_n)
     return out or {"read", "write"}
 
+
+
+def _phase_attribution_from_measurement(
+    *, op_kind: str, measurement: dict[str, Any]
+) -> dict[str, float]:
+    breakdown = measurement.get("breakdown_ms")
+    if isinstance(breakdown, dict) and breakdown:
+        if op_kind == "read":
+            parse = (
+                float(breakdown.get("open", 0.0))
+                + float(breakdown.get("sheets", 0.0))
+                + float(breakdown.get("exercise", 0.0))
+            )
+            return {
+                "parse": parse,
+                "write": 0.0,
+                "verify": float(breakdown.get("close", 0.0)),
+            }
+        if op_kind == "write":
+            write = (
+                float(breakdown.get("create", 0.0))
+                + float(breakdown.get("add_sheets", 0.0))
+                + float(breakdown.get("exercise", 0.0))
+                + float(breakdown.get("save", 0.0))
+            )
+            return {"parse": 0.0, "write": write, "verify": 0.0}
+
+    wall_ms = float(measurement.get("wall_ms", 0.0))
+    if op_kind == "read":
+        return {"parse": wall_ms, "write": 0.0, "verify": 0.0}
+    if op_kind == "write":
+        return {"parse": 0.0, "write": wall_ms, "verify": 0.0}
+    return {"parse": 0.0, "write": 0.0, "verify": 0.0}
+
+
+def _standardize_workload_size(*, test_file: Any, workload: dict[str, Any] | None) -> str:
+    if workload is not None:
+        try:
+            op_count = len(_cells_from_range(str(workload["range"])))
+        except (TypeError, ValueError, KeyError):
+            op_count = 0
+        return _size_from_count(op_count)
+
+    case_count = len(getattr(test_file, "test_cases", []) or [])
+    return _size_from_count(case_count)
+
+
+def _size_from_count(count: int) -> str:
+    if count <= 1_000:
+        return "small"
+    if count <= 10_000:
+        return "medium"
+    return "large"
 
 def _cells_from_range(range_str: str) -> list[str]:
     start, end = _split_range(range_str)

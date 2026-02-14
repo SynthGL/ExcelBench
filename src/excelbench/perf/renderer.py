@@ -82,6 +82,7 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
             "*Config: "
             f"warmup={cfg.get('warmup')} "
             f"iters={cfg.get('iters')} "
+            f"iteration_policy={cfg.get('iteration_policy', 'fixed')} "
             f"breakdown={cfg.get('breakdown')}*"
         )
     lines.append("")

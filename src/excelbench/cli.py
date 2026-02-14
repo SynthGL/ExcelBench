@@ -245,6 +245,11 @@ def perf(
         "--iters",
         help="Recorded iterations per (library, feature, operation).",
     ),
+    iteration_policy: str = typer.Option(
+        "fixed",
+        "--iteration-policy",
+        help="Repeat-run stabilization policy (currently: fixed).",
+    ),
     breakdown: bool = typer.Option(
         False,
         "--breakdown",
@@ -264,6 +269,9 @@ def perf(
 
     from excelbench.harness.adapters import get_all_adapters
     from excelbench.perf import render_perf_results, run_perf
+
+    if not isinstance(iteration_policy, str):
+        iteration_policy = "fixed"
 
     profile = profile.strip().lower()
     if profile not in {"xlsx", "xls"}:
@@ -294,6 +302,7 @@ def perf(
     console.print(f"  Output: {output_dir}/perf")
     console.print(f"  Warmup: {warmup}")
     console.print(f"  Iterations: {iters}")
+    console.print(f"  Iteration policy: {iteration_policy}")
     console.print(f"  Breakdown: {breakdown}")
     if adapters:
         console.print(f"  Adapters: {', '.join([a.name for a in selected])}")
@@ -307,6 +316,7 @@ def perf(
             profile=profile,
             warmup=warmup,
             iters=iters,
+            iteration_policy=iteration_policy,
             breakdown=breakdown,
         )
         render_perf_results(perf_results, output_dir)

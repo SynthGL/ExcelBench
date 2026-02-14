@@ -795,6 +795,7 @@ def _section_performance(perf: dict[str, Any] | None) -> str:
     rows.append(
         f'<div class="meta-bar">Warmup: {config.get("warmup", "?")} &middot; '
         f'Iterations: {config.get("iters", "?")} &middot; '
+        f'Iteration Policy: {_esc(config.get("iteration_policy", "fixed"))} &middot; '
         f'Breakdown: {"Yes" if config.get("breakdown") else "No"} &middot; '
         f'Platform: {_esc(meta.get("platform", "?"))} &middot; '
         f'Python: {_esc(meta.get("python", "?"))}</div>'
