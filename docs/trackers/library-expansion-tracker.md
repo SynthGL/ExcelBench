@@ -46,8 +46,8 @@ Quick links:
 | # | Library | Lang | Caps | Green | Status | Notes |
 |---|---------|------|------|-------|--------|-------|
 | 1 | calamine (rust) | rust | R | 1/18 | Built, not in CI | Cell values + sheet names only |
-| 2 | rust_xlsxwriter | rust | W | ~16/18 | Built, not in CI | Full formatting, no Tier 3 |
-| 3 | **pyumya** (umya-spreadsheet) | rust | R+W | **16/18** | **Tier A** | Full Tier 0-2 fidelity, Tier 3 returning not_found |
+| 2 | rust_xlsxwriter | rust | W | 8/18 | Built, not in CI | Formatting yes, no merged/CF/DV/hyperlinks/images/comments/freeze/T3 |
+| 3 | **pyumya** (umya-spreadsheet) | rust | R+W | **13R+15W/18** | **Tier A** | See pyumya notes below |
 
 ### Planned / Candidate
 
@@ -66,28 +66,48 @@ Quick links:
 
 ## Score Summary — xlsx profile
 
-Extracted from `results/xlsx/README.md` (02/08/2026 run, 12 adapters):
+Extracted from `results/xlsx/README.md` (02/14/2026 run, 14 adapters, 18 features):
 
 ```
-Feature              openpyxl  xlsxwriter  constmem  calamine  opxl-ro  pylightxl  pyexcel  xlwt  pandas  polars  tablib
-                     R  W      W           W         R         R        R  W        R  W     W     R  W    R       R  W
-cell_values          3  3      3           3         1         3        3  1        3  3     3     1  3    1       3  3
-formulas             3  3      3           3         0         3        0  3        0  3     0     0  3    0       0  3
-text_formatting      3  3      3           3         0         0        0  0        0  0     1     0  0    0       0  0
-background_colors    3  3      3           3         0         0        0  0        0  0     1     0  0    0       0  0
-number_formats       3  3      3           3         0         0        0  0        0  1     3     0  0    0       0  1
-alignment            3  3      3           3         1         1        0  1        1  1     3     1  1    1       1  1
-borders              3  3      3           3         0         0        0  0        0  0     1     0  0    0       0  0
-dimensions           3  3      3           1         0         0        0  0        0  0     1     0  0    0       0  0
-multiple_sheets      3  3      3           3         3         3        3  3        3  3     3     3  3    1       3  3
-merged_cells         3  3      3           3         0         0        0  0        0  0     0     0  0    0       0  0
-conditional_format   3  3      3           3         0         0        0  0        0  0     0     0  0    0       0  0
-data_validation      3  3      3           3         0         0        0  0        0  0     0     0  0    0       0  0
-hyperlinks           3  3      3           3         0         0        0  0        0  0     0     0  0    0       0  0
-images               3  3      3           0         0         0        0  0        0  0     0     0  0    0       0  0
-comments             3  3      3           0         0         0        0  0        0  0     0     0  0    0       0  0
-freeze_panes         3  3      3           3         0         0        0  0        0  0     0     0  0    0       0  0
+Feature              openpyxl  xlsxwriter  constmem  calamine  calamine(rs)  opxl-ro  pylightxl  pyexcel  xlwt  pandas  polars  tablib  umya       rust_xlsx
+                     R  W      W           W         R         R             R        R  W        R  W     W     R  W    R       R  W    R  W       W
+cell_values          3  3      3           3         1         1             3        3  1        3  3     3     1  3    1       3  3    3  3       1
+formulas             3  3      3           3         0         0             3        0  3        0  3     0     0  3    0       0  3    3  3       3
+text_formatting      3  3      3           3         0         0             0        0  0        0  0     1     0  0    0       0  0    3  3       3
+background_colors    3  3      3           3         0         0             0        0  0        0  0     1     0  0    0       0  0    3  3       3
+number_formats       3  3      3           3         0         0             0        0  0        0  1     3     0  0    0       0  1    3  3       3
+alignment            3  3      3           3         1         1             1        0  1        1  1     3     1  1    1       1  1    1  1       3
+borders              3  3      3           3         0         0             0        0  0        0  0     1     0  0    0       0  0    3  3       3
+dimensions           3  3      3           1         0         0             0        0  0        0  0     1     0  0    0       0  0    1  3       3
+multiple_sheets      3  3      3           3         3         3             3        3  3        3  3     3     3  3    1       3  3    3  3       3
+merged_cells         3  3      3           3         0         0             0        0  0        0  0     0     0  0    0       0  0    3  3       0
+conditional_format   3  3      3           3         0         0             0        0  0        0  0     0     0  0    0       0  0    3  0       0
+data_validation      3  3      3           3         0         0             0        0  0        0  0     0     0  0    0       0  0    3  3       0
+hyperlinks           3  3      3           3         0         0             0        0  0        0  0     0     0  0    0       0  0    0  0       0
+images               3  3      3           0         0         0             0        0  0        0  0     0     0  0    0       0  0    0  3       0
+comments             3  3      3           0         0         0             0        0  0        0  0     0     0  0    0       0  0    3  3       0
+freeze_panes         3  3      3           3         0         0             0        0  0        0  0     0     0  0    0       0  0    3  3       0
+named_ranges         3  3      —           —         0         0             0        0  0        0  0     0     0  0    0       0  0    3  3       0
+tables               3  3      —           —         0         0             0        0  0        0  0     0     0  0    0       0  0    2  3       0
 ```
+
+## pyumya Notes (umya-spreadsheet 2.3.3)
+
+**Current scores (02/14/2026):** Read 13/18 green (43pts), Write 15/18 green (46pts)
+
+**Non-green features and root causes:**
+
+| Feature | Read | Write | Root Cause | Fixable? |
+|---------|------|-------|------------|----------|
+| alignment | 1 | 1 | umya's `Alignment` struct has no `indent` field | No — upstream limitation |
+| conditional_formatting | 3 | 0 | Write path not implemented in adapter | Possible — needs investigation |
+| dimensions | 1 | 3 | Read path returns approximate dimensions | Possible — needs investigation |
+| hyperlinks | 0 | 0 | umya's XLSX reader never parses `tooltip` attribute from `<hyperlink>` XML | No — upstream bug |
+| images | 0 | 3 | Read path returns `None` for image data/path | No — upstream limitation |
+| tables | 2 | 3 | Read path returns partial table metadata | Possible — needs investigation |
+
+**Fixed in this session:**
+- **borders** (R:1→3, W:1→3): Diagonal border direction flags (`diagonal_up`/`diagonal_down`) were not being read or set. Fixed by checking `borders.get_diagonal_up()` / `borders.get_diagonal_down()` on read and calling `borders.set_diagonal_up(true)` / `borders.set_diagonal_down(true)` on write.
 
 ## Abstraction Cost Analysis
 
@@ -169,6 +189,18 @@ All four wrap openpyxl or calamine internally. Key differences:
   - tablib: 10/48 R + 12/48 W, 2/16 green R + 3/16 green W (matches pyexcel)
 - Key findings: See Abstraction Cost Analysis section above
 - Total adapters: 12 Python xlsx + 2 xls + 3 Rust/PyO3 = 17
+
+### 02/14/2026 — Fresh benchmark + pyumya border fix
+- Ran full fidelity benchmark (xlsx + xls profiles, 14 adapters, 18 features)
+- Ran performance benchmark with phase breakdown
+- Regenerated all visualizations: report, heatmap, dashboard, scatter, html
+- Committed: `aba3822 chore: refresh fidelity + performance benchmarks and regenerate dashboard`
+- Investigated pyumya regressions: alignment indent (upstream), hyperlinks tooltip (upstream), images read (upstream), borders diagonal (fixable)
+- Fixed borders.rs: diagonal direction flags (`diagonal_up`/`diagonal_down`) not being read/set
+- Committed: `28135d2 fix(pyumya): implement diagonal border direction flags for read and write`
+- Re-ran full benchmark with border fix
+- pyumya scores after fix: R:13/18 green (43pts), W:15/18 green (46pts) — borders R:1→3, W:1→3
+- Total: 1155 tests passed, 0 regressions
 
 ### 02/13/2026 — CI fixes + pyo3 bump + Tier 3 scoring
 - Fixed all 31 mypy strict-mode errors across 5 Python files
