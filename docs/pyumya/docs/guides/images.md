@@ -10,37 +10,32 @@ from excelbench_rust import UmyaBook
 book = UmyaBook.open("report.xlsx")
 images = book.read_images("Sheet1")
 for img in images:
-    print(f"Cell {img['cell']}: {img['format']} ({len(img['data'])} bytes)")
-# Cell A1: png (24576 bytes)
+    print(f"Image at {img['cell']}: anchor={img['anchor']}, offset={img['offset']}")
+# Image at A1: anchor=oneCell, offset=[0, 0]
 ```
 
 ## Writing Images
 
 ```python
-from pathlib import Path
 from excelbench_rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Report")
 
-# Embed an image from file
-book.add_image("Report", "B2", {
-    "data": Path("logo.png").read_bytes(),
-    "format": "png",
+# Embed an image by file path
+book.add_image("Report", {
+    "path": "logo.png",
+    "cell": "B2",
 })
 
 book.save("output.xlsx")
 ```
 
-## Supported Formats
+## Formats
 
-| Format | Extension | Read | Write |
-|--------|-----------|:----:|:-----:|
-| PNG | `.png` | Yes | Yes |
-| JPEG | `.jpg`, `.jpeg` | Yes | Yes |
-| GIF | `.gif` | Yes | Yes |
-| BMP | `.bmp` | Yes | Yes |
-| EMF | `.emf` | Yes | Yes |
+The Python API currently exposes image **anchors** (positioning) but does not
+expose image bytes or a detected format on read. For writes, provide a file
+path (e.g. PNG/JPEG).
 
 ## Image Positioning
 

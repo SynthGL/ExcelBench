@@ -18,11 +18,14 @@ for c in comments:
 ## Writing Comments
 
 ```python
+from excelbench_rust import UmyaBook
+
 book = UmyaBook()
 book.add_sheet("Data")
 
 book.write_cell_value("Data", "A1", {"type": "number", "value": 42.0})
-book.add_comment("Data", "A1", {
+book.add_comment("Data", {
+    "cell": "A1",
     "text": "This value needs verification",
     "author": "Reviewer",
 })

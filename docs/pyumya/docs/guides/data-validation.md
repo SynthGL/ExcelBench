@@ -10,56 +10,48 @@ from excelbench_rust import UmyaBook
 book = UmyaBook.open("form.xlsx")
 validations = book.read_data_validations("Sheet1")
 for v in validations:
-    print(f"{v['ranges']}: {v['type']} — {v.get('formula1', '')}")
-# ['B2:B100']: list — "Option A,Option B,Option C"
-# ['C2:C100']: whole — 1
+    print(f"{v['range']}: {v['validation_type']} — {v.get('formula1')}")
+# B2:B100: list — Option A,Option B,Option C
+# C2:C100: whole — 1
 ```
 
 ## Writing Validations
 
-### Dropdown List
-
 ```python
+from excelbench_rust import UmyaBook
+
 book = UmyaBook()
 book.add_sheet("Form")
 
-# Create a dropdown list
 book.add_data_validation("Form", {
-    "ranges": ["B2:B100"],
-    "type": "list",
+    "range": "B2:B100",
+    "validation_type": "list",
     "formula1": "Option A,Option B,Option C",
-    "show_dropdown": True,
+    "allow_blank": True,
 })
 
-book.save("output.xlsx")
-```
-
-### Numeric Constraints
-
-```python
 # Whole number between 1 and 100
 book.add_data_validation("Form", {
-    "ranges": ["C2:C50"],
-    "type": "whole",
+    "range": "C2:C50",
+    "validation_type": "whole",
     "operator": "between",
     "formula1": "1",
     "formula2": "100",
     "error_title": "Invalid Input",
-    "error_message": "Enter a number between 1 and 100",
+    "error": "Enter a number between 1 and 100",
+    "show_error": True,
 })
-```
 
-### Date Range
-
-```python
 # Dates in 2026 only
 book.add_data_validation("Form", {
-    "ranges": ["D2:D50"],
-    "type": "date",
+    "range": "D2:D50",
+    "validation_type": "date",
     "operator": "between",
     "formula1": "2026-01-01",
     "formula2": "2026-12-31",
 })
+
+book.save("output.xlsx")
 ```
 
 ## Validation Types

@@ -65,8 +65,6 @@ extra:
 
 nav:
   - Home: index.md
-  - Getting Started:
-      - Installation: index.md
   - Guides:
       - Merged Cells: guides/merged-cells.md
       - Comments: guides/comments.md

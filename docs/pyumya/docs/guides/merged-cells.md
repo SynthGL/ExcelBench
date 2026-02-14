@@ -1,6 +1,6 @@
 # Merged Cells
 
-Merge and unmerge cell ranges in Excel workbooks.
+Merge cell ranges in Excel workbooks.
 
 ## Reading Merged Ranges
 
@@ -8,7 +8,7 @@ Merge and unmerge cell ranges in Excel workbooks.
 from excelbench_rust import UmyaBook
 
 book = UmyaBook.open("report.xlsx")
-merged = book.read_merged_cells("Sheet1")
+merged = book.read_merged_ranges("Sheet1")
 print(merged)  # ["A1:D1", "B3:B5"]
 ```
 
@@ -40,3 +40,8 @@ book.save("output.xlsx")
 - Merging a range that overlaps an existing merge will raise an error in Excel
 - Single-cell "merges" (e.g., `"A1:A1"`) are valid but have no visual effect
 - Merged cells with borders apply the border to the entire merged region
+
+!!! note "Unmerge"
+    Unmerging is not currently exposed in the Python API. If you need it, open
+    an issue and include the exact Excel behavior you want (preserve top-left
+    value, how to handle formatting, etc.).

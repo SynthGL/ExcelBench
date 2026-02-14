@@ -18,26 +18,31 @@ for link in links:
 ## Writing Hyperlinks
 
 ```python
+from excelbench_rust import UmyaBook
+
 book = UmyaBook()
 book.add_sheet("Links")
 
 # Web URL
-book.write_cell_value("Links", "A1", {"type": "string", "value": "Visit Example"})
-book.add_hyperlink("Links", "A1", {
+book.add_hyperlink("Links", {
+    "cell": "A1",
     "target": "https://example.com",
     "display": "Visit Example",
 })
 
 # Email link
-book.add_hyperlink("Links", "A2", {
+book.add_hyperlink("Links", {
+    "cell": "A2",
     "target": "mailto:support@example.com",
     "display": "Email Support",
 })
 
 # Internal reference (another sheet)
-book.add_hyperlink("Links", "A3", {
+book.add_hyperlink("Links", {
+    "cell": "A3",
     "target": "#Summary!A1",
     "display": "Go to Summary",
+    "internal": True,
 })
 
 book.save("output.xlsx")
