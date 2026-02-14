@@ -9,14 +9,14 @@ def _extract_rust_umya_methods() -> set[str]:
     methods: set[str] = set()
     for path in sorted(umya_dir.glob("*.rs")):
         txt = path.read_text(encoding="utf-8")
-        for m in re.finditer(r"(?m)^\\s*pub\\s+fn\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*\\(", txt):
+        for m in re.finditer(r"(?m)^\s*pub\s+fn\s+([A-Za-z_][A-Za-z0-9_]*)\s*\(", txt):
             methods.add(m.group(1))
     return methods
 
 
 def _iter_python_code_blocks(md_text: str) -> list[str]:
     blocks: list[str] = []
-    for m in re.finditer(r"```(?:python)?\\s*\\n(.*?)\\n```", md_text, flags=re.DOTALL):
+    for m in re.finditer(r"```(?:python)?\s*\n(.*?)\n```", md_text, flags=re.DOTALL):
         code = m.group(1)
         if "UmyaBook" in code:
             blocks.append(code)
@@ -37,21 +37,21 @@ def test_pyumya_docs_only_reference_existing_umya_methods() -> None:
         for code in _iter_python_code_blocks(md):
             # Find variables that are UmyaBook instances.
             vars_: set[str] = set()
-            vars_.update(re.findall(r"(?m)^\\s*(\\w+)\\s*=\\s*UmyaBook\\s*\\(", code))
-            vars_.update(re.findall(r"(?m)^\\s*(\\w+)\\s*=\\s*UmyaBook\\.open\\s*\\(", code))
+            vars_.update(re.findall(r"(?m)^\s*(\w+)\s*=\s*UmyaBook\s*\(", code))
+            vars_.update(re.findall(r"(?m)^\s*(\w+)\s*=\s*UmyaBook\.open\s*\(", code))
 
             # Also treat `book` as a conventional instance name if present.
-            if re.search(r"\\bbook\\s*\\.", code):
+            if re.search(r"\bbook\s*\.", code):
                 vars_.add("book")
 
             for var in vars_:
                 for meth in re.findall(
-                    rf"\\b{re.escape(var)}\\.([A-Za-z_][A-Za-z0-9_]*)\\s*\\(",
+                    rf"\b{re.escape(var)}\.([A-Za-z_][A-Za-z0-9_]*)\s*\(",
                     code,
                 ):
                     referenced.add(meth)
 
-            for meth in re.findall(r"\\bUmyaBook\\.([A-Za-z_][A-Za-z0-9_]*)\\s*\\(", code):
+            for meth in re.findall(r"\bUmyaBook\.([A-Za-z_][A-Za-z0-9_]*)\s*\(", code):
                 referenced.add(meth)
 
         missing = {m for m in referenced if m not in rust_methods and m != "__init__"}
@@ -59,4 +59,3 @@ def test_pyumya_docs_only_reference_existing_umya_methods() -> None:
             offenders[str(md_path)] = missing
 
     assert not offenders, f"Docs reference missing UmyaBook methods: {offenders}"
-

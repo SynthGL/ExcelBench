@@ -70,7 +70,7 @@ def test_excelbench_rust_smoke(tmp_path: Path) -> None:
     assert any(c.get("cell") == "A1" for c in comments)
 
     links = reopened.read_hyperlinks("Data")
-    assert any(l.get("target") == "https://example.com" for l in links)
+    assert any(link.get("target") == "https://example.com" for link in links)
 
     dvs = reopened.read_data_validations("Data")
     assert any(d.get("validation_type") == "list" for d in dvs)
@@ -80,4 +80,3 @@ def test_excelbench_rust_smoke(tmp_path: Path) -> None:
 
     imgs = reopened.read_images("Data")
     assert any(i.get("cell") == "C3" for i in imgs if i.get("cell"))
-
