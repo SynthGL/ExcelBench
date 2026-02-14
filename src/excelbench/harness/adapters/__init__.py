@@ -32,6 +32,15 @@ else:
     RustCalamineAdapter = _RustCalamineAdapter
 
 try:
+    from excelbench.harness.adapters.rust_calamine_styled_adapter import (
+        RustCalamineStyledAdapter as _RustCalamineStyledAdapter,
+    )
+except ImportError:
+    RustCalamineStyledAdapter: AdapterClass | None = None
+else:
+    RustCalamineStyledAdapter = _RustCalamineStyledAdapter
+
+try:
     from excelbench.harness.adapters.rust_xlsxwriter_adapter import (
         RustXlsxWriterAdapter as _RustXlsxWriterAdapter,
     )
@@ -137,6 +146,8 @@ if CalamineAdapter is not None:
     __all__.append("CalamineAdapter")
 if RustCalamineAdapter is not None:
     __all__.append("RustCalamineAdapter")
+if RustCalamineStyledAdapter is not None:
+    __all__.append("RustCalamineStyledAdapter")
 if RustXlsxWriterAdapter is not None:
     __all__.append("RustXlsxWriterAdapter")
 if UmyaAdapter is not None:
@@ -172,6 +183,8 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(CalamineAdapter())
     if RustCalamineAdapter is not None:
         adapters.append(RustCalamineAdapter())
+    if RustCalamineStyledAdapter is not None:
+        adapters.append(RustCalamineStyledAdapter())
     if RustXlsxWriterAdapter is not None:
         adapters.append(RustXlsxWriterAdapter())
     if UmyaAdapter is not None:
