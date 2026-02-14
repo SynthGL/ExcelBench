@@ -50,8 +50,8 @@ impl UmyaBook {
 
             let d = PyDict::new_bound(py);
             d.set_item("type", "formula")?;
-            d.set_item("formula", formula.to_string())?;
-            d.set_item("value", formula.to_string())?;
+            d.set_item("formula", &norm)?;
+            d.set_item("value", &norm)?;
             return Ok(d.into());
         }
 

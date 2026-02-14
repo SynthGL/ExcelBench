@@ -20,7 +20,7 @@ xlsxwriter,formulas,,3
 python-calamine,formulas,0,
 calamine,formulas,0,
 rust_xlsxwriter,formulas,,3
-umya-spreadsheet,formulas,0,3
+umya-spreadsheet,formulas,3,3
 pyumya,formulas,3,3
 pylightxl,formulas,0,3
 xlrd,formulas,,

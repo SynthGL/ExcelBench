@@ -1,9 +1,13 @@
 library,feature,read_score,write_score
 python-calamine,cell_values,3,
+calamine,cell_values,1,
 xlrd,cell_values,3,
 python-calamine,alignment,1,
+calamine,alignment,1,
 xlrd,alignment,3,
 python-calamine,dimensions,0,
+calamine,dimensions,0,
 xlrd,dimensions,3,
 python-calamine,multiple_sheets,3,
+calamine,multiple_sheets,1,
 xlrd,multiple_sheets,3,

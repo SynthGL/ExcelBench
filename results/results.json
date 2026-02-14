@@ -1,7 +1,7 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-13T21:47:23.516992+00:00",
+    "run_date": "2026-02-14T00:03:00.579922+00:00",
     "excel_version": "16.105.3",
     "platform": "Darwin-arm64",
     "profile": "xlsx"
@@ -7475,37 +7475,23 @@
       "feature": "formulas",
       "library": "umya-spreadsheet",
       "scores": {
-        "read": 0,
+        "read": 3,
         "write": 3
       },
       "test_cases": {
         "formula_sum": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "type": "formula",
               "formula": "=SUM(1,2,3)"
             },
             "actual": {
               "type": "formula",
-              "formula": "SUM(1,2,3)"
+              "formula": "=SUM(1,2,3)"
             },
             "notes": null,
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "formulas",
-                  "operation": "read",
-                  "test_case_id": "formula_sum",
-                  "sheet": "formulas",
-                  "cell": "B2"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'type': 'formula', 'formula': '=SUM(1,2,3)'}, actual={'type': 'formula', 'formula': 'SUM(1,2,3)'}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
+            "diagnostics": [],
             "importance": "basic",
             "label": "Formula - SUM"
           },
@@ -7527,31 +7513,17 @@
         },
         "formula_cell_ref": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "type": "formula",
               "formula": "=A3*2"
             },
             "actual": {
               "type": "formula",
-              "formula": "A3*2"
+              "formula": "=A3*2"
             },
             "notes": null,
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "formulas",
-                  "operation": "read",
-                  "test_case_id": "formula_cell_ref",
-                  "sheet": "formulas",
-                  "cell": "B3"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'type': 'formula', 'formula': '=A3*2'}, actual={'type': 'formula', 'formula': 'A3*2'}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
+            "diagnostics": [],
             "importance": "basic",
             "label": "Formula - cell reference"
           },
@@ -7573,31 +7545,17 @@
         },
         "formula_concat": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "type": "formula",
               "formula": "=A4&\" \"&A5"
             },
             "actual": {
               "type": "formula",
-              "formula": "A4&\" \"&A5"
+              "formula": "=A4&\" \"&A5"
             },
             "notes": null,
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "formulas",
-                  "operation": "read",
-                  "test_case_id": "formula_concat",
-                  "sheet": "formulas",
-                  "cell": "B4"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'type': 'formula', 'formula': '=A4&\" \"&A5'}, actual={'type': 'formula', 'formula': 'A4&\" \"&A5'}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
+            "diagnostics": [],
             "importance": "basic",
             "label": "Formula - concat"
           },
@@ -7619,31 +7577,17 @@
         },
         "formula_cross_sheet": {
           "read": {
-            "passed": false,
+            "passed": true,
             "expected": {
               "type": "formula",
               "formula": "='References'!B2"
             },
             "actual": {
               "type": "formula",
-              "formula": "References!B2"
+              "formula": "='References'!B2"
             },
             "notes": null,
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "formulas",
-                  "operation": "read",
-                  "test_case_id": "formula_cross_sheet",
-                  "sheet": "formulas",
-                  "cell": "B5"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'type': 'formula', 'formula': \"='References'!B2\"}, actual={'type': 'formula', 'formula': 'References!B2'}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
+            "diagnostics": [],
             "importance": "basic",
             "label": "Formula - cross sheet"
           },

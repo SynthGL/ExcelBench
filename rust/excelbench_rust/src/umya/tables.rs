@@ -71,10 +71,16 @@ impl UmyaBook {
             }
             d.set_item("columns", cols)?;
 
-            // AutoFilter: umya Table doesn't expose autoFilter directly,
-            // but tables typically have autoFilter by default.
-            // We report false since we can't confirm it from the API.
-            d.set_item("autofilter", false)?;
+            // AutoFilter: umya Table doesn't expose table-level autoFilter,
+            // so we check if the worksheet has an autoFilter whose range matches this table.
+            let has_af = ws.get_auto_filter()
+                .map(|af| {
+                    let af_range = af.get_range().get_range().replace('$', "");
+                    let table_ref = area_to_ref(table);
+                    af_range == table_ref
+                })
+                .unwrap_or(false);
+            d.set_item("autofilter", has_af)?;
 
             result.append(d)?;
         }
@@ -154,6 +160,14 @@ impl UmyaBook {
             .ok_or_else(|| PyErr::new::<PyValueError, _>(format!("Unknown sheet: {sheet}")))?;
 
         ws.add_table(table);
+
+        // If autofilter is requested, set worksheet-level auto filter on the table range.
+        let autofilter: Option<bool> = cfg
+            .get_item("autofilter")?
+            .and_then(|v| v.extract::<bool>().ok());
+        if autofilter == Some(true) {
+            ws.set_auto_filter(&ref_str);
+        }
 
         Ok(())
     }

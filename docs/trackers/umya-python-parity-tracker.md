@@ -69,7 +69,7 @@ Split the 795-line monolith before adding ~510 LOC of Phase 1 features. Avoids
 | Conditional formatting | 6+ | 2 | 33% | Partial |
 | Data validation | 6+ | 2 | 33% | Partial |
 | Formulas (named/array) | 6+ | 3 (basic + named ranges) | ~45% | Partial |
-| Auto filters | 4+ | 0 | 0% | Missing |
+| Auto filters | 4+ | 4 | 100% | Done |
 | Tables (ListObjects) | 8+ | 2 | 25% | Partial |
 | Pivot tables | 4+ | 0 | 0% | Missing |
 | Rich text | 6+ | 0 | 0% | Missing |
@@ -84,7 +84,7 @@ Split the 795-line monolith before adding ~510 LOC of Phase 1 features. Avoids
 | Workbook views | 3+ | 0 | 0% | Missing |
 | **Documentation** | 15 guide pages | 3 | 17% | Skeleton |
 
-**Overall API coverage: ~23%** (33 of ~150+ functions)
+**Overall API coverage: ~25%** (37 of ~150+ functions)
 
 ---
 
@@ -218,9 +218,11 @@ These fill out the "power user" API surface that the Elixir wrapper provides.
 |------|--------|
 | **Elixir module** | `auto_filter_functions.ex` |
 | **Elixir functions** | `set_auto_filter/3`, `remove_auto_filter/2`, `get_auto_filter/2`, `has_auto_filter/2` |
-| **umya-spreadsheet API** | `worksheet.get_auto_filter()`, `AutoFilter::new()` |
-| **Rust effort** | ~40 LOC |
-| **Status** | [ ] Not started |
+| **umya-spreadsheet API** | `worksheet.get_auto_filter()`, `ws.set_auto_filter()`, `ws.remove_auto_filter()` |
+| **Rust module** | `umya/auto_filter.rs` (~53 LOC) |
+| **Python methods** | `get_auto_filter()`, `set_auto_filter()`, `remove_auto_filter()`, `has_auto_filter()` |
+| **Key insight** | Worksheet-level auto filter only — umya Table struct doesn't expose table-level autoFilter. Tables write path sets worksheet AF as heuristic. |
+| **Status** | [x] Done |
 
 ### 1.4 Rich Text R/W
 
@@ -264,7 +266,7 @@ These fill out the "power user" API surface that the Elixir wrapper provides.
 | **Note** | Elixir docs flag this as "basic support only" |
 | **Status** | [ ] Not started |
 
-**Tier 1 progress: 2/7 done (~297 LOC shipped), ~373 LOC remaining**
+**Tier 1 progress: 3/7 done (~350 LOC shipped), ~320 LOC remaining**
 
 ---
 
@@ -545,7 +547,7 @@ Every public function must have:
 | **TD** | Documentation (18 guides + 4 ref + infra) | N/A (prose) | P1 — parallel |
 | **Total** | | ~1,950 LOC | |
 
-Current: ~1,600 LOC (795 base + ~510 T0 + ~297 T1) → Target: ~2,750 LOC (1.7x remaining growth) + docs + packaging
+Current: ~1,650 LOC (795 base + ~510 T0 + ~350 T1) → Target: ~2,750 LOC (1.7x remaining growth) + docs + packaging
 
 ---
 
@@ -568,7 +570,7 @@ Each feature → new `.rs` file in `umya/` + adapter wiring + guide page in docs
 
 ### Phase 2: Power Features (T1)
 1. [x] 1.1 Named ranges (~137 LOC) → `umya/named_ranges.rs` — Score: R3/W3
-2. [ ] 1.3 Auto filters (~40 LOC) → `umya/auto_filter.rs`
+2. [x] 1.3 Auto filters (~53 LOC) → `umya/auto_filter.rs` — Worksheet-level AF + table AF heuristic
 3. [ ] 1.5 Array formulas (~20 LOC) → extend `umya/cell_values.rs`
 4. [ ] 1.4 Rich text (~100 LOC) → `umya/rich_text.rs`
 5. [x] 1.2 Tables (~160 LOC) → `umya/tables.rs` — Score: R2/W3
@@ -651,6 +653,15 @@ Each feature → new `.rs` file in `umya/` + adapter wiring + guide page in docs
 - **Committed**: `8c63fbb` (Phase 1) + `c1e87cc` (Phase 2) — pushed to origin
 - **Tests**: 1134 passed, 0 failed
 - Next: Auto filters (1.3), array formulas (1.5), or standalone pyumya extraction planning
+
+### 02/13/2026 04:05 PM PST
+- **Formula read fix**: `cell_values.rs` lines 53-54 — returned raw `formula` instead of `norm` (normalized with `=` prefix). Two-line fix: `formula.to_string()` → `&norm`. Score: formulas read 0 → 3.
+- **Auto filter module created**: `umya/auto_filter.rs` (~53 LOC) — 4 methods: `get_auto_filter`, `set_auto_filter`, `remove_auto_filter`, `has_auto_filter`. Matches Elixir parity (1.3).
+- **Table autofilter heuristic**: Read path now checks worksheet autoFilter range overlap. Write path sets worksheet-level autoFilter when `autofilter: true`. Tables read score stays at 2 (upstream limitation: table-level autoFilter not in umya's Table struct).
+- **Key learning**: `AutoFilter::get_range()` returns `&Range`, then `Range::get_range()` returns `String` — `Range` doesn't implement `Display`.
+- **Tests**: 1134 passed, 0 failed
+- **Benchmark**: formulas R3/W3, named_ranges R3/W3, tables R2/W3
+- Next: Rich text (1.4), array formulas (1.5), or standalone pyumya extraction
 
 ### 02/13/2026 ~05:00 AM PST
 - **Phase 1 COMPLETE**: All 7 T0 features implemented end-to-end

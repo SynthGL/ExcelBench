@@ -17,6 +17,7 @@ mod hyperlinks;
 mod images;
 mod merged_cells;
 mod named_ranges;
+mod auto_filter;
 mod tables;
 mod util;
 
