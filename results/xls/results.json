@@ -1,7 +1,7 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-14T00:04:47.445967+00:00",
+    "run_date": "2026-02-14T14:02:55.898039+00:00",
     "excel_version": "xlwt",
     "platform": "Darwin-arm64",
     "profile": "xls"
@@ -601,7 +601,7 @@
               "type": "string",
               "value": "#DIV/0!"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -632,7 +632,7 @@
               "type": "string",
               "value": "#N/A"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -663,7 +663,7 @@
               "type": "string",
               "value": "#VALUE!"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1032,7 +1032,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1062,7 +1062,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1092,7 +1092,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1122,7 +1122,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1152,7 +1152,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1198,7 +1198,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1228,7 +1228,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1258,7 +1258,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1299,7 +1299,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1329,7 +1329,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1359,7 +1359,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1389,7 +1389,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1419,7 +1419,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1465,7 +1465,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1495,7 +1495,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1525,7 +1525,7 @@
               "h_align": "general",
               "v_align": "bottom"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1723,7 +1723,7 @@
             "actual": {
               "row_height": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1752,7 +1752,7 @@
             "actual": {
               "row_height": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1781,7 +1781,7 @@
             "actual": {
               "column_width": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1810,7 +1810,7 @@
             "actual": {
               "column_width": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1850,7 +1850,7 @@
             "actual": {
               "row_height": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1879,7 +1879,7 @@
             "actual": {
               "row_height": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1908,7 +1908,7 @@
             "actual": {
               "column_width": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -1937,7 +1937,7 @@
             "actual": {
               "column_width": null
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
@@ -2157,7 +2157,7 @@
             "actual": {
               "type": "blank"
             },
-            "notes": null,
+            "notes": "Incorrect result",
             "diagnostics": [
               {
                 "category": "data_mismatch",
