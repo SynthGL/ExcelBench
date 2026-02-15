@@ -702,6 +702,12 @@ def html_dashboard(
         "--scatter-dir",
         help="Directory with scatter/heatmap SVGs to embed.",
     ),
+    memory_path: Path = typer.Option(
+        Path("results/perf/memory_profile.json"),
+        "--memory",
+        "-m",
+        help="Path to memory_profile.json.",
+    ),
 ) -> None:
     """Generate a single-file interactive HTML dashboard with all results."""
     from excelbench.results.html_dashboard import render_html_dashboard
@@ -711,7 +717,9 @@ def html_dashboard(
     try:
         perf = perf_path if perf_path.exists() else None
         sdir = scatter_dir if scatter_dir.exists() else None
-        render_html_dashboard(fidelity_path, perf, output_path, sdir)
+        mem = (memory_path if isinstance(memory_path, Path) and memory_path.exists()
+               else None)
+        render_html_dashboard(fidelity_path, perf, output_path, sdir, memory_json=mem)
         console.print(f"  [green]✓[/green] {output_path}")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
