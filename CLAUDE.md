@@ -91,8 +91,10 @@ src/excelbench/
 
 rust/excelbench_rust/       # Separate PyO3 crate (not part of hatchling build)
   src/lib.rs                # Module entry + build_info()
-  src/calamine_backend.rs   # calamine read bindings
-  src/rust_xlsxwriter_backend.rs  # rust_xlsxwriter write bindings
+  src/calamine_backend.rs   # calamine read bindings (basic, no styles)
+  src/calamine_styled_backend.rs  # calamine-styled read bindings (full fidelity + OOXML T2/T3)
+  src/rust_xlsxwriter_backend.rs  # rust_xlsxwriter write bindings (full fidelity + T2/T3)
+  src/ooxml_util.rs         # Shared zip/XML helpers for OOXML parsing
   src/umya_backend.rs       # umya-spreadsheet R+W bindings
 
 fixtures/
@@ -148,11 +150,14 @@ tests/                      # pytest + pytest-cov
 ## Current State (as of 2026-02-14)
 
 - **Fidelity**: Tier 0 (3) + Tier 1 (6) + Tier 2 (7 + pivot_tables=0) + Tier 3 (2) = 18 scored features
-- **Adapters**: 12 Python xlsx + 2 xls + 3 Rust/PyO3 (pyumya R:13/W:15 green out of 18) = 17 total
+- **Adapters**: 12 Python xlsx + 2 xls + 5 Rust/PyO3 = 19 total
+- **pycalumya** (hybrid): calamine read + rust_xlsxwriter write → R:17/18 + W:17/18 green (S- tier)
+  - calamine-styled: R:17/18 green (borders=1 diagonal, images=0)
+  - rust_xlsxwriter: W:17/18 green (images=0)
+  - pyumya: R:13/W:15 green (alignment indent, hyperlinks tooltip, images read = upstream)
 - **Performance**: Runner + renderer + throughput dashboard operational
 - **Visualizations**: Heatmap (PNG/SVG), combined fidelity+perf dashboard, tier list, scatter plots
-- **Rust adapters**: Built locally via maturin; pyo3 0.24; pyumya remaining gaps: alignment indent (upstream), hyperlinks tooltip (upstream), images read (upstream), conditional_formatting write, dimensions read, tables read
-- **Tier 3 features**: named_ranges + tables scored — openpyxl 18/18, pyumya named_ranges 3/3 R+W, tables 2R/3W
+- **Rust adapters**: Built locally via maturin; pyo3 0.24; calamine fork at wolfiesch/calamine#styles
 - **CLI commands**: generate, generate-xls, benchmark, benchmark-profiles, perf, report, heatmap, dashboard, html, scatter
 - **CI/CD**: GitHub Actions CI (lint/test/benchmark on all pushes) + deploy-dashboard (auto-deploys HTML to Vercel on results/generator changes)
 
