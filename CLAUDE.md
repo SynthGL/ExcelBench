@@ -155,7 +155,12 @@ tests/                      # pytest + pytest-cov
   - calamine-styled: R:17/18 green (borders=1 diagonal, images=0)
   - rust_xlsxwriter: W:17/18 green (images=0)
   - pyumya: R:13/W:15 green (alignment indent, hyperlinks tooltip, images read = upstream)
-- **Performance**: Runner + renderer + throughput dashboard operational
+- **Performance**: Runner + renderer + throughput dashboard operational; bulk read/write methods on Rust adapters
+  - Bulk read (10K cells): pycalumya 9.1ms, openpyxl 27.7ms → **3.0x faster**
+  - Bulk write (10K cells): pycalumya 7.9ms, openpyxl 27.8ms → **3.5x faster**
+  - Bulk read (100K cells): pycalumya 112ms, openpyxl 382ms → **3.4x faster**
+  - Bulk write (100K cells): pycalumya 60ms, openpyxl 299ms → **5.0x faster**
+  - Rust adapters have `read_sheet_values()` and `write_sheet_values()` for bulk ops
 - **Visualizations**: Heatmap (PNG/SVG), combined fidelity+perf dashboard, tier list, scatter plots
 - **Rust adapters**: Built locally via maturin; pyo3 0.24; calamine fork at wolfiesch/calamine#styles
 - **CLI commands**: generate, generate-xls, benchmark, benchmark-profiles, perf, report, heatmap, dashboard, html, scatter

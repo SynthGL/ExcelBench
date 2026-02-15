@@ -1,12 +1,12 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-15T07:01:54.817366+00:00",
+    "run_date": "2026-02-15T07:26:49.823252+00:00",
     "excel_version": "xlsxwriter-generated",
     "platform": "Darwin-arm64",
     "profile": "xlsx",
     "python": "3.12.3",
-    "commit": "f809f97",
+    "commit": "a3aaba6",
     "config": {
       "warmup": 2,
       "iters": 5,
@@ -62,6 +62,24 @@
       "version": "3.2.9",
       "language": "python",
       "capabilities": [
+        "write"
+      ]
+    },
+    "pandas": {
+      "name": "pandas",
+      "version": "3.0.0",
+      "language": "python",
+      "capabilities": [
+        "read",
+        "write"
+      ]
+    },
+    "tablib": {
+      "name": "tablib",
+      "version": "3.9.0",
+      "language": "python",
+      "capabilities": [
+        "read",
         "write"
       ]
     }
@@ -215,20 +233,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 7.877083,
-            "p50": 7.93975,
-            "p95": 8.08
+            "min": 7.35625,
+            "p50": 7.428084,
+            "p95": 7.501584
           },
           "cpu_ms": {
-            "min": 7.885,
-            "p50": 7.944,
-            "p95": 7.965
+            "min": 7.361,
+            "p50": 7.435,
+            "p95": 7.508
           },
-          "rss_peak_mb": 169.5,
+          "rss_peak_mb": 161.234375,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 7.93975,
+            "write": 7.428084,
             "verify": 0.0
           },
           "op_count": 10000,
@@ -255,20 +273,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 7.857917,
-            "p50": 8.053167,
-            "p95": 8.394875
+            "min": 7.344,
+            "p50": 7.425292,
+            "p95": 7.437833
           },
           "cpu_ms": {
-            "min": 7.864,
-            "p50": 7.937,
-            "p95": 8.159
+            "min": 7.349,
+            "p50": 7.43,
+            "p95": 7.442
           },
-          "rss_peak_mb": 169.515625,
+          "rss_peak_mb": 163.46875,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 8.053167,
+            "write": 7.425292,
             "verify": 0.0
           },
           "op_count": 10000,
@@ -285,20 +303,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 27.271416,
-            "p50": 27.781917,
-            "p95": 49.849708
+            "min": 25.519209,
+            "p50": 26.143375,
+            "p95": 26.438709
           },
           "cpu_ms": {
-            "min": 27.272,
-            "p50": 27.686,
-            "p95": 49.824
+            "min": 25.517,
+            "p50": 26.121,
+            "p95": 26.428
           },
-          "rss_peak_mb": 169.75,
+          "rss_peak_mb": 161.984375,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 27.781917,
+            "write": 26.143375,
             "verify": 0.0
           },
           "op_count": 10000,
@@ -325,20 +343,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 17.452375,
-            "p50": 17.76,
-            "p95": 39.405875
+            "min": 16.719583,
+            "p50": 16.976375,
+            "p95": 17.979125
           },
           "cpu_ms": {
-            "min": 17.453,
-            "p50": 17.752,
-            "p95": 39.407
+            "min": 16.72,
+            "p50": 16.977,
+            "p95": 17.979
           },
-          "rss_peak_mb": 174.71875,
+          "rss_peak_mb": 163.40625,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 17.76,
+            "write": 16.976375,
             "verify": 0.0
           },
           "op_count": 10000,
@@ -1055,20 +1073,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 58.836625,
-            "p50": 59.651042,
-            "p95": 59.70425
+            "min": 56.215333,
+            "p50": 57.505833,
+            "p95": 57.608833
           },
           "cpu_ms": {
-            "min": 58.58,
-            "p50": 59.587,
-            "p95": 59.665
+            "min": 56.23,
+            "p50": 57.462,
+            "p95": 57.521
           },
-          "rss_peak_mb": 283.0,
+          "rss_peak_mb": 292.71875,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 59.651042,
+            "write": 57.505833,
             "verify": 0.0
           },
           "op_count": 99856,
@@ -1095,20 +1113,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 58.196834,
-            "p50": 59.300791,
-            "p95": 60.538125
+            "min": 56.308583,
+            "p50": 56.685042,
+            "p95": 56.701917
           },
           "cpu_ms": {
-            "min": 58.204,
-            "p50": 58.918,
-            "p95": 59.306
+            "min": 56.324,
+            "p50": 56.699,
+            "p95": 56.713
           },
-          "rss_peak_mb": 359.953125,
+          "rss_peak_mb": 374.265625,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 59.300791,
+            "write": 56.685042,
             "verify": 0.0
           },
           "op_count": 99856,
@@ -1125,20 +1143,20 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 284.703292,
-            "p50": 298.88725,
-            "p95": 305.670958
+            "min": 261.525625,
+            "p50": 280.2855,
+            "p95": 281.507208
           },
           "cpu_ms": {
-            "min": 283.417,
-            "p50": 298.427,
-            "p95": 304.026
+            "min": 261.241,
+            "p50": 280.143,
+            "p95": 280.596
           },
-          "rss_peak_mb": 369.40625,
+          "rss_peak_mb": 298.828125,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 298.88725,
+            "write": 280.2855,
             "verify": 0.0
           },
           "op_count": 99856,
@@ -1165,20 +1183,140 @@
         "read": null,
         "write": {
           "wall_ms": {
-            "min": 170.682625,
-            "p50": 175.037541,
-            "p95": 178.743167
+            "min": 166.880709,
+            "p50": 168.42375,
+            "p95": 168.688209
           },
           "cpu_ms": {
-            "min": 169.49,
-            "p50": 173.282,
-            "p95": 174.822
+            "min": 166.872,
+            "p50": 168.131,
+            "p95": 168.416
           },
-          "rss_peak_mb": 369.40625,
+          "rss_peak_mb": 298.828125,
           "breakdown_ms": null,
           "phase_attribution_ms": {
             "parse": 0.0,
-            "write": 175.037541,
+            "write": 168.42375,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 36.413083,
+            "p50": 37.05225,
+            "p95": 37.4945
+          },
+          "cpu_ms": {
+            "min": 36.404,
+            "p50": 36.815,
+            "p95": 37.048
+          },
+          "rss_peak_mb": 156.25,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 37.05225,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 33.064542,
+            "p50": 33.684292,
+            "p95": 33.708416
+          },
+          "cpu_ms": {
+            "min": 33.064,
+            "p50": 33.678,
+            "p95": 33.702
+          },
+          "rss_peak_mb": 163.53125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 33.684292,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "pandas",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 382.918708,
+            "p50": 387.840708,
+            "p95": 389.686416
+          },
+          "cpu_ms": {
+            "min": 381.835,
+            "p50": 383.415,
+            "p95": 384.02
+          },
+          "rss_peak_mb": 200.25,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 387.840708,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "tablib",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 362.054875,
+            "p50": 362.750667,
+            "p95": 366.854584
+          },
+          "cpu_ms": {
+            "min": 355.671,
+            "p50": 362.634,
+            "p95": 365.393
+          },
+          "rss_peak_mb": 378.84375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 362.750667,
             "verify": 0.0
           },
           "op_count": 99856,
