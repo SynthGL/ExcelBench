@@ -1,5 +1,11 @@
 # CLAUDE.md — ExcelBench
 
+> **ARCHITECTURE MAP**: Read `architecture.md` before making structural changes. Keep it updated
+> when you introduce new top-level modules, flows, or dependency directions.
+
+> **DECISION LOG**: When making a significant design or architecture decision, always add an entry
+> to `decisions.md` using the `DEC-NNN` format. Next ID: **DEC-013**.
+
 ## What This Project Is
 
 ExcelBench is an objective, reproducible benchmark suite that scores Python Excel libraries on **feature fidelity** (correctness) and optionally **performance** (speed/memory). It tests 16 scored features across 12+ adapters using real Excel-generated fixtures as ground truth.
