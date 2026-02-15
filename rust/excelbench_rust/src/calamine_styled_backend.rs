@@ -11,7 +11,7 @@ use calamine::{
     FontWeight, HorizontalAlignment, Style, StyleRange, TextRotation, UnderlineStyle,
     VerticalAlignment, WorksheetLayout,
 };
-use calamine::{Data, Reader, Xlsx};
+use calamine::{Data, Range, Reader, Xlsx};
 use chrono::NaiveTime;
 
 use quick_xml::events::Event;
@@ -282,6 +282,8 @@ struct Tier2SheetCache {
     conditional_formats: Option<Vec<ConditionalFormatRuleInfo>>,
     data_validations: Option<Vec<DataValidationInfo>>,
     tables: Option<Vec<TableInfo>>,
+    /// Lazy cache: (row,col) -> cellXfs style_id (from worksheet XML `c s="..."`).
+    cell_style_ids: Option<HashMap<(u32, u32), u32>>,
 }
 
 #[pyclass(unsendable)]
@@ -302,6 +304,10 @@ pub struct CalamineStyledBook {
     named_ranges: Option<Vec<NamedRangeInfo>>,
     /// Lazy cache: diagonal border definitions (by cellXfs style_id).
     diagonal_borders: Option<HashMap<u32, DiagonalBorderInfo>>,
+    /// Cache: worksheet value ranges (avoids re-cloning on every per-cell read).
+    range_cache: HashMap<String, Range<Data>>,
+    /// Cache: worksheet formula ranges (avoids re-cloning on every per-cell read).
+    formula_cache: HashMap<String, Option<Range<String>>>,
 }
 
 #[pymethods]
@@ -324,6 +330,8 @@ impl CalamineStyledBook {
             dxfs_bg_colors: None,
             named_ranges: None,
             diagonal_borders: None,
+            range_cache: HashMap::new(),
+            formula_cache: HashMap::new(),
         })
     }
 
@@ -335,10 +343,10 @@ impl CalamineStyledBook {
         let (row, col) = a1_to_row_col(a1).map_err(|msg| PyErr::new::<PyValueError, _>(msg))?;
 
         self.ensure_sheet_exists(sheet)?;
+        self.ensure_range_cache(sheet)?;
+        self.ensure_formula_cache(sheet)?;
 
-        let range = self.workbook.worksheet_range(sheet).map_err(|e| {
-            PyErr::new::<PyIOError, _>(format!("Failed to read sheet {sheet}: {e}"))
-        })?;
+        let range = self.range_cache.get(sheet).unwrap();
 
         let value = match range.get_value((row, col)) {
             None => return cell_blank(py),
@@ -346,7 +354,7 @@ impl CalamineStyledBook {
         };
 
         // Prefer formula text fidelity when available.
-        if let Ok(formula_range) = self.workbook.worksheet_formula(sheet) {
+        if let Some(Some(formula_range)) = self.formula_cache.get(sheet) {
             if let Some(f) = formula_range.get_value((row, col)) {
                 if !f.is_empty() {
                     let formula = if f.starts_with('=') {
@@ -482,11 +490,12 @@ impl CalamineStyledBook {
     ) -> PyResult<PyObject> {
         let (row, col) = a1_to_row_col(a1).map_err(|msg| PyErr::new::<PyValueError, _>(msg))?;
         self.ensure_sheet_exists(sheet)?;
+        self.ensure_formula_cache(sheet)?;
 
         // Gracefully handle sheets that have no formula data.
-        let range = match self.workbook.worksheet_formula(sheet) {
-            Ok(r) => r,
-            Err(_) => return Ok(py.None()),
+        let range = match self.formula_cache.get(sheet) {
+            Some(Some(r)) => r,
+            _ => return Ok(py.None()),
         };
         match range.get_value((row, col)) {
             Some(f) if !f.is_empty() => {
@@ -551,10 +560,8 @@ impl CalamineStyledBook {
 
         let mut diag_up_missing = true;
         let mut diag_down_missing = true;
-        let mut style_id: Option<u32> = None;
 
         if let Some(style) = style {
-            style_id = style.style_id;
             if let Some(borders) = &style.borders {
                 Self::maybe_set_edge(py, &d, "top", &borders.top)?;
                 Self::maybe_set_edge(py, &d, "bottom", &borders.bottom)?;
@@ -570,8 +577,8 @@ impl CalamineStyledBook {
             // Calamine currently doesn't propagate border-level diagonalUp/diagonalDown flags
             // into Borders::diagonal_up/diagonal_down. Work around by reading the flags
             // directly from styles.xml, keyed by style_id (cellXfs index).
-            if (diag_up_missing || diag_down_missing) {
-                if let Some(style_id) = style_id {
+            if diag_up_missing || diag_down_missing {
+                if let Some(style_id) = self.cell_style_id(sheet, row, col)? {
                     self.ensure_diagonal_borders()?;
                     if let Some(map) = &self.diagonal_borders {
                         if let Some(info) = map.get(&style_id) {
@@ -815,6 +822,28 @@ impl CalamineStyledBook {
                 style_origin: origin,
             },
         );
+        Ok(())
+    }
+
+    /// Ensure the worksheet value range is cached for this sheet.
+    fn ensure_range_cache(&mut self, sheet: &str) -> PyResult<()> {
+        if self.range_cache.contains_key(sheet) {
+            return Ok(());
+        }
+        let range = self.workbook.worksheet_range(sheet).map_err(|e| {
+            PyErr::new::<PyIOError, _>(format!("Failed to read sheet {sheet}: {e}"))
+        })?;
+        self.range_cache.insert(sheet.to_string(), range);
+        Ok(())
+    }
+
+    /// Ensure the worksheet formula range is cached for this sheet.
+    fn ensure_formula_cache(&mut self, sheet: &str) -> PyResult<()> {
+        if self.formula_cache.contains_key(sheet) {
+            return Ok(());
+        }
+        let fr = self.workbook.worksheet_formula(sheet).ok();
+        self.formula_cache.insert(sheet.to_string(), fr);
         Ok(())
     }
 
@@ -1081,6 +1110,45 @@ impl CalamineStyledBook {
                 Err(e) => {
                     return Err(PyErr::new::<PyIOError, _>(format!(
                         "Failed to parse worksheet XML: {e}"
+                    )))
+                }
+                _ => {}
+            }
+            buf.clear();
+        }
+
+        Ok(out)
+    }
+
+    fn parse_cell_style_ids_from_sheet_xml(xml: &str) -> PyResult<HashMap<(u32, u32), u32>> {
+        let mut reader = XmlReader::from_str(xml);
+        reader.config_mut().trim_text(true);
+        let mut buf: Vec<u8> = Vec::new();
+        let mut out: HashMap<(u32, u32), u32> = HashMap::new();
+
+        loop {
+            match reader.read_event_into(&mut buf) {
+                Ok(Event::Start(e)) | Ok(Event::Empty(e)) => {
+                    if e.name().as_ref() == b"c" {
+                        let a1 = ooxml_util::attr_value(&e, b"r").unwrap_or_default();
+                        if a1.is_empty() {
+                            continue;
+                        }
+                        let style_id = ooxml_util::attr_value(&e, b"s")
+                            .and_then(|s| s.parse::<u32>().ok())
+                            .unwrap_or(0);
+                        if style_id == 0 {
+                            continue;
+                        }
+                        if let Ok((row, col)) = a1_to_row_col(&a1) {
+                            out.insert((row, col), style_id);
+                        }
+                    }
+                }
+                Ok(Event::Eof) => break,
+                Err(e) => {
+                    return Err(PyErr::new::<PyIOError, _>(format!(
+                        "Failed to parse worksheet XML for style IDs: {e}"
                     )))
                 }
                 _ => {}
@@ -1512,6 +1580,30 @@ impl CalamineStyledBook {
 
         self.dxfs_bg_colors = Some(out);
         Ok(())
+    }
+
+    fn cell_style_id(&mut self, sheet: &str, row: u32, col: u32) -> PyResult<Option<u32>> {
+        self.ensure_sheet_exists(sheet)?;
+
+        let needs_load = self
+            .tier2_cache
+            .get(sheet)
+            .and_then(|c| c.cell_style_ids.as_ref())
+            .is_none();
+        if needs_load {
+            let xml = self.sheet_xml_content(sheet)?;
+            let map = Self::parse_cell_style_ids_from_sheet_xml(&xml)?;
+            self.tier2_cache
+                .entry(sheet.to_string())
+                .or_default()
+                .cell_style_ids = Some(map);
+        }
+
+        Ok(self
+            .tier2_cache
+            .get(sheet)
+            .and_then(|c| c.cell_style_ids.as_ref())
+            .and_then(|m| m.get(&(row, col)).copied()))
     }
 
     fn ensure_diagonal_borders(&mut self) -> PyResult<()> {
