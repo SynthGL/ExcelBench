@@ -117,7 +117,8 @@ class WolfxlAdapter(ExcelAdapter):
         cell_range: str | None = None,
     ) -> list[list[Any]]:
         """Return raw Rust FFI output without cell_value_from_payload() wrapping."""
-        return workbook.read_sheet_values(sheet, cell_range)
+        result: list[list[Any]] = workbook.read_sheet_values(sheet, cell_range)
+        return result
 
     def read_cell_format(self, workbook: Any, sheet: str, cell: str) -> CellFormat:
         payload = workbook.read_cell_format(sheet, cell)
