@@ -929,7 +929,7 @@ def _section_memory(memory: list[dict[str, Any]] | None) -> str:
         return ""
 
     # Classify adapters as Rust or Python
-    rust_adapters = {"pycalumya", "calamine-styled", "rust_xlsxwriter", "python-calamine"}
+    rust_adapters = {"wolfxl", "calamine-styled", "rust_xlsxwriter", "python-calamine"}
 
     def _adapter_cls(name: str) -> str:
         return "rust" if name in rust_adapters else "python"

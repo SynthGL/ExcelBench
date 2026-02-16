@@ -1,4 +1,4 @@
-"""Tests for the pycalumya openpyxl-compatible API."""
+"""Tests for the wolfxl openpyxl-compatible API."""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ class TestUtils:
     """Coordinate conversion helpers."""
 
     def test_column_letter(self) -> None:
-        from pycalumya._utils import column_letter
+        from wolfxl._utils import column_letter
 
         assert column_letter(1) == "A"
         assert column_letter(26) == "Z"
@@ -28,7 +28,7 @@ class TestUtils:
         assert column_letter(702) == "ZZ"
 
     def test_column_index(self) -> None:
-        from pycalumya._utils import column_index
+        from wolfxl._utils import column_index
 
         assert column_index("A") == 1
         assert column_index("Z") == 26
@@ -36,7 +36,7 @@ class TestUtils:
         assert column_index("ZZ") == 702
 
     def test_a1_roundtrip(self) -> None:
-        from pycalumya._utils import a1_to_rowcol, rowcol_to_a1
+        from wolfxl._utils import a1_to_rowcol, rowcol_to_a1
 
         assert a1_to_rowcol("B3") == (3, 2)
         assert rowcol_to_a1(3, 2) == "B3"
@@ -44,7 +44,7 @@ class TestUtils:
         assert rowcol_to_a1(100, 27) == "AA100"
 
     def test_invalid_a1_raises(self) -> None:
-        from pycalumya._utils import a1_to_rowcol
+        from wolfxl._utils import a1_to_rowcol
 
         with pytest.raises(ValueError, match="Invalid A1 reference"):
             a1_to_rowcol("123")
@@ -54,7 +54,7 @@ class TestStyles:
     """Frozen style dataclasses."""
 
     def test_font_defaults(self) -> None:
-        from pycalumya._styles import Font
+        from wolfxl._styles import Font
 
         f = Font()
         assert f.bold is False
@@ -62,34 +62,34 @@ class TestStyles:
         assert f.size is None
 
     def test_font_is_frozen(self) -> None:
-        from pycalumya._styles import Font
+        from wolfxl._styles import Font
 
         f = Font(bold=True)
         with pytest.raises(AttributeError):
             f.bold = False  # type: ignore[misc]
 
     def test_color_hex_conversion(self) -> None:
-        from pycalumya._styles import Color
+        from wolfxl._styles import Color
 
         c = Color(rgb="FFFF0000")
         assert c.to_hex() == "#FF0000"
         assert Color.from_hex("#00FF00").rgb == "FF00FF00"
 
     def test_pattern_fill(self) -> None:
-        from pycalumya._styles import PatternFill
+        from wolfxl._styles import PatternFill
 
         fill = PatternFill(patternType="solid", fgColor="#FF0000")
         assert fill._fg_hex() == "#FF0000"
 
     def test_border_defaults(self) -> None:
-        from pycalumya._styles import Border, Side
+        from wolfxl._styles import Border, Side
 
         b = Border()
         assert b.left == Side()
         assert b.top.style is None
 
     def test_alignment_defaults(self) -> None:
-        from pycalumya._styles import Alignment
+        from wolfxl._styles import Alignment
 
         a = Alignment()
         assert a.horizontal is None
@@ -111,7 +111,7 @@ class TestReadMode:
         _require_rust()
 
     def test_load_workbook_basic(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -125,7 +125,7 @@ class TestReadMode:
         wb.close()
 
     def test_read_number(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -138,7 +138,7 @@ class TestReadMode:
         wb.close()
 
     def test_read_font_bold(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "03_text_formatting.xlsx"
         if not path.exists():
@@ -151,7 +151,7 @@ class TestReadMode:
         wb.close()
 
     def test_read_background_color(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "04_background_colors.xlsx"
         if not path.exists():
@@ -165,7 +165,7 @@ class TestReadMode:
         wb.close()
 
     def test_context_manager(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -174,7 +174,7 @@ class TestReadMode:
             assert len(wb.sheetnames) > 0
 
     def test_iter_rows_read_mode(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -187,7 +187,7 @@ class TestReadMode:
         wb.close()
 
     def test_iter_rows_auto_dimensions(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -199,7 +199,7 @@ class TestReadMode:
         wb.close()
 
     def test_workbook_contains(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         path = FIXTURES / "tier1" / "01_cell_values.xlsx"
         if not path.exists():
@@ -223,7 +223,7 @@ class TestWriteMode:
         _require_rust()
 
     def test_write_basic(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook
+        from wolfxl import Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -237,7 +237,7 @@ class TestWriteMode:
         assert out.stat().st_size > 0
 
     def test_write_with_font(self, tmp_path: Path) -> None:
-        from pycalumya import Font, Workbook
+        from wolfxl import Font, Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -249,7 +249,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_write_with_fill(self, tmp_path: Path) -> None:
-        from pycalumya import PatternFill, Workbook
+        from wolfxl import PatternFill, Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -261,7 +261,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_write_with_border(self, tmp_path: Path) -> None:
-        from pycalumya import Border, Side, Workbook
+        from wolfxl import Border, Side, Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -278,7 +278,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_write_with_alignment(self, tmp_path: Path) -> None:
-        from pycalumya import Alignment, Workbook
+        from wolfxl import Alignment, Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -290,7 +290,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_write_multiple_sheets(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook
+        from wolfxl import Workbook
 
         wb = Workbook()
         ws1 = wb.active
@@ -304,7 +304,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_write_number_format(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook
+        from wolfxl import Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -316,7 +316,7 @@ class TestWriteMode:
         assert out.exists()
 
     def test_cell_method(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook
+        from wolfxl import Workbook
 
         wb = Workbook()
         ws = wb.active
@@ -330,18 +330,18 @@ class TestWriteMode:
 
 
 # ======================================================================
-# Round-trip tests (write with pycalumya, read back)
+# Round-trip tests (write with wolfxl, read back)
 # ======================================================================
 
 
 class TestRoundTrip:
-    """Write with pycalumya, read back with pycalumya."""
+    """Write with wolfxl, read back with wolfxl."""
 
     def setup_method(self) -> None:
         _require_rust()
 
     def test_roundtrip_values(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook, load_workbook
+        from wolfxl import Workbook, load_workbook
 
         # Write
         wb = Workbook()
@@ -364,7 +364,7 @@ class TestRoundTrip:
         wb2.close()
 
     def test_roundtrip_font(self, tmp_path: Path) -> None:
-        from pycalumya import Font, Workbook, load_workbook
+        from wolfxl import Font, Workbook, load_workbook
 
         # Write
         wb = Workbook()
@@ -383,7 +383,7 @@ class TestRoundTrip:
         wb2.close()
 
     def test_roundtrip_fill(self, tmp_path: Path) -> None:
-        from pycalumya import PatternFill, Workbook, load_workbook
+        from wolfxl import PatternFill, Workbook, load_workbook
 
         # Write
         wb = Workbook()
@@ -405,7 +405,7 @@ class TestRoundTrip:
         wb2.close()
 
     def test_roundtrip_formula(self, tmp_path: Path) -> None:
-        from pycalumya import Workbook, load_workbook
+        from wolfxl import Workbook, load_workbook
 
         # Write
         wb = Workbook()
@@ -443,14 +443,14 @@ class TestModifyMode:
             pytest.skip("tier1 fixture not available")
 
     def test_modify_repr(self) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         assert "modify" in repr(wb)
         wb.close()
 
     def test_modify_string_value(self, tmp_path: Path) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -460,14 +460,14 @@ class TestModifyMode:
         wb.save(str(out))
         wb.close()
 
-        # Verify with pycalumya read
+        # Verify with wolfxl read
         wb2 = load_workbook(str(out))
         assert wb2.active is not None
         assert wb2.active["A1"].value == "Modified"
         wb2.close()
 
     def test_modify_number_value(self, tmp_path: Path) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -483,7 +483,7 @@ class TestModifyMode:
         wb2.close()
 
     def test_modify_boolean_value(self, tmp_path: Path) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -499,7 +499,7 @@ class TestModifyMode:
         wb2.close()
 
     def test_modify_formula(self, tmp_path: Path) -> None:
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -519,7 +519,7 @@ class TestModifyMode:
 
     def test_modify_preserves_unchanged(self, tmp_path: Path) -> None:
         """Cells not touched should remain unchanged after save."""
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         # Read original B1
         wb_orig = load_workbook(str(FIXTURE))
@@ -545,7 +545,7 @@ class TestModifyMode:
 
     def test_modify_read_then_write(self, tmp_path: Path) -> None:
         """Read a value, modify it, save — the classic read-modify-write cycle."""
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -563,7 +563,7 @@ class TestModifyMode:
 
     def test_modify_insert_new_cell(self, tmp_path: Path) -> None:
         """Insert a cell at a position that didn't exist in the original."""
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -582,7 +582,7 @@ class TestModifyMode:
         """Modify mode: set font on a cell."""
         import openpyxl
 
-        from pycalumya import Font, load_workbook
+        from wolfxl import Font, load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -606,7 +606,7 @@ class TestModifyMode:
         """Modify mode: set fill on a cell."""
         import openpyxl
 
-        from pycalumya import PatternFill, load_workbook
+        from wolfxl import PatternFill, load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -628,7 +628,7 @@ class TestModifyMode:
         """Modify mode: set alignment on a cell."""
         import openpyxl
 
-        from pycalumya import Alignment, load_workbook
+        from wolfxl import Alignment, load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -651,7 +651,7 @@ class TestModifyMode:
         """Modify mode: set border on a cell."""
         import openpyxl
 
-        from pycalumya import Border, Side, load_workbook
+        from wolfxl import Border, Side, load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -678,7 +678,7 @@ class TestModifyMode:
         """Modify mode: set number format on a cell."""
         import openpyxl
 
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -698,7 +698,7 @@ class TestModifyMode:
         """Modify mode: set both value and format on the same cell."""
         import openpyxl
 
-        from pycalumya import Font, PatternFill, load_workbook
+        from wolfxl import Font, PatternFill, load_workbook
 
         wb = load_workbook(str(FIXTURE), modify=True)
         ws = wb.active
@@ -727,7 +727,7 @@ class TestModifyMode:
 
         import openpyxl
 
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(multi_fixture), modify=True)
         wb["Alpha"]["A1"] = "Patched Alpha"
@@ -753,7 +753,7 @@ class TestModifyMode:
 
         import openpyxl
 
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         orig_size = img_fixture.stat().st_size
 
@@ -784,7 +784,7 @@ class TestModifyMode:
 
         import openpyxl
 
-        from pycalumya import load_workbook
+        from wolfxl import load_workbook
 
         wb = load_workbook(str(link_fixture), modify=True)
         ws = wb.active

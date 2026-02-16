@@ -2,7 +2,7 @@
 
 Most Python Excel tutorials start with `pip install openpyxl`. It's the default, the safe choice, the one every Stack Overflow answer recommends. But what if there's a library that's **3–12x faster** and supports the same 17 out of 18 Excel features?
 
-That library is **pycalumya**.
+That library is **WolfXL**.
 
 ## The Problem: Speed vs. Features
 
@@ -27,7 +27,7 @@ The benchmark tests 19 libraries across 12 Python adapters and 5 Rust/PyO3 adapt
 
 Here are the headline numbers from our benchmark runs on an M3 MacBook Pro:
 
-| Operation | pycalumya | openpyxl | xlsxwriter | Speedup |
+| Operation | WolfXL | openpyxl | xlsxwriter | Speedup |
 |---|---|---|---|---|
 | Per-cell read (10K) | 10.0ms | 35.2ms | — | **3.5x** |
 | Per-cell write (10K) | 11.9ms | 36.8ms | 28.8ms | **3.1x** |
@@ -38,28 +38,28 @@ Here are the headline numbers from our benchmark runs on an M3 MacBook Pro:
 | Formulas read (10K) | 13.5ms | 43.8ms | — | **3.2x** |
 | Formulas write (10K) | 8.0ms | 37.1ms | 77.7ms | **4.6x** |
 
-The speedups range from 3x on plain cell I/O to **12.5x on border writes**. At the 100K scale that matters for real workloads, pycalumya's bulk write pushes **1.73 million cells/sec** versus openpyxl's 347K/sec.
+The speedups range from 3x on plain cell I/O to **12.5x on border writes**. At the 100K scale that matters for real workloads, WolfXL's bulk write pushes **1.73 million cells/sec** versus openpyxl's 347K/sec.
 
 And these aren't just values. These are fully-formatted cells with the correct fonts, colors, number formats, and borders preserved.
 
 ## Where It Stands Among Rust-backed Libraries
 
-pycalumya isn't the first library to wrap Rust Excel crates in Python. Here's how it compares:
+WolfXL isn't the first library to wrap Rust Excel crates in Python. Here's how it compares:
 
 | Library | Read | Write | Styles | Formulas | Merged Cells |
 |---|---|---|---|---|---|
-| **pycalumya** | calamine | rust_xlsxwriter | Full | Full | Full |
+| **WolfXL** | calamine | rust_xlsxwriter | Full | Full | Full |
 | python-calamine | calamine | — | None | None | None |
 | fastexcel | calamine | — | None | None | None |
 | fastxlsx | calamine | rust_xlsxwriter | None | None | None |
 
-The key differentiator: **fastexcel** and **python-calamine** are read-only and skip all formatting. **fastxlsx** wraps the same Rust crates as pycalumya for read+write, but explicitly does not support styles, formulas, or merged cells — it's designed for raw data throughput.
+The key differentiator: **fastexcel** and **python-calamine** are read-only and skip all formatting. **fastxlsx** wraps the same Rust crates as WolfXL for read+write, but explicitly does not support styles, formulas, or merged cells — it's designed for raw data throughput.
 
-pycalumya is the only Rust-backed Python library with full style fidelity.
+WolfXL is the only Rust-backed Python library with full style fidelity.
 
 ## Fidelity: 17 out of 18
 
-On ExcelBench's 18-feature fidelity matrix, pycalumya scores green (3/3) on 17 features for both read and write:
+On ExcelBench's 18-feature fidelity matrix, WolfXL scores green (3/3) on 17 features for both read and write:
 
 - **Cell values** — strings, numbers, booleans, dates, datetimes, blanks, errors
 - **Formulas** — preserved on read, written correctly on write (custom XML parser eliminated 86% of FFI overhead)
@@ -82,7 +82,7 @@ The one gap: **images** (feature 14/18). Neither calamine nor rust_xlsxwriter ha
 
 ## How It Works
 
-pycalumya is a hybrid: it uses **calamine** (via calamine-styled, a fork with OOXML style parsing) for reading and **rust_xlsxwriter** for writing. Both are compiled to native code via PyO3/maturin.
+WolfXL is a hybrid: it uses **calamine** (via calamine-styled, a fork with OOXML style parsing) for reading and **rust_xlsxwriter** for writing. Both are compiled to native code via PyO3/maturin.
 
 The architecture hits a sweet spot:
 
@@ -95,10 +95,10 @@ The PyO3 boundary passes plain dicts across the FFI — `{"type": "string", "val
 
 ## Getting Started
 
-pycalumya provides an openpyxl-compatible API so you can switch with minimal code changes:
+WolfXL provides an openpyxl-compatible API so you can switch with minimal code changes:
 
 ```python
-from pycalumya import load_workbook, Workbook, Font, PatternFill
+from wolfxl import load_workbook, Workbook, Font, PatternFill
 
 # Reading
 wb = load_workbook("report.xlsx")

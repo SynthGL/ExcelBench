@@ -162,16 +162,16 @@ tests/                      # pytest + pytest-cov
 
 - **Fidelity**: Tier 0 (3) + Tier 1 (6) + Tier 2 (7 + pivot_tables=0) + Tier 3 (2) = 18 scored features
 - **Adapters**: 12 Python xlsx + 2 xls + 5 Rust/PyO3 = 19 total
-- **pycalumya** (hybrid): calamine read + rust_xlsxwriter write → R:17/18 + W:17/18 green (S- tier)
+- **WolfXL** (hybrid): calamine read + rust_xlsxwriter write → R:17/18 + W:17/18 green (S- tier)
   - calamine-styled: R:17/18 green (borders=1 diagonal, images=0)
   - rust_xlsxwriter: W:17/18 green (images=0)
   - **WolfXL modify mode**: `load_workbook(path, modify=True)` → surgical ZIP patching, 10-14x vs openpyxl
   - pyumya: R:13/W:15 green (alignment indent, hyperlinks tooltip, images read = upstream)
 - **Performance**: Runner + renderer + throughput dashboard operational; bulk read/write methods on Rust adapters
-  - Per-cell read (10K, release): pycalumya **995K/s** vs openpyxl 284K/s → **3.5x faster**
-  - Per-cell styled read (1K, release): pycalumya 624-742K/s vs openpyxl 131-137K/s → **4-5x faster**
-  - Bulk read (10K, release): pycalumya **1.26M/s** vs openpyxl 372K/s → **3.4x faster**
-  - Bulk write (100K, release): pycalumya **1.73M/s** vs openpyxl 347K/s → **5.0x faster**
+  - Per-cell read (10K, release): WolfXL **995K/s** vs openpyxl 284K/s → **3.5x faster**
+  - Per-cell styled read (1K, release): WolfXL 624-742K/s vs openpyxl 131-137K/s → **4-5x faster**
+  - Bulk read (10K, release): WolfXL **1.26M/s** vs openpyxl 372K/s → **3.4x faster**
+  - Bulk write (100K, release): WolfXL **1.73M/s** vs openpyxl 347K/s → **5.0x faster**
   - Hybrid optimization: fast formula XML parser + Python cell cache + sheet XML caching
   - Rust adapters have `read_sheet_values()` and `write_sheet_values()` for bulk ops
 - **Visualizations**: Heatmap (PNG/SVG), combined fidelity+perf dashboard, tier list, scatter plots

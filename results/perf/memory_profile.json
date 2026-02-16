@@ -1,6 +1,6 @@
 [
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "read",
     "cells": 1000,
     "rss_before_mb": 138.91,
@@ -40,7 +40,7 @@
     "scale": "1k"
   },
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "write",
     "cells": 1000,
     "rss_before_mb": 140.25,
@@ -100,7 +100,7 @@
     "scale": "1k"
   },
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "read",
     "cells": 10000,
     "rss_before_mb": 138.95,
@@ -140,7 +140,7 @@
     "scale": "10k"
   },
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "write",
     "cells": 10000,
     "rss_before_mb": 150.12,
@@ -200,7 +200,7 @@
     "scale": "10k"
   },
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "read",
     "cells": 99856,
     "rss_before_mb": 139.03,
@@ -240,7 +240,7 @@
     "scale": "100k"
   },
   {
-    "adapter": "pycalumya",
+    "adapter": "wolfxl",
     "op": "write",
     "cells": 99856,
     "rss_before_mb": 254.41,

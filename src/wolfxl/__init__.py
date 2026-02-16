@@ -1,8 +1,8 @@
-"""pycalumya — fast, openpyxl-compatible Excel I/O backed by Rust.
+"""WolfXL — fast, openpyxl-compatible Excel I/O backed by Rust.
 
 Usage::
 
-    from pycalumya import load_workbook, Workbook, Font, PatternFill
+    from wolfxl import load_workbook, Workbook, Font, PatternFill
 
     # Read
     wb = load_workbook("data.xlsx")
@@ -17,8 +17,8 @@ Usage::
     wb.save("out.xlsx")
 """
 
-from pycalumya._styles import Alignment, Border, Color, Font, PatternFill, Side
-from pycalumya._workbook import Workbook
+from wolfxl._styles import Alignment, Border, Color, Font, PatternFill, Side
+from wolfxl._workbook import Workbook
 
 __all__ = [
     "Alignment",

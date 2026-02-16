@@ -48,7 +48,7 @@ Quick links:
 | 1 | calamine (rust) | rust | R | 1/18 | Built, not in CI | Cell values + sheet names only |
 | 2 | calamine-styled | rust | R | **17R/18** | **Tier S-** | Full read fidelity (missing: images, diagonal borders=1) |
 | 3 | rust_xlsxwriter | rust | W | **17W/18** | **Tier S-** | Full write fidelity (missing: images) |
-| 4 | **pycalumya** (calamine+rxw) | rust | R+W | **17R+17W/18** | **Tier S-** | Hybrid: calamine read + rust_xlsxwriter write |
+| 4 | **wolfxl** (calamine+rxw) | rust | R+W | **17R+17W/18** | **Tier S-** | Hybrid: calamine read + rust_xlsxwriter write |
 | 5 | **pyumya** (umya-spreadsheet) | rust | R+W | **13R+15W/18** | **Tier A** | See pyumya notes below |
 
 ### Planned / Candidate
@@ -71,7 +71,7 @@ Quick links:
 Extracted from `results/xlsx/README.md` (02/14/2026 run, 14 adapters, 18 features):
 
 ```
-Feature              openpyxl  xlsxwriter  constmem  calamine  cal(rs)  cal-styled  opxl-ro  pylightxl  pyexcel  xlwt  pandas  polars  tablib  umya       rxw(rs)  pycalumya
+Feature              openpyxl  xlsxwriter  constmem  calamine  cal(rs)  cal-styled  opxl-ro  pylightxl  pyexcel  xlwt  pandas  polars  tablib  umya       rxw(rs)  wolfxl
                      R  W      W           W         R         R        R           R        R  W        R  W     W     R  W    R       R  W    R  W       W        R  W
 cell_values          3  3      3           3         1         1        3           3        3  1        3  3     3     1  3    1       3  3    3  3       3        3  3
 formulas             3  3      3           3         0         0        3           3        0  3        0  3     0     0  3    0       0  3    3  3       3        3  3
@@ -204,8 +204,8 @@ All four wrap openpyxl or calamine internally. Key differences:
 - pyumya scores after fix: R:13/18 green (43pts), W:15/18 green (46pts) — borders R:1→3, W:1→3
 - Total: 1155 tests passed, 0 regressions
 
-### 02/14/2026 — pycalumya hybrid adapter + Sprint 1+2 completion
-- Created **pycalumya** hybrid adapter: calamine-styled (read) + rust_xlsxwriter (write)
+### 02/14/2026 — wolfxl hybrid adapter + Sprint 1+2 completion
+- Created **wolfxl** hybrid adapter: calamine-styled (read) + rust_xlsxwriter (write)
 - Codex Sprint 1: formulas read, column-width padding in Rust, 4 Tier 2 R+W (merged, hyperlinks, comments, freeze_panes)
 - Codex Sprint 2: ooxml_util.rs extraction, 4 more Tier 2/3 R+W (CF, DV, named_ranges, tables)
 - Fixed cell_values regression (error-formula mapping matching openpyxl's ERROR_FORMULA_MAP)
@@ -213,8 +213,8 @@ All four wrap openpyxl or calamine internally. Key differences:
 - Scores:
   - calamine-styled: R:17/18 green (borders=1 diagonal, images=0)
   - rust_xlsxwriter: W:17/18 green (images=0)
-  - **pycalumya: R:17/18 + W:17/18** — second only to openpyxl (18/18)
-- Performance: pycalumya reads 0.3-1.5ms per feature (except cell_values 14ms first access)
+  - **wolfxl: R:17/18 + W:17/18** — second only to openpyxl (18/18)
+- Performance: wolfxl reads 0.3-1.5ms per feature (except cell_values 14ms first access)
 - Total adapters: 12 Python xlsx + 2 xls + 5 Rust/PyO3 = 19
 - Total tests: 1155 passed, 0 regressions
 

@@ -55,7 +55,7 @@ perf runner (performance) -> perf renderer
 
 Rust extension (optional) is called by Rust-backed adapters; it should not depend on Python code.
 
-pycalumya depends on excelbench_rust (PyO3 extension) only — no dependency on excelbench.
+wolfxl depends on excelbench_rust (PyO3 extension) only — no dependency on excelbench.
 ```
 
 Rule of thumb: keep adapters thin and deterministic. Any cross-library normalization should live in
@@ -83,7 +83,7 @@ Most-touched top-level directories:
   - Backends include: calamine (read), calamine-styled (read+OOXML T2/T3), rust_xlsxwriter (write),
     umya-spreadsheet (read/write), wolfxl (surgical xlsx patcher for modify mode)
 
-- `src/pycalumya/` (openpyxl-compatible API wrapper)
+- `src/wolfxl/` (openpyxl-compatible API wrapper)
   - `__init__.py`: public API (`load_workbook`, `Workbook`, style exports)
   - `_workbook.py`: three-mode Workbook (read via CalamineStyledBook, write via RustXlsxWriterBook,
     modify via XlsxPatcher — surgical ZIP patching, 10-14x faster than openpyxl)

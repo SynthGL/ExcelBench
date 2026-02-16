@@ -5,11 +5,11 @@ from __future__ import annotations
 from collections.abc import Iterator
 from typing import TYPE_CHECKING, Any
 
-from pycalumya._cell import Cell
-from pycalumya._utils import a1_to_rowcol, rowcol_to_a1
+from wolfxl._cell import Cell
+from wolfxl._utils import a1_to_rowcol, rowcol_to_a1
 
 if TYPE_CHECKING:
-    from pycalumya._workbook import Workbook
+    from wolfxl._workbook import Workbook
 
 
 class Worksheet:
@@ -134,7 +134,7 @@ class Worksheet:
 
     def _flush(self) -> None:
         """Write all dirty cells to the Rust backend. Called by Workbook.save()."""
-        from pycalumya._cell import (
+        from wolfxl._cell import (
             alignment_to_format_dict,
             border_to_rust_dict,
             fill_to_format_dict,
@@ -163,7 +163,7 @@ class Worksheet:
         alignment_to_format_dict: Any, border_to_rust_dict: Any,
     ) -> None:
         """Flush dirty cells to the RustXlsxWriterBook backend (write mode)."""
-        from pycalumya._cell import _UNSET
+        from wolfxl._cell import _UNSET
 
         for row, col in self._dirty:
             cell = self._cells.get((row, col))
@@ -201,7 +201,7 @@ class Worksheet:
         alignment_to_format_dict: Any, border_to_rust_dict: Any,
     ) -> None:
         """Flush dirty cells to the XlsxPatcher backend (modify mode)."""
-        from pycalumya._cell import _UNSET
+        from wolfxl._cell import _UNSET
 
         for row, col in self._dirty:
             cell = self._cells.get((row, col))

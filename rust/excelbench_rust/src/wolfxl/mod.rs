@@ -407,7 +407,7 @@ fn dict_to_format_spec(d: &Bound<'_, PyDict>) -> PyResult<FormatSpec> {
     // Number format
     spec.number_format = extract_str(d, "number_format")?;
 
-    // Alignment — accept both openpyxl-style and pycalumya-style key names
+    // Alignment — accept both openpyxl-style and wolfxl-style key names
     let horizontal = extract_str(d, "horizontal")?
         .or(extract_str(d, "h_align")?);
     let vertical = extract_str(d, "vertical")?

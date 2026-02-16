@@ -5,11 +5,11 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import TYPE_CHECKING, Any
 
-from pycalumya._styles import Alignment, Border, Color, Font, PatternFill, Side
-from pycalumya._utils import rowcol_to_a1
+from wolfxl._styles import Alignment, Border, Color, Font, PatternFill, Side
+from wolfxl._utils import rowcol_to_a1
 
 if TYPE_CHECKING:
-    from pycalumya._worksheet import Worksheet
+    from wolfxl._worksheet import Worksheet
 
 
 class Cell:

@@ -28,14 +28,14 @@ SCALE_FILES = {
 
 # Adapters with read_sheet_values and/or write_sheet_values
 READ_ADAPTERS = [
-    "pycalumya",
+    "wolfxl",
     "calamine-styled",
     "openpyxl",
     "python-calamine",
     "pandas",
 ]
 WRITE_ADAPTERS = [
-    "pycalumya",
+    "wolfxl",
     "rust_xlsxwriter",
     "openpyxl",
     "xlsxwriter",

@@ -106,7 +106,7 @@ def main() -> None:
                 "polars",
                 "python-calamine",
                 "tablib",
-                "pycalumya",
+                "wolfxl",
                 "calamine-styled",
             ],
             "features": [
@@ -134,7 +134,7 @@ def main() -> None:
                 "openpyxl",
                 "pandas",
                 "tablib",
-                "pycalumya",
+                "wolfxl",
                 "rust_xlsxwriter",
             ],
             "features": [
@@ -156,7 +156,7 @@ def main() -> None:
     jobs.append(
         {
             "name": "per_cell_fast",
-            "adapters": ["openpyxl", "xlsxwriter", "pylightxl", "pyexcel", "pycalumya"],
+            "adapters": ["openpyxl", "xlsxwriter", "pylightxl", "pyexcel", "wolfxl"],
             "features": [
                 "cell_values_1k",
                 "cell_values_10k",
@@ -193,7 +193,7 @@ def main() -> None:
                     "polars",
                     "python-calamine",
                     "tablib",
-                    "pycalumya",
+                    "wolfxl",
                     "calamine-styled",
                 ],
                 "features": [
@@ -209,7 +209,7 @@ def main() -> None:
                     "openpyxl",
                     "pandas",
                     "tablib",
-                    "pycalumya",
+                    "wolfxl",
                     "rust_xlsxwriter",
                 ],
                 "features": [

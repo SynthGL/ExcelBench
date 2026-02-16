@@ -1,4 +1,4 @@
-"""pycalumya — hybrid Rust adapter: calamine (read) + rust_xlsxwriter (write).
+"""wolfxl — hybrid Rust adapter: calamine (read) + rust_xlsxwriter (write).
 
 Combines the fastest Rust Excel reader (calamine with style support) and the
 fastest Rust writer (rust_xlsxwriter) into a single full-fidelity R+W adapter.
@@ -30,7 +30,7 @@ JSONDict = dict[str, Any]
 try:
     import excelbench_rust as _excelbench_rust
 except ImportError as e:  # pragma: no cover
-    raise ImportError("excelbench_rust unavailable — pycalumya requires it") from e
+    raise ImportError("excelbench_rust unavailable — wolfxl requires it") from e
 
 if getattr(_excelbench_rust, "CalamineStyledBook", None) is None:  # pragma: no cover
     raise ImportError("excelbench_rust built without calamine backend")
@@ -38,7 +38,7 @@ if getattr(_excelbench_rust, "RustXlsxWriterBook", None) is None:  # pragma: no 
     raise ImportError("excelbench_rust built without rust_xlsxwriter backend")
 
 
-class PycalumyaAdapter(ExcelAdapter):
+class WolfxlAdapter(ExcelAdapter):
     """Hybrid adapter: calamine-styled reads + rust_xlsxwriter writes."""
 
     def __init__(self) -> None:
@@ -51,7 +51,7 @@ class PycalumyaAdapter(ExcelAdapter):
         cal_ver = get_rust_backend_version("calamine")
         rxw_ver = get_rust_backend_version("rust_xlsxwriter")
         return LibraryInfo(
-            name="pycalumya",
+            name="wolfxl",
             version=f"cal={cal_ver}+rxw={rxw_ver}",
             language="rust",
             capabilities={"read", "write"},
@@ -252,7 +252,7 @@ class PycalumyaAdapter(ExcelAdapter):
         return
 
     def add_pivot_table(self, workbook: Any, sheet: str, pivot: JSONDict) -> None:
-        raise NotImplementedError("pycalumya pivot tables not implemented")
+        raise NotImplementedError("wolfxl pivot tables not implemented")
 
     def add_comment(self, workbook: Any, sheet: str, comment: JSONDict) -> None:
         workbook.add_comment(sheet, comment)

@@ -7,8 +7,8 @@
     "profile": "xlsx"
   },
   "libraries": {
-    "pycalumya": {
-      "name": "pycalumya",
+    "wolfxl": {
+      "name": "wolfxl",
       "version": "cal=0.33.0+rxw=0.79.4",
       "language": "rust",
       "capabilities": [
@@ -36,7 +36,7 @@
   "results": [
     {
       "feature": "cell_values",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -1241,7 +1241,7 @@
     },
     {
       "feature": "formulas",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -1538,7 +1538,7 @@
     },
     {
       "feature": "text_formatting",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -2777,7 +2777,7 @@
     },
     {
       "feature": "background_colors",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -3042,7 +3042,7 @@
     },
     {
       "feature": "number_formats",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -3365,7 +3365,7 @@
     },
     {
       "feature": "alignment",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -3968,7 +3968,7 @@
     },
     {
       "feature": "borders",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 1,
         "write": 3
@@ -5447,7 +5447,7 @@
     },
     {
       "feature": "dimensions",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -5712,7 +5712,7 @@
     },
     {
       "feature": "multiple_sheets",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -6033,7 +6033,7 @@
     },
     {
       "feature": "merged_cells",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -6346,7 +6346,7 @@
     },
     {
       "feature": "conditional_formatting",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -7047,7 +7047,7 @@
     },
     {
       "feature": "data_validation",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -7578,7 +7578,7 @@
     },
     {
       "feature": "hyperlinks",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -8035,7 +8035,7 @@
     },
     {
       "feature": "images",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 0,
         "write": 0
@@ -8312,7 +8312,7 @@
     },
     {
       "feature": "pivot_tables",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": null,
         "write": null
@@ -8342,7 +8342,7 @@
     },
     {
       "feature": "comments",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -8645,7 +8645,7 @@
     },
     {
       "feature": "freeze_panes",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -8932,7 +8932,7 @@
     },
     {
       "feature": "named_ranges",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3
@@ -9433,7 +9433,7 @@
     },
     {
       "feature": "tables",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "scores": {
         "read": 3,
         "write": 3

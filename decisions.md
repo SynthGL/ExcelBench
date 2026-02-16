@@ -42,10 +42,10 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ### DEC-014 — WolfXL: Surgical ZIP patcher for read-modify-write mode (2026-02-15)
 
-**Context**: pycalumya's hybrid architecture (calamine read + rust_xlsxwriter write) cannot modify
+**Context**: WolfXL's hybrid architecture (calamine read + rust_xlsxwriter write) cannot modify
 existing files in place. The `load → modify → save` workflow is one of openpyxl's most common use
 cases. Using umya-spreadsheet for this would match openpyxl's speed (both parse the full DOM),
-defeating pycalumya's value proposition of Rust-backed speed.
+defeating WolfXL's value proposition of Rust-backed speed.
 
 **Decision**: Build WolfXL (`XlsxPatcher`) — a streaming XML patcher that treats .xlsx as a ZIP of
 XML files. On save, it only parses and rewrites the worksheet XMLs that have dirty cells, patches
@@ -57,8 +57,8 @@ than openpyxl). (2) Full rewrite via calamine read + rust_xlsxwriter write (reje
 images, macros, VBA — destructive). (3) Python ZIP patcher with ElementTree (rejected: slower,
 more memory). (4) Wait for calamine upstream R/W support (rejected: no timeline).
 
-**Consequences**: pycalumya now has three modes: read-only (calamine), write-only (rust_xlsxwriter),
-and modify (WolfXL). Modify mode is 10-14x faster than openpyxl across file sizes (38KB→651KB).
+**Consequences**: WolfXL now has three modes: read-only (calamine), write-only (rust_xlsxwriter),
+and modify (XlsxPatcher). Modify mode is 10-14x faster than openpyxl across file sizes (38KB→651KB).
 Preserves images, hyperlinks, charts, comments, and other ZIP entries unchanged. Uses inline
 strings for new values, which slightly increases file size vs shared strings but avoids SST mutation.
 
@@ -66,10 +66,13 @@ strings for new values, which slightly increases file size vs shared strings but
 
 ### DEC-013 — Separate pycalumya compat package in src/pycalumya/ (2026-02-15)
 
-**Context**: pycalumya has proven 3–12x faster than openpyxl with 17/18 feature fidelity. To drive
+> **Note**: The package was originally created as `pycalumya` (`src/pycalumya/`) and later renamed
+> to `wolfxl` (`src/wolfxl/`). The decision rationale remains unchanged.
+
+**Context**: WolfXL has proven 3–12x faster than openpyxl with 17/18 feature fidelity. To drive
 adoption, it needs an openpyxl-compatible API so users can switch with minimal code changes.
 
-**Decision**: Create `src/pycalumya/` as a separate package namespace (not inside `excelbench`).
+**Decision**: Create `src/wolfxl/` as a separate package namespace (not inside `excelbench`).
 Dual-mode Workbook: `load_workbook()` wraps CalamineStyledBook for reading, `Workbook()` wraps
 RustXlsxWriterBook for writing. Style dataclasses (Font, PatternFill, Border, Alignment) match
 openpyxl's public names. No Rust changes needed — uses `excelbench_rust` directly.
@@ -78,7 +81,7 @@ openpyxl's public names. No Rust changes needed — uses `excelbench_rust` direc
 and harder to publish standalone on PyPI). (2) Full openpyxl shim with read-modify-write (rejected:
 calamine is read-only and rust_xlsxwriter is write-only — no shared state model).
 
-**Consequences**: Future standalone PyPI publishing is trivial (`src/pycalumya/` is already a
+**Consequences**: Future standalone PyPI publishing is trivial (`src/wolfxl/` is already a
 self-contained package). Users get `wb['Sheet1']['A1'].value` interface backed by Rust. Trade-off:
 no read-modify-write support (fundamental limitation of the hybrid approach).
 
@@ -98,13 +101,14 @@ poison another's memory baseline).
 
 **Commit(s)**: `7b94655`, `0ecab5f`
 
-### DEC-011 — Ship a hybrid "best-of-breed" Rust adapter (pycalumya) (2026-02-14)
+### DEC-011 — Ship a hybrid "best-of-breed" Rust adapter (pycalumya, now WolfXL) (2026-02-14)
 
 **Context**: No single library achieved the desired read and write fidelity/performance across all
 scored features. Some libraries are excellent readers but limited writers (or vice versa).
 
-**Decision**: Provide a hybrid adapter (`pycalumya`) that composes the fastest/highest-fidelity read
-backend with the best write backend, so users can benchmark a realistic "production pairing".
+**Decision**: Provide a hybrid adapter (`wolfxl`, originally named `pycalumya`) that composes the
+fastest/highest-fidelity read backend with the best write backend, so users can benchmark a
+realistic "production pairing".
 
 **Alternatives considered**: (1) Require a single library per adapter (rejected: leaves a large gap
 in the realistic Pareto frontier). (2) Keep hybrid logic out of ExcelBench (rejected: the benchmark

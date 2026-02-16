@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from pycalumya._worksheet import Worksheet
+from wolfxl._worksheet import Worksheet
 
 
 class Workbook:

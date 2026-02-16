@@ -15,8 +15,8 @@
     }
   },
   "libraries": {
-    "pycalumya": {
-      "name": "pycalumya",
+    "wolfxl": {
+      "name": "wolfxl",
       "version": "cal=0.33.0+rxw=0.79.4",
       "language": "rust",
       "capabilities": [
@@ -87,7 +87,7 @@
   "results": [
     {
       "feature": "cell_values_10k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -227,7 +227,7 @@
     },
     {
       "feature": "cell_values_10k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -367,7 +367,7 @@
     },
     {
       "feature": "cell_values_1k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -507,7 +507,7 @@
     },
     {
       "feature": "cell_values_1k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": null,
@@ -647,7 +647,7 @@
     },
     {
       "feature": "strings_unique_10k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -787,7 +787,7 @@
     },
     {
       "feature": "strings_unique_10k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -927,7 +927,7 @@
     },
     {
       "feature": "cell_values_100k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "large",
       "perf": {
         "read": {
@@ -1067,7 +1067,7 @@
     },
     {
       "feature": "cell_values_100k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "large",
       "perf": {
         "read": null,
@@ -1327,7 +1327,7 @@
     },
     {
       "feature": "cell_values_10k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -1457,7 +1457,7 @@
     },
     {
       "feature": "cell_values_1k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -1587,7 +1587,7 @@
     },
     {
       "feature": "background_colors_1k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -1717,7 +1717,7 @@
     },
     {
       "feature": "number_formats_1k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -1847,7 +1847,7 @@
     },
     {
       "feature": "alignment_1k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -1977,7 +1977,7 @@
     },
     {
       "feature": "borders_200",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -2107,7 +2107,7 @@
     },
     {
       "feature": "cell_values_10k_sparse_1pct_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -2197,7 +2197,7 @@
     },
     {
       "feature": "formulas_10k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -2327,7 +2327,7 @@
     },
     {
       "feature": "formulas_10k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -2397,7 +2397,7 @@
     },
     {
       "feature": "formulas_1k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -2527,7 +2527,7 @@
     },
     {
       "feature": "formulas_1k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -2597,7 +2597,7 @@
     },
     {
       "feature": "cell_values_10k_1000x10_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -2667,7 +2667,7 @@
     },
     {
       "feature": "cell_values_10k_1000x10_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -2757,7 +2757,7 @@
     },
     {
       "feature": "cell_values_10k_10x1000_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -2827,7 +2827,7 @@
     },
     {
       "feature": "cell_values_10k_10x1000_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -2917,7 +2917,7 @@
     },
     {
       "feature": "strings_unique_1k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -2987,7 +2987,7 @@
     },
     {
       "feature": "strings_unique_1k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": null,
@@ -3077,7 +3077,7 @@
     },
     {
       "feature": "strings_unique_1k_len64_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -3147,7 +3147,7 @@
     },
     {
       "feature": "strings_unique_1k_len64_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": null,
@@ -3237,7 +3237,7 @@
     },
     {
       "feature": "strings_unique_1k_len256_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -3307,7 +3307,7 @@
     },
     {
       "feature": "strings_unique_1k_len256_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": null,
@@ -3397,7 +3397,7 @@
     },
     {
       "feature": "strings_repeated_1k_len256_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": {
@@ -3467,7 +3467,7 @@
     },
     {
       "feature": "strings_repeated_1k_len256_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "small",
       "perf": {
         "read": null,
@@ -3557,7 +3557,7 @@
     },
     {
       "feature": "strings_repeated_10k_bulk_read",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": {
@@ -3627,7 +3627,7 @@
     },
     {
       "feature": "strings_repeated_10k_bulk_write",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "medium",
       "perf": {
         "read": null,
@@ -3717,7 +3717,7 @@
     },
     {
       "feature": "cell_values_100k",
-      "library": "pycalumya",
+      "library": "wolfxl",
       "workload_size": "large",
       "perf": {
         "read": {

@@ -11,7 +11,7 @@
 
 **Tier 0 — Basic Values**
 
-| Feature | calamine-styled | pycalumya | rust_xlsxwriter |
+| Feature | calamine-styled | rust_xlsxwriter | wolfxl |
 |---------|:-:|:-:|:-:|
 | Cell Values | 🟢 | 🟢 | 🟢 |
 | Formulas | 🟢 | 🟢 | 🟢 |
@@ -19,7 +19,7 @@
 
 **Tier 1 — Formatting**
 
-| Feature | calamine-styled | pycalumya | rust_xlsxwriter |
+| Feature | calamine-styled | rust_xlsxwriter | wolfxl |
 |---------|:-:|:-:|:-:|
 | Alignment | 🟢 | 🟢 | 🟢 |
 | Bg Colors | 🟢 | 🟢 | 🟢 |
@@ -30,7 +30,7 @@
 
 **Tier 2 — Advanced**
 
-| Feature | calamine-styled | pycalumya | rust_xlsxwriter |
+| Feature | calamine-styled | rust_xlsxwriter | wolfxl |
 |---------|:-:|:-:|:-:|
 | Comments | 🟢 | 🟢 | 🟢 |
 | Cond Fmt | 🟢 | 🟢 | 🟢 |
@@ -42,7 +42,7 @@
 
 **Tier 3 — Workbook Metadata**
 
-| Feature | calamine-styled | pycalumya | rust_xlsxwriter |
+| Feature | calamine-styled | rust_xlsxwriter | wolfxl |
 |---------|:-:|:-:|:-:|
 | Named Ranges | 🟢 | 🟢 | 🟢 |
 | Tables | 🟢 | 🟢 | 🟢 |
@@ -53,8 +53,8 @@
 
 | Tier | Library | Caps | Green Features | Summary |
 |:----:|---------|:----:|:--------------:|---------|
-| **A** | pycalumya | R+W | 17/18 | 17/18 features with full fidelity |
 | **A** | rust_xlsxwriter | W | 17/18 | 17/18 features with full fidelity |
+| **A** | wolfxl | R+W | 17/18 | 17/18 features with full fidelity |
 | **A** | calamine-styled | R | 16/18 | 16/18 features with full fidelity |
 
 ## Score Legend
@@ -71,7 +71,7 @@
 
 **Tier 0 — Basic Values**
 
-| Feature | calamine-styled (R) | pycalumya (R) | pycalumya (W) | rust_xlsxwriter (W) |
+| Feature | calamine-styled (R) | rust_xlsxwriter (W) | wolfxl (R) | wolfxl (W) |
 |---------|------------|------------|------------|------------|
 | [cell_values](#cell_values-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [formulas](#formulas-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
@@ -79,18 +79,18 @@
 
 **Tier 1 — Formatting**
 
-| Feature | calamine-styled (R) | pycalumya (R) | pycalumya (W) | rust_xlsxwriter (W) |
+| Feature | calamine-styled (R) | rust_xlsxwriter (W) | wolfxl (R) | wolfxl (W) |
 |---------|------------|------------|------------|------------|
 | [alignment](#alignment-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [background_colors](#background_colors-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
-| [borders](#borders-details) | 🟠 1 | 🟠 1 | 🟢 3 | 🟢 3 |
+| [borders](#borders-details) | 🟠 1 | 🟢 3 | 🟠 1 | 🟢 3 |
 | [dimensions](#dimensions-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [number_formats](#number_formats-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [text_formatting](#text_formatting-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 
 **Tier 2 — Advanced**
 
-| Feature | calamine-styled (R) | pycalumya (R) | pycalumya (W) | rust_xlsxwriter (W) |
+| Feature | calamine-styled (R) | rust_xlsxwriter (W) | wolfxl (R) | wolfxl (W) |
 |---------|------------|------------|------------|------------|
 | [comments](#comments-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [conditional_formatting](#conditional_formatting-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
@@ -103,7 +103,7 @@
 
 **Tier 3 — Workbook Metadata**
 
-| Feature | calamine-styled (R) | pycalumya (R) | pycalumya (W) | rust_xlsxwriter (W) |
+| Feature | calamine-styled (R) | rust_xlsxwriter (W) | wolfxl (R) | wolfxl (W) |
 |---------|------------|------------|------------|------------|
 | [named_ranges](#named_ranges-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
 | [tables](#tables-details) | 🟢 3 | 🟢 3 | 🟢 3 | 🟢 3 |
@@ -117,15 +117,15 @@
 | Library | Mode | Tests | Passed | Failed | Pass Rate | Green Features |
 |---------|------|-------|--------|--------|-----------|----------------|
 | calamine-styled | R | 125 | 120 | 5 | 96% | 16/18 |
-| pycalumya | R | 125 | 120 | 5 | 96% | 16/18 |
-| pycalumya | W | 125 | 123 | 2 | 98% | 17/18 |
 | rust_xlsxwriter | W | 125 | 123 | 2 | 98% | 17/18 |
+| wolfxl | R | 125 | 120 | 5 | 96% | 16/18 |
+| wolfxl | W | 125 | 123 | 2 | 98% | 17/18 |
 
 ## Libraries Tested
 
 - **calamine-styled** v0.33.0 (rust) - read
-- **pycalumya** vcal=0.33.0+rxw=0.79.4 (rust) - read, write
 - **rust_xlsxwriter** v0.79.4 (rust) - write
+- **wolfxl** vcal=0.33.0+rxw=0.79.4 (rust) - read, write
 
 ## Diagnostics Summary
 
@@ -138,16 +138,16 @@
 
 | Feature | Library | Test Case | Operation | Category | Severity | Message |
 |---------|---------|-----------|-----------|----------|----------|---------|
-| borders | pycalumya | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
-| borders | pycalumya | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
-| borders | pycalumya | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
+| borders | wolfxl | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
+| borders | wolfxl | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
+| borders | wolfxl | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | calamine-styled | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
 | borders | calamine-styled | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
 | borders | calamine-styled | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
-| images | pycalumya | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
-| images | pycalumya | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
-| images | pycalumya | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
-| images | pycalumya | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
+| images | wolfxl | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
+| images | wolfxl | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
+| images | wolfxl | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
+| images | wolfxl | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | calamine-styled | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
 | images | calamine-styled | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | rust_xlsxwriter | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
@@ -160,18 +160,18 @@
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="background_colors-details"></a>
 ### background_colors
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="borders-details"></a>
 ### borders
@@ -201,7 +201,9 @@
 | Border - mixed styles per edge | basic | ✅ |
 | Border - mixed colors per edge | basic | ✅ |
 
-**pycalumya** — Read: 🟠 1 | Write: 🟢 3
+**rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟠 1 | Write: 🟢 3
 
 | Test | Importance | Read | Write |
 |------|-----------|------|-------|
@@ -226,79 +228,77 @@
 | Border - mixed styles per edge | basic | ✅ | ✅ |
 | Border - mixed colors per edge | basic | ✅ | ✅ |
 
-**rust_xlsxwriter** — Write: 🟢 3
-
 <a id="cell_values-details"></a>
 ### cell_values
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="comments-details"></a>
 ### comments
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="conditional_formatting-details"></a>
 ### conditional_formatting
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="data_validation-details"></a>
 ### data_validation
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="dimensions-details"></a>
 ### dimensions
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="formulas-details"></a>
 ### formulas
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="freeze_panes-details"></a>
 ### freeze_panes
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="hyperlinks-details"></a>
 ### hyperlinks
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="images-details"></a>
 ### images
@@ -310,13 +310,6 @@
 | Image: one-cell anchor | basic | ❌ |
 | Image: two-cell anchor with offset | edge | ❌ |
 
-**pycalumya** — Read: 🔴 0 | Write: 🔴 0
-
-| Test | Importance | Read | Write |
-|------|-----------|------|-------|
-| Image: one-cell anchor | basic | ❌ | ❌ |
-| Image: two-cell anchor with offset | edge | ❌ | ❌ |
-
 **rust_xlsxwriter** — Write: 🔴 0
 
 | Test | Importance | Write |
@@ -324,41 +317,48 @@
 | Image: one-cell anchor | basic | ❌ |
 | Image: two-cell anchor with offset | edge | ❌ |
 
+**wolfxl** — Read: 🔴 0 | Write: 🔴 0
+
+| Test | Importance | Read | Write |
+|------|-----------|------|-------|
+| Image: one-cell anchor | basic | ❌ | ❌ |
+| Image: two-cell anchor with offset | edge | ❌ | ❌ |
+
 <a id="merged_cells-details"></a>
 ### merged_cells
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="multiple_sheets-details"></a>
 ### multiple_sheets
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="named_ranges-details"></a>
 ### named_ranges
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="number_formats-details"></a>
 ### number_formats
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="pivot_tables-details"></a>
 ### pivot_tables
@@ -366,10 +366,10 @@
 **calamine-styled**
 - Notes: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
-**pycalumya**
+**rust_xlsxwriter**
 - Notes: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
-**rust_xlsxwriter**
+**wolfxl**
 - Notes: Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx).
 
 <a id="tables-details"></a>
@@ -377,18 +377,18 @@
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 <a id="text_formatting-details"></a>
 ### text_formatting
 
 **calamine-styled** — Read: 🟢 3
 
-**pycalumya** — Read: 🟢 3 | Write: 🟢 3
-
 **rust_xlsxwriter** — Write: 🟢 3
+
+**wolfxl** — Read: 🟢 3 | Write: 🟢 3
 
 ---
 *Benchmark version: 0.1.0*
