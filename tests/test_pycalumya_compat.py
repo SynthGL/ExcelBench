@@ -718,3 +718,83 @@ class TestModifyMode:
         assert cell.font.italic is True
         assert "00FF00" in str(cell.fill.fgColor.rgb)
         wb2.close()
+
+    def test_modify_multiple_sheets(self, tmp_path: Path) -> None:
+        """Modify mode: patch cells across multiple sheets."""
+        multi_fixture = Path("fixtures/excel/tier1/09_multiple_sheets.xlsx")
+        if not multi_fixture.exists():
+            pytest.skip("multi-sheet fixture not available")
+
+        import openpyxl
+
+        from pycalumya import load_workbook
+
+        wb = load_workbook(str(multi_fixture), modify=True)
+        wb["Alpha"]["A1"] = "Patched Alpha"
+        wb["Beta"]["B2"] = 999
+        wb["Gamma"]["C3"] = True
+        out = tmp_path / "mod_multi.xlsx"
+        wb.save(str(out))
+        wb.close()
+
+        wb2 = openpyxl.load_workbook(str(out))
+        assert wb2["Alpha"]["A1"].value == "Patched Alpha"
+        assert wb2["Beta"]["B2"].value == 999
+        assert wb2["Gamma"]["C3"].value is True
+        # Originals preserved
+        assert wb2["Alpha"]["B1"].value is not None  # original data still there
+        wb2.close()
+
+    def test_modify_preserves_images(self, tmp_path: Path) -> None:
+        """Modify mode: files with images should preserve them after patching."""
+        img_fixture = Path("fixtures/excel/tier2/14_images.xlsx")
+        if not img_fixture.exists():
+            pytest.skip("images fixture not available")
+
+        import openpyxl
+
+        from pycalumya import load_workbook
+
+        orig_size = img_fixture.stat().st_size
+
+        wb = load_workbook(str(img_fixture), modify=True)
+        ws = wb.active
+        assert ws is not None
+        ws["A1"] = "Has images"
+        out = tmp_path / "mod_images.xlsx"
+        wb.save(str(out))
+        wb.close()
+
+        # File should still be similar size (images preserved)
+        new_size = out.stat().st_size
+        ratio = new_size / orig_size
+        assert 0.5 < ratio < 2.0, f"Size ratio {ratio:.2f} suggests corruption"
+
+        # Should still open fine
+        wb2 = openpyxl.load_workbook(str(out))
+        assert wb2.active is not None
+        assert wb2.active["A1"].value == "Has images"
+        wb2.close()
+
+    def test_modify_preserves_hyperlinks(self, tmp_path: Path) -> None:
+        """Modify mode: files with hyperlinks should preserve them."""
+        link_fixture = Path("fixtures/excel/tier2/13_hyperlinks.xlsx")
+        if not link_fixture.exists():
+            pytest.skip("hyperlinks fixture not available")
+
+        import openpyxl
+
+        from pycalumya import load_workbook
+
+        wb = load_workbook(str(link_fixture), modify=True)
+        ws = wb.active
+        assert ws is not None
+        ws["A1"] = "Has links"
+        out = tmp_path / "mod_links.xlsx"
+        wb.save(str(out))
+        wb.close()
+
+        wb2 = openpyxl.load_workbook(str(out))
+        assert wb2.active is not None
+        assert wb2.active["A1"].value == "Has links"
+        wb2.close()
