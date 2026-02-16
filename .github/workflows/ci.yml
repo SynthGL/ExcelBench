@@ -87,16 +87,11 @@ jobs:
 
       - uses: astral-sh/setup-uv@v3
 
-      - uses: dtolnay/rust-toolchain@stable
-
       - name: Install deps (dev + rust)
         run: uv sync --extra dev --extra rust
 
-      - name: Build Rust extension (umya)
-        run: >
-          uv run maturin develop
-          --manifest-path rust/excelbench_rust/Cargo.toml
-          --features umya
+      - name: Verify wolfxl install
+        run: uv run python -c "import wolfxl; print(wolfxl.__version__)"
 
-      - name: Rust smoke tests
-        run: uv run pytest -k excelbench_rust_smoke -v
+      - name: Rust integration tests
+        run: uv run pytest tests/test_rust_integration.py -v

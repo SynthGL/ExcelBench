@@ -40,6 +40,27 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-016 — Extract WolfXL to standalone GitHub repo + PyPI (2026-02-15)
+
+**Context**: WolfXL was embedded inside ExcelBench across `packages/wolfxl/` (Python wrapper) and
+`rust/excelbench_rust/` (Rust backend). This made it unusable for anyone not building ExcelBench
+from source. For adoption, WolfXL needs to be `pip install wolfxl`.
+
+**Decision**: Extract WolfXL to `wolfiesch/wolfxl` on GitHub. Publish the calamine fork as
+`calamine-styles` crate on crates.io (required because cargo disallows git deps in published
+crates). The standalone repo includes only the 3 core backends (calamine-styled, rust_xlsxwriter,
+wolfxl patcher) — umya and basic calamine stay in ExcelBench. ExcelBench's `[project.optional-dependencies] rust`
+now points to `wolfxl>=0.1.0` from PyPI instead of `maturin`.
+
+**Alternatives considered**: (1) Keep WolfXL in ExcelBench and add maturin wheel CI (rejected:
+couples product and benchmark releases). (2) Include all 5 backends in standalone (rejected: umya
+and basic calamine are ExcelBench-only benchmarking tools). (3) Publish calamine fork under
+original name (rejected: name collision on crates.io).
+
+**Consequences**: `pip install wolfxl` provides pre-built wheels for Linux/macOS/Windows. ExcelBench
+CI no longer needs Rust toolchain for WolfXL (just `pip install wolfxl`). The `excelbench_rust_shim`
+package can be deprecated. Calamine fork must be maintained as `calamine-styles` on crates.io.
+
 ### DEC-015 — Publish WolfXL as standalone + `wolfxl._rust` with shim compatibility (2026-02-15)
 
 **Context**: WolfXL started as an in-repo compatibility layer and used the native module name

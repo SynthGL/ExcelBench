@@ -43,7 +43,7 @@ dev = [
     "mypy>=1.0",
 ]
 rust = [
-    "maturin>=1.0",
+    "wolfxl @ git+https://github.com/wolfiesch/wolfxl.git",
 ]
 docs = [
     "mkdocs-material>=9.5",
@@ -57,6 +57,9 @@ excelbench = "excelbench.cli:app"
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.hatch.metadata]
+allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/excelbench"]

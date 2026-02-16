@@ -4,7 +4,7 @@
 > when you introduce new top-level modules, flows, or dependency directions.
 
 > **DECISION LOG**: When making a significant design or architecture decision, always add an entry
-> to `decisions.md` using the `DEC-NNN` format. Next ID: **DEC-015**.
+> to `decisions.md` using the `DEC-NNN` format. Next ID: **DEC-017**.
 
 ## What This Project Is
 
@@ -48,16 +48,16 @@ uv run ruff check
 uv run mypy
 ```
 
-### Rust Adapters (optional)
+### WolfXL (optional, from PyPI)
 
 ```bash
-uv sync --extra rust
-uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml \
-  --features calamine,rust_xlsxwriter,umya
-uv run python -c "import wolfxl._rust as rust; print(rust.build_info())"
+uv sync --extra rust   # installs wolfxl from PyPI (pre-built wheel)
+uv run python -c "import wolfxl; print(wolfxl.__version__)"
 ```
 
-**Gotcha**: `uv sync` may uninstall the locally-built extension. Rerun `maturin develop` after syncing.
+For local development of wolfxl itself, see https://github.com/wolfiesch/wolfxl.
+
+**Note**: umya/basic calamine adapters still require local `maturin develop` from `rust/excelbench_rust/`.
 
 ### Fixture Generation (requires Excel installed)
 
