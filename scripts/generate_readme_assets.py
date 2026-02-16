@@ -261,8 +261,8 @@ def generate_architecture_diagram(dark: bool = True) -> str:
 
 <!-- Rust engines -->
 <rect x="40" y="235" width="220" height="45" fill="{box_bg}" stroke="{rust_color}" rx="8"/>
-<text x="150" y="258" text-anchor="middle" fill="{rust_color}" font-size="12" font-weight="600">calamine</text>
-<text x="150" y="273" text-anchor="middle" fill="{muted}" font-size="10">Rust XLSX parser</text>
+<text x="150" y="258" text-anchor="middle" fill="{rust_color}" font-size="12" font-weight="600">calamine-styles</text>
+<text x="150" y="273" text-anchor="middle" fill="{muted}" font-size="10">Rust XLSX parser + styles</text>
 
 <rect x="230" y="235" width="220" height="45" fill="{box_bg}" stroke="{rust_color}" rx="8"/>
 <text x="340" y="258" text-anchor="middle" fill="{rust_color}" font-size="12" font-weight="600">rust_xlsxwriter</text>

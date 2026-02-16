@@ -70,21 +70,26 @@ See the [full dashboard](results/DASHBOARD.md) for the combined fidelity + perfo
 
 ### Optional: Rust Backends (PyO3)
 
-Three additional adapters via a local PyO3 extension module:
+Five additional adapters via Rust/PyO3 extension modules:
 
-| Library | Caps | Notes |
-|:--------|:-----|:------|
-| calamine (Rust) | R | Direct Rust calamine bindings |
-| rust_xlsxwriter | W | Rust write bindings |
-| umya-spreadsheet | R+W | Rust read + write |
+| Library | Caps | Source | Notes |
+|:--------|:-----|:-------|:------|
+| [WolfXL](https://github.com/wolfiesch/wolfxl) (calamine-styled) | R | PyPI | Full-fidelity Rust reader with style extraction |
+| [WolfXL](https://github.com/wolfiesch/wolfxl) (rust_xlsxwriter) | W | PyPI | Full-fidelity Rust writer |
+| calamine (basic) | R | Local | Direct calamine bindings (data only, no styles) |
+| rust_xlsxwriter (direct) | W | Local | Direct rust_xlsxwriter bindings |
+| umya-spreadsheet | R+W | Local | Rust read + write |
 
 ```bash
+# WolfXL adapters (from PyPI — no Rust toolchain needed)
 uv sync --extra rust
+
+# Local-only adapters (requires Rust toolchain + maturin)
 uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml \
   --features calamine,rust_xlsxwriter,umya
 ```
 
-> `uv sync` may uninstall the locally-built extension; rerun `maturin develop` after.
+> `uv sync` may uninstall locally-built extensions; rerun `maturin develop` after.
 
 ## How It Works
 
@@ -161,9 +166,9 @@ Charts, print settings, protection.
 
 ## Project Status
 
-**v0.1.0** -- 16 scored features, 12 Python xlsx adapters + 2 xls + 3 Rust/PyO3.
+**v0.1.0** -- 18 scored features, 12 Python xlsx adapters + 2 xls + 5 Rust/PyO3.
 
-1084 tests passing. Actively maintained.
+1124 tests passing. Actively maintained.
 
 ## Contributing
 

@@ -26,17 +26,35 @@ Status legend:
 | Number format | Supported | `cell.number_format` |
 | Full openpyxl API parity | Partial | Focused subset |
 
-## Ecosystem Comparison (high-level)
+## Ecosystem Comparison
 
-| Capability | openpyxl | XlsxWriter | python-calamine / fastexcel | WolfXL |
-|---|---|---|---|---|
-| Read `.xlsx` | Yes | No (write-only) | Yes (reader-focused) | Yes |
-| Write `.xlsx` | Yes | Yes | Reader-focused | Yes |
-| Modify existing workbook | Yes | No | Not primary scope | Yes |
-| openpyxl-style workflow | Native | Different API | Different API | Targeted compatibility |
+### Pure Python Libraries
 
-Notes:
+| Capability | openpyxl | XlsxWriter | pandas (openpyxl engine) |
+|---|---|---|---|
+| Read `.xlsx` | Yes | No (write-only) | Yes |
+| Write `.xlsx` | Yes | Yes | Yes |
+| Modify existing workbook | Yes | No | No |
+| Style read/write | Yes | Yes (write) | No (DataFrame coercion) |
+| openpyxl-style API | Native | Different API | Different API |
+| Speed (relative) | 1x baseline | ~1.5x write | ~1x (wraps openpyxl) |
 
-- XlsxWriter explicitly documents write-only scope.
-- Read-focused libraries are excellent for ingestion workloads.
-- WolfXL emphasizes compatibility + performance + fidelity checks.
+### Rust-Backed Libraries
+
+| Capability | fastexcel | python-calamine | FastXLSX | rustpy-xlsxwriter | WolfXL |
+|---|---|---|---|---|---|
+| Read `.xlsx` | Yes | Yes | Yes | No | **Yes** |
+| Write `.xlsx` | No | No | Yes | Yes | **Yes** |
+| Modify existing file | No | No | No | No | **Yes** |
+| Style extraction (read) | No | No | No | N/A | **Yes** |
+| Style writing | N/A | N/A | No | Partial | **Yes** |
+| openpyxl-compatible API | No | No | No | No | **Yes** |
+
+Key takeaways:
+
+- **fastexcel** and **python-calamine** are excellent data readers — fast for ingestion into Arrow/DataFrames, but no formatting or write support.
+- **FastXLSX** combines calamine + rust_xlsxwriter but skips formatting, merged cells, and modify mode.
+- **rustpy-xlsxwriter** wraps rust_xlsxwriter for writes with some formatting, but no read or openpyxl API.
+- **WolfXL** targets the full openpyxl workflow: read with styles, write with styles, and modify existing files.
+
+Upstream [calamine](https://github.com/tafia/calamine) does not parse cell styles. WolfXL's read engine uses [calamine-styles](https://crates.io/crates/calamine-styles), a fork that adds Font/Fill/Border/Alignment/NumberFormat extraction from OOXML.
