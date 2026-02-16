@@ -1,19 +1,4 @@
 {
-  "metadata": {
-    "benchmark_version": "0.1.0",
-    "run_date": "2026-02-16T02:40:42.479695+00:00",
-    "excel_version": "16.105.3",
-    "platform": "Darwin-arm64",
-    "profile": "xlsx",
-    "python": "3.12.3",
-    "commit": "5e8b554",
-    "config": {
-      "warmup": 3,
-      "iters": 25,
-      "iteration_policy": "fixed",
-      "breakdown": false
-    }
-  },
   "libraries": {
     "openpyxl": {
       "name": "openpyxl",
@@ -10987,6 +10972,7126 @@
           },
           "op_count": null,
           "op_unit": null
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 28.804291,
+            "p50": 30.006125,
+            "p95": 56.775125
+          },
+          "cpu_ms": {
+            "min": 28.791,
+            "p50": 29.771,
+            "p95": 56.694
+          },
+          "rss_peak_mb": 162.5,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 30.006125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 24.57575,
+            "p50": 24.969167,
+            "p95": 24.970125
+          },
+          "cpu_ms": {
+            "min": 24.553,
+            "p50": 24.939,
+            "p95": 24.945
+          },
+          "rss_peak_mb": 162.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 24.969167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 24.864125,
+            "p50": 25.38,
+            "p95": 25.525167
+          },
+          "cpu_ms": {
+            "min": 24.827,
+            "p50": 25.326,
+            "p95": 25.471
+          },
+          "rss_peak_mb": 163.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 25.38,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.721,
+            "p50": 8.163541,
+            "p95": 8.173459
+          },
+          "cpu_ms": {
+            "min": 14.055,
+            "p50": 14.804,
+            "p95": 14.962
+          },
+          "rss_peak_mb": 187.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.163541,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.141,
+            "p50": 6.363666,
+            "p95": 6.380375
+          },
+          "cpu_ms": {
+            "min": 6.141,
+            "p50": 6.355,
+            "p95": 6.371
+          },
+          "rss_peak_mb": 187.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.363666,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 21.161583,
+            "p50": 21.604834,
+            "p95": 22.175125
+          },
+          "cpu_ms": {
+            "min": 21.155,
+            "p50": 21.583,
+            "p95": 22.076
+          },
+          "rss_peak_mb": 187.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 21.604834,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 79.023541,
+            "p50": 79.266292,
+            "p95": 79.708542
+          },
+          "cpu_ms": {
+            "min": 78.929,
+            "p50": 79.194,
+            "p95": 79.65
+          },
+          "rss_peak_mb": 192.109375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 79.266292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 79.864833,
+            "p50": 80.426625,
+            "p95": 80.77575
+          },
+          "cpu_ms": {
+            "min": 79.741,
+            "p50": 80.315,
+            "p95": 80.48
+          },
+          "rss_peak_mb": 192.109375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 80.426625,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.619875,
+            "p50": 3.709292,
+            "p95": 3.89275
+          },
+          "cpu_ms": {
+            "min": 3.62,
+            "p50": 3.71,
+            "p95": 3.893
+          },
+          "rss_peak_mb": 192.109375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 3.709292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.781,
+            "p50": 3.995542,
+            "p95": 4.544084
+          },
+          "cpu_ms": {
+            "min": 3.782,
+            "p50": 3.988,
+            "p95": 4.532
+          },
+          "rss_peak_mb": 192.1875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 3.995542,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.41725,
+            "p50": 4.569875,
+            "p95": 4.671042
+          },
+          "cpu_ms": {
+            "min": 4.418,
+            "p50": 4.571,
+            "p95": 4.656
+          },
+          "rss_peak_mb": 192.296875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.569875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.602833,
+            "p50": 1.742791,
+            "p95": 1.75075
+          },
+          "cpu_ms": {
+            "min": 6.624,
+            "p50": 7.336,
+            "p95": 7.616
+          },
+          "rss_peak_mb": 192.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.742791,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 0.646583,
+            "p50": 0.676125,
+            "p95": 0.698167
+          },
+          "cpu_ms": {
+            "min": 0.645,
+            "p50": 0.676,
+            "p95": 0.698
+          },
+          "rss_peak_mb": 192.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.676125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.527041,
+            "p50": 3.748459,
+            "p95": 3.753417
+          },
+          "cpu_ms": {
+            "min": 3.527,
+            "p50": 3.749,
+            "p95": 3.754
+          },
+          "rss_peak_mb": 192.859375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 3.748459,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.396458,
+            "p50": 8.673334,
+            "p95": 8.739125
+          },
+          "cpu_ms": {
+            "min": 8.389,
+            "p50": 8.668,
+            "p95": 8.735
+          },
+          "rss_peak_mb": 192.859375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.673334,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.478208,
+            "p50": 8.561583,
+            "p95": 8.573
+          },
+          "cpu_ms": {
+            "min": 8.472,
+            "p50": 8.562,
+            "p95": 8.569
+          },
+          "rss_peak_mb": 192.859375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.561583,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 36.848833,
+            "p50": 37.021667,
+            "p95": 37.225084
+          },
+          "cpu_ms": {
+            "min": 36.823,
+            "p50": 37.001,
+            "p95": 37.173
+          },
+          "rss_peak_mb": 193.03125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 37.021667,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 31.173041,
+            "p50": 31.876708,
+            "p95": 32.958917
+          },
+          "cpu_ms": {
+            "min": 31.167,
+            "p50": 31.868,
+            "p95": 32.931
+          },
+          "rss_peak_mb": 193.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 31.876708,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 28.8985,
+            "p50": 29.110542,
+            "p95": 29.6345
+          },
+          "cpu_ms": {
+            "min": 28.899,
+            "p50": 29.091,
+            "p95": 29.621
+          },
+          "rss_peak_mb": 193.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 29.110542,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.783875,
+            "p50": 6.933958,
+            "p95": 6.93575
+          },
+          "cpu_ms": {
+            "min": 13.197,
+            "p50": 13.513,
+            "p95": 13.529
+          },
+          "rss_peak_mb": 194.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.933958,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.031666,
+            "p50": 7.176167,
+            "p95": 7.282834
+          },
+          "cpu_ms": {
+            "min": 7.031,
+            "p50": 7.177,
+            "p95": 7.268
+          },
+          "rss_peak_mb": 194.171875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.176167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 25.943584,
+            "p50": 26.822375,
+            "p95": 26.932875
+          },
+          "cpu_ms": {
+            "min": 25.937,
+            "p50": 26.796,
+            "p95": 26.841
+          },
+          "rss_peak_mb": 194.3125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 26.822375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 109.886208,
+            "p50": 109.913,
+            "p95": 109.929625
+          },
+          "cpu_ms": {
+            "min": 109.75,
+            "p50": 109.763,
+            "p95": 109.779
+          },
+          "rss_peak_mb": 194.453125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 109.913,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 109.461791,
+            "p50": 110.164917,
+            "p95": 110.190458
+          },
+          "cpu_ms": {
+            "min": 109.343,
+            "p50": 109.996,
+            "p95": 110.034
+          },
+          "rss_peak_mb": 194.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 110.164917,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.501542,
+            "p50": 4.779459,
+            "p95": 4.977917
+          },
+          "cpu_ms": {
+            "min": 4.498,
+            "p50": 4.768,
+            "p95": 4.974
+          },
+          "rss_peak_mb": 194.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.779459,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.403042,
+            "p50": 4.832583,
+            "p95": 4.857542
+          },
+          "cpu_ms": {
+            "min": 4.404,
+            "p50": 4.816,
+            "p95": 4.838
+          },
+          "rss_peak_mb": 194.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.832583,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.749041,
+            "p50": 5.377125,
+            "p95": 6.046208
+          },
+          "cpu_ms": {
+            "min": 4.75,
+            "p50": 5.374,
+            "p95": 6.04
+          },
+          "rss_peak_mb": 194.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.377125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.394584,
+            "p50": 1.466667,
+            "p95": 1.575833
+          },
+          "cpu_ms": {
+            "min": 6.261,
+            "p50": 7.217,
+            "p95": 7.957
+          },
+          "rss_peak_mb": 194.75,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.466667,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 0.757667,
+            "p50": 0.762792,
+            "p95": 0.787
+          },
+          "cpu_ms": {
+            "min": 0.758,
+            "p50": 0.762,
+            "p95": 0.787
+          },
+          "rss_peak_mb": 194.75,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.762792,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.074209,
+            "p50": 4.299958,
+            "p95": 4.309542
+          },
+          "cpu_ms": {
+            "min": 4.075,
+            "p50": 4.296,
+            "p95": 4.301
+          },
+          "rss_peak_mb": 194.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.299958,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 11.357542,
+            "p50": 11.638208,
+            "p95": 11.8095
+          },
+          "cpu_ms": {
+            "min": 11.358,
+            "p50": 11.607,
+            "p95": 11.796
+          },
+          "rss_peak_mb": 194.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 11.638208,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 11.725959,
+            "p50": 11.937292,
+            "p95": 11.969833
+          },
+          "cpu_ms": {
+            "min": 11.705,
+            "p50": 11.912,
+            "p95": 11.966
+          },
+          "rss_peak_mb": 194.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 11.937292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 30.767917,
+            "p50": 31.313208,
+            "p95": 31.632917
+          },
+          "cpu_ms": {
+            "min": 30.735,
+            "p50": 31.282,
+            "p95": 31.569
+          },
+          "rss_peak_mb": 195.0,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 31.313208,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 26.384333,
+            "p50": 26.8955,
+            "p95": 27.031084
+          },
+          "cpu_ms": {
+            "min": 26.325,
+            "p50": 26.787,
+            "p95": 26.951
+          },
+          "rss_peak_mb": 195.515625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 26.8955,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 25.54725,
+            "p50": 26.0355,
+            "p95": 26.537625
+          },
+          "cpu_ms": {
+            "min": 25.505,
+            "p50": 26.011,
+            "p95": 26.481
+          },
+          "rss_peak_mb": 195.578125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 26.0355,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.852333,
+            "p50": 4.968375,
+            "p95": 5.040083
+          },
+          "cpu_ms": {
+            "min": 7.37,
+            "p50": 7.582,
+            "p95": 7.641
+          },
+          "rss_peak_mb": 195.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.968375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.452834,
+            "p50": 6.8265,
+            "p95": 6.979917
+          },
+          "cpu_ms": {
+            "min": 6.452,
+            "p50": 6.81,
+            "p95": 6.981
+          },
+          "rss_peak_mb": 195.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.8265,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 23.239417,
+            "p50": 23.755958,
+            "p95": 24.577333
+          },
+          "cpu_ms": {
+            "min": 23.239,
+            "p50": 23.751,
+            "p95": 24.519
+          },
+          "rss_peak_mb": 195.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 23.755958,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 82.411584,
+            "p50": 83.004375,
+            "p95": 83.135458
+          },
+          "cpu_ms": {
+            "min": 82.403,
+            "p50": 82.931,
+            "p95": 83.028
+          },
+          "rss_peak_mb": 195.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 83.004375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 83.228083,
+            "p50": 83.773583,
+            "p95": 84.021709
+          },
+          "cpu_ms": {
+            "min": 83.089,
+            "p50": 83.599,
+            "p95": 83.819
+          },
+          "rss_peak_mb": 195.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 83.773583,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 28.105542,
+            "p50": 28.808292,
+            "p95": 51.832375
+          },
+          "cpu_ms": {
+            "min": 28.104,
+            "p50": 28.767,
+            "p95": 51.832
+          },
+          "rss_peak_mb": 195.9375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 28.808292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 24.602,
+            "p50": 24.743917,
+            "p95": 25.046375
+          },
+          "cpu_ms": {
+            "min": 24.603,
+            "p50": 24.734,
+            "p95": 25.043
+          },
+          "rss_peak_mb": 195.9375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 24.743917,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 36.014625,
+            "p50": 36.291125,
+            "p95": 56.109416
+          },
+          "cpu_ms": {
+            "min": 35.979,
+            "p50": 36.225,
+            "p95": 55.976
+          },
+          "rss_peak_mb": 196.40625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 36.291125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 13.652292,
+            "p50": 13.7505,
+            "p95": 13.795667
+          },
+          "cpu_ms": {
+            "min": 40.972,
+            "p50": 41.667,
+            "p95": 42.978
+          },
+          "rss_peak_mb": 225.015625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 13.7505,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.181542,
+            "p50": 6.196292,
+            "p95": 6.309291
+          },
+          "cpu_ms": {
+            "min": 6.181,
+            "p50": 6.2,
+            "p95": 6.302
+          },
+          "rss_peak_mb": 225.015625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.196292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 21.951625,
+            "p50": 22.109875,
+            "p95": 22.181208
+          },
+          "cpu_ms": {
+            "min": 21.927,
+            "p50": 22.091,
+            "p95": 22.149
+          },
+          "rss_peak_mb": 225.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 22.109875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 77.738833,
+            "p50": 78.400584,
+            "p95": 79.011292
+          },
+          "cpu_ms": {
+            "min": 77.732,
+            "p50": 78.391,
+            "p95": 78.943
+          },
+          "rss_peak_mb": 225.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 78.400584,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 77.891791,
+            "p50": 78.0995,
+            "p95": 79.085
+          },
+          "cpu_ms": {
+            "min": 77.812,
+            "p50": 78.08,
+            "p95": 79.062
+          },
+          "rss_peak_mb": 225.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 78.0995,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.730875,
+            "p50": 7.207167,
+            "p95": 7.541917
+          },
+          "cpu_ms": {
+            "min": 6.731,
+            "p50": 7.207,
+            "p95": 7.542
+          },
+          "rss_peak_mb": 225.109375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.207167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.218125,
+            "p50": 7.367541,
+            "p95": 7.764416
+          },
+          "cpu_ms": {
+            "min": 7.21,
+            "p50": 7.368,
+            "p95": 7.765
+          },
+          "rss_peak_mb": 225.125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.367541,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.493166,
+            "p50": 7.78875,
+            "p95": 8.301
+          },
+          "cpu_ms": {
+            "min": 7.494,
+            "p50": 7.789,
+            "p95": 8.292
+          },
+          "rss_peak_mb": 225.265625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.78875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.415792,
+            "p50": 1.461041,
+            "p95": 1.513917
+          },
+          "cpu_ms": {
+            "min": 5.59,
+            "p50": 5.97,
+            "p95": 6.33
+          },
+          "rss_peak_mb": 225.265625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.461041,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 0.995625,
+            "p50": 1.007708,
+            "p95": 1.011666
+          },
+          "cpu_ms": {
+            "min": 0.995,
+            "p50": 1.007,
+            "p95": 1.013
+          },
+          "rss_peak_mb": 225.296875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.007708,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.364583,
+            "p50": 6.619208,
+            "p95": 6.817541
+          },
+          "cpu_ms": {
+            "min": 6.364,
+            "p50": 6.619,
+            "p95": 6.818
+          },
+          "rss_peak_mb": 225.3125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.619208,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 12.158292,
+            "p50": 12.335083,
+            "p95": 12.464458
+          },
+          "cpu_ms": {
+            "min": 12.159,
+            "p50": 12.325,
+            "p95": 12.433
+          },
+          "rss_peak_mb": 225.3125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 12.335083,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 12.095167,
+            "p50": 12.17625,
+            "p95": 12.274833
+          },
+          "cpu_ms": {
+            "min": 12.095,
+            "p50": 12.176,
+            "p95": 12.272
+          },
+          "rss_peak_mb": 225.3125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 12.17625,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.997125,
+            "p50": 7.337542,
+            "p95": 7.509375
+          },
+          "cpu_ms": {
+            "min": 6.997,
+            "p50": 7.339,
+            "p95": 7.509
+          },
+          "rss_peak_mb": 225.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.337542,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.258625,
+            "p50": 7.441875,
+            "p95": 7.560708
+          },
+          "cpu_ms": {
+            "min": 7.248,
+            "p50": 7.43,
+            "p95": 7.534
+          },
+          "rss_peak_mb": 225.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.441875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.251708,
+            "p50": 8.761625,
+            "p95": 9.054792
+          },
+          "cpu_ms": {
+            "min": 8.252,
+            "p50": 8.747,
+            "p95": 9.046
+          },
+          "rss_peak_mb": 225.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.761625,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.643666,
+            "p50": 1.736375,
+            "p95": 1.79
+          },
+          "cpu_ms": {
+            "min": 5.121,
+            "p50": 7.013,
+            "p95": 7.114
+          },
+          "rss_peak_mb": 225.453125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.736375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.087917,
+            "p50": 1.099959,
+            "p95": 1.109542
+          },
+          "cpu_ms": {
+            "min": 1.088,
+            "p50": 1.1,
+            "p95": 1.111
+          },
+          "rss_peak_mb": 225.453125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.099959,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.014708,
+            "p50": 7.102708,
+            "p95": 7.226833
+          },
+          "cpu_ms": {
+            "min": 7.006,
+            "p50": 7.073,
+            "p95": 7.219
+          },
+          "rss_peak_mb": 225.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.102708,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 13.094167,
+            "p50": 13.186292,
+            "p95": 13.270458
+          },
+          "cpu_ms": {
+            "min": 13.082,
+            "p50": 13.167,
+            "p95": 13.253
+          },
+          "rss_peak_mb": 225.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 13.186292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 13.129458,
+            "p50": 13.277833,
+            "p95": 13.335
+          },
+          "cpu_ms": {
+            "min": 13.131,
+            "p50": 13.277,
+            "p95": 13.318
+          },
+          "rss_peak_mb": 225.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 13.277833,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.939583,
+            "p50": 8.299167,
+            "p95": 8.454375
+          },
+          "cpu_ms": {
+            "min": 7.94,
+            "p50": 8.299,
+            "p95": 8.448
+          },
+          "rss_peak_mb": 225.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.299167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.03775,
+            "p50": 8.202375,
+            "p95": 8.631542
+          },
+          "cpu_ms": {
+            "min": 8.031,
+            "p50": 8.196,
+            "p95": 8.627
+          },
+          "rss_peak_mb": 225.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.202375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.536333,
+            "p50": 8.896375,
+            "p95": 9.235458
+          },
+          "cpu_ms": {
+            "min": 8.528,
+            "p50": 8.898,
+            "p95": 9.235
+          },
+          "rss_peak_mb": 225.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.896375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.860167,
+            "p50": 1.9535,
+            "p95": 1.973125
+          },
+          "cpu_ms": {
+            "min": 7.305,
+            "p50": 7.792,
+            "p95": 8.105
+          },
+          "rss_peak_mb": 226.359375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.9535,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.406166,
+            "p50": 1.5125,
+            "p95": 1.537042
+          },
+          "cpu_ms": {
+            "min": 1.406,
+            "p50": 1.487,
+            "p95": 1.512
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.5125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.795208,
+            "p50": 7.804959,
+            "p95": 8.077375
+          },
+          "cpu_ms": {
+            "min": 7.724,
+            "p50": 7.778,
+            "p95": 7.999
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.804959,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 15.533125,
+            "p50": 15.809125,
+            "p95": 15.954541
+          },
+          "cpu_ms": {
+            "min": 15.505,
+            "p50": 15.792,
+            "p95": 15.929
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 15.809125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 15.304792,
+            "p50": 15.545125,
+            "p95": 15.59275
+          },
+          "cpu_ms": {
+            "min": 15.277,
+            "p50": 15.529,
+            "p95": 15.593
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 15.545125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.900042,
+            "p50": 4.15875,
+            "p95": 4.42675
+          },
+          "cpu_ms": {
+            "min": 3.9,
+            "p50": 4.158,
+            "p95": 4.427
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.15875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.849958,
+            "p50": 4.136417,
+            "p95": 4.542584
+          },
+          "cpu_ms": {
+            "min": 3.85,
+            "p50": 4.131,
+            "p95": 4.543
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.136417,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.97075,
+            "p50": 5.283959,
+            "p95": 5.961708
+          },
+          "cpu_ms": {
+            "min": 4.971,
+            "p50": 5.263,
+            "p95": 5.946
+          },
+          "rss_peak_mb": 226.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.283959,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "polars",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.420416,
+            "p50": 1.628916,
+            "p95": 1.657334
+          },
+          "cpu_ms": {
+            "min": 6.43,
+            "p50": 7.309,
+            "p95": 8.167
+          },
+          "rss_peak_mb": 226.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.628916,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 0.899042,
+            "p50": 0.923917,
+            "p95": 0.925625
+          },
+          "cpu_ms": {
+            "min": 0.9,
+            "p50": 0.924,
+            "p95": 0.927
+          },
+          "rss_peak_mb": 226.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.923917,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 3.96475,
+            "p50": 4.261458,
+            "p95": 4.48325
+          },
+          "cpu_ms": {
+            "min": 3.958,
+            "p50": 4.262,
+            "p95": 4.466
+          },
+          "rss_peak_mb": 226.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.261458,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.926125,
+            "p50": 9.994625,
+            "p95": 10.105958
+          },
+          "cpu_ms": {
+            "min": 9.928,
+            "p50": 9.996,
+            "p95": 10.088
+          },
+          "rss_peak_mb": 226.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 9.994625,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.810792,
+            "p50": 10.163125,
+            "p95": 10.265708
+          },
+          "cpu_ms": {
+            "min": 9.804,
+            "p50": 10.143,
+            "p95": 10.245
+          },
+          "rss_peak_mb": 226.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 10.163125,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 62.52625,
+            "p50": 63.028042,
+            "p95": 63.122542
+          },
+          "cpu_ms": {
+            "min": 62.447,
+            "p50": 62.933,
+            "p95": 63.059
+          },
+          "rss_peak_mb": 226.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 63.028042,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 57.373458,
+            "p50": 57.859708,
+            "p95": 58.469292
+          },
+          "cpu_ms": {
+            "min": 57.313,
+            "p50": 57.794,
+            "p95": 58.395
+          },
+          "rss_peak_mb": 226.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 57.859708,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 57.94325,
+            "p50": 58.226875,
+            "p95": 77.817125
+          },
+          "cpu_ms": {
+            "min": 57.847,
+            "p50": 58.033,
+            "p95": 77.659
+          },
+          "rss_peak_mb": 226.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 58.226875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.675833,
+            "p50": 8.709459,
+            "p95": 8.7435
+          },
+          "cpu_ms": {
+            "min": 15.657,
+            "p50": 17.93,
+            "p95": 18.027
+          },
+          "rss_peak_mb": 227.25,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.709459,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.823542,
+            "p50": 9.990958,
+            "p95": 10.047875
+          },
+          "cpu_ms": {
+            "min": 9.809,
+            "p50": 9.976,
+            "p95": 10.03
+          },
+          "rss_peak_mb": 227.46875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 9.990958,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 53.351542,
+            "p50": 53.975709,
+            "p95": 73.163042
+          },
+          "cpu_ms": {
+            "min": 53.292,
+            "p50": 53.798,
+            "p95": 73.056
+          },
+          "rss_peak_mb": 227.46875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 53.975709,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 119.256042,
+            "p50": 119.904,
+            "p95": 120.965625
+          },
+          "cpu_ms": {
+            "min": 119.114,
+            "p50": 119.608,
+            "p95": 120.694
+          },
+          "rss_peak_mb": 227.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 119.904,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 120.079416,
+            "p50": 120.317833,
+            "p95": 121.023625
+          },
+          "cpu_ms": {
+            "min": 119.771,
+            "p50": 119.939,
+            "p95": 120.595
+          },
+          "rss_peak_mb": 227.96875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 120.317833,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 32.228958,
+            "p50": 33.695917,
+            "p95": 55.593875
+          },
+          "cpu_ms": {
+            "min": 32.151,
+            "p50": 33.392,
+            "p95": 54.922
+          },
+          "rss_peak_mb": 228.4375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 33.695917,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 26.491334,
+            "p50": 27.90875,
+            "p95": 28.44725
+          },
+          "cpu_ms": {
+            "min": 26.492,
+            "p50": 27.598,
+            "p95": 27.85
+          },
+          "rss_peak_mb": 228.4375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 27.90875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 26.042291,
+            "p50": 26.726666,
+            "p95": 27.001542
+          },
+          "cpu_ms": {
+            "min": 26.038,
+            "p50": 26.667,
+            "p95": 26.966
+          },
+          "rss_peak_mb": 228.4375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 26.726666,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "polars",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 6.039875,
+            "p50": 6.357166,
+            "p95": 6.754583
+          },
+          "cpu_ms": {
+            "min": 10.785,
+            "p50": 13.675,
+            "p95": 13.733
+          },
+          "rss_peak_mb": 228.453125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 6.357166,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.164125,
+            "p50": 8.4175,
+            "p95": 8.784917
+          },
+          "cpu_ms": {
+            "min": 8.16,
+            "p50": 8.413,
+            "p95": 8.678
+          },
+          "rss_peak_mb": 228.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.4175,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 22.874458,
+            "p50": 22.910833,
+            "p95": 23.687542
+          },
+          "cpu_ms": {
+            "min": 22.855,
+            "p50": 22.887,
+            "p95": 23.319
+          },
+          "rss_peak_mb": 228.59375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 22.910833,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 91.564666,
+            "p50": 92.776833,
+            "p95": 93.334375
+          },
+          "cpu_ms": {
+            "min": 91.415,
+            "p50": 92.591,
+            "p95": 93.127
+          },
+          "rss_peak_mb": 228.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 92.776833,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 92.839625,
+            "p50": 93.565541,
+            "p95": 94.260417
+          },
+          "cpu_ms": {
+            "min": 92.565,
+            "p50": 93.435,
+            "p95": 94.109
+          },
+          "rss_peak_mb": 228.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 93.565541,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 18.767,
+            "p50": 19.98225,
+            "p95": 20.111
+          },
+          "cpu_ms": {
+            "min": 18.762,
+            "p50": 19.43,
+            "p95": 19.6
+          },
+          "rss_peak_mb": 149.265625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 19.98225,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 28.624,
+            "p50": 30.509375,
+            "p95": 30.519667
+          },
+          "cpu_ms": {
+            "min": 28.603,
+            "p50": 29.245,
+            "p95": 30.12
+          },
+          "rss_peak_mb": 156.015625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 30.509375,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 40.698417,
+            "p50": 41.015083,
+            "p95": 41.199584
+          },
+          "cpu_ms": {
+            "min": 40.646,
+            "p50": 40.855,
+            "p95": 40.938
+          },
+          "rss_peak_mb": 159.0,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 41.015083,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 37.014875,
+            "p50": 37.357042,
+            "p95": 37.710792
+          },
+          "cpu_ms": {
+            "min": 36.778,
+            "p50": 37.268,
+            "p95": 37.335
+          },
+          "rss_peak_mb": 159.375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 37.357042,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 91.161,
+            "p50": 91.790292,
+            "p95": 92.066542
+          },
+          "cpu_ms": {
+            "min": 91.044,
+            "p50": 91.556,
+            "p95": 91.638
+          },
+          "rss_peak_mb": 165.859375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 91.790292,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 91.745542,
+            "p50": 92.005541,
+            "p95": 92.028792
+          },
+          "cpu_ms": {
+            "min": 91.507,
+            "p50": 91.726,
+            "p95": 91.765
+          },
+          "rss_peak_mb": 165.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 92.005541,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 2.539875,
+            "p50": 2.740083,
+            "p95": 2.889667
+          },
+          "cpu_ms": {
+            "min": 2.539,
+            "p50": 2.739,
+            "p95": 2.877
+          },
+          "rss_peak_mb": 165.96875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 2.740083,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 2.185459,
+            "p50": 2.667209,
+            "p95": 2.753125
+          },
+          "cpu_ms": {
+            "min": 2.186,
+            "p50": 2.655,
+            "p95": 2.711
+          },
+          "rss_peak_mb": 165.96875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 2.667209,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 35.100125,
+            "p50": 37.225667,
+            "p95": 41.065792
+          },
+          "cpu_ms": {
+            "min": 34.854,
+            "p50": 36.675,
+            "p95": 38.067
+          },
+          "rss_peak_mb": 166.375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 37.225667,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 21.894959,
+            "p50": 23.178458,
+            "p95": 23.194458
+          },
+          "cpu_ms": {
+            "min": 21.877,
+            "p50": 23.124,
+            "p95": 23.135
+          },
+          "rss_peak_mb": 166.375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 23.178458,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.786375,
+            "p50": 4.93875,
+            "p95": 5.095541
+          },
+          "cpu_ms": {
+            "min": 4.799,
+            "p50": 4.958,
+            "p95": 5.093
+          },
+          "rss_peak_mb": 166.421875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.93875,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_sparse_1pct_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.849,
+            "p50": 5.12975,
+            "p95": 5.214875
+          },
+          "cpu_ms": {
+            "min": 4.861,
+            "p50": 5.125,
+            "p95": 5.177
+          },
+          "rss_peak_mb": 166.4375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.12975,
+            "verify": 0.0
+          },
+          "op_count": 100,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 3.636667,
+            "p50": 3.86775,
+            "p95": 3.896
+          },
+          "cpu_ms": {
+            "min": 3.579,
+            "p50": 3.841,
+            "p95": 3.875
+          },
+          "rss_peak_mb": 166.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.86775,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.332167,
+            "p50": 4.6735,
+            "p95": 4.726709
+          },
+          "cpu_ms": {
+            "min": 4.332,
+            "p50": 4.562,
+            "p95": 4.685
+          },
+          "rss_peak_mb": 166.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.6735,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 5.911417,
+            "p50": 6.181,
+            "p95": 6.783
+          },
+          "cpu_ms": {
+            "min": 5.902,
+            "p50": 6.182,
+            "p95": 6.491
+          },
+          "rss_peak_mb": 166.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 6.181,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.931042,
+            "p50": 5.171917,
+            "p95": 5.36775
+          },
+          "cpu_ms": {
+            "min": 4.925,
+            "p50": 5.157,
+            "p95": 5.359
+          },
+          "rss_peak_mb": 166.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.171917,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 9.932792,
+            "p50": 10.262917,
+            "p95": 10.266125
+          },
+          "cpu_ms": {
+            "min": 9.942,
+            "p50": 10.253,
+            "p95": 10.27
+          },
+          "rss_peak_mb": 166.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.262917,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 9.915167,
+            "p50": 10.174916,
+            "p95": 10.284125
+          },
+          "cpu_ms": {
+            "min": 9.908,
+            "p50": 10.06,
+            "p95": 10.211
+          },
+          "rss_peak_mb": 166.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.174916,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 20.020333,
+            "p50": 20.521542,
+            "p95": 24.061166
+          },
+          "cpu_ms": {
+            "min": 19.996,
+            "p50": 20.482,
+            "p95": 20.916
+          },
+          "rss_peak_mb": 166.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 20.521542,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 29.636375,
+            "p50": 29.988209,
+            "p95": 30.023333
+          },
+          "cpu_ms": {
+            "min": 29.582,
+            "p50": 29.938,
+            "p95": 29.988
+          },
+          "rss_peak_mb": 167.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 29.988209,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 39.579958,
+            "p50": 40.584583,
+            "p95": 41.203333
+          },
+          "cpu_ms": {
+            "min": 39.504,
+            "p50": 40.069,
+            "p95": 41.041
+          },
+          "rss_peak_mb": 167.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 40.584583,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 37.922958,
+            "p50": 38.722084,
+            "p95": 38.835583
+          },
+          "cpu_ms": {
+            "min": 37.883,
+            "p50": 38.642,
+            "p95": 38.762
+          },
+          "rss_peak_mb": 167.890625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 38.722084,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 90.012417,
+            "p50": 90.599875,
+            "p95": 91.032417
+          },
+          "cpu_ms": {
+            "min": 89.851,
+            "p50": 90.399,
+            "p95": 90.932
+          },
+          "rss_peak_mb": 169.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 90.599875,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_1000x10_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 88.870417,
+            "p50": 89.806125,
+            "p95": 89.849458
+          },
+          "cpu_ms": {
+            "min": 88.778,
+            "p50": 89.713,
+            "p95": 89.726
+          },
+          "rss_peak_mb": 169.34375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 89.806125,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 18.911125,
+            "p50": 19.238334,
+            "p95": 19.487208
+          },
+          "cpu_ms": {
+            "min": 18.897,
+            "p50": 19.163,
+            "p95": 19.442
+          },
+          "rss_peak_mb": 169.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 19.238334,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 29.262583,
+            "p50": 29.596292,
+            "p95": 30.058125
+          },
+          "cpu_ms": {
+            "min": 29.194,
+            "p50": 29.413,
+            "p95": 29.538
+          },
+          "rss_peak_mb": 169.984375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 29.596292,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 52.995041,
+            "p50": 53.517542,
+            "p95": 55.001208
+          },
+          "cpu_ms": {
+            "min": 52.898,
+            "p50": 53.398,
+            "p95": 54.679
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 53.517542,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 36.6245,
+            "p50": 36.837125,
+            "p95": 36.853208
+          },
+          "cpu_ms": {
+            "min": 36.546,
+            "p50": 36.728,
+            "p95": 36.795
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 36.837125,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 92.421875,
+            "p50": 92.642458,
+            "p95": 93.140875
+          },
+          "cpu_ms": {
+            "min": 92.03,
+            "p50": 92.361,
+            "p95": 92.992
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 92.642458,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k_10x1000_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 92.533959,
+            "p50": 93.091917,
+            "p95": 93.499667
+          },
+          "cpu_ms": {
+            "min": 92.422,
+            "p50": 92.945,
+            "p95": 93.375
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 93.091917,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 5.068542,
+            "p50": 5.433208,
+            "p95": 5.651416
+          },
+          "cpu_ms": {
+            "min": 5.069,
+            "p50": 5.426,
+            "p95": 5.63
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.433208,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.9685,
+            "p50": 7.032375,
+            "p95": 7.199292
+          },
+          "cpu_ms": {
+            "min": 4.968,
+            "p50": 5.917,
+            "p95": 6.004
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.032375,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 7.678542,
+            "p50": 7.797375,
+            "p95": 7.803125
+          },
+          "cpu_ms": {
+            "min": 7.502,
+            "p50": 7.685,
+            "p95": 7.78
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.797375,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 5.705167,
+            "p50": 6.267917,
+            "p95": 6.3475
+          },
+          "cpu_ms": {
+            "min": 5.694,
+            "p50": 6.244,
+            "p95": 6.335
+          },
+          "rss_peak_mb": 171.875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 6.267917,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 13.871792,
+            "p50": 14.108666,
+            "p95": 14.113209
+          },
+          "cpu_ms": {
+            "min": 13.857,
+            "p50": 14.099,
+            "p95": 14.099
+          },
+          "rss_peak_mb": 171.890625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 14.108666,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 13.866958,
+            "p50": 13.959292,
+            "p95": 13.987708
+          },
+          "cpu_ms": {
+            "min": 13.834,
+            "p50": 13.962,
+            "p95": 13.986
+          },
+          "rss_peak_mb": 171.890625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 13.959292,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 5.435459,
+            "p50": 5.56875,
+            "p95": 5.801458
+          },
+          "cpu_ms": {
+            "min": 5.436,
+            "p50": 5.569,
+            "p95": 5.778
+          },
+          "rss_peak_mb": 171.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.56875,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 6.034625,
+            "p50": 6.442958,
+            "p95": 6.509958
+          },
+          "cpu_ms": {
+            "min": 6.025,
+            "p50": 6.309,
+            "p95": 6.485
+          },
+          "rss_peak_mb": 171.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 6.442958,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 8.057792,
+            "p50": 8.506583,
+            "p95": 8.703833
+          },
+          "cpu_ms": {
+            "min": 7.921,
+            "p50": 8.473,
+            "p95": 8.696
+          },
+          "rss_peak_mb": 171.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 8.506583,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 6.848875,
+            "p50": 7.159,
+            "p95": 7.623208
+          },
+          "cpu_ms": {
+            "min": 6.842,
+            "p50": 7.125,
+            "p95": 7.5
+          },
+          "rss_peak_mb": 171.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.159,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 19.496958,
+            "p50": 20.027708,
+            "p95": 20.059625
+          },
+          "cpu_ms": {
+            "min": 19.484,
+            "p50": 19.744,
+            "p95": 19.867
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 20.027708,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len64_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 19.02075,
+            "p50": 19.266333,
+            "p95": 19.697834
+          },
+          "cpu_ms": {
+            "min": 19.013,
+            "p50": 19.274,
+            "p95": 19.664
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 19.266333,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 8.529458,
+            "p50": 8.936583,
+            "p95": 9.017708
+          },
+          "cpu_ms": {
+            "min": 8.52,
+            "p50": 8.938,
+            "p95": 9.003
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 8.936583,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 7.456459,
+            "p50": 7.74825,
+            "p95": 8.313791
+          },
+          "cpu_ms": {
+            "min": 7.452,
+            "p50": 7.741,
+            "p95": 8.249
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.74825,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 9.635,
+            "p50": 10.467667,
+            "p95": 10.546959
+          },
+          "cpu_ms": {
+            "min": 9.611,
+            "p50": 10.185,
+            "p95": 10.44
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.467667,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 7.781375,
+            "p50": 8.880334,
+            "p95": 9.445375
+          },
+          "cpu_ms": {
+            "min": 7.781,
+            "p50": 8.634,
+            "p95": 9.138
+          },
+          "rss_peak_mb": 172.15625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 8.880334,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 28.663958,
+            "p50": 29.0695,
+            "p95": 29.172916
+          },
+          "cpu_ms": {
+            "min": 28.652,
+            "p50": 29.069,
+            "p95": 29.135
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 29.0695,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_1k_len256_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 29.158458,
+            "p50": 29.337875,
+            "p95": 29.397583
+          },
+          "cpu_ms": {
+            "min": 29.106,
+            "p50": 29.288,
+            "p95": 29.365
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 29.337875,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 3.787584,
+            "p50": 4.096125,
+            "p95": 4.253875
+          },
+          "cpu_ms": {
+            "min": 3.788,
+            "p50": 4.088,
+            "p95": 4.239
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.096125,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 7.187542,
+            "p50": 7.685916,
+            "p95": 7.776209
+          },
+          "cpu_ms": {
+            "min": 7.174,
+            "p50": 7.679,
+            "p95": 7.765
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.685916,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "pandas",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 9.373208,
+            "p50": 9.448792,
+            "p95": 9.526708
+          },
+          "cpu_ms": {
+            "min": 9.369,
+            "p50": 9.449,
+            "p95": 9.484
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 9.448792,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "tablib",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 8.094875,
+            "p50": 8.460084,
+            "p95": 8.74425
+          },
+          "cpu_ms": {
+            "min": 8.096,
+            "p50": 8.45,
+            "p95": 8.721
+          },
+          "rss_peak_mb": 172.671875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 8.460084,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 10.546666,
+            "p50": 10.71325,
+            "p95": 10.7455
+          },
+          "cpu_ms": {
+            "min": 10.548,
+            "p50": 10.7,
+            "p95": 10.748
+          },
+          "rss_peak_mb": 172.6875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.71325,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_1k_len256_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 10.37475,
+            "p50": 10.536583,
+            "p95": 10.605584
+          },
+          "cpu_ms": {
+            "min": 10.377,
+            "p50": 10.538,
+            "p95": 10.586
+          },
+          "rss_peak_mb": 172.6875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.536583,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 29.036417,
+            "p50": 30.557375,
+            "p95": 32.480708
+          },
+          "cpu_ms": {
+            "min": 28.979,
+            "p50": 29.402,
+            "p95": 29.983
+          },
+          "rss_peak_mb": 173.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 30.557375,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 36.591959,
+            "p50": 36.860291,
+            "p95": 37.599125
+          },
+          "cpu_ms": {
+            "min": 36.442,
+            "p50": 36.582,
+            "p95": 37.497
+          },
+          "rss_peak_mb": 173.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 36.860291,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 51.262959,
+            "p50": 52.155792,
+            "p95": 52.213041
+          },
+          "cpu_ms": {
+            "min": 51.143,
+            "p50": 52.001,
+            "p95": 52.081
+          },
+          "rss_peak_mb": 173.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 52.155792,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 44.556875,
+            "p50": 46.317,
+            "p95": 46.333167
+          },
+          "cpu_ms": {
+            "min": 44.345,
+            "p50": 45.933,
+            "p95": 45.991
+          },
+          "rss_peak_mb": 173.546875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 46.317,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 127.014834,
+            "p50": 129.71925,
+            "p95": 131.033833
+          },
+          "cpu_ms": {
+            "min": 126.647,
+            "p50": 126.918,
+            "p95": 128.206
+          },
+          "rss_peak_mb": 174.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 129.71925,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_unique_10k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 126.811416,
+            "p50": 132.768083,
+            "p95": 134.66775
+          },
+          "cpu_ms": {
+            "min": 126.517,
+            "p50": 129.211,
+            "p95": 130.385
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 132.768083,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 18.141875,
+            "p50": 19.017916,
+            "p95": 20.362584
+          },
+          "cpu_ms": {
+            "min": 17.558,
+            "p50": 18.105,
+            "p95": 18.592
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 19.017916,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 34.486916,
+            "p50": 38.603292,
+            "p95": 38.755959
+          },
+          "cpu_ms": {
+            "min": 34.151,
+            "p50": 34.907,
+            "p95": 35.111
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 38.603292,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "pandas",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 50.094875,
+            "p50": 52.241083,
+            "p95": 77.696542
+          },
+          "cpu_ms": {
+            "min": 48.738,
+            "p50": 50.325,
+            "p95": 55.003
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 52.241083,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "tablib",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 42.291584,
+            "p50": 43.295833,
+            "p95": 43.326416
+          },
+          "cpu_ms": {
+            "min": 41.987,
+            "p50": 43.231,
+            "p95": 43.252
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 43.295833,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 68.600333,
+            "p50": 69.409667,
+            "p95": 69.574375
+          },
+          "cpu_ms": {
+            "min": 68.554,
+            "p50": 69.288,
+            "p95": 69.461
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 69.409667,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "strings_repeated_10k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 68.884042,
+            "p50": 69.079709,
+            "p95": 69.339625
+          },
+          "cpu_ms": {
+            "min": 68.775,
+            "p50": 68.961,
+            "p95": 69.282
+          },
+          "rss_peak_mb": 174.78125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 69.079709,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 37.329125,
+            "p50": 37.436,
+            "p95": 38.121791
+          },
+          "cpu_ms": {
+            "min": 37.295,
+            "p50": 37.409,
+            "p95": 38.072
+          },
+          "rss_peak_mb": 157.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 37.436,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 38.676208,
+            "p50": 38.763375,
+            "p95": 38.984583
+          },
+          "cpu_ms": {
+            "min": 38.585,
+            "p50": 38.729,
+            "p95": 38.886
+          },
+          "rss_peak_mb": 164.6875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 38.763375,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 30.373041,
+            "p50": 36.610709,
+            "p95": 56.247167
+          },
+          "cpu_ms": {
+            "min": 30.35,
+            "p50": 31.394,
+            "p95": 53.34
+          },
+          "rss_peak_mb": 164.6875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 36.610709,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "cell_values_10k",
+      "library": "pylightxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 38.730292,
+            "p50": 38.901375,
+            "p95": 39.279666
+          },
+          "cpu_ms": {
+            "min": 38.694,
+            "p50": 38.861,
+            "p95": 39.267
+          },
+          "rss_peak_mb": 164.796875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 38.901375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 32.270709,
+            "p50": 32.634875,
+            "p95": 33.203375
+          },
+          "cpu_ms": {
+            "min": 32.24,
+            "p50": 32.573,
+            "p95": 33.037
+          },
+          "rss_peak_mb": 164.796875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 32.634875,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k",
+      "library": "pyexcel",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 158.784042,
+            "p50": 161.169417,
+            "p95": 161.799209
+          },
+          "cpu_ms": {
+            "min": 158.685,
+            "p50": 160.903,
+            "p95": 161.377
+          },
+          "rss_peak_mb": 164.796875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 161.169417,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 30.450291,
+            "p50": 30.990167,
+            "p95": 30.999792
+          },
+          "cpu_ms": {
+            "min": 30.413,
+            "p50": 30.873,
+            "p95": 30.943
+          },
+          "rss_peak_mb": 166.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 30.990167,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_10k",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 91.727083,
+            "p50": 92.526916,
+            "p95": 93.112584
+          },
+          "cpu_ms": {
+            "min": 91.645,
+            "p50": 92.405,
+            "p95": 92.858
+          },
+          "rss_peak_mb": 171.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 92.526916,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 103.692917,
+            "p50": 105.242375,
+            "p95": 105.262084
+          },
+          "cpu_ms": {
+            "min": 103.656,
+            "p50": 105.108,
+            "p95": 105.108
+          },
+          "rss_peak_mb": 173.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 105.242375,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.30025,
+            "p50": 4.422834,
+            "p95": 4.452584
+          },
+          "cpu_ms": {
+            "min": 4.299,
+            "p50": 4.423,
+            "p95": 4.424
+          },
+          "rss_peak_mb": 173.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.422834,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 4.8745,
+            "p50": 5.155583,
+            "p95": 5.59075
+          },
+          "cpu_ms": {
+            "min": 4.875,
+            "p50": 5.147,
+            "p95": 5.584
+          },
+          "rss_peak_mb": 173.71875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.155583,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 4.233667,
+            "p50": 4.575417,
+            "p95": 4.8945
+          },
+          "cpu_ms": {
+            "min": 4.234,
+            "p50": 4.575,
+            "p95": 4.885
+          },
+          "rss_peak_mb": 173.796875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.575417,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "cell_values_1k",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.933917,
+            "p50": 5.300916,
+            "p95": 5.609583
+          },
+          "cpu_ms": {
+            "min": 4.928,
+            "p50": 5.284,
+            "p95": 5.601
+          },
+          "rss_peak_mb": 174.03125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.300916,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 3.22825,
+            "p50": 3.378667,
+            "p95": 3.589583
+          },
+          "cpu_ms": {
+            "min": 3.228,
+            "p50": 3.379,
+            "p95": 3.585
+          },
+          "rss_peak_mb": 174.03125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.378667,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.5085,
+            "p50": 8.742167,
+            "p95": 9.015292
+          },
+          "cpu_ms": {
+            "min": 8.482,
+            "p50": 8.738,
+            "p95": 9.013
+          },
+          "rss_peak_mb": 174.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.742167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 4.355959,
+            "p50": 4.607083,
+            "p95": 4.635667
+          },
+          "cpu_ms": {
+            "min": 4.355,
+            "p50": 4.6,
+            "p95": 4.618
+          },
+          "rss_peak_mb": 174.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.607083,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_1k",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.813875,
+            "p50": 9.938792,
+            "p95": 10.029292
+          },
+          "cpu_ms": {
+            "min": 9.807,
+            "p50": 9.934,
+            "p95": 10.008
+          },
+          "rss_peak_mb": 174.046875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 9.938792,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 11.433166,
+            "p50": 11.7385,
+            "p95": 11.782792
+          },
+          "cpu_ms": {
+            "min": 11.429,
+            "p50": 11.633,
+            "p95": 11.71
+          },
+          "rss_peak_mb": 174.09375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 11.7385,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k",
+      "library": "openpyxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 45.933208,
+            "p50": 47.153167,
+            "p95": 47.178292
+          },
+          "cpu_ms": {
+            "min": 45.869,
+            "p50": 46.552,
+            "p95": 47.077
+          },
+          "rss_peak_mb": 177.8125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 47.153167,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 40.299166,
+            "p50": 41.395959,
+            "p95": 41.644833
+          },
+          "cpu_ms": {
+            "min": 39.866,
+            "p50": 40.401,
+            "p95": 41.001
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 41.395959,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k",
+      "library": "xlsxwriter",
+      "workload_size": "medium",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 80.697125,
+            "p50": 82.815084,
+            "p95": 104.798458
+          },
+          "cpu_ms": {
+            "min": 80.573,
+            "p50": 82.341,
+            "p95": 104.322
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 82.815084,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "formulas_10k",
+      "library": "pylightxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 44.252666,
+            "p50": 44.613833,
+            "p95": 44.99775
+          },
+          "cpu_ms": {
+            "min": 44.202,
+            "p50": 44.567,
+            "p95": 44.942
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 44.613833,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 30.555083,
+            "p50": 31.514,
+            "p95": 31.522875
+          },
+          "cpu_ms": {
+            "min": 30.552,
+            "p50": 31.486,
+            "p95": 31.502
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 31.514,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k",
+      "library": "pyexcel",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 156.662417,
+            "p50": 157.786458,
+            "p95": 158.485083
+          },
+          "cpu_ms": {
+            "min": 156.51,
+            "p50": 157.481,
+            "p95": 158.223
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 157.786458,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 30.34625,
+            "p50": 31.051,
+            "p95": 32.156708
+          },
+          "cpu_ms": {
+            "min": 30.332,
+            "p50": 31.048,
+            "p95": 32.118
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 31.051,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_10k",
+      "library": "wolfxl",
+      "workload_size": "medium",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 122.289917,
+            "p50": 123.713166,
+            "p95": 124.311583
+          },
+          "cpu_ms": {
+            "min": 122.125,
+            "p50": 123.482,
+            "p95": 123.964
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 123.713166,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 77.658625,
+            "p50": 77.782208,
+            "p95": 78.38125
+          },
+          "cpu_ms": {
+            "min": 77.505,
+            "p50": 77.728,
+            "p95": 78.358
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 77.782208,
+            "verify": 0.0
+          },
+          "op_count": 10000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 5.0535,
+            "p50": 5.323542,
+            "p95": 5.584416
+          },
+          "cpu_ms": {
+            "min": 5.05,
+            "p50": 5.323,
+            "p95": 5.57
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.323542,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 5.391792,
+            "p50": 5.424791,
+            "p95": 5.768833
+          },
+          "cpu_ms": {
+            "min": 5.392,
+            "p50": 5.424,
+            "p95": 5.77
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.424791,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 9.189125,
+            "p50": 10.033041,
+            "p95": 10.18275
+          },
+          "cpu_ms": {
+            "min": 9.189,
+            "p50": 10.017,
+            "p95": 10.169
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.033041,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "formulas_1k",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 5.146209,
+            "p50": 5.482875,
+            "p95": 5.700042
+          },
+          "cpu_ms": {
+            "min": 5.147,
+            "p50": 5.474,
+            "p95": 5.7
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.482875,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 3.053209,
+            "p50": 3.271041,
+            "p95": 3.290125
+          },
+          "cpu_ms": {
+            "min": 3.053,
+            "p50": 3.127,
+            "p95": 3.29
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.271041,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.579791,
+            "p50": 8.851666,
+            "p95": 8.882791
+          },
+          "cpu_ms": {
+            "min": 8.581,
+            "p50": 8.839,
+            "p95": 8.884
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.851666,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 4.233334,
+            "p50": 4.612,
+            "p95": 4.749459
+          },
+          "cpu_ms": {
+            "min": 4.233,
+            "p50": 4.612,
+            "p95": 4.743
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.612,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas_1k",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 12.599542,
+            "p50": 12.71575,
+            "p95": 12.726833
+          },
+          "cpu_ms": {
+            "min": 12.6,
+            "p50": 12.717,
+            "p95": 12.728
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 12.71575,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 9.974458,
+            "p50": 10.14875,
+            "p95": 10.269209
+          },
+          "cpu_ms": {
+            "min": 9.987,
+            "p50": 10.157,
+            "p95": 10.281
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 10.14875,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors_1k",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.071792,
+            "p50": 8.277083,
+            "p95": 8.435458
+          },
+          "cpu_ms": {
+            "min": 8.071,
+            "p50": 8.266,
+            "p95": 8.426
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.277083,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 21.046958,
+            "p50": 21.488666,
+            "p95": 22.385
+          },
+          "cpu_ms": {
+            "min": 21.048,
+            "p50": 21.472,
+            "p95": 22.357
+          },
+          "rss_peak_mb": 179.65625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 21.488666,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors_1k",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 12.707667,
+            "p50": 13.049916,
+            "p95": 13.568625
+          },
+          "cpu_ms": {
+            "min": 12.706,
+            "p50": 13.051,
+            "p95": 13.447
+          },
+          "rss_peak_mb": 185.578125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 13.049916,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "background_colors_1k",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.967458,
+            "p50": 5.364375,
+            "p95": 5.383458
+          },
+          "cpu_ms": {
+            "min": 4.968,
+            "p50": 5.366,
+            "p95": 5.383
+          },
+          "rss_peak_mb": 185.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.364375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 3.7115,
+            "p50": 3.783583,
+            "p95": 4.238917
+          },
+          "cpu_ms": {
+            "min": 3.713,
+            "p50": 3.784,
+            "p95": 4.142
+          },
+          "rss_peak_mb": 185.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.783583,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors_1k",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.903834,
+            "p50": 5.238667,
+            "p95": 5.283666
+          },
+          "cpu_ms": {
+            "min": 4.901,
+            "p50": 5.229,
+            "p95": 5.275
+          },
+          "rss_peak_mb": 185.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.238667,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 5.650166,
+            "p50": 6.134417,
+            "p95": 6.315958
+          },
+          "cpu_ms": {
+            "min": 5.651,
+            "p50": 6.121,
+            "p95": 6.302
+          },
+          "rss_peak_mb": 185.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 6.134417,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors_1k",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 11.411458,
+            "p50": 11.578709,
+            "p95": 11.643292
+          },
+          "cpu_ms": {
+            "min": 11.408,
+            "p50": 11.532,
+            "p95": 11.617
+          },
+          "rss_peak_mb": 185.640625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 11.578709,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 14.698084,
+            "p50": 14.906209,
+            "p95": 14.999041
+          },
+          "cpu_ms": {
+            "min": 14.702,
+            "p50": 14.912,
+            "p95": 14.992
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 14.906209,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats_1k",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 7.514792,
+            "p50": 7.705375,
+            "p95": 8.076084
+          },
+          "cpu_ms": {
+            "min": 7.508,
+            "p50": 7.689,
+            "p95": 8.065
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 7.705375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 7.67675,
+            "p50": 7.684291,
+            "p95": 7.883583
+          },
+          "cpu_ms": {
+            "min": 7.668,
+            "p50": 7.679,
+            "p95": 7.866
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 7.684291,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats_1k",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 11.358333,
+            "p50": 11.876958,
+            "p95": 11.885625
+          },
+          "cpu_ms": {
+            "min": 11.325,
+            "p50": 11.666,
+            "p95": 11.859
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 11.876958,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "number_formats_1k",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 5.06925,
+            "p50": 5.164792,
+            "p95": 5.188583
+          },
+          "cpu_ms": {
+            "min": 5.069,
+            "p50": 5.162,
+            "p95": 5.172
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.164792,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 3.524209,
+            "p50": 3.569375,
+            "p95": 3.794958
+          },
+          "cpu_ms": {
+            "min": 3.525,
+            "p50": 3.56,
+            "p95": 3.775
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.569375,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats_1k",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.492833,
+            "p50": 4.651959,
+            "p95": 4.7955
+          },
+          "cpu_ms": {
+            "min": 4.492,
+            "p50": 4.652,
+            "p95": 4.776
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.651959,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 4.445208,
+            "p50": 4.520417,
+            "p95": 4.5535
+          },
+          "cpu_ms": {
+            "min": 4.445,
+            "p50": 4.52,
+            "p95": 4.55
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 4.520417,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats_1k",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.028042,
+            "p50": 9.14375,
+            "p95": 9.199833
+          },
+          "cpu_ms": {
+            "min": 9.028,
+            "p50": 9.129,
+            "p95": 9.196
+          },
+          "rss_peak_mb": 185.734375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 9.14375,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 15.316625,
+            "p50": 15.341709,
+            "p95": 15.3525
+          },
+          "cpu_ms": {
+            "min": 15.326,
+            "p50": 15.334,
+            "p95": 15.349
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 15.341709,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment_1k",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 8.088334,
+            "p50": 8.310625,
+            "p95": 8.355416
+          },
+          "cpu_ms": {
+            "min": 8.084,
+            "p50": 8.311,
+            "p95": 8.351
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 8.310625,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 17.606833,
+            "p50": 17.906208,
+            "p95": 18.475583
+          },
+          "cpu_ms": {
+            "min": 17.596,
+            "p50": 17.877,
+            "p95": 18.331
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 17.906208,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment_1k",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 11.922625,
+            "p50": 12.276084,
+            "p95": 12.502916
+          },
+          "cpu_ms": {
+            "min": 11.915,
+            "p50": 12.26,
+            "p95": 12.403
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 12.276084,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "alignment_1k",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.995667,
+            "p50": 5.113208,
+            "p95": 5.200458
+          },
+          "cpu_ms": {
+            "min": 4.996,
+            "p50": 5.101,
+            "p95": 5.201
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 5.113208,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 3.553541,
+            "p50": 3.622666,
+            "p95": 3.705542
+          },
+          "cpu_ms": {
+            "min": 3.547,
+            "p50": 3.622,
+            "p95": 3.694
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 3.622666,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment_1k",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.594875,
+            "p50": 4.812208,
+            "p95": 5.093
+          },
+          "cpu_ms": {
+            "min": 4.595,
+            "p50": 4.809,
+            "p95": 5.094
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.812208,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 5.149792,
+            "p50": 5.584209,
+            "p95": 5.893
+          },
+          "cpu_ms": {
+            "min": 5.15,
+            "p50": 5.553,
+            "p95": 5.574
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.584209,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment_1k",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 9.928167,
+            "p50": 10.057792,
+            "p95": 10.087666
+          },
+          "cpu_ms": {
+            "min": 9.916,
+            "p50": 10.038,
+            "p95": 10.074
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 10.057792,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 14.526542,
+            "p50": 14.713666,
+            "p95": 14.7345
+          },
+          "cpu_ms": {
+            "min": 14.526,
+            "p50": 14.685,
+            "p95": 14.726
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 14.713666,
+            "verify": 0.0
+          },
+          "op_count": 1000,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders_200",
+      "library": "openpyxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 2.43225,
+            "p50": 2.571667,
+            "p95": 2.837959
+          },
+          "cpu_ms": {
+            "min": 2.433,
+            "p50": 2.561,
+            "p95": 2.833
+          },
+          "rss_peak_mb": 185.765625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 2.571667,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 11.081875,
+            "p50": 11.404167,
+            "p95": 11.441
+          },
+          "cpu_ms": {
+            "min": 11.07,
+            "p50": 11.389,
+            "p95": 11.42
+          },
+          "rss_peak_mb": 185.8125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 11.404167,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders_200",
+      "library": "xlsxwriter",
+      "workload_size": "small",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 5.077583,
+            "p50": 5.757583,
+            "p95": 6.246791
+          },
+          "cpu_ms": {
+            "min": 5.073,
+            "p50": 5.745,
+            "p95": 6.232
+          },
+          "rss_peak_mb": 185.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.757583,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        }
+      },
+      "notes": "Read unsupported"
+    },
+    {
+      "feature": "borders_200",
+      "library": "pylightxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.721833,
+            "p50": 1.756,
+            "p95": 1.871542
+          },
+          "cpu_ms": {
+            "min": 1.722,
+            "p50": 1.756,
+            "p95": 1.868
+          },
+          "rss_peak_mb": 185.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.756,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 0.900792,
+            "p50": 0.963875,
+            "p95": 0.966083
+          },
+          "cpu_ms": {
+            "min": 0.901,
+            "p50": 0.964,
+            "p95": 0.966
+          },
+          "rss_peak_mb": 185.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 0.963875,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders_200",
+      "library": "pyexcel",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 1.657,
+            "p50": 1.82675,
+            "p95": 1.860625
+          },
+          "cpu_ms": {
+            "min": 1.657,
+            "p50": 1.828,
+            "p95": 1.854
+          },
+          "rss_peak_mb": 185.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 1.82675,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 2.185,
+            "p50": 2.416792,
+            "p95": 2.55075
+          },
+          "cpu_ms": {
+            "min": 2.186,
+            "p50": 2.416,
+            "p95": 2.552
+          },
+          "rss_peak_mb": 185.921875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 2.416792,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders_200",
+      "library": "wolfxl",
+      "workload_size": "small",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 4.092959,
+            "p50": 4.358542,
+            "p95": 4.37225
+          },
+          "cpu_ms": {
+            "min": 4.094,
+            "p50": 4.351,
+            "p95": 4.369
+          },
+          "rss_peak_mb": 185.9375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 4.358542,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        },
+        "write": {
+          "wall_ms": {
+            "min": 5.714833,
+            "p50": 5.913709,
+            "p95": 5.924417
+          },
+          "cpu_ms": {
+            "min": 5.725,
+            "p50": 5.923,
+            "p95": 5.929
+          },
+          "rss_peak_mb": 185.96875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 5.913709,
+            "verify": 0.0
+          },
+          "op_count": 200,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "openpyxl",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 393.054791,
+            "p50": 400.354916,
+            "p95": 418.915833
+          },
+          "cpu_ms": {
+            "min": 392.53,
+            "p50": 399.837,
+            "p95": 418.358
+          },
+          "rss_peak_mb": 207.53125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 400.354916,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "openpyxl-readonly",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 247.263792,
+            "p50": 251.395292,
+            "p95": 271.195042
+          },
+          "cpu_ms": {
+            "min": 247.162,
+            "p50": 251.021,
+            "p95": 270.929
+          },
+          "rss_peak_mb": 207.53125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 251.395292,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "pandas",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 240.444916,
+            "p50": 241.026583,
+            "p95": 243.214792
+          },
+          "cpu_ms": {
+            "min": 240.09,
+            "p50": 240.492,
+            "p95": 242.85
+          },
+          "rss_peak_mb": 207.53125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 241.026583,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "polars",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 49.591833,
+            "p50": 49.895042,
+            "p95": 49.958333
+          },
+          "cpu_ms": {
+            "min": 63.58,
+            "p50": 66.379,
+            "p95": 66.619
+          },
+          "rss_peak_mb": 218.828125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 49.895042,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "python-calamine",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 86.653375,
+            "p50": 87.7475,
+            "p95": 89.251042
+          },
+          "cpu_ms": {
+            "min": 86.543,
+            "p50": 87.595,
+            "p95": 89.129
+          },
+          "rss_peak_mb": 220.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 87.7475,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "tablib",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 221.977334,
+            "p50": 224.435042,
+            "p95": 224.877875
+          },
+          "cpu_ms": {
+            "min": 221.605,
+            "p50": 224.11,
+            "p95": 224.509
+          },
+          "rss_peak_mb": 220.625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 224.435042,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "wolfxl",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 818.928167,
+            "p50": 826.911958,
+            "p95": 827.587792
+          },
+          "cpu_ms": {
+            "min": 817.721,
+            "p50": 825.679,
+            "p95": 826.246
+          },
+          "rss_peak_mb": 276.484375,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 826.911958,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_read",
+      "library": "calamine-styled",
+      "workload_size": "large",
+      "perf": {
+        "read": {
+          "wall_ms": {
+            "min": 819.909708,
+            "p50": 828.505959,
+            "p95": 828.914625
+          },
+          "cpu_ms": {
+            "min": 818.525,
+            "p50": 826.574,
+            "p95": 827.801
+          },
+          "rss_peak_mb": 277.078125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 828.505959,
+            "write": 0.0,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        },
+        "write": null
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "xlsxwriter",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 176.460958,
+            "p50": 179.418458,
+            "p95": 187.150208
+          },
+          "cpu_ms": {
+            "min": 176.178,
+            "p50": 179.16,
+            "p95": 184.334
+          },
+          "rss_peak_mb": 173.953125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 179.418458,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "openpyxl",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 290.34125,
+            "p50": 312.216875,
+            "p95": 325.196
+          },
+          "cpu_ms": {
+            "min": 288.797,
+            "p50": 310.121,
+            "p95": 310.287
+          },
+          "rss_peak_mb": 202.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 312.216875,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "pandas",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 414.652583,
+            "p50": 418.997417,
+            "p95": 420.967541
+          },
+          "cpu_ms": {
+            "min": 411.706,
+            "p50": 415.78,
+            "p95": 418.051
+          },
+          "rss_peak_mb": 202.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 418.997417,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "tablib",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 382.355958,
+            "p50": 390.465958,
+            "p95": 391.205959
+          },
+          "cpu_ms": {
+            "min": 381.924,
+            "p50": 388.87,
+            "p95": 389.819
+          },
+          "rss_peak_mb": 202.328125,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 390.465958,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "wolfxl",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 720.093542,
+            "p50": 725.546291,
+            "p95": 727.116041
+          },
+          "cpu_ms": {
+            "min": 719.279,
+            "p50": 724.644,
+            "p95": 726.108
+          },
+          "rss_peak_mb": 289.296875,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 725.546291,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values_100k_bulk_write",
+      "library": "rust_xlsxwriter",
+      "workload_size": "large",
+      "perf": {
+        "read": null,
+        "write": {
+          "wall_ms": {
+            "min": 711.920666,
+            "p50": 718.978458,
+            "p95": 726.460334
+          },
+          "cpu_ms": {
+            "min": 710.534,
+            "p50": 717.864,
+            "p95": 725.507
+          },
+          "rss_peak_mb": 355.515625,
+          "breakdown_ms": null,
+          "phase_attribution_ms": {
+            "parse": 0.0,
+            "write": 718.978458,
+            "verify": 0.0
+          },
+          "op_count": 99856,
+          "op_unit": "cells"
         }
       },
       "notes": null
