@@ -51,7 +51,7 @@ but not yet exposed through pyumya's Python bindings.
 
 ### Newly Exposed / Partial Support
 
-These features are now exposed in `excelbench_rust.UmyaBook`, but some have
+These features are now exposed in `wolfxl._rust.UmyaBook`, but some have
 known limitations or partial read/write coverage.
 
 | Feature | Read | Write | Notes |

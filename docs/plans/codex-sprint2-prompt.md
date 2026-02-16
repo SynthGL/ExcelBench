@@ -1,5 +1,9 @@
 # Codex Sprint 2 Prompt: Fix cell_values Regression + Add Tier 2/3 Read & Write
 
+> Historical naming note: this prompt predates the module rename. References to
+> `excelbench_rust` refer to what is now imported as `wolfxl._rust`. The crate path
+> `rust/excelbench_rust/` remains current.
+
 ## Context
 
 This is a follow-up to Sprint 1 which added formulas read, column-width padding in Rust, 4 Tier 2 read features (merged_cells, hyperlinks, comments, freeze_panes) to calamine_styled_backend, and 4 Tier 2 write features to rust_xlsxwriter_backend.

@@ -5,7 +5,7 @@ Embed and read images in Excel worksheets.
 ## Reading Images
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("report.xlsx")
 images = book.read_images("Sheet1")
@@ -17,7 +17,7 @@ for img in images:
 ## Writing Images
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Report")

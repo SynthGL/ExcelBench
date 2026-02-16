@@ -55,7 +55,8 @@ perf runner (performance) -> perf renderer
 
 Rust extension (optional) is called by Rust-backed adapters; it should not depend on Python code.
 
-wolfxl depends on excelbench_rust (PyO3 extension) only — no dependency on excelbench.
+`packages/wolfxl` depends on `wolfxl._rust` (built from `rust/excelbench_rust`) and has no
+dependency on `excelbench`.
 ```
 
 Rule of thumb: keep adapters thin and deterministic. Any cross-library normalization should live in
@@ -79,11 +80,11 @@ Most-touched top-level directories:
   - `throughput_xlsx/`: scale fixtures for perf/throughput workloads
 
 - `rust/excelbench_rust/` (optional)
-  - PyO3 crate that exposes Rust backends to Python (`excelbench_rust` module)
+  - PyO3 crate that exposes Rust backends to Python (`wolfxl._rust` module)
   - Backends include: calamine (read), calamine-styled (read+OOXML T2/T3), rust_xlsxwriter (write),
     umya-spreadsheet (read/write), wolfxl (surgical xlsx patcher for modify mode)
 
-- `src/wolfxl/` (openpyxl-compatible API wrapper)
+- `packages/wolfxl/src/wolfxl/` (openpyxl-compatible API wrapper)
   - `__init__.py`: public API (`load_workbook`, `Workbook`, style exports)
   - `_workbook.py`: three-mode Workbook (read via CalamineStyledBook, write via RustXlsxWriterBook,
     modify via XlsxPatcher — surgical ZIP patching, 10-14x faster than openpyxl)
@@ -91,6 +92,9 @@ Most-touched top-level directories:
   - `_cell.py`: Cell proxy with lazy read dispatch and write-behind accumulation
   - `_styles.py`: frozen dataclasses matching openpyxl names (Font, PatternFill, Border, etc.)
   - `_utils.py`: A1-style coordinate conversion helpers
+
+- `packages/excelbench_rust_shim/src/excelbench_rust/` (compatibility shim)
+  - Re-exports `wolfxl._rust` for legacy imports that still use `excelbench_rust`
 
 - `tests/`: pytest suites (fidelity + adapter unit tests + visualization smoke tests)
 - `docs/`: plans and trackers (treat as source of truth for methodology and run logs)

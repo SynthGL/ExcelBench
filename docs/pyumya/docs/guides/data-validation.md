@@ -5,7 +5,7 @@ Add dropdown lists, input constraints, and validation rules to cells.
 ## Reading Validations
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("form.xlsx")
 validations = book.read_data_validations("Sheet1")
@@ -18,7 +18,7 @@ for v in validations:
 ## Writing Validations
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Form")

@@ -1,5 +1,9 @@
 # Phase 3: Rust Library Integration (PyO3) - Plan + Progress Tracker
 
+> Historical naming note: this document predates the module rename. References to the Python
+> module `excelbench_rust` now map to `wolfxl._rust`. The crate path `rust/excelbench_rust/`
+> remains current.
+
 Created: 02/07/2026 11:13 PM PST (via pst-timestamp)
 
 ## Working State (keep updated)

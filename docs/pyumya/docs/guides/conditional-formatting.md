@@ -5,7 +5,7 @@ Apply formatting rules that change cell appearance based on values.
 ## Reading Conditional Formats
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("dashboard.xlsx")
 rules = book.read_conditional_formats("Sheet1")
@@ -18,7 +18,7 @@ for r in rules:
 ## Writing Conditional Formats
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Sales")

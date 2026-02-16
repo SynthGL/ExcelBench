@@ -7,7 +7,7 @@ a pure Rust library for reading and writing `.xlsx` and `.xlsm` files. It provid
 Rust with the ergonomics of Python.
 
 !!! note "Source of truth (current)"
-    The current API documented here is the in-repo `excelbench_rust.UmyaBook` class.
+    The current API documented here is the in-repo `wolfxl._rust.UmyaBook` class.
     A standalone PyPI package named `pyumya` is planned, but not the primary source of truth yet.
 
 ## Why pyumya?
@@ -36,7 +36,7 @@ uv run maturin develop --manifest-path rust/excelbench_rust/Cargo.toml --feature
 ### Reading an Excel file
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 # Open a workbook
 book = UmyaBook.open("report.xlsx")
@@ -60,7 +60,7 @@ print(border)  # {"top": {"style": "thin", "color": "#000000"}}
 ### Writing an Excel file
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 # Create a new workbook
 book = UmyaBook()
@@ -95,7 +95,7 @@ book.save("output.xlsx")
 
 ## Current API Coverage
 
-`excelbench_rust.UmyaBook` currently exposes **30+ methods** covering:
+`wolfxl._rust.UmyaBook` currently exposes **30+ methods** covering:
 
 - **File I/O**: Create, open, save workbooks
 - **Sheet management**: List and add sheets

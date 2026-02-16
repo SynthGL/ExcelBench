@@ -1,5 +1,9 @@
 # Fast Rust Excel Library — Plan & Sprint Tracker
 
+> Historical naming note: this plan predates the module rename. References to `excelbench_rust`
+> refer to what is now imported as `wolfxl._rust`. The crate path `rust/excelbench_rust/` remains
+> current.
+
 Created: 02/14/2026 07:30 AM PST
 Status: **PLANNING**
 

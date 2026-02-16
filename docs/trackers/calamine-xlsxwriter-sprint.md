@@ -1,5 +1,9 @@
 # calamine + rust_xlsxwriter Sprint Tracker
 
+> Historical naming note: this tracker predates the module rename. References to
+> `excelbench_rust` refer to what is now imported as `wolfxl._rust`. The crate path
+> `rust/excelbench_rust/` remains current.
+
 Created: 02/14/2026 07:40 AM PST (via pst-timestamp)
 Plan: `docs/plans/2026-02-14-fast-rust-excel-library.md`
 

@@ -11,7 +11,7 @@ both **API surface** (every function the Elixir wrapper exposes) and **documenta
 quality** (guides, examples, troubleshooting, limitations page).
 
 Quick links:
-- Current Rust backend: `rust/excelbench_rust/src/umya/` (split from monolith, 6 modules)
+- Current Rust backend: `rust/excelbench_rust/src/umya/` (exposed to Python as `wolfxl._rust.UmyaBook`)
 - Python adapter: `src/excelbench/harness/adapters/umya_adapter.py`
 - Elixir source: 35 modules in `lib/umya_spreadsheet/`
 - Elixir docs: https://hexdocs.pm/umya_spreadsheet_ex/
@@ -414,7 +414,7 @@ Structural work to make this a proper standalone library (not just ExcelBench bi
 
 | Item | Detail |
 |------|--------|
-| **Current** | `excelbench_rust` crate — tightly coupled to benchmark project |
+| **Current** | `rust/excelbench_rust` crate (module `wolfxl._rust`) — tightly coupled to benchmark project |
 | **Target** | Separate `umya-python` (or `pyumya`) crate with its own repo, Cargo.toml, CI |
 | **Decisions needed** | Package name, repo location, relationship to ExcelBench |
 | **Status** | [ ] Not started |

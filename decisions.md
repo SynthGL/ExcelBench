@@ -40,6 +40,27 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-015 — Publish WolfXL as standalone + `wolfxl._rust` with shim compatibility (2026-02-15)
+
+**Context**: WolfXL started as an in-repo compatibility layer and used the native module name
+`excelbench_rust`. To publish WolfXL independently and make branding/dependency boundaries clear,
+the native module needed a WolfXL namespace while existing integrations still required compatibility.
+
+**Decision**: Split WolfXL into standalone packages under `packages/` and brand the native module as
+`wolfxl._rust` (`wolfxl-rust` distribution). Keep ExcelBench compatible by adding an
+`excelbench-rust` shim distribution that re-exports `wolfxl._rust`, and keep runtime fallback import
+logic in adapter utilities.
+
+**Alternatives considered**: (1) Keep shipping WolfXL inside the `excelbench` package (rejected:
+couples product and benchmark release cycles). (2) Keep native module name `excelbench_rust`
+(rejected: mismatched branding for external users). (3) Break compatibility and require all callers
+to migrate immediately (rejected: unnecessary migration friction).
+
+**Consequences**: WolfXL can be released independently, with clearer product identity and dependency
+boundaries. ExcelBench continues to function during transition via compatibility shim/fallback.
+Documentation and error messages must consistently reference `wolfxl._rust` as primary and
+`excelbench_rust` as legacy compatibility.
+
 ### DEC-014 — WolfXL: Surgical ZIP patcher for read-modify-write mode (2026-02-15)
 
 **Context**: WolfXL's hybrid architecture (calamine read + rust_xlsxwriter write) cannot modify
@@ -49,8 +70,9 @@ defeating WolfXL's value proposition of Rust-backed speed.
 
 **Decision**: Build WolfXL (`XlsxPatcher`) — a streaming XML patcher that treats .xlsx as a ZIP of
 XML files. On save, it only parses and rewrites the worksheet XMLs that have dirty cells, patches
-styles.xml only if formats changed, and raw-copies all other ZIP entries unchanged. Uses inline
-strings (`t="str"`) to avoid touching sharedStrings.xml entirely.
+styles.xml only if formats changed, and copies other ZIP entries through the rewriter unchanged at
+the file-content level (compressed bytes may differ). Uses inline strings (`t="str"`) to avoid
+touching sharedStrings.xml entirely.
 
 **Alternatives considered**: (1) Use umya-spreadsheet for R/W (rejected: parses full DOM, no faster
 than openpyxl). (2) Full rewrite via calamine read + rust_xlsxwriter write (rejected: loses charts,
@@ -67,12 +89,13 @@ strings for new values, which slightly increases file size vs shared strings but
 ### DEC-013 — Separate pycalumya compat package in src/pycalumya/ (2026-02-15)
 
 > **Note**: The package was originally created as `pycalumya` (`src/pycalumya/`) and later renamed
-> to `wolfxl` (`src/wolfxl/`). The decision rationale remains unchanged.
+> to `wolfxl`, now located at `packages/wolfxl/src/wolfxl/`. References to `excelbench_rust` in
+> this entry are historical and now map to `wolfxl._rust`.
 
 **Context**: WolfXL has proven 3–12x faster than openpyxl with 17/18 feature fidelity. To drive
 adoption, it needs an openpyxl-compatible API so users can switch with minimal code changes.
 
-**Decision**: Create `src/wolfxl/` as a separate package namespace (not inside `excelbench`).
+**Decision**: Create a separate `wolfxl` package namespace (not inside `excelbench`).
 Dual-mode Workbook: `load_workbook()` wraps CalamineStyledBook for reading, `Workbook()` wraps
 RustXlsxWriterBook for writing. Style dataclasses (Font, PatternFill, Border, Alignment) match
 openpyxl's public names. No Rust changes needed — uses `excelbench_rust` directly.
@@ -81,7 +104,7 @@ openpyxl's public names. No Rust changes needed — uses `excelbench_rust` direc
 and harder to publish standalone on PyPI). (2) Full openpyxl shim with read-modify-write (rejected:
 calamine is read-only and rust_xlsxwriter is write-only — no shared state model).
 
-**Consequences**: Future standalone PyPI publishing is trivial (`src/wolfxl/` is already a
+**Consequences**: Future standalone PyPI publishing is trivial (`wolfxl` is already a
 self-contained package). Users get `wb['Sheet1']['A1'].value` interface backed by Rust. Trade-off:
 no read-modify-write support (fundamental limitation of the hybrid approach).
 

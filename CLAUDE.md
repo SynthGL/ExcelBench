@@ -95,6 +95,12 @@ src/excelbench/
     html_dashboard.py       # Single-file interactive HTML dashboard generator
     scatter.py              # Fidelity-vs-throughput scatter plots (PNG/SVG)
 
+packages/
+  wolfxl/
+    src/wolfxl/            # Openpyxl-compatible WolfXL Python API wrapper
+  excelbench_rust_shim/
+    src/excelbench_rust/   # Backwards-compat shim re-exporting wolfxl._rust
+
 rust/excelbench_rust/       # Separate PyO3 crate (not part of hatchling build)
   src/lib.rs                # Module entry + build_info()
   src/calamine_backend.rs   # calamine read bindings (basic, no styles)

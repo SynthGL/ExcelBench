@@ -5,7 +5,7 @@ Lock rows and columns so they stay visible while scrolling.
 ## Reading Freeze Pane Settings
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("dashboard.xlsx")
 panes = book.read_freeze_panes("Sheet1")
@@ -15,7 +15,7 @@ print(panes)  # {"mode": "freeze", "top_left_cell": "A2"}  (top row frozen)
 ## Writing Freeze Panes
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Data")

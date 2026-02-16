@@ -5,7 +5,7 @@ Add, read, and manage cell comments (notes) in Excel workbooks.
 ## Reading Comments
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("annotated.xlsx")
 comments = book.read_comments("Sheet1")
@@ -18,7 +18,7 @@ for c in comments:
 ## Writing Comments
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Data")

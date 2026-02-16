@@ -1,5 +1,9 @@
 # Codex Sprint 1 Prompt: calamine Read + rust_xlsxwriter Write — Easy + Medium
 
+> Historical naming note: this prompt predates the module rename. References to
+> `excelbench_rust` refer to what is now imported as `wolfxl._rust`. The crate path
+> `rust/excelbench_rust/` remains current.
+
 ## Context
 
 ExcelBench is a benchmark suite that scores Excel libraries on feature fidelity. We have a Rust/PyO3 extension crate (`rust/excelbench_rust/`) with three backends:

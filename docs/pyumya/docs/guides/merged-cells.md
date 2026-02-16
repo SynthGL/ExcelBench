@@ -5,7 +5,7 @@ Merge cell ranges in Excel workbooks.
 ## Reading Merged Ranges
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("report.xlsx")
 merged = book.read_merged_ranges("Sheet1")

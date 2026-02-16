@@ -5,7 +5,7 @@ Add and read hyperlinks in Excel cells.
 ## Reading Hyperlinks
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook.open("links.xlsx")
 links = book.read_hyperlinks("Sheet1")
@@ -18,7 +18,7 @@ for link in links:
 ## Writing Hyperlinks
 
 ```python
-from excelbench_rust import UmyaBook
+from wolfxl._rust import UmyaBook
 
 book = UmyaBook()
 book.add_sheet("Links")
