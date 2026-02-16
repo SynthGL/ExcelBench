@@ -91,7 +91,7 @@ jobs:
         run: uv sync --extra dev --extra rust
 
       - name: Verify wolfxl install
-        run: uv run python -c "import wolfxl; print(wolfxl.__version__)"
+        run: uv run python -c "from wolfxl._rust import build_info; print(build_info())"
 
       - name: Rust integration tests
         run: uv run pytest tests/test_rust_integration.py -v
