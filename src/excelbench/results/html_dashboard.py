@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import html as html_mod
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -24,6 +25,7 @@ _FEATURE_ORDER: list[str] = [
     "dimensions", "number_formats", "text_formatting",
     "comments", "conditional_formatting", "data_validation",
     "freeze_panes", "hyperlinks", "images", "merged_cells",
+    "pivot_tables",
     "named_ranges", "tables",
 ]
 
@@ -131,6 +133,25 @@ def _safe_json(data: Any) -> str:
     return json.dumps(data, ensure_ascii=False).replace("</", r"<\/")
 
 
+def _namespace_svg_ids(svg: str, prefix: str) -> str:
+    """Namespace inline SVG ids so multiple charts can coexist without collisions."""
+    id_matches = re.findall(r'id="([^"]+)"', svg)
+    if not id_matches:
+        return svg
+
+    seen: set[str] = set()
+    for old_id in id_matches:
+        if old_id in seen:
+            continue
+        seen.add(old_id)
+        new_id = f"{prefix}{old_id}"
+        svg = svg.replace(f'id="{old_id}"', f'id="{new_id}"')
+        svg = svg.replace(f"url(#{old_id})", f"url(#{new_id})")
+        svg = svg.replace(f'href="#{old_id}"', f'href="#{new_id}"')
+        svg = svg.replace(f'xlink:href="#{old_id}"', f'xlink:href="#{new_id}"')
+    return svg
+
+
 # ── Public API ──────────────────────────────────────────────────────
 
 
@@ -156,7 +177,7 @@ def render_html_dashboard(
         for name in ("scatter_tiers", "scatter_features", "heatmap"):
             svg_path = scatter_dir / f"{name}.svg"
             if svg_path.exists():
-                svgs[name] = svg_path.read_text()
+                svgs[name] = _namespace_svg_ids(svg_path.read_text(), f"{name}-")
 
     body_parts = [
         _section_nav(has_memory=memory is not None),
@@ -216,6 +237,10 @@ nav .brand{font-weight:700;font-size:1.1rem;color:#ededed;letter-spacing:-.02em}
 nav .links{display:flex;gap:1rem;flex-wrap:wrap}
 nav .links a{color:#a0a0a0;font-size:.82rem;font-weight:500;transition:color .15s}
 nav .links a:hover{color:#fff;text-decoration:none}
+nav .nav-actions{margin-left:auto;display:flex;align-items:center;gap:.55rem}
+nav .wolf-link{color:#fb923c;font-size:.82rem;font-weight:600;display:flex;
+  align-items:center;gap:.3rem}
+nav .nav-toggle{display:none}
 
 /* ── Cards ── */
 .card{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);
@@ -233,7 +258,7 @@ h1{font-size:1.6rem;font-weight:700;margin-bottom:.5rem;color:#ededed}
 h2{font-size:1.3rem;font-weight:700;margin-bottom:.75rem;color:#ededed;
   padding-bottom:.4rem;border-bottom:2px solid var(--border)}
 h3{font-size:1.05rem;font-weight:600;margin:1rem 0 .5rem;color:#ededed}
-.meta-bar{font-size:.8rem;color:var(--text2);margin-bottom:1rem}
+.meta-bar{font-size:.8rem;color:#acb4c0;margin-bottom:1rem}
 
 /* ── Tables ── */
 table{border-collapse:collapse;width:100%;font-size:.82rem}
@@ -290,7 +315,7 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
 /* ── Perf breakdown bar ── */
 .bbar{display:flex;height:18px;border-radius:4px;overflow:hidden;width:100%;min-width:120px}
 .bbar span{display:flex;align-items:center;justify-content:center;font-size:8px;
-  color:#fff;overflow:hidden;white-space:nowrap;padding:0 3px}
+  color:#0a0a0a;overflow:hidden;white-space:nowrap;padding:0 3px;font-weight:700}
 .bbar span:nth-child(1){background:#3b82f6}
 .bbar span:nth-child(2){background:#8b5cf6}
 .bbar span:nth-child(3){background:#06b6d4}
@@ -306,6 +331,8 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
   font-size:.85rem;width:280px;outline:none;background:#191919;color:#ededed}
 .filter-box input:focus{border-color:#51a8ff;box-shadow:0 0 0 2px rgba(81,168,255,.2)}
 .filter-box input::placeholder{color:#878787}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* ── Memory bars ── */
 .mem-group{margin-bottom:1.5rem}
@@ -361,9 +388,20 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
 footer{text-align:center;padding:2rem;color:var(--text2);font-size:.78rem}
 .flex-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem}
 @media(max-width:768px){
+  nav{padding:.55rem .9rem;gap:.55rem;flex-wrap:wrap;align-items:flex-start}
+  nav .brand{font-size:1rem}
+  nav .nav-actions{order:2;margin-left:auto;gap:.4rem}
+  nav .wolf-link{font-size:.95rem}
+  nav .nav-toggle{display:inline-flex;align-items:center;justify-content:center;
+    min-width:64px;padding:.25rem .55rem;border:1px solid #2d2d2d;border-radius:6px;
+    background:#151515;color:#d8d8d8;font-size:.78rem;font-weight:600;cursor:pointer}
+  nav .links{display:none;width:100%;order:3}
+  nav.menu-open .links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.35rem .7rem;
+    border-top:1px solid #2d2d2d;padding-top:.55rem}
+  nav .links a{font-size:.92rem;line-height:1.2}
   .cards-grid{grid-template-columns:1fr 1fr}
-  nav .links{gap:.5rem}
   .container{padding:1rem}
+  .filter-box input{width:100%}
 }
 """
 
@@ -372,6 +410,25 @@ footer{text-align:center;padding:2rem;color:var(--text2);font-size:.78rem}
 # ====================================================================
 
 _JS = r"""
+/* Mobile nav toggle */
+const nav=document.querySelector('nav');
+const navToggle=nav?.querySelector('.nav-toggle');
+const closeNav=()=>{
+  if(!nav||!navToggle)return;
+  nav.classList.remove('menu-open');
+  navToggle.setAttribute('aria-expanded','false');
+  navToggle.textContent='Menu';
+};
+if(nav && navToggle){
+  navToggle.addEventListener('click',()=>{
+    const open=nav.classList.toggle('menu-open');
+    navToggle.setAttribute('aria-expanded',String(open));
+    navToggle.textContent=open?'Close':'Menu';
+  });
+  window.addEventListener('resize',()=>{
+    if(window.innerWidth>768){closeNav();}
+  });
+}
 /* Table sorting */
 document.querySelectorAll('th.sort').forEach(th=>{
   th.addEventListener('click',()=>{
@@ -415,9 +472,20 @@ document.querySelectorAll('.toggle-all').forEach(btn=>{
 /* Smooth scroll */
 document.querySelectorAll('nav a[href^="#"]').forEach(a=>{
   a.addEventListener('click',e=>{
+    const href=a.getAttribute('href');
+    if(!href) return;
+    const el=document.querySelector(href);
+    if(!el) return;
     e.preventDefault();
-    const el=document.querySelector(a.getAttribute('href'));
-    if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+    el.scrollIntoView({behavior:'smooth',block:'start'});
+    if(history && history.pushState){
+      history.pushState(null,'',href);
+    }else{
+      location.hash=href;
+    }
+    if(window.matchMedia('(max-width: 768px)').matches){
+      closeNav();
+    }
   });
 });
 """
@@ -441,12 +509,15 @@ def _section_nav(*, has_memory: bool = False) -> str:
     links.append(("#diag", "Diagnostics"))
     link_html = "".join(f'<a href="{h}">{t}</a>' for h, t in links)
     return (
-        f'<nav><div class="brand">ExcelBench</div>'
-        f'<div class="links">{link_html}</div>'
-        f'<a href="https://github.com/wolfiesch/wolfxl" target="_blank" '
-        f'style="margin-left:auto;color:#fb923c;font-size:.82rem;font-weight:600;'
-        f'display:flex;align-items:center;gap:.3rem">'
-        f'\U0001F43A WolfXL</a></nav>'
+        f'<nav>'
+        f'<div class="brand">ExcelBench</div>'
+        f'<div class="links" id="site-nav-links">{link_html}</div>'
+        f'<div class="nav-actions">'
+        f'<a class="wolf-link" href="https://github.com/wolfiesch/wolfxl" target="_blank" '
+        f'rel="noopener noreferrer">\U0001F43A WolfXL</a>'
+        f'<button type="button" class="nav-toggle" aria-controls="site-nav-links" '
+        f'aria-expanded="false" aria-label="Toggle navigation menu">Menu</button>'
+        f'</div></nav>'
     )
 
 
@@ -542,6 +613,10 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
         f'Platform: {_esc(meta.get("platform", "?"))} &middot; '
         f'Excel: {_esc(meta.get("excel_version", "?"))} &middot; '
         f'Date: {_esc(meta.get("run_date", "?")[:10])}'
+        f'</div>'
+        f'<div style="margin-top:.45rem;color:#acb4c0;font-size:.82rem">'
+        f'Score rubric: 3 = all basic + edge pass; 2 = all basic pass with edge failures; '
+        f'1 = at least one basic pass (not all); 0 = no basic pass.'
         f'</div>'
         f'{wolf_hero}'
         f'<div class="cards-grid">{cards_html}</div>'
@@ -697,7 +772,9 @@ def _section_comparison(fidelity: dict[str, Any], perf: dict[str, Any] | None) -
     rows.append('<section id="comparison" class="container"><h2>Library Comparison</h2>')
     rows.append('<div class="flex-bar">'
                 '<div class="filter-box">'
-                '<input type="text" class="filter-input" data-target="cmp-table" '
+                '<label class="sr-only" for="cmp-filter">Filter libraries</label>'
+                '<input id="cmp-filter" type="text" class="filter-input" data-target="cmp-table" '
+                'aria-label="Filter libraries" '
                 'placeholder="Filter libraries\u2026"></div></div>')
     rows.append('<div class="table-scroll"><table id="cmp-table">')
     rows.append("<thead><tr>"
