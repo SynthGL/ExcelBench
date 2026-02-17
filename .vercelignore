@@ -1,4 +1,4 @@
 # Deploy only the generated dashboard artifact.
 *
-!deploy/
-!deploy/index.html
+!deploy
+!deploy/**
