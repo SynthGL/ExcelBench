@@ -43,6 +43,7 @@ dependencies = [
     "xlwt>=1.3.0",
     # Visualization
     "matplotlib>=3.7.0",
+    "plotly>=6.0",
 ]
 
 [project.optional-dependencies]
@@ -117,6 +118,8 @@ module = [
     "matplotlib",
     "matplotlib.*",
     "numpy",
+    "plotly",
+    "plotly.*",
     "numpy.*",
     "pyumya",
     "pyumya.*",

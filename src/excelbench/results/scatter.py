@@ -116,7 +116,7 @@ _ZONE_BANDS: list[tuple[float, float, str, str]] = [
     (0, 50, "#1a0a0a", "0"),  # dark red tint
     (50, 80, "#1a1400", "1"),  # dark amber tint
     (80, 100, "#0c1f12", "2"),  # dark green tint (score 2)
-    (100, 110, "#133d1f", "3"),  # brighter green tint (score 3 — visually distinct)
+    (100, 110, "#0e2916", "3"),  # subtle green tint (score 3 — distinct but gridline-friendly)
 ]
 
 
