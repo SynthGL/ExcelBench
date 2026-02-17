@@ -107,9 +107,12 @@ def _fmt_ms(val: float | None) -> str:
 
 
 def _fmt_rate(op_count: int | None, p50_ms: float | None) -> str:
-    if op_count is None or p50_ms is None or p50_ms == 0:
+    if p50_ms is None or p50_ms == 0:
         return "\u2014"
-    rate = op_count * 1000.0 / p50_ms
+    if op_count is not None:
+        rate = op_count * 1000.0 / p50_ms
+    else:
+        rate = 1000.0 / p50_ms
     if rate >= 1_000_000:
         return f"{rate / 1_000_000:.1f}M"
     if rate >= 1_000:
@@ -598,7 +601,8 @@ def _section_comparison(fidelity: dict[str, Any], perf: dict[str, Any] | None) -
             perf_lookup[(e["feature"], e["library"])] = e.get("perf", {})
         for lib in libs_info:
             read_rate = write_rate = raw_read_rate = "\u2014"
-            for sc in ("cell_values_10k_bulk_read", "cell_values_10k", "cell_values_1k"):
+            for sc in ("cell_values_10k_bulk_read", "cell_values_10k",
+                        "cell_values_1k", "cell_values"):
                 p = perf_lookup.get((sc, lib), {}).get("read", {})
                 if p and p.get("wall_ms", {}).get("p50"):
                     read_rate = _fmt_rate(p.get("op_count"), p["wall_ms"]["p50"])
@@ -608,7 +612,8 @@ def _section_comparison(fidelity: dict[str, Any], perf: dict[str, Any] | None) -
                 if p and p.get("wall_ms", {}).get("p50"):
                     raw_read_rate = _fmt_rate(p.get("op_count"), p["wall_ms"]["p50"])
                     break
-            for sc in ("cell_values_10k_bulk_write", "cell_values_10k", "cell_values_1k"):
+            for sc in ("cell_values_10k_bulk_write", "cell_values_10k",
+                        "cell_values_1k", "cell_values"):
                 p = perf_lookup.get((sc, lib), {}).get("write", {})
                 if p and p.get("wall_ms", {}).get("p50"):
                     write_rate = _fmt_rate(p.get("op_count"), p["wall_ms"]["p50"])
