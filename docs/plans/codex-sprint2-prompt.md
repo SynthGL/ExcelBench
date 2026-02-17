@@ -579,7 +579,7 @@ Study these for patterns and dict formats:
 ## Important Notes
 
 - **CRITICAL**: Fix cell_values FIRST, then verify the fix before proceeding to Sprint 2 features
-- The calamine fork is at `git = "https://github.com/wolfiesch/calamine.git", branch = "styles"` in Cargo.toml
+- The calamine fork is at `git = "https://github.com/SynthGL/calamine.git", branch = "styles"` in Cargo.toml
 - PyO3 version is 0.24; needs `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` env var
 - All Rust methods returning Python objects need `py: Python<'_>` parameter
 - Use the existing `Tier2SheetCache` for caching new read results per-sheet

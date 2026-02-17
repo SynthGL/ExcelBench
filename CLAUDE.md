@@ -55,7 +55,7 @@ uv sync --extra rust   # installs wolfxl from PyPI (pre-built wheel)
 uv run python -c "import wolfxl; print(wolfxl.__version__)"
 ```
 
-For local development of wolfxl itself, see https://github.com/wolfiesch/wolfxl.
+For local development of wolfxl itself, see https://github.com/SynthGL/wolfxl.
 
 **Note**: umya/basic calamine adapters still require local `maturin develop` from `rust/excelbench_rust/`.
 
@@ -100,7 +100,7 @@ rust/excelbench_rust/       # Local-only PyO3 crate for ExcelBench-specific back
   src/calamine_backend.rs   # Basic calamine read bindings (no styles)
   src/umya_backend.rs       # umya-spreadsheet R+W bindings
 
-# WolfXL (standalone — https://github.com/wolfiesch/wolfxl)
+# WolfXL (standalone — https://github.com/SynthGL/wolfxl)
 # Installed from PyPI: `uv sync --extra rust` or `pip install wolfxl`
 # Core backends: calamine-styled (read), rust_xlsxwriter (write), XlsxPatcher (modify)
 
@@ -171,7 +171,7 @@ tests/                      # pytest + pytest-cov
   - Hybrid optimization: fast formula XML parser + Python cell cache + sheet XML caching
   - Rust adapters have `read_sheet_values()` and `write_sheet_values()` for bulk ops
 - **Visualizations**: Heatmap (PNG/SVG), combined fidelity+perf dashboard, tier list, scatter plots
-- **Rust adapters**: Built locally via maturin; pyo3 0.24; calamine fork at wolfiesch/calamine#styles
+- **Rust adapters**: Built locally via maturin; pyo3 0.24; calamine fork at SynthGL/calamine#styles
   - Features: `calamine`, `rust_xlsxwriter`, `umya`, `wolfxl` (WolfXL patcher)
 - **CLI commands**: generate, generate-xls, benchmark, benchmark-profiles, perf, report, heatmap, dashboard, html, scatter
 - **CI/CD**: GitHub Actions CI (lint/test/benchmark on all pushes) + deploy-dashboard (auto-deploys HTML to Vercel on results/generator changes)

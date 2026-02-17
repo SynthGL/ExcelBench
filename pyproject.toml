@@ -67,9 +67,9 @@ excelbench = "excelbench.cli:app"
 
 [project.urls]
 Homepage = "https://excelbench.vercel.app"
-Repository = "https://github.com/wolfiesch/ExcelBench"
-Documentation = "https://github.com/wolfiesch/ExcelBench#readme"
-Issues = "https://github.com/wolfiesch/ExcelBench/issues"
+Repository = "https://github.com/SynthGL/ExcelBench"
+Documentation = "https://github.com/SynthGL/ExcelBench#readme"
+Issues = "https://github.com/SynthGL/ExcelBench/issues"
 
 [build-system]
 requires = ["hatchling"]

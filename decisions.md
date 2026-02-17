@@ -65,7 +65,7 @@ Scores are stricter but more semantically accurate and less susceptible to defau
 `rust/excelbench_rust/` (Rust backend). This made it unusable for anyone not building ExcelBench
 from source. For adoption, WolfXL needs to be `pip install wolfxl`.
 
-**Decision**: Extract WolfXL to `wolfiesch/wolfxl` on GitHub. Publish the calamine fork as
+**Decision**: Extract WolfXL to `SynthGL/wolfxl` on GitHub. Publish the calamine fork as
 `calamine-styles` crate on crates.io (required because cargo disallows git deps in published
 crates). The standalone repo includes only the 3 core backends (calamine-styled, rust_xlsxwriter,
 wolfxl patcher) — umya and basic calamine stay in ExcelBench. ExcelBench's `[project.optional-dependencies] rust`

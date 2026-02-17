@@ -1,7 +1,7 @@
 # calamine + rust_xlsxwriter Sprint Tracker
 
 > **ARCHIVED**: This tracker is superseded by the WolfXL standalone project
-> (https://github.com/wolfiesch/wolfxl). The work described here was completed and
+> (https://github.com/SynthGL/wolfxl). The work described here was completed and
 > extracted into the wolfxl PyPI package. Sprint dashboard below reflects the
 > state at time of tracker creation, not final completion status.
 

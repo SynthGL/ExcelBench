@@ -84,7 +84,7 @@ Most-touched top-level directories:
     standalone `wolfxl` package on PyPI (`pip install wolfxl`)
 
 - WolfXL (external dependency, `pip install wolfxl`)
-  - Standalone repo: https://github.com/wolfiesch/wolfxl
+  - Standalone repo: https://github.com/SynthGL/wolfxl
   - Openpyxl-compatible API: `load_workbook`, `Workbook`, `Font`, `PatternFill`, etc.
   - Three modes: read (calamine-styles), write (rust_xlsxwriter), modify (XlsxPatcher)
   - Installed as optional dependency: `uv sync --extra rust`
@@ -110,7 +110,7 @@ Common starting points by intent:
   - Harness exercise/scoring: `src/excelbench/harness/runner.py`
 
 - Extend Tier 2/3 OOXML parsing:
-  - WolfXL (external): calamine-styled + ooxml utilities live in [wolfxl repo](https://github.com/wolfiesch/wolfxl)
+  - WolfXL (external): calamine-styled + ooxml utilities live in [wolfxl repo](https://github.com/SynthGL/wolfxl)
   - ExcelBench-local Rust: `rust/excelbench_rust/src/` (basic calamine, umya bindings)
 
 - Performance track:

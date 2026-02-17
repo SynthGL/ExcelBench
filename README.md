@@ -80,8 +80,8 @@ Five additional adapters via Rust/PyO3 extension modules:
 
 | Library | Caps | Source | Notes |
 |:--------|:-----|:-------|:------|
-| [WolfXL](https://github.com/wolfiesch/wolfxl) (calamine-styled) | R | PyPI | Full-fidelity Rust reader with style extraction |
-| [WolfXL](https://github.com/wolfiesch/wolfxl) (rust_xlsxwriter) | W | PyPI | Full-fidelity Rust writer |
+| [WolfXL](https://github.com/SynthGL/wolfxl) (calamine-styled) | R | PyPI | Full-fidelity Rust reader with style extraction |
+| [WolfXL](https://github.com/SynthGL/wolfxl) (rust_xlsxwriter) | W | PyPI | Full-fidelity Rust writer |
 | calamine (basic) | R | Local | Direct calamine bindings (data only, no styles) |
 | rust_xlsxwriter (direct) | W | Local | Direct rust_xlsxwriter bindings |
 | umya-spreadsheet | R+W | Local | Rust read + write |
@@ -108,13 +108,13 @@ Full methodology: [METHODOLOGY.md](METHODOLOGY.md)
 
 ## WolfXL Docs
 
-WolfXL documentation lives in the [wolfxl repository](https://github.com/wolfiesch/wolfxl/tree/main/docs).
+WolfXL documentation lives in the [wolfxl repository](https://github.com/SynthGL/wolfxl/tree/main/docs).
 
-- [Quickstart](https://github.com/wolfiesch/wolfxl/blob/main/docs/getting-started/quickstart.md)
-- [Openpyxl migration guide](https://github.com/wolfiesch/wolfxl/blob/main/docs/migration/openpyxl-migration.md)
-- [Compatibility matrix](https://github.com/wolfiesch/wolfxl/blob/main/docs/migration/compatibility-matrix.md)
-- [Benchmark methodology](https://github.com/wolfiesch/wolfxl/blob/main/docs/performance/methodology.md)
-- [Known limitations](https://github.com/wolfiesch/wolfxl/blob/main/docs/trust/limitations.md)
+- [Quickstart](https://github.com/SynthGL/wolfxl/blob/main/docs/getting-started/quickstart.md)
+- [Openpyxl migration guide](https://github.com/SynthGL/wolfxl/blob/main/docs/migration/openpyxl-migration.md)
+- [Compatibility matrix](https://github.com/SynthGL/wolfxl/blob/main/docs/migration/compatibility-matrix.md)
+- [Benchmark methodology](https://github.com/SynthGL/wolfxl/blob/main/docs/performance/methodology.md)
+- [Known limitations](https://github.com/SynthGL/wolfxl/blob/main/docs/trust/limitations.md)
 
 ## Quick Start
 

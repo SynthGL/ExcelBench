@@ -11,7 +11,7 @@ ExcelBench is a benchmark suite that scores Excel libraries on feature fidelity.
 - **rust_xlsxwriter** (write-only) — `rust_xlsxwriter_backend.rs` currently handles Tier 0 + Tier 1 write
 - **umya** (read+write, slow) — reference implementation in `src/umya/` with ALL features implemented
 
-The calamine backend uses a **forked calamine** with styles PR #538 merged. The fork is at `git = "https://github.com/wolfiesch/calamine.git", branch = "styles"` in Cargo.toml.
+The calamine backend uses a **forked calamine** with styles PR #538 merged. The fork is at `git = "https://github.com/SynthGL/calamine.git", branch = "styles"` in Cargo.toml.
 
 ## Objective
 
@@ -318,7 +318,7 @@ Study these existing implementations for patterns and dict formats:
 
 ## Important Notes
 
-- The calamine fork (wolfiesch/calamine branch: styles) uses calamine 0.33.0-ish with styles PR #538
+- The calamine fork (SynthGL/calamine branch: styles) uses calamine 0.33.0-ish with styles PR #538
 - PyO3 version is 0.24; needs `PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1` env var for Python 3.14
 - All Rust methods that return Python objects need `py: Python<'_>` parameter
 - Tier 2 read methods that parse zip should cache the parsed data per-sheet in the style_cache or a separate cache

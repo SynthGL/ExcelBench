@@ -132,7 +132,7 @@ Transparency matters more than marketing:
 ## Try It
 
 - **Live dashboard**: [excelbench.vercel.app](https://excelbench.vercel.app) — interactive fidelity heatmap + performance charts
-- **ExcelBench repo**: [github.com/wolfiesch/ExcelBench](https://github.com/wolfiesch/ExcelBench) — run the benchmarks yourself
+- **ExcelBench repo**: [github.com/SynthGL/ExcelBench](https://github.com/SynthGL/ExcelBench) — run the benchmarks yourself
 - **Reproduce**: `uv run excelbench benchmark --tests fixtures/excel --output results` then `uv run excelbench html`
 
 The data is open. The methodology is reproducible. If your Python code touches Excel at scale, the numbers speak for themselves.
