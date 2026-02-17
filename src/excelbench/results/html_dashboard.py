@@ -172,18 +172,25 @@ def render_html_dashboard(
     if memory_json and memory_json.exists():
         memory = json.loads(memory_json.read_text())
 
-    # Heatmap SVG (still static — no interactive replacement needed)
+    # Load SVGs from scatter_dir
     heatmap_svg: str | None = None
+    scatter_svgs: dict[str, str] = {}
     if scatter_dir:
-        heatmap_path = scatter_dir / "heatmap.svg"
-        if heatmap_path.exists():
-            heatmap_svg = _namespace_svg_ids(heatmap_path.read_text(), "heatmap-")
+        for name, prefix in [
+            ("heatmap.svg", "heatmap-"),
+            ("scatter_tiers.svg", "sctier-"),
+            ("scatter_features.svg", "scfeat-"),
+        ]:
+            svg_path = scatter_dir / name
+            if svg_path.exists():
+                scatter_svgs[name] = _namespace_svg_ids(svg_path.read_text(), prefix)
+        heatmap_svg = scatter_svgs.get("heatmap.svg")
 
     body_parts = [
         _section_nav(has_memory=memory is not None),
         _section_overview(fidelity, perf),
         _section_matrix(fidelity),
-        _section_scatter(fidelity, perf, heatmap_svg),
+        _section_scatter(fidelity, perf, heatmap_svg, scatter_svgs),
         _section_comparison(fidelity, perf),
         _section_features(fidelity),
         _section_performance(perf),
@@ -558,14 +565,24 @@ document.querySelectorAll('.toggle-all').forEach(btn=>{
       var wrap=btn.closest('.chart-maximize-wrap');
       var chart=wrap?wrap.querySelector('.plotly-chart'):null;
       if(!chart)return;
-      /* Clone chart nodes into modal (same-origin Plotly SVG, safe to clone) */
-      var clone=chart.cloneNode(true);
       while(modalBody.firstChild)modalBody.removeChild(modalBody.firstChild);
-      modalBody.appendChild(clone);
-      overlay.classList.add('active');
-      /* Re-render Plotly charts at full size */
-      var plots=modalBody.querySelectorAll('.js-plotly-plot');
-      plots.forEach(function(p){if(window.Plotly)window.Plotly.Plots.resize(p);});
+      /* Rebuild Plotly chart in modal with full interactivity */
+      var srcPlot=chart.querySelector('.js-plotly-plot');
+      if(srcPlot&&srcPlot.data&&srcPlot.layout&&window.Plotly){
+        var plotDiv=document.createElement('div');
+        plotDiv.style.width='100%';
+        plotDiv.style.height='100%';
+        modalBody.appendChild(plotDiv);
+        overlay.classList.add('active');
+        var newLayout=Object.assign({},srcPlot.layout,{autosize:true,
+          height:content.clientHeight-20,width:content.clientWidth-20});
+        window.Plotly.newPlot(plotDiv,srcPlot.data,newLayout,
+          {displayModeBar:true,displaylogo:false,responsive:true});
+      }else{
+        /* Fallback: clone static content */
+        modalBody.appendChild(chart.cloneNode(true));
+        overlay.classList.add('active');
+      }
     });
   });
 })();
@@ -797,13 +814,14 @@ def _section_scatter(
     fidelity: dict[str, Any],
     perf: dict[str, Any] | None,
     heatmap_svg: str | None,
+    scatter_svgs: dict[str, str] | None = None,
 ) -> str:
-    if not perf and not heatmap_svg:
+    if not perf and not heatmap_svg and not scatter_svgs:
         return ""
 
     parts = ['<section id="scatter" class="container"><h2>Fidelity vs. Throughput</h2>']
 
-    # Interactive Plotly scatter charts (only when perf data exists)
+    # Interactive Plotly scatter charts (preferred when perf data exists)
     if perf:
         from excelbench.results.scatter_interactive import (
             render_interactive_scatter_features_from_data,
@@ -827,8 +845,19 @@ def _section_scatter(
             f' aria-label="Maximize chart">\u26f6</button>'
             f'<div class="plotly-chart">{features_html}</div></div>'
         )
+    else:
+        # Fallback: embed pre-rendered static SVGs when perf data is unavailable
+        if scatter_svgs:
+            tiers_svg = scatter_svgs.get("scatter_tiers.svg")
+            feats_svg = scatter_svgs.get("scatter_features.svg")
+            if tiers_svg:
+                parts.append(f'<h3>By Feature Group</h3>'
+                             f'<div class="svg-wrap">{tiers_svg}</div>')
+            if feats_svg:
+                parts.append(f'<h3>Per Feature</h3>'
+                             f'<div class="svg-wrap">{feats_svg}</div>')
 
-    # Static heatmap SVG (unchanged)
+    # Static heatmap SVG (always shown if available)
     if heatmap_svg:
         parts.append(f'<h3>Heatmap</h3><div class="svg-wrap">{heatmap_svg}</div>')
 

@@ -17,8 +17,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-import plotly.graph_objects as go  # type: ignore[import-untyped]
-from plotly.subplots import make_subplots  # type: ignore[import-untyped]
+import plotly.graph_objects as go
+from plotly.subplots import make_subplots
 
 # ── Reuse data pipeline + constants from the static renderer ──────
 from excelbench.results.scatter import (
@@ -283,8 +283,9 @@ def _build_tiers_figure(
 
     _apply_layout(fig, "ExcelBench \u2014 Fidelity vs. Throughput by Feature Group", 1, 3)
 
-    # Style subplot titles
-    for ann in fig.layout.annotations:
+    # Style subplot titles only (not zone labels added by _build_panel)
+    n_subplot_titles = len(tier_titles)
+    for ann in fig.layout.annotations[:n_subplot_titles]:
         ann.font = dict(size=16, color=_DARK_TEXT, family="system-ui, sans-serif")
 
     _add_footer_annotations(fig)
@@ -318,7 +319,9 @@ def _build_features_figure(
 
     _apply_layout(fig, "ExcelBench \u2014 Per-Feature Fidelity vs. Throughput", 2, 3)
 
-    for ann in fig.layout.annotations:
+    # Style subplot titles only (not zone labels added by _build_panel)
+    n_subplot_titles = len(feature_titles)
+    for ann in fig.layout.annotations[:n_subplot_titles]:
         ann.font = dict(size=16, color=_DARK_TEXT, family="system-ui, sans-serif")
 
     _add_footer_annotations(fig)
@@ -359,7 +362,7 @@ def render_interactive_scatter_tiers(
     fidelity = json.loads(fidelity_json.read_text())
     perf = json.loads(perf_json.read_text())
     fig = _build_tiers_figure(fidelity, perf)
-    return fig.to_html(full_html=False, include_plotlyjs=True, config=_PLOTLY_CONFIG)
+    return str(fig.to_html(full_html=False, include_plotlyjs=True, config=_PLOTLY_CONFIG))
 
 
 def render_interactive_scatter_features(
@@ -373,7 +376,7 @@ def render_interactive_scatter_features(
     fidelity = json.loads(fidelity_json.read_text())
     perf = json.loads(perf_json.read_text())
     fig = _build_features_figure(fidelity, perf)
-    return fig.to_html(full_html=False, include_plotlyjs=False, config=_PLOTLY_CONFIG)
+    return str(fig.to_html(full_html=False, include_plotlyjs=False, config=_PLOTLY_CONFIG))
 
 
 # ── Convenience: build from raw dicts (for dashboard integration) ──
@@ -385,7 +388,7 @@ def render_interactive_scatter_tiers_from_data(
 ) -> str:
     """Like render_interactive_scatter_tiers but accepts pre-loaded dicts."""
     fig = _build_tiers_figure(fidelity, perf)
-    return fig.to_html(full_html=False, include_plotlyjs=True, config=_PLOTLY_CONFIG)
+    return str(fig.to_html(full_html=False, include_plotlyjs=True, config=_PLOTLY_CONFIG))
 
 
 def render_interactive_scatter_features_from_data(
@@ -394,4 +397,4 @@ def render_interactive_scatter_features_from_data(
 ) -> str:
     """Like render_interactive_scatter_features but accepts pre-loaded dicts."""
     fig = _build_features_figure(fidelity, perf)
-    return fig.to_html(full_html=False, include_plotlyjs=False, config=_PLOTLY_CONFIG)
+    return str(fig.to_html(full_html=False, include_plotlyjs=False, config=_PLOTLY_CONFIG))
