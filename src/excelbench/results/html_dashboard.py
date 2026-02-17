@@ -195,61 +195,62 @@ def render_html_dashboard(
 
 _CSS = """
 :root{
-  --bg:#f8fafc;--card:#fff;--border:#e2e8f0;
-  --text:#1e293b;--text2:#64748b;--accent:#2563eb;
-  --g3:#dcfce7;--g3t:#166534;--g2:#fef9c3;--g2t:#854d0e;
-  --g1:#ffedd5;--g1t:#9a3412;--g0:#fee2e2;--g0t:#991b1b;
-  --na:#f1f5f9;--nat:#94a3b8;
+  --bg:#0b0f19;--card:#111827;--border:#1e293b;
+  --text:#e2e8f0;--text2:#94a3b8;--accent:#60a5fa;
+  --g3:#064e3b;--g3t:#6ee7b7;--g2:#713f12;--g2t:#fde68a;
+  --g1:#7c2d12;--g1t:#fdba74;--g0:#7f1d1d;--g0t:#fca5a5;
+  --na:#1e293b;--nat:#64748b;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
 a{color:var(--accent);text-decoration:none}
-a:hover{text-decoration:underline}
+a:hover{text-decoration:underline;color:#93c5fd}
 .container{max-width:1440px;margin:0 auto;padding:1.5rem 1.5rem}
 
 /* ── Nav ── */
 nav{position:sticky;top:0;z-index:100;background:linear-gradient(135deg,#0f172a,#1e293b);
   padding:.6rem 1.5rem;display:flex;align-items:center;gap:1.5rem;
-  box-shadow:0 2px 8px rgba(0,0,0,.15)}
-nav .brand{font-weight:700;font-size:1.1rem;color:#e2e8f0;letter-spacing:-.02em}
+  box-shadow:0 2px 12px rgba(0,0,0,.4);border-bottom:1px solid #334155}
+nav .brand{font-weight:700;font-size:1.1rem;color:#f1f5f9;letter-spacing:-.02em}
 nav .links{display:flex;gap:1rem;flex-wrap:wrap}
 nav .links a{color:#94a3b8;font-size:.82rem;font-weight:500;transition:color .15s}
 nav .links a:hover{color:#fff;text-decoration:none}
 
 /* ── Cards ── */
-.card{background:var(--card);border-radius:10px;box-shadow:0 1px 3px rgba(0,0,0,.06);
+.card{background:var(--card);border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.3);
   padding:1.5rem;margin-bottom:1.5rem;border:1px solid var(--border)}
 .cards-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
   gap:1rem;margin:1rem 0}
 .stat-card{background:var(--card);border-radius:10px;padding:1.2rem;text-align:center;
   border:1px solid var(--border)}
-.stat-card .val{font-size:2rem;font-weight:700;color:var(--accent)}
+.stat-card .val{font-size:2rem;font-weight:700;color:#60a5fa}
 .stat-card .lbl{font-size:.78rem;color:var(--text2);margin-top:.2rem}
 
 /* ── Section headings ── */
 section{margin-bottom:2rem}
-h1{font-size:1.6rem;font-weight:700;margin-bottom:.5rem}
-h2{font-size:1.3rem;font-weight:700;margin-bottom:.75rem;
+h1{font-size:1.6rem;font-weight:700;margin-bottom:.5rem;color:#f1f5f9}
+h2{font-size:1.3rem;font-weight:700;margin-bottom:.75rem;color:#f1f5f9;
   padding-bottom:.4rem;border-bottom:2px solid var(--border)}
-h3{font-size:1.05rem;font-weight:600;margin:1rem 0 .5rem}
+h3{font-size:1.05rem;font-weight:600;margin:1rem 0 .5rem;color:#e2e8f0}
 .meta-bar{font-size:.8rem;color:var(--text2);margin-bottom:1rem}
 
 /* ── Tables ── */
 table{border-collapse:collapse;width:100%;font-size:.82rem}
 th,td{padding:.45rem .6rem;border:1px solid var(--border);text-align:left;vertical-align:top}
-th{background:#f1f5f9;font-weight:600;white-space:nowrap;position:sticky;top:0;z-index:1}
+th{background:#1e293b;font-weight:600;white-space:nowrap;position:sticky;top:0;z-index:1;
+  color:#e2e8f0}
 th.sort{cursor:pointer;user-select:none}
-th.sort:hover{background:#e2e8f0}
+th.sort:hover{background:#334155}
 th.sort::after{content:'';margin-left:4px;opacity:.3}
 th.asc::after{content:' \\25B2'}
 th.desc::after{content:' \\25BC'}
-tbody tr:hover{background:#f8fafc}
+tbody tr:hover{background:rgba(255,255,255,.04)}
 .table-scroll{overflow-x:auto;margin-bottom:1rem;border-radius:8px;border:1px solid var(--border)}
 .table-scroll table{border:none}
 .table-scroll td,.table-scroll th{border-left:none;border-right:none}
 
-/* ── Score colours ── */
+/* ── Score colours (dark) ── */
 .s3{background:var(--g3);color:var(--g3t);font-weight:700;text-align:center}
 .s2{background:var(--g2);color:var(--g2t);font-weight:700;text-align:center}
 .s1{background:var(--g1);color:var(--g1t);font-weight:700;text-align:center}
@@ -259,30 +260,32 @@ tbody tr:hover{background:#f8fafc}
 /* ── Matrix ── */
 .matrix th,.matrix td{padding:.35rem .5rem;text-align:center;min-width:52px;font-size:.78rem}
 .matrix .feat{text-align:left;font-weight:500;min-width:130px;white-space:nowrap}
-.tier-row td{background:#0f172a !important;color:#e2e8f0;font-weight:600;
-  font-size:.78rem;padding:.3rem .6rem;letter-spacing:.02em}
+.matrix .feat a{color:#93c5fd}
+.tier-row td{background:#0f172a !important;color:#f1f5f9;font-weight:600;
+  font-size:.78rem;padding:.3rem .6rem;letter-spacing:.02em;
+  border-bottom:1px solid #334155}
 
 /* ── Details ── */
 details{border:1px solid var(--border);border-radius:8px;margin-bottom:.6rem;background:var(--card)}
 details summary{padding:.7rem 1rem;cursor:pointer;font-weight:500;font-size:.88rem;
-  list-style:none;display:flex;align-items:center;gap:.5rem}
+  list-style:none;display:flex;align-items:center;gap:.5rem;color:#e2e8f0}
 details summary::before{content:'\\25B6';font-size:.65rem;
   color:var(--text2);transition:transform .2s}
 details[open] summary::before{transform:rotate(90deg)}
 details[open] summary{border-bottom:1px solid var(--border)}
 details .content{padding:.75rem 1rem}
 .badge{display:inline-block;padding:.1rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600}
-.badge-t0{background:#dbeafe;color:#1e40af}
-.badge-t1{background:#fef3c7;color:#92400e}
-.badge-t2{background:#ede9fe;color:#5b21b6}
-.badge-t3{background:#d1fae5;color:#065f46}
+.badge-t0{background:#1e3a5f;color:#93c5fd}
+.badge-t1{background:#422006;color:#fde68a}
+.badge-t2{background:#2e1065;color:#c4b5fd}
+.badge-t3{background:#052e16;color:#86efac}
 
 /* ── Test case table ── */
 .tc-table td,.tc-table th{font-size:.75rem;padding:.3rem .5rem}
-.tc-table .pass{color:#166534}
-.tc-table .fail{color:#991b1b;font-weight:600}
+.tc-table .pass{color:#6ee7b7}
+.tc-table .fail{color:#fca5a5;font-weight:600}
 code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
-  background:#f1f5f9;padding:.1rem .3rem;border-radius:3px;word-break:break-all}
+  background:#1e293b;color:#e2e8f0;padding:.1rem .3rem;border-radius:3px;word-break:break-all}
 
 /* ── Perf breakdown bar ── */
 .bbar{display:flex;height:18px;border-radius:4px;overflow:hidden;width:100%;min-width:120px}
@@ -299,9 +302,10 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
 
 /* ── Filter ── */
 .filter-box{margin-bottom:.75rem}
-.filter-box input{padding:.4rem .75rem;border:1px solid var(--border);border-radius:6px;
-  font-size:.85rem;width:280px;outline:none}
-.filter-box input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(37,99,235,.15)}
+.filter-box input{padding:.4rem .75rem;border:1px solid #334155;border-radius:6px;
+  font-size:.85rem;width:280px;outline:none;background:#1e293b;color:#e2e8f0}
+.filter-box input:focus{border-color:#60a5fa;box-shadow:0 0 0 2px rgba(96,165,250,.2)}
+.filter-box input::placeholder{color:#64748b}
 
 /* ── Memory bars ── */
 .mem-group{margin-bottom:1.5rem}
@@ -311,7 +315,7 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
 .mem-bar-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.35rem;font-size:.78rem}
 .mem-bar-label{width:130px;text-align:right;font-weight:500;flex-shrink:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mem-bar-track{flex:1;height:22px;background:#f1f5f9;border-radius:4px;position:relative;
+.mem-bar-track{flex:1;height:22px;background:#1e293b;border-radius:4px;position:relative;
   overflow:hidden;min-width:100px}
 .mem-bar-fill{height:100%;border-radius:4px;display:flex;align-items:center;
   padding-left:6px;font-size:.7rem;font-weight:600;color:#fff;white-space:nowrap;
@@ -327,20 +331,33 @@ code.val{font-family:'JetBrains Mono','Fira Code',monospace;font-size:.72rem;
 .mem-legend .dot{width:10px;height:10px;border-radius:2px;display:inline-block}
 .mem-legend .dot.rust{background:#f97316}
 .mem-legend .dot.python{background:#3b82f6}
-.mem-insight{background:#fffbeb;border:1px solid #fef3c7;border-radius:8px;padding:.8rem 1rem;
-  font-size:.82rem;color:#92400e;margin-bottom:1rem}
+.mem-insight{background:#1c1105;border:1px solid #854d0e;border-radius:8px;padding:.8rem 1rem;
+  font-size:.82rem;color:#fde68a;margin-bottom:1rem}
 
 /* ── WolfXL highlight ── */
-.wolfxl-col{background:rgba(249,115,22,.06)}
-.wolfxl-hdr{border-bottom:3px solid #f97316}
-.wolfxl-hdr div:first-child::before{content:'\\2B50 ';font-size:.6rem}
-.wolfxl-row{border-left:3px solid #f97316;background:rgba(249,115,22,.04)}
-.wolfxl-row td:first-child{font-weight:700;color:#ea580c}
+.wolfxl-col{background:rgba(249,115,22,.12)}
+.wolfxl-hdr{background:linear-gradient(135deg,#431407,#7c2d12) !important;
+  border-bottom:3px solid #f97316;position:relative}
+.wolfxl-hdr div:first-child{color:#fb923c;font-weight:800;font-size:.88rem}
+.wolfxl-hdr div:first-child::after{content:' \\1F3C6';font-size:.7rem}
+.wolfxl-row{border-left:4px solid #f97316;background:linear-gradient(90deg,
+  rgba(249,115,22,.15),rgba(249,115,22,.04)) !important}
+.wolfxl-row td:first-child{font-weight:800;color:#fb923c}
+.wolfxl-badge{display:inline-block;background:linear-gradient(135deg,#f97316,#f59e0b);
+  color:#fff;font-size:.6rem;font-weight:700;padding:.15rem .45rem;border-radius:10px;
+  margin-left:.4rem;vertical-align:middle;letter-spacing:.03em;text-transform:uppercase}
+.wolfxl-hero{background:linear-gradient(135deg,#1c1105,#431407);
+  border:2px solid #f97316;border-radius:12px;padding:1.2rem 1.5rem;
+  margin-bottom:1.5rem;display:flex;align-items:center;gap:1rem}
+.wolfxl-hero .wolf-icon{font-size:2rem}
+.wolfxl-hero .wolf-text h3{margin:0;font-size:1rem;color:#fb923c;font-weight:700}
+.wolfxl-hero .wolf-text p{margin:.2rem 0 0;font-size:.82rem;color:#fde68a;line-height:1.4}
+.wolfxl-hero .wolf-text a{color:#fb923c;font-weight:600}
 
 /* ── Misc ── */
-.btn{display:inline-block;padding:.3rem .8rem;border:1px solid var(--border);border-radius:6px;
-  font-size:.78rem;cursor:pointer;background:var(--card);color:var(--text2)}
-.btn:hover{background:#f1f5f9}
+.btn{display:inline-block;padding:.3rem .8rem;border:1px solid #334155;border-radius:6px;
+  font-size:.78rem;cursor:pointer;background:#1e293b;color:#94a3b8}
+.btn:hover{background:#334155;color:#e2e8f0}
 footer{text-align:center;padding:2rem;color:var(--text2);font-size:.78rem}
 .flex-bar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:.75rem}
 @media(max-width:768px){
@@ -425,7 +442,11 @@ def _section_nav(*, has_memory: bool = False) -> str:
     link_html = "".join(f'<a href="{h}">{t}</a>' for h, t in links)
     return (
         f'<nav><div class="brand">ExcelBench</div>'
-        f'<div class="links">{link_html}</div></nav>'
+        f'<div class="links">{link_html}</div>'
+        f'<a href="https://github.com/wolfiesch/wolfxl" target="_blank" '
+        f'style="margin-left:auto;color:#fb923c;font-size:.82rem;font-weight:600;'
+        f'display:flex;align-items:center;gap:.3rem">'
+        f'\U0001F43A WolfXL</a></nav>'
     )
 
 
@@ -476,6 +497,43 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
         for v, lbl in cards
     )
 
+    # WolfXL hero stats
+    wolf_green = sum(
+        1 for e in results if e["library"] == "wolfxl"
+        and max((s for s in [e["scores"].get("read"), e["scores"].get("write")]
+                 if s is not None), default=-1) == 3
+    )
+    wolf_scored = sum(1 for e in results if e["library"] == "wolfxl")
+    wolf_hero = ""
+    if wolf_scored > 0:
+        # Compute throughput headline from perf data if available
+        wolf_perf_note = ""
+        if perf:
+            for e in perf.get("results", []):
+                if e["library"] == "wolfxl" and "read" in e.get("perf", {}):
+                    p = e["perf"]["read"]
+                    oc = p.get("op_count")
+                    p50 = (p.get("wall_ms") or {}).get("p50")
+                    if p50 and p50 > 0:
+                        rate = (oc * 1000.0 / p50) if oc else (1000.0 / p50)
+                        if rate > 100_000:
+                            wolf_perf_note = (
+                                f" &middot; Up to <b>{rate / 1000:.0f}K cells/s</b> read throughput"
+                            )
+                        break
+        wolf_hero = (
+            f'<div class="wolfxl-hero">'
+            f'<div class="wolf-icon">\U0001F43A</div>'
+            f'<div class="wolf-text">'
+            f'<h3>WolfXL &mdash; Top-Ranked Across Fidelity &amp; Performance</h3>'
+            f'<p><b>{wolf_green}/{wolf_scored}</b> features at full fidelity (score 3)'
+            f'{wolf_perf_note}. '
+            f'Hybrid Rust+Python architecture for maximum compatibility and speed. '
+            f'<a href="https://github.com/wolfiesch/wolfxl" '
+            f'style="color:#ea580c;font-weight:600">View on GitHub &rarr;</a></p>'
+            f'</div></div>'
+        )
+
     return (
         f'<section id="overview" class="container">'
         f'<h1>ExcelBench Dashboard</h1>'
@@ -485,6 +543,7 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
         f'Excel: {_esc(meta.get("excel_version", "?"))} &middot; '
         f'Date: {_esc(meta.get("run_date", "?")[:10])}'
         f'</div>'
+        f'{wolf_hero}'
         f'<div class="cards-grid">{cards_html}</div>'
         f'</section>'
     )
@@ -657,7 +716,8 @@ def _section_comparison(fidelity: dict[str, Any], perf: dict[str, Any] | None) -
         st = lib_stats[lib]
         pr = (st["passed"] / st["total"] * 100) if st["total"] else 0
         row_cls = " class='wolfxl-row'" if lib == "wolfxl" else ""
-        rows.append(f"<tr{row_cls}><td><b>{_esc(lib)}</b></td>"
+        wolf_badge = '<span class="wolfxl-badge">Recommended</span>' if lib == "wolfxl" else ""
+        rows.append(f"<tr{row_cls}><td><b>{_esc(lib)}</b>{wolf_badge}</td>"
                     f"<td>{st['cap']}</td>"
                     f"<td style='font-family:monospace;font-size:.75rem'>{_esc(st['version'])}</td>"
                     f"<td data-v='{st['green']}'>{st['green']}/{st['scored']}</td>"

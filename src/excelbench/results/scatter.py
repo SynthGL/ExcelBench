@@ -73,8 +73,9 @@ _FEATURE_LABELS: dict[str, str] = {
 # ── Consistent library colour palette ──────────────────────────────
 
 _LIB_COLORS: dict[str, str] = {
+    "wolfxl": "#f97316",
     "openpyxl": "#2563eb",
-    "xlsxwriter": "#ea580c",
+    "xlsxwriter": "#7c3aed",
     "python-calamine": "#16a34a",
     "pylightxl": "#9333ea",
     "xlrd": "#78716c",
@@ -84,8 +85,11 @@ _LIB_COLORS: dict[str, str] = {
     "tablib": "#ca8a04",
     "xlsxwriter-constmem": "#c2410c",
     "openpyxl-readonly": "#4f46e5",
+    "rust_xlsxwriter": "#dc2626",
     "fastexcel": "#65a30d",
 }
+# WolfXL gets a larger marker to stand out
+_WOLFXL_MARKER_SCALE = 1.8
 _FALLBACK_COLOR = "#6b7280"
 
 # Short display names to reduce label clutter
@@ -393,11 +397,16 @@ def _draw_panel(ax: Axes, title: str, points: list[Point]) -> None:
         y = rate + _jitter(lib, scale=3.0)
         y = float(np.clip(y, -2, 107))
 
+        is_wolfxl = lib == "wolfxl"
+        sz = int(80 * _WOLFXL_MARKER_SCALE ** 2) if is_wolfxl else 80
+        ec = "#fb923c" if is_wolfxl else _DARK_CARD
+        lw = 2.0 if is_wolfxl else 0.8
+        zord = 10 if is_wolfxl else 5
         ax.scatter(
             tp, y,
-            c=color, marker=marker, s=80,
-            edgecolors="white", linewidths=0.8,
-            zorder=5, alpha=0.92,
+            c=color, marker=marker, s=sz,
+            edgecolors=ec, linewidths=lw,
+            zorder=zord, alpha=0.95 if is_wolfxl else 0.92,
         )
         jittered.append((lib, y, tp, rate, cap))
 
@@ -425,19 +434,26 @@ def _draw_panel(ax: Axes, title: str, points: list[Point]) -> None:
         label_ys.append(y + y_off)
 
         use_arrow = abs(y_off) > 12
+        is_wolf = lib == "wolfxl"
         ax.annotate(
             display_name, (tp, y),
             xytext=(x_off, y_off), textcoords="offset points",
-            fontsize=6, color=color, fontweight="medium",
+            fontsize=7.5 if is_wolf else 6,
+            color=color,
+            fontweight="bold" if is_wolf else "medium",
             ha=ha, va="center",
             bbox=dict(
-                boxstyle="round,pad=0.15", fc="white", ec="none", alpha=0.85,
+                boxstyle="round,pad=0.2" if is_wolf else "round,pad=0.15",
+                fc="#431407" if is_wolf else _DARK_CARD,
+                ec="#f97316" if is_wolf else "none",
+                alpha=0.95 if is_wolf else 0.85,
+                lw=1.0 if is_wolf else 0,
             ),
             arrowprops=(
                 dict(arrowstyle="-", color=color, alpha=0.35, lw=0.6)
                 if use_arrow else None
             ),
-            zorder=10,
+            zorder=11 if is_wolf else 10,
         )
 
     _style_axes(ax, title)
@@ -465,15 +481,25 @@ def _stagger_offset(
     return 0.0
 
 
+_DARK_BG = "#0b0f19"
+_DARK_CARD = "#111827"
+_DARK_TEXT = "#e2e8f0"
+_DARK_TEXT2 = "#94a3b8"
+_DARK_GRID = "#1e293b"
+
+
 def _style_axes(ax: Axes, title: str) -> None:
-    """Apply shared axis styling."""
+    """Apply shared axis styling (dark theme)."""
+    ax.set_facecolor(_DARK_CARD)
     ax.set_xscale("log")
     ax.set_ylim(-5, 110)
-    ax.set_ylabel("Pass Rate (%)", fontsize=9, labelpad=6)
-    ax.set_xlabel("Throughput (ops / s)", fontsize=9, labelpad=6)
-    ax.set_title(title, fontsize=11, fontweight="bold", pad=10)
-    ax.tick_params(labelsize=8)
-    ax.grid(True, axis="x", alpha=0.12, zorder=0)
+    ax.set_ylabel("Pass Rate (%)", fontsize=9, labelpad=6, color=_DARK_TEXT)
+    ax.set_xlabel("Throughput (ops / s)", fontsize=9, labelpad=6, color=_DARK_TEXT)
+    ax.set_title(title, fontsize=11, fontweight="bold", pad=10, color=_DARK_TEXT)
+    ax.tick_params(labelsize=8, colors=_DARK_TEXT2)
+    ax.grid(True, axis="x", alpha=0.15, color=_DARK_GRID, zorder=0)
+    for spine in ax.spines.values():
+        spine.set_color(_DARK_GRID)
     ax.spines["top"].set_visible(False)
     ax.spines["right"].set_visible(False)
 
@@ -488,7 +514,7 @@ def _add_capability_legend(fig: Figure) -> None:
     handles = [
         Line2D(
             [0], [0], marker=m, color="none",
-            markerfacecolor="#6b7280", markeredgecolor="white",
+            markerfacecolor="#94a3b8", markeredgecolor=_DARK_CARD,
             markersize=8, label=_CAP_LABELS[cap],
         )
         for cap, m in _CAP_MARKERS.items()
@@ -496,6 +522,7 @@ def _add_capability_legend(fig: Figure) -> None:
     fig.legend(
         handles=handles, loc="lower center", ncol=3,
         fontsize=8, frameon=False, bbox_to_anchor=(0.5, 0.005),
+        labelcolor=_DARK_TEXT2,
     )
 
 
@@ -526,9 +553,10 @@ def render_scatter_tiers(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(1, 3, figsize=(19, 7.5))
+    fig.set_facecolor(_DARK_BG)
     fig.suptitle(
         "ExcelBench — Fidelity vs. Throughput by Feature Group",
-        fontsize=14, fontweight="bold", y=0.98,
+        fontsize=14, fontweight="bold", y=0.98, color=_DARK_TEXT,
     )
 
     # Tier panels
@@ -548,14 +576,14 @@ def render_scatter_tiers(
     fig.text(
         0.5, 0.005,
         "Y-positions include \u00b13 % jitter for visibility  \u00b7  marker shape = capability",
-        ha="center", fontsize=7, color="#9ca3af", fontstyle="italic",
+        ha="center", fontsize=7, color=_DARK_TEXT2, fontstyle="italic",
     )
 
     paths: list[Path] = []
     for ext in ("png", "svg"):
         path = output_dir / f"scatter_tiers.{ext}"
         dpi = 200 if ext == "png" else 150
-        fig.savefig(path, dpi=dpi, bbox_inches="tight", facecolor="white")
+        fig.savefig(path, dpi=dpi, bbox_inches="tight", facecolor=_DARK_BG)
         paths.append(path)
     plt.close(fig)
     return paths
@@ -586,9 +614,10 @@ def render_scatter_features(
     output_dir.mkdir(parents=True, exist_ok=True)
 
     fig, axes = plt.subplots(2, 3, figsize=(19, 13))
+    fig.set_facecolor(_DARK_BG)
     fig.suptitle(
         "ExcelBench — Per-Feature Fidelity vs. Throughput",
-        fontsize=14, fontweight="bold", y=0.98,
+        fontsize=14, fontweight="bold", y=0.98, color=_DARK_TEXT,
     )
 
     for ax, feature in zip(axes.flat, features):
@@ -603,14 +632,14 @@ def render_scatter_features(
     fig.text(
         0.5, 0.005,
         "Y-positions include \u00b13 % jitter for visibility  \u00b7  marker shape = capability",
-        ha="center", fontsize=7, color="#9ca3af", fontstyle="italic",
+        ha="center", fontsize=7, color=_DARK_TEXT2, fontstyle="italic",
     )
 
     paths: list[Path] = []
     for ext in ("png", "svg"):
         path = output_dir / f"scatter_features.{ext}"
         dpi = 200 if ext == "png" else 150
-        fig.savefig(path, dpi=dpi, bbox_inches="tight", facecolor="white")
+        fig.savefig(path, dpi=dpi, bbox_inches="tight", facecolor=_DARK_BG)
         paths.append(path)
     plt.close(fig)
     return paths

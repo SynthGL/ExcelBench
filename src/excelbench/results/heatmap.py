@@ -146,11 +146,16 @@ def _render(
     lib_labels: list[str],
     output_path: Path,
 ) -> None:
-    """Render the heatmap to a file."""
+    """Render the heatmap to a file (dark theme)."""
+    _BG = "#0b0f19"
+    _CARD = "#111827"
+    _TEXT = "#e2e8f0"
+    _TEXT2 = "#94a3b8"
+
     n_features, n_libs = matrix.shape
 
-    # Color map: -1=light gray (N/A), 0=red, 1=orange, 2=yellow, 3=green
-    colors = ["#e0e0e0", "#e74c3c", "#e67e22", "#f1c40f", "#2ecc71"]
+    # Color map: -1=dark gray (N/A), 0=red, 1=orange, 2=yellow, 3=green
+    colors = ["#1e293b", "#991b1b", "#92400e", "#854d0e", "#065f46"]
     cmap = ListedColormap(colors)
 
     # Shift matrix so -1 maps to index 0, 0->1, 1->2, 2->3, 3->4
@@ -162,49 +167,82 @@ def _render(
     fig_h = max(1.5 + n_features * cell_h, 4)
 
     fig, ax = plt.subplots(figsize=(fig_w, fig_h))
+    fig.set_facecolor(_BG)
+    ax.set_facecolor(_CARD)
     ax.imshow(plot_data, cmap=cmap, vmin=0, vmax=4, aspect="auto")
 
     # Annotate cells
     score_labels = {-1: "", 0: "0", 1: "1", 2: "2", 3: "3"}
+    text_colors = {-1: "#64748b", 0: "#fca5a5", 1: "#fdba74", 2: "#fde68a", 3: "#6ee7b7"}
     for i in range(n_features):
         for j in range(n_libs):
             val = matrix[i, j]
             text = score_labels.get(val, "")
-            text_color = "white" if val in (0, 3) else ("black" if val >= 0 else "#999")
+            tc = text_colors.get(val, _TEXT2)
             ax.text(j, i, text, ha="center", va="center", fontsize=9, fontweight="bold",
-                    color=text_color)
+                    color=tc)
 
     # Tier boundary lines
     for boundary_row in _TIER_BOUNDARIES:
         if boundary_row < n_features:
-            ax.axhline(y=boundary_row + 0.5, color="#555", linewidth=1.5, linestyle="-")
+            ax.axhline(y=boundary_row + 0.5, color="#475569", linewidth=1.5, linestyle="-")
+
+    # WolfXL column highlight
+    wolfxl_col = None
+    for j, lib in enumerate(lib_labels):
+        if lib == "wolfxl":
+            wolfxl_col = j
+            break
+    if wolfxl_col is not None:
+        from matplotlib.patches import FancyBboxPatch
+        ax.add_patch(FancyBboxPatch(
+            (wolfxl_col - 0.5, -0.5), 1, n_features,
+            boxstyle="square,pad=0", facecolor="none",
+            edgecolor="#f97316", linewidth=2.5, zorder=5,
+        ))
 
     # Axis labels
     ax.set_xticks(range(n_libs))
-    ax.set_xticklabels(lib_labels, rotation=45, ha="right", fontsize=8)
+    x_labels = []
+    for lib in lib_labels:
+        if lib == "wolfxl":
+            x_labels.append(f"\u25C6 {lib}")
+        else:
+            x_labels.append(lib)
+    ax.set_xticklabels(x_labels, rotation=45, ha="right", fontsize=8, color=_TEXT)
     ax.set_yticks(range(n_features))
-    ax.set_yticklabels(feature_labels, fontsize=8)
+    ax.set_yticklabels(feature_labels, fontsize=8, color=_TEXT)
+
+    # Highlight WolfXL x-tick label
+    if wolfxl_col is not None:
+        ax.get_xticklabels()[wolfxl_col].set_color("#fb923c")
+        ax.get_xticklabels()[wolfxl_col].set_fontweight("bold")
 
     # Move x labels to top
     ax.xaxis.tick_top()
     ax.xaxis.set_label_position("top")
+    ax.tick_params(axis="both", colors=_TEXT2)
 
     ax.set_title("ExcelBench — Feature Fidelity (best of R/W)", fontsize=12,
-                 fontweight="bold", pad=15)
+                 fontweight="bold", pad=15, color=_TEXT)
+
+    for spine in ax.spines.values():
+        spine.set_color("#334155")
 
     # Legend in bottom-right
     from matplotlib.patches import Patch
     legend_items = [
-        Patch(facecolor="#2ecc71", label="3 — Full"),
-        Patch(facecolor="#f1c40f", label="2 — Functional"),
-        Patch(facecolor="#e67e22", label="1 — Minimal"),
-        Patch(facecolor="#e74c3c", label="0 — Unsupported"),
-        Patch(facecolor="#e0e0e0", label="N/A"),
+        Patch(facecolor="#065f46", edgecolor="#6ee7b7", label="3 — Full"),
+        Patch(facecolor="#854d0e", edgecolor="#fde68a", label="2 — Functional"),
+        Patch(facecolor="#92400e", edgecolor="#fdba74", label="1 — Minimal"),
+        Patch(facecolor="#991b1b", edgecolor="#fca5a5", label="0 — Unsupported"),
+        Patch(facecolor="#1e293b", edgecolor="#64748b", label="N/A"),
     ]
     ax.legend(handles=legend_items, loc="lower right", fontsize=7,
-              bbox_to_anchor=(1.0, -0.15), ncol=5, frameon=False)
+              bbox_to_anchor=(1.0, -0.15), ncol=5, frameon=False,
+              labelcolor=_TEXT2)
 
     plt.tight_layout()
     dpi = 200 if output_path.suffix == ".png" else 150
-    fig.savefig(output_path, dpi=dpi, bbox_inches="tight", facecolor="white")
+    fig.savefig(output_path, dpi=dpi, bbox_inches="tight", facecolor=_BG)
     plt.close(fig)
