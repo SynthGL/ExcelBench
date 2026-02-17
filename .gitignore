@@ -56,10 +56,11 @@ Cargo.lock
 # Jupyter
 .ipynb_checkpoints/
 
-# Coverage
+# Coverage / test artifacts
 .coverage
 htmlcov/
 .pytest_cache/
+test-results/
 
 # mypy
 .mypy_cache/
