@@ -113,7 +113,8 @@ _CAP_LABELS: dict[str, str] = {
 _ZONE_BANDS: list[tuple[float, float, str, str]] = [
     (0, 50, "#1a0a0a", "0"),  # dark red tint
     (50, 80, "#1a1400", "1"),  # dark amber tint
-    (80, 100, "#0a1f14", "2–3"),  # dark green tint
+    (80, 100, "#0c1f12", "2"),  # dark green tint (score 2)
+    (100, 110, "#133d1f", "3"),  # brighter green tint (score 3 — visually distinct)
 ]
 
 
@@ -351,7 +352,7 @@ def _draw_panel(ax: Axes, title: str, points: list[Point]) -> None:
 
     # ── Score-zone background bands ──
     for y_lo, y_hi, colour, _ in _ZONE_BANDS:
-        ax.axhspan(y_lo, y_hi, color=colour, alpha=0.5, zorder=0)
+        ax.axhspan(y_lo, y_hi, color=colour, alpha=0.65, zorder=0)
 
     # Threshold lines
     for y_val, ls, c, lw in [
@@ -361,18 +362,18 @@ def _draw_panel(ax: Axes, title: str, points: list[Point]) -> None:
     ]:
         ax.axhline(y_val, color=c, linewidth=lw, linestyle=ls, zorder=1)
 
-    # Zone score annotations on the right edge (very subtle, behind data)
+    # Zone score annotations on the left edge (avoids WolfXL label collisions)
     for y_pos, label, colour in [
         (25, "Score 0", "#e4484d"),
         (65, "Score 1", "#e79c12"),
-        (90, "Score 2", "#62c073"),
-        (102, "Score 3", "#62c073"),
+        (90, "Score 2", "#4ead5b"),
+        (106, "Score 3", "#62c073"),
     ]:
         ax.text(
-            0.99, y_pos, label,
+            0.01, y_pos, label,
             transform=ax.get_yaxis_transform(),
-            ha="right", va="center", fontsize=5.5, color=colour, alpha=0.6,
-            fontstyle="italic", zorder=2,
+            ha="left", va="center", fontsize=5.5, color=colour, alpha=0.7,
+            fontstyle="italic", zorder=12,
         )
 
     # ── Empty-state fallback ──
