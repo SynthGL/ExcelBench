@@ -231,10 +231,30 @@ class WolfxlAdapter(ExcelAdapter):
         if d:
             workbook.write_cell_format(sheet, cell, d)
 
+    def write_sheet_formats(
+        self,
+        workbook: Any,
+        sheet: str,
+        start_cell: str,
+        formats: list[list[dict[str, Any] | None]],
+    ) -> None:
+        """Bulk write a grid of format dicts via RustXlsxWriterBook.write_sheet_formats()."""
+        workbook.write_sheet_formats(sheet, start_cell, formats)
+
     def write_cell_border(self, workbook: Any, sheet: str, cell: str, border: BorderInfo) -> None:
         d = border_to_dict(border)
         if d:
             workbook.write_cell_border(sheet, cell, d)
+
+    def write_sheet_borders(
+        self,
+        workbook: Any,
+        sheet: str,
+        start_cell: str,
+        borders: list[list[dict[str, Any] | None]],
+    ) -> None:
+        """Bulk write a grid of border dicts via RustXlsxWriterBook.write_sheet_borders()."""
+        workbook.write_sheet_borders(sheet, start_cell, borders)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
         workbook.set_row_height(sheet, row - 1, height)

@@ -1225,6 +1225,118 @@ def main() -> None:
         )
     )
 
+    # -- Bulk styled write scenarios (batch values + batch formats/borders) --
+
+    # 1k bg_color bulk write
+    scenario = "background_colors_1k_bulk_write"
+    sheet = "S1"
+    rows, cols = 40, 25
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    palette = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00"]
+    files.append(
+        TestFile(
+            path=f"tier0/00_background_colors_1k.xlsx",
+            feature=scenario,
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id=scenario,
+                    label="Throughput: bg_color bulk write (1k cells)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": scenario,
+                            "op": "bulk_write_styled_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "style_kind": "format",
+                            "palette": palette,
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 1k number_format bulk write (uses format batch API)
+    scenario = "number_formats_1k_bulk_write"
+    sheet = "S1"
+    rows, cols = 40, 25
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    files.append(
+        TestFile(
+            path=f"tier0/00_number_formats_1k.xlsx",
+            feature=scenario,
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id=scenario,
+                    label="Throughput: number_format bulk write (1k cells)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": scenario,
+                            "op": "bulk_write_styled_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "style_kind": "format",
+                            "palette": ["#FFFFFF"],
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
+    # 200 borders bulk write
+    scenario = "borders_200_bulk_write"
+    sheet = "S1"
+    rows, cols = 20, 10
+    end_cell = _coord_to_cell(rows, cols)
+    rng = f"A1:{end_cell}"
+    files.append(
+        TestFile(
+            path=f"tier0/00_borders_200.xlsx",
+            feature=scenario,
+            tier=0,
+            file_format="xlsx",
+            test_cases=[
+                TestCase(
+                    id=scenario,
+                    label="Throughput: borders bulk write (200 cells)",
+                    row=1,
+                    expected={
+                        "workload": {
+                            "scenario": scenario,
+                            "op": "bulk_write_styled_grid",
+                            "operations": ["write"],
+                            "sheet": sheet,
+                            "range": rng,
+                            "style_kind": "border",
+                            "border_style": "thin",
+                            "border_color": "#000000",
+                            "start": 1,
+                            "step": 1,
+                        }
+                    },
+                    importance=Importance.BASIC,
+                )
+            ],
+        )
+    )
+
     if args.include_100k:
         # ~100k = 316x316 = 99856 cells
         scenario = "cell_values_100k"

@@ -156,6 +156,22 @@ def main() -> None:
 
     jobs.append(
         {
+            "name": "bulk_write_styled",
+            "adapters": [
+                "wolfxl",
+                "openpyxl",
+                "xlsxwriter",
+            ],
+            "features": [
+                "background_colors_1k_bulk_write",
+                "number_formats_1k_bulk_write",
+                "borders_200_bulk_write",
+            ],
+        }
+    )
+
+    jobs.append(
+        {
             "name": "per_cell_fast",
             "adapters": ["openpyxl", "xlsxwriter", "pylightxl", "pyexcel", "wolfxl"],
             "features": [

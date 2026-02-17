@@ -929,6 +929,83 @@ def _run_workload_write(
         fn(workbook, sheet, start_cell, values)
         return
 
+    if op == "bulk_write_styled_grid":
+        fn_vals = getattr(adapter, "write_sheet_values", None)
+        fn_fmts = getattr(adapter, "write_sheet_formats", None)
+        fn_borders = getattr(adapter, "write_sheet_borders", None)
+        if fn_vals is None:
+            raise ValueError(f"Adapter does not support bulk sheet writes: {adapter.name}")
+
+        start_cell, end_cell = _split_range(str(workload.get("range") or "A1"))
+        r0, c0 = _cell_to_coord(start_cell)
+        r1, c1 = _cell_to_coord(end_cell)
+        rows = r1 - r0 + 1
+        cols = c1 - c0 + 1
+
+        style_kind = str(workload.get("style_kind") or "format")
+        start = int(workload.get("start") or 1)
+        step = int(workload.get("step") or 1)
+
+        # Build value grid.
+        values: list[list[Any]] = []
+        v = start
+        for _r in range(rows):
+            row_vals: list[Any] = []
+            for _c in range(cols):
+                row_vals.append(v)
+                v += step
+            values.append(row_vals)
+
+        fn_vals(workbook, sheet, start_cell, values)
+
+        # Build style grid.
+        if style_kind == "format" and fn_fmts is not None:
+            palette = workload.get("palette")
+            if not isinstance(palette, list) or not palette:
+                palette = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00"]
+            fmts_grid: list[list[dict[str, Any] | None]] = []
+            linear = 0
+            for _r in range(rows):
+                row_fmts: list[dict[str, Any] | None] = []
+                for _c in range(cols):
+                    row_fmts.append({"bg_color": palette[linear % len(palette)]})
+                    linear += 1
+                fmts_grid.append(row_fmts)
+            fn_fmts(workbook, sheet, start_cell, fmts_grid)
+        elif style_kind == "border" and fn_borders is not None:
+            border_style = str(workload.get("border_style") or "thin")
+            border_color = str(workload.get("border_color") or "#000000")
+            bd = {
+                "top_style": border_style,
+                "top_color": border_color,
+                "bottom_style": border_style,
+                "bottom_color": border_color,
+                "left_style": border_style,
+                "left_color": border_color,
+                "right_style": border_style,
+                "right_color": border_color,
+            }
+            borders_grid: list[list[dict[str, Any] | None]] = []
+            for _r in range(rows):
+                borders_grid.append([bd] * cols)
+            fn_borders(workbook, sheet, start_cell, borders_grid)
+        # If adapter doesn't have batch format/border, fall back to per-cell.
+        elif style_kind == "format":
+            palette = workload.get("palette")
+            if not isinstance(palette, list) or not palette:
+                palette = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00"]
+            for idx, cell in enumerate(cells):
+                color = str(palette[idx % len(palette)])
+                adapter.write_cell_format(workbook, sheet, cell, CellFormat(bg_color=color))
+        elif style_kind == "border":
+            border_style_val = BorderStyle(str(workload.get("border_style") or "thin"))
+            border_color_val = str(workload.get("border_color") or "#000000")
+            edge = BorderEdge(style=border_style_val, color=border_color_val)
+            border_obj = BorderInfo(top=edge, bottom=edge, left=edge, right=edge)
+            for cell in cells:
+                adapter.write_cell_border(workbook, sheet, cell, border_obj)
+        return
+
     if op == "cell_value":
         start = int(workload.get("start") or 1)
         step = int(workload.get("step") or 1)
