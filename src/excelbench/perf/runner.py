@@ -947,10 +947,10 @@ def _run_workload_write(
         step = int(workload.get("step") or 1)
 
         # Build value grid.
-        values: list[list[Any]] = []
+        values = []
         v = start
         for _r in range(rows):
-            row_vals: list[Any] = []
+            row_vals = []
             for _c in range(cols):
                 row_vals.append(v)
                 v += step
