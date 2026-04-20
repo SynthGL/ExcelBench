@@ -126,9 +126,10 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
 
 [[package]]
-name = "calamine"
-version = "0.33.0"
-source = "git+https://github.com/wolfiesch/calamine.git?branch=styles#3f8ff1e2253a1fdff8f96bd21246faffb0a71227"
+name = "calamine-styles"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "337b95a4e01c06d881bd360dad0fa6c274868db6a37bd9d4be2796eb0946f940"
 dependencies = [
  "atoi_simd",
  "byteorder",
@@ -315,7 +316,7 @@ checksum = "877a4ace8713b0bcf2a4e7eec82529c029f1d0619886d18145fea96c3ffe5c0f"
 name = "excelbench_rust"
 version = "0.1.0"
 dependencies = [
- "calamine",
+ "calamine-styles",
  "chrono",
  "indexmap",
  "pyo3",
@@ -880,9 +881,9 @@ checksum = "b1dd07eb858a2067e2f3c7155d54e929265c264e6f37efe3ee7a8d1b5a1dd0ba"
 
 [[package]]
 name = "thin-vec"
-version = "0.2.14"
+version = "0.2.16"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "144f754d318415ac792f9d69fc87abbbfc043ce2ef041c60f16ad828f638717d"
+checksum = "259cdf8ed4e4aca6f1e9d011e10bd53f524a2d0637d7b28450f6c64ac298c4c6"
 
 [[package]]
 name = "thiserror"
