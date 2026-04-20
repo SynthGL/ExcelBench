@@ -26,6 +26,18 @@ def _enabled_backends(rust_mod: Any) -> set[str]:
     return set()
 
 
+def test_rust_xlsxwriter_row_index_tracks_wolfxl_api_versions() -> None:
+    from excelbench.harness.adapters.rust_adapter_utils import (
+        _rust_xlsxwriter_row_index_for_version,
+    )
+
+    assert _rust_xlsxwriter_row_index_for_version(1, "0.1.0") == 0
+    assert _rust_xlsxwriter_row_index_for_version(3, "0.1.0") == 2
+    assert _rust_xlsxwriter_row_index_for_version(1, "0.4.0") == 1
+    assert _rust_xlsxwriter_row_index_for_version(3, "0.4.0") == 3
+    assert _rust_xlsxwriter_row_index_for_version(1, "unknown") == 1
+
+
 def test_registry_works_without_wolfxl_rust() -> None:
     """If the native extension isn't installed, adapter discovery must still work."""
     try:

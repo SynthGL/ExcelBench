@@ -13,6 +13,7 @@ from excelbench.harness.adapters.rust_adapter_utils import (
     format_to_dict,
     get_rust_backend_version,
     payload_from_cell_value,
+    rust_xlsxwriter_row_index,
 )
 from excelbench.models import (
     BorderInfo,
@@ -93,7 +94,7 @@ class RustXlsxWriterAdapter(WriteOnlyAdapter):
         workbook.write_sheet_values(sheet, start_cell, values)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
-        workbook.set_row_height(sheet, row, height)
+        workbook.set_row_height(sheet, rust_xlsxwriter_row_index(row), height)
 
     def set_column_width(self, workbook: Any, sheet: str, column: str, width: float) -> None:
         workbook.set_column_width(sheet, column, width)
