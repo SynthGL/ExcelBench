@@ -257,7 +257,7 @@ class WolfxlAdapter(ExcelAdapter):
         workbook.write_sheet_borders(sheet, start_cell, borders)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
-        workbook.set_row_height(sheet, row - 1, height)
+        workbook.set_row_height(sheet, row, height)
 
     def set_column_width(self, workbook: Any, sheet: str, column: str, width: float) -> None:
         workbook.set_column_width(sheet, column, width)

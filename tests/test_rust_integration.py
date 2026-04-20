@@ -435,12 +435,14 @@ def test_rust_xlsxwriter_writes_row_height_and_col_width() -> None:
         adapter.add_sheet(wb, "S")
         adapter.write_cell_value(wb, "S", "A1", CellValue(type=CellType.STRING, value="x"))
         adapter.set_row_height(wb, "S", 1, 30.0)
+        adapter.set_row_height(wb, "S", 3, 45.0)
         adapter.set_column_width(wb, "S", "A", 20.0)
         adapter.save_workbook(wb, path)
 
         wb2 = openpyxl.load_workbook(str(path))
         ws = wb2["S"]
         assert ws.row_dimensions[1].height == pytest.approx(30.0, abs=0.5)
+        assert ws.row_dimensions[3].height == pytest.approx(45.0, abs=0.5)
         assert ws.column_dimensions["A"].width == pytest.approx(20.0, abs=1.0)
         wb2.close()
     finally:

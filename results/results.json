@@ -1,7 +1,7 @@
 {
   "metadata": {
     "benchmark_version": "0.1.0",
-    "run_date": "2026-02-16T23:15:37.869714+00:00",
+    "run_date": "2026-04-20T07:06:40.530212+00:00",
     "excel_version": "16.105.3",
     "platform": "Darwin-arm64",
     "profile": "xlsx"
@@ -12,8 +12,8 @@
       "version": "3.1.5",
       "language": "python",
       "capabilities": [
-        "read",
-        "write"
+        "write",
+        "read"
       ]
     },
     "xlsxwriter": {
@@ -32,14 +32,6 @@
         "read"
       ]
     },
-    "calamine-styled": {
-      "name": "calamine-styled",
-      "version": "0.1.0",
-      "language": "rust",
-      "capabilities": [
-        "read"
-      ]
-    },
     "rust_xlsxwriter": {
       "name": "rust_xlsxwriter",
       "version": "0.79.4",
@@ -50,11 +42,12 @@
     },
     "wolfxl": {
       "name": "wolfxl",
-      "version": "cal=0.1.0+rxw=0.79.4",
+      "version": "cal=0.4.0+rxw=0.79.4",
       "language": "rust",
       "capabilities": [
-        "read",
-        "write"
+        "modify",
+        "write",
+        "read"
       ]
     },
     "pylightxl": {
@@ -62,8 +55,8 @@
       "version": "1.61",
       "language": "python",
       "capabilities": [
-        "read",
-        "write"
+        "write",
+        "read"
       ]
     },
     "xlrd": {
@@ -79,8 +72,8 @@
       "version": "0.7.4",
       "language": "python",
       "capabilities": [
-        "read",
-        "write"
+        "write",
+        "read"
       ]
     },
     "xlwt": {
@@ -96,8 +89,8 @@
       "version": "3.0.0",
       "language": "python",
       "capabilities": [
-        "read",
-        "write"
+        "write",
+        "read"
       ]
     },
     "xlsxwriter-constmem": {
@@ -129,8 +122,8 @@
       "version": "3.9.0",
       "language": "python",
       "capabilities": [
-        "read",
-        "write"
+        "write",
+        "read"
       ]
     }
   },
@@ -1378,319 +1371,6 @@
         }
       },
       "notes": "Known limitation: python-calamine can surface formula error cells as blank values in current API responses."
-    },
-    {
-      "feature": "cell_values",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "string_simple": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "Hello World"
-            },
-            "actual": {
-              "type": "string",
-              "value": "Hello World"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "String - simple"
-          }
-        },
-        "string_unicode": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
-            },
-            "actual": {
-              "type": "string",
-              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "String - unicode"
-          }
-        },
-        "string_empty": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "blank"
-            },
-            "actual": {
-              "type": "blank"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "String - empty"
-          }
-        },
-        "string_long": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-            },
-            "actual": {
-              "type": "string",
-              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "String - long (1000 chars)"
-          }
-        },
-        "string_newline": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "Line 1\nLine 2\nLine 3"
-            },
-            "actual": {
-              "type": "string",
-              "value": "Line 1\nLine 2\nLine 3"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "String - with newlines"
-          }
-        },
-        "number_integer": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "number",
-              "value": 42
-            },
-            "actual": {
-              "type": "number",
-              "value": 42.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Number - integer"
-          }
-        },
-        "number_float": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "number",
-              "value": 3.14159265358979
-            },
-            "actual": {
-              "type": "number",
-              "value": 3.14159265358979
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Number - float"
-          }
-        },
-        "number_negative": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "number",
-              "value": -100.5
-            },
-            "actual": {
-              "type": "number",
-              "value": -100.5
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Number - negative"
-          }
-        },
-        "number_large": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "number",
-              "value": 1234567890123456
-            },
-            "actual": {
-              "type": "number",
-              "value": 1234567890123456.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Number - large"
-          }
-        },
-        "number_scientific": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "number",
-              "value": 1.23e-10
-            },
-            "actual": {
-              "type": "number",
-              "value": 1.23e-10
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Number - scientific notation"
-          }
-        },
-        "date_standard": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "date",
-              "value": "2026-02-04"
-            },
-            "actual": {
-              "type": "date",
-              "value": "2026-02-04"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Date - standard"
-          }
-        },
-        "datetime": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "datetime",
-              "value": "2026-02-04T10:30:45"
-            },
-            "actual": {
-              "type": "datetime",
-              "value": "2026-02-04T10:30:45"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "DateTime - with time"
-          }
-        },
-        "boolean_true": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "boolean",
-              "value": true
-            },
-            "actual": {
-              "type": "boolean",
-              "value": true
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Boolean - TRUE"
-          }
-        },
-        "boolean_false": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "boolean",
-              "value": false
-            },
-            "actual": {
-              "type": "boolean",
-              "value": false
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Boolean - FALSE"
-          }
-        },
-        "error_div0": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "error",
-              "value": "#DIV/0!"
-            },
-            "actual": {
-              "type": "error",
-              "value": "#DIV/0!"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Error - #DIV/0!"
-          }
-        },
-        "error_na": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "error",
-              "value": "#N/A"
-            },
-            "actual": {
-              "type": "error",
-              "value": "#N/A"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Error - #N/A"
-          }
-        },
-        "error_value": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "error",
-              "value": "#VALUE!"
-            },
-            "actual": {
-              "type": "error",
-              "value": "#VALUE!"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Error - #VALUE!"
-          }
-        },
-        "blank": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "blank"
-            },
-            "actual": {
-              "type": "blank"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Blank cell"
-          }
-        }
-      },
-      "notes": null
     },
     {
       "feature": "cell_values",
@@ -6647,85 +6327,6 @@
     },
     {
       "feature": "formulas",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "formula_sum": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "formula",
-              "formula": "=SUM(1,2,3)"
-            },
-            "actual": {
-              "type": "formula",
-              "formula": "=SUM(1,2,3)"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Formula - SUM"
-          }
-        },
-        "formula_cell_ref": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "formula",
-              "formula": "=A3*2"
-            },
-            "actual": {
-              "type": "formula",
-              "formula": "=A3*2"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Formula - cell reference"
-          }
-        },
-        "formula_concat": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "formula",
-              "formula": "=A4&\" \"&A5"
-            },
-            "actual": {
-              "type": "formula",
-              "formula": "=A4&\" \"&A5"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Formula - concat"
-          }
-        },
-        "formula_cross_sheet": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "formula",
-              "formula": "='References'!B2"
-            },
-            "actual": {
-              "type": "formula",
-              "formula": "='References'!B2"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Formula - cross sheet"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "formulas",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -9499,334 +9100,6 @@
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
-            "importance": "basic",
-            "label": "Combined - bold, 16pt, red"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "text_formatting",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "bold": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bold": true
-            },
-            "actual": {
-              "bold": true,
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Bold"
-          }
-        },
-        "italic": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "italic": true
-            },
-            "actual": {
-              "italic": true,
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Italic"
-          }
-        },
-        "underline_single": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "underline": "single"
-            },
-            "actual": {
-              "underline": "single",
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Underline - single"
-          }
-        },
-        "underline_double": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "underline": "double"
-            },
-            "actual": {
-              "underline": "double",
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Underline - double"
-          }
-        },
-        "strikethrough": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "strikethrough": true
-            },
-            "actual": {
-              "strikethrough": true,
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Strikethrough"
-          }
-        },
-        "bold_italic": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bold": true,
-              "italic": true
-            },
-            "actual": {
-              "bold": true,
-              "italic": true,
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Bold + Italic"
-          }
-        },
-        "font_size_8": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_size": 8
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 8.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font size 8"
-          }
-        },
-        "font_size_14": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_size": 14
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 14.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font size 14"
-          }
-        },
-        "font_size_24": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_size": 24
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 24.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font size 24"
-          }
-        },
-        "font_size_36": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_size": 36
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 36.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font size 36"
-          }
-        },
-        "font_arial": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_name": "Arial"
-            },
-            "actual": {
-              "font_name": "Arial",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font - Arial"
-          }
-        },
-        "font_times": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_name": "Times New Roman"
-            },
-            "actual": {
-              "font_name": "Times New Roman",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font - Times New Roman"
-          }
-        },
-        "font_courier": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_name": "Courier New"
-            },
-            "actual": {
-              "font_name": "Courier New",
-              "font_size": 12.0,
-              "font_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font - Courier New"
-          }
-        },
-        "color_red": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_color": "#FF0000"
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#FF0000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font color - red"
-          }
-        },
-        "color_blue": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_color": "#0000FF"
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#0000FF"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font color - blue"
-          }
-        },
-        "color_green": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_color": "#00FF00"
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#00FF00"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font color - green"
-          }
-        },
-        "color_custom": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "font_color": "#8B4513"
-            },
-            "actual": {
-              "font_name": "Aptos Narrow",
-              "font_size": 12.0,
-              "font_color": "#8B4513"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Font color - custom (#8B4513)"
-          }
-        },
-        "combined": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bold": true,
-              "font_size": 16,
-              "font_color": "#FF0000"
-            },
-            "actual": {
-              "bold": true,
-              "font_name": "Aptos Narrow",
-              "font_size": 16.0,
-              "font_color": "#FF0000"
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "basic",
             "label": "Combined - bold, 16pt, red"
           }
@@ -16756,77 +16029,6 @@
     },
     {
       "feature": "background_colors",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "bg_red": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bg_color": "#FF0000"
-            },
-            "actual": {
-              "bg_color": "#FF0000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Background - red"
-          }
-        },
-        "bg_blue": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bg_color": "#0000FF"
-            },
-            "actual": {
-              "bg_color": "#0000FF"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Background - blue"
-          }
-        },
-        "bg_green": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bg_color": "#00FF00"
-            },
-            "actual": {
-              "bg_color": "#00FF00"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Background - green"
-          }
-        },
-        "bg_custom": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "bg_color": "#8B4513"
-            },
-            "actual": {
-              "bg_color": "#8B4513"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Background - custom (#8B4513)"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "background_colors",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -18698,92 +17900,6 @@
     },
     {
       "feature": "number_formats",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "numfmt_currency": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "number_format": "$#,##0.00"
-            },
-            "actual": {
-              "number_format": "$#,##0.00"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Format - currency"
-          }
-        },
-        "numfmt_percent": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "number_format": "0.00%"
-            },
-            "actual": {
-              "number_format": "0.00%"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Format - percent"
-          }
-        },
-        "numfmt_date": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "number_format": "yyyy-mm-dd"
-            },
-            "actual": {
-              "number_format": "yyyy-mm-dd"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Format - date"
-          }
-        },
-        "numfmt_scientific": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "number_format": "0.00E+00"
-            },
-            "actual": {
-              "number_format": "0.00E+00"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Format - scientific"
-          }
-        },
-        "numfmt_custom_text": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "number_format": "\"USD\" 0.00"
-            },
-            "actual": {
-              "number_format": "\"USD\" 0.00"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Format - custom text"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "number_formats",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -19315,7 +18431,7 @@
       "library": "pyexcel",
       "scores": {
         "read": 0,
-        "write": 1
+        "write": 0
       },
       "test_cases": {
         "numfmt_currency": {
@@ -19453,15 +18569,29 @@
             "label": "Format - date"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "number_format": "yyyy-mm-dd"
             },
             "actual": {
-              "number_format": "yyyy-mm-dd"
+              "number_format": "General"
             },
-            "notes": null,
-            "diagnostics": [],
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "number_formats",
+                  "operation": "write",
+                  "test_case_id": "numfmt_date",
+                  "sheet": "number_formats",
+                  "cell": "B4"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'General'}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Format - date"
           }
@@ -19811,7 +18941,7 @@
               "number_format": "yyyy-mm-dd"
             },
             "actual": {
-              "number_format": "YYYY-MM-DD"
+              "number_format": "General"
             },
             "notes": "Incorrect result",
             "diagnostics": [
@@ -19825,7 +18955,7 @@
                   "sheet": "number_formats",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'YYYY-MM-DD'}",
+                "adapter_message": "Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'General'}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -20327,7 +19457,7 @@
       "library": "tablib",
       "scores": {
         "read": 0,
-        "write": 1
+        "write": 0
       },
       "test_cases": {
         "numfmt_currency": {
@@ -20465,15 +19595,29 @@
             "label": "Format - date"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "number_format": "yyyy-mm-dd"
             },
             "actual": {
-              "number_format": "yyyy-mm-dd"
+              "number_format": "General"
             },
-            "notes": null,
-            "diagnostics": [],
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "number_formats",
+                  "operation": "write",
+                  "test_case_id": "numfmt_date",
+                  "sheet": "number_formats",
+                  "cell": "B4"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'General'}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Format - date"
           }
@@ -20604,8 +19748,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -20618,8 +19761,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -20634,8 +19776,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20648,8 +19789,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20664,8 +19804,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -20678,8 +19817,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -20694,8 +19832,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -20708,8 +19845,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -20724,8 +19860,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20738,8 +19873,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20754,8 +19888,7 @@
               "v_align": "bottom"
             },
             "actual": {
-              "v_align": "bottom",
-              "h_align": "general"
+              "v_align": "bottom"
             },
             "notes": null,
             "diagnostics": [],
@@ -20768,8 +19901,7 @@
               "v_align": "bottom"
             },
             "actual": {
-              "v_align": "bottom",
-              "h_align": "general"
+              "v_align": "bottom"
             },
             "notes": null,
             "diagnostics": [],
@@ -20784,9 +19916,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -20799,9 +19929,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -20816,9 +19944,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -20831,9 +19957,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -20848,9 +19972,7 @@
               "indent": 2
             },
             "actual": {
-              "indent": 2.0,
-              "h_align": "general",
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -20863,9 +19985,7 @@
               "indent": 2
             },
             "actual": {
-              "indent": 2.0,
-              "h_align": "general",
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -20881,7 +20001,7 @@
       "library": "xlsxwriter",
       "scores": {
         "read": null,
-        "write": 3
+        "write": 1
       },
       "test_cases": {
         "h_left": {
@@ -20891,8 +20011,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -20907,8 +20026,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20923,8 +20041,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -20939,8 +20056,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -20955,8 +20071,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -20966,16 +20081,27 @@
         },
         "v_bottom": {
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -20987,9 +20113,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -21004,9 +20128,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -21022,8 +20144,7 @@
             },
             "actual": {
               "h_align": "left",
-              "indent": 2.0,
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -21038,7 +20159,7 @@
       "feature": "alignment",
       "library": "python-calamine",
       "scores": {
-        "read": 1,
+        "read": 0,
         "write": null
       },
       "test_cases": {
@@ -21048,10 +20169,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21064,7 +20182,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21078,10 +20196,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21094,7 +20209,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21108,10 +20223,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21124,7 +20236,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21138,10 +20250,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21154,7 +20263,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21168,10 +20277,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21184,7 +20290,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21194,16 +20300,27 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -21214,10 +20331,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21230,7 +20344,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21244,10 +20358,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21260,7 +20371,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21274,10 +20385,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21290,7 +20398,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -21303,168 +20411,10 @@
     },
     {
       "feature": "alignment",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "h_left": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "h_align": "left"
-            },
-            "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - left"
-          }
-        },
-        "h_center": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "h_align": "center"
-            },
-            "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - center"
-          }
-        },
-        "h_right": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "h_align": "right"
-            },
-            "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - right"
-          }
-        },
-        "v_top": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "v_align": "top"
-            },
-            "actual": {
-              "v_align": "top",
-              "h_align": "general"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - top"
-          }
-        },
-        "v_center": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "v_align": "center"
-            },
-            "actual": {
-              "v_align": "center",
-              "h_align": "general"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - center"
-          }
-        },
-        "v_bottom": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "v_align": "bottom"
-            },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - bottom"
-          }
-        },
-        "wrap_text": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "wrap": true
-            },
-            "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - wrap text"
-          }
-        },
-        "rotation_45": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "rotation": 45
-            },
-            "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - rotation 45"
-          }
-        },
-        "indent_2": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "indent": 2
-            },
-            "actual": {
-              "indent": 2,
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Align - indent 2"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "alignment",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
-        "write": 3
+        "write": 1
       },
       "test_cases": {
         "h_left": {
@@ -21474,8 +20424,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -21490,8 +20439,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -21506,8 +20454,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -21522,8 +20469,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -21538,8 +20484,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -21549,16 +20494,27 @@
         },
         "v_bottom": {
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -21570,9 +20526,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -21587,9 +20541,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -21605,8 +20557,7 @@
             },
             "actual": {
               "h_align": "left",
-              "indent": 2.0,
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -21622,7 +20573,7 @@
       "library": "wolfxl",
       "scores": {
         "read": 3,
-        "write": 3
+        "write": 1
       },
       "test_cases": {
         "h_left": {
@@ -21646,8 +20597,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -21676,8 +20626,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -21706,8 +20655,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -21722,8 +20670,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -21736,8 +20683,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -21752,8 +20698,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -21766,8 +20711,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -21782,7 +20726,6 @@
               "v_align": "bottom"
             },
             "actual": {
-              "h_align": "general",
               "v_align": "bottom"
             },
             "notes": null,
@@ -21791,16 +20734,27 @@
             "label": "Align - bottom"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -21812,9 +20766,8 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "v_align": "bottom",
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -21827,9 +20780,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -21844,9 +20795,8 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "v_align": "bottom",
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -21859,9 +20809,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -21876,9 +20824,8 @@
               "indent": 2
             },
             "actual": {
-              "indent": 2,
-              "h_align": "general",
-              "v_align": "bottom"
+              "v_align": "bottom",
+              "indent": 2
             },
             "notes": null,
             "diagnostics": [],
@@ -21892,8 +20839,7 @@
             },
             "actual": {
               "h_align": "left",
-              "indent": 2.0,
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -21909,7 +20855,7 @@
       "library": "pylightxl",
       "scores": {
         "read": 0,
-        "write": 1
+        "write": 0
       },
       "test_cases": {
         "h_left": {
@@ -21945,10 +20891,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -21961,7 +20904,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22002,10 +20945,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22018,7 +20958,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22059,10 +20999,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22075,7 +21012,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22116,10 +21053,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22132,7 +21066,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22173,10 +21107,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22189,7 +21120,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22226,16 +21157,27 @@
             "label": "Align - bottom"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -22273,10 +21215,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22289,7 +21228,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22330,10 +21269,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22346,7 +21282,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22387,10 +21323,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22403,7 +21336,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22428,8 +21361,8 @@
       "feature": "alignment",
       "library": "pyexcel",
       "scores": {
-        "read": 1,
-        "write": 1
+        "read": 0,
+        "write": 0
       },
       "test_cases": {
         "h_left": {
@@ -22438,10 +21371,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22454,7 +21384,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22466,10 +21396,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22482,7 +21409,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22496,10 +21423,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22512,7 +21436,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22524,10 +21448,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22540,7 +21461,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22554,10 +21475,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22570,7 +21488,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22582,10 +21500,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22598,7 +21513,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22612,10 +21527,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22628,7 +21540,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22640,10 +21552,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22656,7 +21565,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22670,10 +21579,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22686,7 +21592,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22698,10 +21604,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22714,7 +21617,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22724,30 +21627,52 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -22758,10 +21683,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22774,7 +21696,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22786,10 +21708,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22802,7 +21721,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22816,10 +21735,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22832,7 +21748,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22844,10 +21760,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22860,7 +21773,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22874,10 +21787,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22890,7 +21800,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22902,10 +21812,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -22918,7 +21825,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -22992,8 +21899,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -23008,8 +21914,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -23024,8 +21929,7 @@
               "v_align": "bottom"
             },
             "actual": {
-              "v_align": "bottom",
-              "h_align": "general"
+              "v_align": "bottom"
             },
             "notes": null,
             "diagnostics": [],
@@ -23041,8 +21945,7 @@
             },
             "actual": {
               "v_align": "bottom",
-              "wrap": true,
-              "h_align": "general"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -23058,8 +21961,7 @@
             },
             "actual": {
               "v_align": "bottom",
-              "rotation": 45,
-              "h_align": "general"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -23075,8 +21977,7 @@
             },
             "actual": {
               "v_align": "bottom",
-              "indent": 2,
-              "h_align": "general"
+              "indent": 2
             },
             "notes": null,
             "diagnostics": [],
@@ -23091,8 +21992,8 @@
       "feature": "alignment",
       "library": "pandas",
       "scores": {
-        "read": 1,
-        "write": 1
+        "read": 0,
+        "write": 0
       },
       "test_cases": {
         "h_left": {
@@ -23101,10 +22002,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23117,7 +22015,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23129,10 +22027,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23145,7 +22040,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23159,10 +22054,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23175,7 +22067,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23187,10 +22079,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23203,7 +22092,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23217,10 +22106,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23233,7 +22119,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23245,10 +22131,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23261,7 +22144,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23275,10 +22158,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23291,7 +22171,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23303,10 +22183,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23319,7 +22196,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23333,10 +22210,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23349,7 +22223,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23361,10 +22235,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23377,7 +22248,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23387,30 +22258,52 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -23421,10 +22314,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23437,7 +22327,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23449,10 +22339,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23465,7 +22352,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23479,10 +22366,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23495,7 +22379,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23507,10 +22391,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23523,7 +22404,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23537,10 +22418,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23553,7 +22431,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23565,10 +22443,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23581,7 +22456,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23597,7 +22472,7 @@
       "library": "xlsxwriter-constmem",
       "scores": {
         "read": null,
-        "write": 3
+        "write": 1
       },
       "test_cases": {
         "h_left": {
@@ -23607,8 +22482,7 @@
               "h_align": "left"
             },
             "actual": {
-              "h_align": "left",
-              "v_align": "bottom"
+              "h_align": "left"
             },
             "notes": null,
             "diagnostics": [],
@@ -23623,8 +22497,7 @@
               "h_align": "center"
             },
             "actual": {
-              "h_align": "center",
-              "v_align": "bottom"
+              "h_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -23639,8 +22512,7 @@
               "h_align": "right"
             },
             "actual": {
-              "h_align": "right",
-              "v_align": "bottom"
+              "h_align": "right"
             },
             "notes": null,
             "diagnostics": [],
@@ -23655,8 +22527,7 @@
               "v_align": "top"
             },
             "actual": {
-              "v_align": "top",
-              "h_align": "general"
+              "v_align": "top"
             },
             "notes": null,
             "diagnostics": [],
@@ -23671,8 +22542,7 @@
               "v_align": "center"
             },
             "actual": {
-              "v_align": "center",
-              "h_align": "general"
+              "v_align": "center"
             },
             "notes": null,
             "diagnostics": [],
@@ -23682,16 +22552,27 @@
         },
         "v_bottom": {
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -23703,9 +22584,7 @@
               "wrap": true
             },
             "actual": {
-              "wrap": true,
-              "h_align": "general",
-              "v_align": "bottom"
+              "wrap": true
             },
             "notes": null,
             "diagnostics": [],
@@ -23720,9 +22599,7 @@
               "rotation": 45
             },
             "actual": {
-              "rotation": 45,
-              "h_align": "general",
-              "v_align": "bottom"
+              "rotation": 45
             },
             "notes": null,
             "diagnostics": [],
@@ -23738,8 +22615,7 @@
             },
             "actual": {
               "h_align": "left",
-              "indent": 2.0,
-              "v_align": "bottom"
+              "indent": 2.0
             },
             "notes": null,
             "diagnostics": [],
@@ -23754,7 +22630,7 @@
       "feature": "alignment",
       "library": "openpyxl-readonly",
       "scores": {
-        "read": 1,
+        "read": 0,
         "write": null
       },
       "test_cases": {
@@ -23764,10 +22640,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23780,7 +22653,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23794,10 +22667,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23810,7 +22680,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23824,10 +22694,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23840,7 +22707,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23854,10 +22721,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23870,7 +22734,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23884,10 +22748,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23900,7 +22761,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23910,16 +22771,27 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -23930,10 +22802,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23946,7 +22815,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23960,10 +22829,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -23976,7 +22842,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -23990,10 +22856,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24006,7 +22869,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24021,7 +22884,7 @@
       "feature": "alignment",
       "library": "polars",
       "scores": {
-        "read": 1,
+        "read": 0,
         "write": null
       },
       "test_cases": {
@@ -24031,10 +22894,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24047,7 +22907,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24061,10 +22921,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24077,7 +22934,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24091,10 +22948,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24107,7 +22961,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24121,10 +22975,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24137,7 +22988,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24151,10 +23002,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24167,7 +23015,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24177,16 +23025,27 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -24197,10 +23056,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24213,7 +23069,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24227,10 +23083,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24243,7 +23096,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24257,10 +23110,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24273,7 +23123,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24288,8 +23138,8 @@
       "feature": "alignment",
       "library": "tablib",
       "scores": {
-        "read": 1,
-        "write": 1
+        "read": 0,
+        "write": 0
       },
       "test_cases": {
         "h_left": {
@@ -24298,10 +23148,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24314,7 +23161,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24326,10 +23173,7 @@
             "expected": {
               "h_align": "left"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24342,7 +23186,7 @@
                   "sheet": "alignment",
                   "cell": "B2"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'left'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24356,10 +23200,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24372,7 +23213,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24384,10 +23225,7 @@
             "expected": {
               "h_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24400,7 +23238,7 @@
                   "sheet": "alignment",
                   "cell": "B3"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24414,10 +23252,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24430,7 +23265,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24442,10 +23277,7 @@
             "expected": {
               "h_align": "right"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24458,7 +23290,7 @@
                   "sheet": "alignment",
                   "cell": "B4"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'h_align': 'right'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24472,10 +23304,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24488,7 +23317,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24500,10 +23329,7 @@
             "expected": {
               "v_align": "top"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24516,7 +23342,7 @@
                   "sheet": "alignment",
                   "cell": "B5"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'top'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24530,10 +23356,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24546,7 +23369,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24558,10 +23381,7 @@
             "expected": {
               "v_align": "center"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24574,7 +23394,7 @@
                   "sheet": "alignment",
                   "cell": "B6"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'center'}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24584,30 +23404,52 @@
         },
         "v_bottom": {
           "read": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "read",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           },
           "write": {
-            "passed": true,
+            "passed": false,
             "expected": {
               "v_align": "bottom"
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
-            "notes": null,
-            "diagnostics": [],
+            "actual": {},
+            "notes": "Incorrect result",
+            "diagnostics": [
+              {
+                "category": "data_mismatch",
+                "severity": "error",
+                "location": {
+                  "feature": "alignment",
+                  "operation": "write",
+                  "test_case_id": "v_bottom",
+                  "sheet": "alignment",
+                  "cell": "B7"
+                },
+                "adapter_message": "Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={}",
+                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
+              }
+            ],
             "importance": "basic",
             "label": "Align - bottom"
           }
@@ -24618,10 +23460,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24634,7 +23473,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24646,10 +23485,7 @@
             "expected": {
               "wrap": true
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24662,7 +23498,7 @@
                   "sheet": "alignment",
                   "cell": "B8"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'wrap': True}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24676,10 +23512,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24692,7 +23525,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24704,10 +23537,7 @@
             "expected": {
               "rotation": 45
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24720,7 +23550,7 @@
                   "sheet": "alignment",
                   "cell": "B9"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'rotation': 45}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24734,10 +23564,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24750,7 +23577,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -24762,10 +23589,7 @@
             "expected": {
               "indent": 2
             },
-            "actual": {
-              "h_align": "general",
-              "v_align": "bottom"
-            },
+            "actual": {},
             "notes": "Incorrect result",
             "diagnostics": [
               {
@@ -24778,7 +23602,7 @@
                   "sheet": "alignment",
                   "cell": "B10"
                 },
-                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={'h_align': 'general', 'v_align': 'bottom'}",
+                "adapter_message": "Expected values did not match actual values: expected={'indent': 2}, actual={}",
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
@@ -26407,371 +25231,6 @@
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
-            "importance": "basic",
-            "label": "Border - mixed colors per edge"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "borders",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "thin_all": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "thin",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "thin",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - thin all edges"
-          }
-        },
-        "medium_all": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "medium",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "medium",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - medium all edges"
-          }
-        },
-        "thick_all": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "thick",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "thick",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - thick all edges"
-          }
-        },
-        "double": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "double",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "double",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - double line"
-          }
-        },
-        "dashed": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "dashed",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "dashed",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - dashed"
-          }
-        },
-        "dotted": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "dotted",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "dotted",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - dotted"
-          }
-        },
-        "dash_dot": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "dashDot",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "dashDot",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - dash-dot"
-          }
-        },
-        "dash_dot_dot": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "dashDotDot",
-              "border_color": "#000000"
-            },
-            "actual": {
-              "border_style": "dashDotDot",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - dash-dot-dot"
-          }
-        },
-        "top_only": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top": "thin",
-              "border_bottom": null,
-              "border_left": null,
-              "border_right": null
-            },
-            "actual": {
-              "border_top": "thin",
-              "border_top_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - top only"
-          }
-        },
-        "bottom_only": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top": null,
-              "border_bottom": "thin",
-              "border_left": null,
-              "border_right": null
-            },
-            "actual": {
-              "border_bottom": "thin",
-              "border_bottom_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - bottom only"
-          }
-        },
-        "left_only": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top": null,
-              "border_bottom": null,
-              "border_left": "thin",
-              "border_right": null
-            },
-            "actual": {
-              "border_left": "thin",
-              "border_left_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - left only"
-          }
-        },
-        "right_only": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top": null,
-              "border_bottom": null,
-              "border_left": null,
-              "border_right": "thin"
-            },
-            "actual": {
-              "border_right": "thin",
-              "border_right_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - right only"
-          }
-        },
-        "diagonal_up": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_diagonal_up": "thin"
-            },
-            "actual": {
-              "border_diagonal_up": "thin"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - diagonal up"
-          }
-        },
-        "diagonal_down": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_diagonal_down": "thin"
-            },
-            "actual": {
-              "border_diagonal_down": "thin"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - diagonal down"
-          }
-        },
-        "diagonal_both": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_diagonal_up": "thin",
-              "border_diagonal_down": "thin"
-            },
-            "actual": {
-              "border_diagonal_up": "thin",
-              "border_diagonal_down": "thin"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - diagonal both"
-          }
-        },
-        "color_red": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "thin",
-              "border_color": "#FF0000"
-            },
-            "actual": {
-              "border_style": "thin",
-              "border_color": "#FF0000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - red color"
-          }
-        },
-        "color_blue": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "thin",
-              "border_color": "#0000FF"
-            },
-            "actual": {
-              "border_style": "thin",
-              "border_color": "#0000FF"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - blue color"
-          }
-        },
-        "color_custom": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_style": "thin",
-              "border_color": "#8B4513"
-            },
-            "actual": {
-              "border_style": "thin",
-              "border_color": "#8B4513"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - custom color (#8B4513)"
-          }
-        },
-        "mixed_styles": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top": "thick",
-              "border_bottom": "thin",
-              "border_left": "medium",
-              "border_right": "dashed"
-            },
-            "actual": {
-              "border_top": "thick",
-              "border_bottom": "thin",
-              "border_left": "medium",
-              "border_right": "dashed",
-              "border_color": "#000000"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Border - mixed styles per edge"
-          }
-        },
-        "mixed_colors": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "border_top_color": "#FF0000",
-              "border_bottom_color": "#00FF00",
-              "border_left_color": "#0000FF",
-              "border_right_color": "#FFFF00"
-            },
-            "actual": {
-              "border_top_color": "#FF0000",
-              "border_bottom_color": "#00FF00",
-              "border_left_color": "#0000FF",
-              "border_right_color": "#FFFF00",
-              "border_style": "thin"
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "basic",
             "label": "Border - mixed colors per edge"
           }
@@ -34588,77 +33047,6 @@
     },
     {
       "feature": "dimensions",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "row_height_30": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "row_height": 30
-            },
-            "actual": {
-              "row_height": 30.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Row height - 30"
-          }
-        },
-        "row_height_45": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "row_height": 45
-            },
-            "actual": {
-              "row_height": 45.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Row height - 45"
-          }
-        },
-        "col_width_20": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "column_width": 20
-            },
-            "actual": {
-              "column_width": 20.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Column width - D = 20"
-          }
-        },
-        "col_width_8": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "column_width": 8
-            },
-            "actual": {
-              "column_width": 8.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Column width - E = 8"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "dimensions",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -36492,91 +34880,6 @@
     {
       "feature": "multiple_sheets",
       "library": "python-calamine",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "sheet_names": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "sheet_names": [
-                "Alpha",
-                "Beta",
-                "Gamma"
-              ]
-            },
-            "actual": {
-              "sheet_names": [
-                "Alpha",
-                "Beta",
-                "Gamma"
-              ]
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Sheet names"
-          }
-        },
-        "value_alpha": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "Alpha"
-            },
-            "actual": {
-              "type": "string",
-              "value": "Alpha"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Alpha value"
-          }
-        },
-        "value_beta": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "Beta"
-            },
-            "actual": {
-              "type": "string",
-              "value": "Beta"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Beta value"
-          }
-        },
-        "value_gamma": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "type": "string",
-              "value": "Gamma"
-            },
-            "actual": {
-              "type": "string",
-              "value": "Gamma"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Gamma value"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "multiple_sheets",
-      "library": "calamine-styled",
       "scores": {
         "read": 3,
         "write": null
@@ -38231,89 +36534,6 @@
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
-            "importance": "edge",
-            "label": "Merge with top-left fill"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "merged_cells",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "merge_horizontal": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "merged_range": "B2:D2",
-              "top_left_value": "Merged"
-            },
-            "actual": {
-              "merged_range": "B2:D2",
-              "top_left_value": "Merged"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Merge horizontal B2:D2"
-          }
-        },
-        "merge_vertical": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "merged_range": "B3:B5",
-              "top_left_value": "Vertical"
-            },
-            "actual": {
-              "merged_range": "B3:B5",
-              "top_left_value": "Vertical"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Merge vertical B3:B5"
-          }
-        },
-        "merge_value_off_top_left": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "merged_range": "B6:D6",
-              "top_left_value": "OffTop",
-              "non_top_left_nonempty": 0
-            },
-            "actual": {
-              "merged_range": "B6:D6",
-              "top_left_value": "OffTop",
-              "non_top_left_nonempty": 0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Merge with non-top-left value"
-          }
-        },
-        "merge_top_left_fill": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "merged_range": "B7:D7",
-              "top_left_value": "Fill",
-              "top_left_bg_color": "#FF0000"
-            },
-            "actual": {
-              "merged_range": "B7:D7",
-              "top_left_value": "Fill",
-              "top_left_bg_color": "#FF0000"
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "edge",
             "label": "Merge with top-left fill"
           }
@@ -40775,187 +38995,6 @@
     },
     {
       "feature": "conditional_formatting",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "cf_cell_gt": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "cellIs",
-                "operator": "greaterThan",
-                "formula": "5",
-                "priority": 1,
-                "format": {
-                  "bg_color": "#FFFF00"
-                }
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "cellIs",
-                "operator": "greaterThan",
-                "formula": "5",
-                "format": {
-                  "bg_color": "#FFFF00"
-                }
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "CF: cell > 5 (yellow fill)"
-          }
-        },
-        "cf_formula_cross_sheet": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "expression",
-                "formula": "=Ref!$A$1>5",
-                "priority": 2,
-                "format": {
-                  "bg_color": "#FF00FF"
-                }
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "expression",
-                "formula": "=Ref!$A$1>5",
-                "format": {
-                  "bg_color": "#FF00FF"
-                }
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "CF: formula rule with cross-sheet ref"
-          }
-        },
-        "cf_text_contains": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "expression",
-                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
-                "priority": 3,
-                "format": {
-                  "bg_color": "#FFFF00"
-                }
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "expression",
-                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
-                "format": {
-                  "bg_color": "#FFFF00"
-                }
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "CF: text contains"
-          }
-        },
-        "cf_data_bar": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "dataBar",
-                "priority": 4
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "dataBar"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "CF: data bar"
-          }
-        },
-        "cf_color_scale": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "colorScale",
-                "priority": 5
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B2:B6",
-                "rule_type": "colorScale"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "CF: 3-color scale"
-          }
-        },
-        "cf_stop_if_true": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "cf_rule": {
-                "range": "B7:B9",
-                "rule_type": "cellIs",
-                "operator": "lessThan",
-                "formula": "3",
-                "priority": 1,
-                "stop_if_true": true,
-                "format": {
-                  "bg_color": "#FF0000"
-                }
-              }
-            },
-            "actual": {
-              "cf_rule": {
-                "range": "B7:B9",
-                "rule_type": "cellIs",
-                "operator": "lessThan",
-                "formula": "3",
-                "stop_if_true": true,
-                "format": {
-                  "bg_color": "#FF0000"
-                }
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "CF: stop-if-true priority"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "conditional_formatting",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -44528,144 +42567,6 @@
     },
     {
       "feature": "data_validation",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "dv_list_csv": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "validation": {
-                "range": "B2",
-                "validation_type": "list",
-                "formula1": "\"Red,Green,Blue\"",
-                "allow_blank": true
-              }
-            },
-            "actual": {
-              "validation": {
-                "range": "B2",
-                "validation_type": "list",
-                "formula1": "\"Red,Green,Blue\"",
-                "allow_blank": true
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "DV: list from CSV"
-          }
-        },
-        "dv_list_range": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "validation": {
-                "range": "B3",
-                "validation_type": "list",
-                "formula1": "=$D$2:$D$4"
-              }
-            },
-            "actual": {
-              "validation": {
-                "range": "B3",
-                "validation_type": "list",
-                "formula1": "=$D$2:$D$4"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "DV: list from range"
-          }
-        },
-        "dv_cross_sheet": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "validation": {
-                "range": "B4",
-                "validation_type": "list",
-                "formula1": "=RegionList"
-              }
-            },
-            "actual": {
-              "validation": {
-                "range": "B4",
-                "validation_type": "list",
-                "formula1": "=RegionList"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "DV: cross-sheet named range"
-          }
-        },
-        "dv_custom_formula": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "validation": {
-                "range": "B5",
-                "validation_type": "custom",
-                "formula1": "=B5>C5"
-              }
-            },
-            "actual": {
-              "validation": {
-                "range": "B5",
-                "validation_type": "custom",
-                "formula1": "=B5>C5"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "DV: custom formula"
-          }
-        },
-        "dv_whole_between": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "validation": {
-                "range": "B6",
-                "validation_type": "whole",
-                "operator": "between",
-                "formula1": "1",
-                "formula2": "10",
-                "allow_blank": false,
-                "error_title": "Invalid",
-                "error": "Enter 1-10"
-              }
-            },
-            "actual": {
-              "validation": {
-                "range": "B6",
-                "validation_type": "whole",
-                "operator": "between",
-                "formula1": "1",
-                "formula2": "10",
-                "allow_blank": false,
-                "error_title": "Invalid",
-                "error": "Enter 1-10"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "DV: whole number with error"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "data_validation",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -47506,125 +45407,6 @@
     },
     {
       "feature": "hyperlinks",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "link_external": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "hyperlink": {
-                "cell": "B2",
-                "target": "https://example.com/docs",
-                "display": "Example Docs",
-                "tooltip": "Go to docs",
-                "internal": false
-              }
-            },
-            "actual": {
-              "hyperlink": {
-                "cell": "B2",
-                "target": "https://example.com/docs",
-                "display": "Example Docs",
-                "tooltip": "Go to docs",
-                "internal": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Hyperlink: external URL"
-          }
-        },
-        "link_internal": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "hyperlink": {
-                "cell": "B3",
-                "target": "Targets!A1",
-                "display": "Go Target",
-                "tooltip": "Jump to target",
-                "internal": true
-              }
-            },
-            "actual": {
-              "hyperlink": {
-                "cell": "B3",
-                "target": "Targets!A1",
-                "display": "Go Target",
-                "tooltip": "Jump to target",
-                "internal": true
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Hyperlink: internal sheet"
-          }
-        },
-        "link_mailto": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "hyperlink": {
-                "cell": "B4",
-                "target": "mailto:test@example.com",
-                "display": "Email",
-                "tooltip": "Send email",
-                "internal": false
-              }
-            },
-            "actual": {
-              "hyperlink": {
-                "cell": "B4",
-                "target": "mailto:test@example.com",
-                "display": "Email",
-                "tooltip": "Send email",
-                "internal": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Hyperlink: mailto"
-          }
-        },
-        "link_long": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "hyperlink": {
-                "cell": "B5",
-                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
-                "display": "Search",
-                "tooltip": "Encoded URL",
-                "internal": false
-              }
-            },
-            "actual": {
-              "hyperlink": {
-                "cell": "B5",
-                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
-                "display": "Search",
-                "tooltip": "Encoded URL",
-                "internal": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Hyperlink: long encoded URL"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "hyperlinks",
       "library": "rust_xlsxwriter",
       "scores": {
         "read": null,
@@ -49754,79 +47536,6 @@
     {
       "feature": "images",
       "library": "python-calamine",
-      "scores": {
-        "read": 0,
-        "write": null
-      },
-      "test_cases": {
-        "image_one_cell": {
-          "read": {
-            "passed": false,
-            "expected": {
-              "image": {
-                "cell": "B2",
-                "path": "fixtures/images/sample.png",
-                "anchor": "oneCell"
-              }
-            },
-            "actual": {},
-            "notes": "Incorrect result",
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "images",
-                  "operation": "read",
-                  "test_case_id": "image_one_cell",
-                  "sheet": "images",
-                  "cell": "B2"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
-            "importance": "basic",
-            "label": "Image: one-cell anchor"
-          }
-        },
-        "image_two_cell_offset": {
-          "read": {
-            "passed": false,
-            "expected": {
-              "image": {
-                "cell": "D6",
-                "path": "fixtures/images/sample.jpg",
-                "anchor": "oneCell"
-              }
-            },
-            "actual": {},
-            "notes": "Incorrect result",
-            "diagnostics": [
-              {
-                "category": "data_mismatch",
-                "severity": "error",
-                "location": {
-                  "feature": "images",
-                  "operation": "read",
-                  "test_case_id": "image_two_cell_offset",
-                  "sheet": "images",
-                  "cell": "B3"
-                },
-                "adapter_message": "Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={}",
-                "probable_cause": "Adapter returned a value that differs from benchmark expectations."
-              }
-            ],
-            "importance": "edge",
-            "label": "Image: two-cell anchor with offset"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "images",
-      "library": "calamine-styled",
       "scores": {
         "read": 0,
         "write": null
@@ -50954,16 +48663,6 @@
     {
       "feature": "pivot_tables",
       "library": "python-calamine",
-      "scores": {
-        "read": null,
-        "write": null
-      },
-      "test_cases": {},
-      "notes": "Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx)."
-    },
-    {
-      "feature": "pivot_tables",
-      "library": "calamine-styled",
       "scores": {
         "read": null,
         "write": null
@@ -51401,86 +49100,6 @@
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
-            "importance": "edge",
-            "label": "Comment: second author"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "comments",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "comment_legacy": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "comment": {
-                "cell": "B2",
-                "text": "Legacy note",
-                "threaded": false
-              }
-            },
-            "actual": {
-              "comment": {
-                "cell": "B2",
-                "text": "Legacy note",
-                "threaded": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Comment: legacy note"
-          }
-        },
-        "comment_threaded": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "comment": {
-                "cell": "B3",
-                "text": "Threaded fallback",
-                "threaded": false
-              }
-            },
-            "actual": {
-              "comment": {
-                "cell": "B3",
-                "text": "Threaded fallback",
-                "threaded": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Comment: threaded"
-          }
-        },
-        "comment_author": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "comment": {
-                "cell": "B4",
-                "text": "Another note",
-                "threaded": false
-              }
-            },
-            "actual": {
-              "comment": {
-                "cell": "B4",
-                "text": "Another note",
-                "threaded": false
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "edge",
             "label": "Comment: second author"
           }
@@ -53223,82 +50842,6 @@
                 "probable_cause": "Adapter returned a value that differs from benchmark expectations."
               }
             ],
-            "importance": "edge",
-            "label": "Split panes row=2 col=1"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "freeze_panes",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "freeze_b2": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "freeze": {
-                "mode": "freeze",
-                "top_left_cell": "B2"
-              }
-            },
-            "actual": {
-              "freeze": {
-                "mode": "freeze",
-                "top_left_cell": "B2"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Freeze panes at B2"
-          }
-        },
-        "freeze_d5": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "freeze": {
-                "mode": "freeze",
-                "top_left_cell": "D5"
-              }
-            },
-            "actual": {
-              "freeze": {
-                "mode": "freeze",
-                "top_left_cell": "D5"
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Freeze panes at D5"
-          }
-        },
-        "split_2x1": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "freeze": {
-                "mode": "split",
-                "x_split": 1,
-                "y_split": 2
-              }
-            },
-            "actual": {
-              "freeze": {
-                "mode": "split",
-                "x_split": 1,
-                "y_split": 2
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "edge",
             "label": "Split panes row=2 col=1"
           }
@@ -55445,137 +52988,6 @@
                 "probable_cause": "Adapter raised an exception while evaluating this test case."
               }
             ],
-            "importance": "edge",
-            "label": "Named range: underscore name"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "named_ranges",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "nr_simple_cell": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "SingleCell",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$2",
-              "value": 42
-            },
-            "actual": {
-              "name": "SingleCell",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$2",
-              "value": 42.0
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Named range: single cell"
-          }
-        },
-        "nr_cell_range": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "DataRange",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$3:$D$3"
-            },
-            "actual": {
-              "name": "DataRange",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$3:$D$3"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Named range: cell range"
-          }
-        },
-        "nr_formula_ref": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "TaxRate",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$4",
-              "value": 0.08
-            },
-            "actual": {
-              "name": "TaxRate",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$4",
-              "value": 0.08
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Named range: used in formula"
-          }
-        },
-        "nr_sheet_scope": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "LocalName",
-              "scope": "sheet",
-              "refers_to": "named_ranges!$B$5",
-              "value": "local"
-            },
-            "actual": {
-              "name": "LocalName",
-              "scope": "sheet",
-              "refers_to": "named_ranges!$B$5",
-              "value": "local"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Named range: sheet-scoped"
-          }
-        },
-        "nr_cross_sheet": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "OtherSheet",
-              "scope": "workbook",
-              "refers_to": "Targets!$A$1"
-            },
-            "actual": {
-              "name": "OtherSheet",
-              "scope": "workbook",
-              "refers_to": "Targets!$A$1"
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Named range: cross-sheet reference"
-          }
-        },
-        "nr_special_chars": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "name": "_my_range",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$7"
-            },
-            "actual": {
-              "name": "_my_range",
-              "scope": "workbook",
-              "refers_to": "named_ranges!$B$7"
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "edge",
             "label": "Named range: underscore name"
           }
@@ -59203,237 +56615,6 @@
                 "probable_cause": "Adapter raised an exception while evaluating this test case."
               }
             ],
-            "importance": "edge",
-            "label": "Table: with autoFilter"
-          }
-        }
-      },
-      "notes": null
-    },
-    {
-      "feature": "tables",
-      "library": "calamine-styled",
-      "scores": {
-        "read": 3,
-        "write": null
-      },
-      "test_cases": {
-        "tbl_basic": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "SalesData",
-                "ref": "E2:G5",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "Name",
-                  "Qty",
-                  "Price"
-                ]
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "SalesData",
-                "ref": "E2:G5",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "Name",
-                  "Qty",
-                  "Price"
-                ]
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Table: basic 3-col"
-          }
-        },
-        "tbl_with_totals": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "Summary",
-                "ref": "E7:G11",
-                "header_row": true,
-                "totals_row": true,
-                "style": "TableStyleLight1",
-                "columns": [
-                  "Item",
-                  "Count",
-                  "Total"
-                ],
-                "totals_row_count": 1
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "Summary",
-                "ref": "E7:G11",
-                "header_row": true,
-                "totals_row": true,
-                "style": "TableStyleLight1",
-                "columns": [
-                  "Item",
-                  "Count",
-                  "Total"
-                ],
-                "totals_row_count": 1
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Table: with totals row"
-          }
-        },
-        "tbl_no_style": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "PlainTable",
-                "ref": "E13:F16",
-                "header_row": true,
-                "totals_row": false,
-                "style": null,
-                "columns": [
-                  "Key",
-                  "Value"
-                ]
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "PlainTable",
-                "ref": "E13:F16",
-                "header_row": true,
-                "totals_row": false,
-                "style": null,
-                "columns": [
-                  "Key",
-                  "Value"
-                ]
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "basic",
-            "label": "Table: no style"
-          }
-        },
-        "tbl_single_col": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "SingleCol",
-                "ref": "E18:E21",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium2",
-                "columns": [
-                  "Score"
-                ]
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "SingleCol",
-                "ref": "E18:E21",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium2",
-                "columns": [
-                  "Score"
-                ]
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Table: single column"
-          }
-        },
-        "tbl_single_row": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "EmptyTable",
-                "ref": "E23:G23",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "A",
-                  "B",
-                  "C"
-                ]
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "EmptyTable",
-                "ref": "E23:G23",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "A",
-                  "B",
-                  "C"
-                ]
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
-            "importance": "edge",
-            "label": "Table: header only (no data rows)"
-          }
-        },
-        "tbl_autofilter": {
-          "read": {
-            "passed": true,
-            "expected": {
-              "table": {
-                "name": "Filtered",
-                "ref": "E25:G28",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "Region",
-                  "Sales",
-                  "Year"
-                ],
-                "autofilter": true
-              }
-            },
-            "actual": {
-              "table": {
-                "name": "Filtered",
-                "ref": "E25:G28",
-                "header_row": true,
-                "totals_row": false,
-                "style": "TableStyleMedium9",
-                "columns": [
-                  "Region",
-                  "Sales",
-                  "Year"
-                ],
-                "autofilter": true
-              }
-            },
-            "notes": null,
-            "diagnostics": [],
             "importance": "edge",
             "label": "Table: with autoFilter"
           }
