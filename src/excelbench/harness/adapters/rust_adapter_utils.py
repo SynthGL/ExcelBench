@@ -6,10 +6,13 @@ and the Python harness.
 
 from __future__ import annotations
 
+import re
 from datetime import date, datetime
 from typing import Any
 
 from excelbench.models import BorderEdge, BorderInfo, BorderStyle, CellFormat, CellType, CellValue
+
+_RUST_XLSXWRITER_ONE_BASED_ROW_VERSION = (0, 4, 0)
 
 
 def get_rust_backend_version(backend_key: str) -> str:
@@ -28,6 +31,44 @@ def get_rust_backend_version(backend_key: str) -> str:
         return str(getattr(rust_mod, "__version__", "unknown"))
     except Exception:
         return "unknown"
+
+
+def get_wolfxl_package_version() -> str:
+    """Return the installed wolfxl package version reported by the Rust extension."""
+
+    try:
+        import wolfxl._rust as rust
+
+        rust_mod: Any = rust
+
+        info = rust_mod.build_info()
+        if isinstance(info, dict) and info.get("package_version"):
+            return str(info["package_version"])
+        return str(getattr(rust_mod, "__version__", "unknown"))
+    except Exception:
+        return "unknown"
+
+
+def _parse_version(value: str) -> tuple[int, int, int] | None:
+    match = re.match(r"^\s*(\d+)(?:\.(\d+))?(?:\.(\d+))?", value)
+    if match is None:
+        return None
+    return tuple(int(part or 0) for part in match.groups())  # type: ignore[return-value]
+
+
+def _rust_xlsxwriter_row_index_for_version(row: int, package_version: str) -> int:
+    """Translate ExcelBench's 1-based row number to the installed Rust API."""
+
+    parsed = _parse_version(package_version)
+    if parsed is not None and parsed < _RUST_XLSXWRITER_ONE_BASED_ROW_VERSION:
+        return max(row - 1, 0)
+    return row
+
+
+def rust_xlsxwriter_row_index(row: int) -> int:
+    """Return the row index expected by the installed RustXlsxWriterBook bindings."""
+
+    return _rust_xlsxwriter_row_index_for_version(row, get_wolfxl_package_version())
 
 
 def payload_from_cell_value(value: CellValue) -> dict[str, Any]:
