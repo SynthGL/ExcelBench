@@ -9,6 +9,15 @@ from excelbench.generator.generate import write_manifest
 from excelbench.models import Importance, Manifest
 from excelbench.models import TestCase as BenchCase
 from excelbench.models import TestFile as BenchFile
+from excelbench.perf.renderer import render_perf_markdown
+from excelbench.perf.runner import (
+    PerfConfig,
+    PerfFeatureResult,
+    PerfMetadata,
+    PerfOpResult,
+    PerfResults,
+    PerfStats,
+)
 
 
 def _write_cell_values_suite(test_dir: Path) -> None:
@@ -82,3 +91,75 @@ def test_perf_command_writes_outputs(tmp_path: Path) -> None:
     assert data["metadata"]["config"]["iters"] == 1
     assert data["metadata"]["config"]["iteration_policy"] == "fixed"
     assert "openpyxl" in data["libraries"]
+
+
+def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None:
+    stats = PerfStats(min=1.0, p50=1.0, p95=1.0)
+    results = PerfResults(
+        metadata=PerfMetadata(
+            benchmark_version="test",
+            run_date=datetime(2026, 1, 1, tzinfo=UTC),
+            excel_version="test",
+            platform="test",
+            profile="xlsx",
+            python="test",
+            commit=None,
+            config=PerfConfig(
+                warmup=0,
+                iters=1,
+                iteration_policy="fixed",
+                breakdown=False,
+            ),
+        ),
+        libraries={
+            "openpyxl": {
+                "name": "openpyxl",
+                "version": "test",
+                "language": "python",
+                "capabilities": ["read", "write"],
+            },
+            "python-calamine": {
+                "name": "python-calamine",
+                "version": "test",
+                "language": "python",
+                "capabilities": ["read"],
+            },
+        },
+        results=[
+            PerfFeatureResult(
+                feature="cell_values",
+                library="openpyxl",
+                workload_size="tiny",
+                perf={
+                    "read": PerfOpResult(wall_ms=stats, cpu_ms=stats),
+                    "write": PerfOpResult(
+                        wall_ms=PerfStats(min=2.0, p50=2.0, p95=2.0),
+                        cpu_ms=stats,
+                    ),
+                },
+            ),
+            PerfFeatureResult(
+                feature="cell_values",
+                library="python-calamine",
+                workload_size="tiny",
+                perf={
+                    "read": PerfOpResult(
+                        wall_ms=PerfStats(min=0.5, p50=0.5, p95=0.5),
+                        cpu_ms=stats,
+                    ),
+                    "write": None,
+                },
+            ),
+        ],
+    )
+
+    readme = tmp_path / "README.md"
+    render_perf_markdown(results, readme)
+
+    markdown = readme.read_text()
+    assert (
+        "| Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | "
+        "python-calamine (R p50 ms) |"
+    ) in markdown
+    assert "| cell_values | 1.00 | 2.00 | 0.50 |" in markdown
+    assert markdown.count("**Tier 0") == 1

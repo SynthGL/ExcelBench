@@ -113,31 +113,31 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
             header += f" {lib} (W p50 ms) |"
             sep += "--------------|"
 
-        tier_map: dict[int, list[str]] = {0: [], 1: [], 2: []}
-        for feat in fidelity_features:
-            tier_map.setdefault(_FEATURE_TIERS.get(feat, 2), []).append(feat)
+    tier_map: dict[int, list[str]] = {0: [], 1: [], 2: []}
+    for feat in fidelity_features:
+        tier_map.setdefault(_FEATURE_TIERS.get(feat, 2), []).append(feat)
 
-        for tier in sorted(tier_map.keys()):
-            feats = tier_map[tier]
-            if not feats:
-                continue
-            lines.append(f"**{_TIER_LABELS.get(tier, f'Tier {tier}')}**")
-            lines.append("")
+    for tier in sorted(tier_map.keys()):
+        feats = tier_map[tier]
+        if not feats:
+            continue
+        lines.append(f"**{_TIER_LABELS.get(tier, f'Tier {tier}')}**")
+        lines.append("")
 
-            lines.append(header)
-            lines.append(sep)
-            for feat in feats:
-                row = f"| {feat} |"
-                for lib in libs:
-                    caps = set(data["libraries"][lib].get("capabilities", []))
-                    entry = lookup.get((feat, lib))
-                    perf = entry.get("perf") if entry else None
-                    if "read" in caps:
-                        row += f" {_fmt_p50_ms(perf, 'read')} |"
-                    if "write" in caps:
-                        row += f" {_fmt_p50_ms(perf, 'write')} |"
-                lines.append(row)
-            lines.append("")
+        lines.append(header)
+        lines.append(sep)
+        for feat in feats:
+            row = f"| {feat} |"
+            for lib in libs:
+                caps = set(data["libraries"][lib].get("capabilities", []))
+                entry = lookup.get((feat, lib))
+                perf = entry.get("perf") if entry else None
+                if "read" in caps:
+                    row += f" {_fmt_p50_ms(perf, 'read')} |"
+                if "write" in caps:
+                    row += f" {_fmt_p50_ms(perf, 'write')} |"
+            lines.append(row)
+        lines.append("")
 
     _append_throughput_section(lines, data, libs, workload_features, lookup)
 
