@@ -25,7 +25,7 @@ dependencies = [
     "xlwings>=0.30.0",
     # Libraries under test - Python
     "openpyxl>=3.1.0",
-    "pillow>=10.0.0",
+    "pillow>=12.2.0",
     "xlsxwriter>=3.1.0",
     "xlrd>=2.0.0",
     "pylightxl>=1.60",
@@ -48,7 +48,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
-    "pytest>=7.0",
+    "pytest>=9.0.3",
     "pytest-cov>=4.0",
     "ruff>=0.1.0",
     "mypy>=1.0",
