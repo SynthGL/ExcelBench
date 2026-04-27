@@ -13,12 +13,12 @@ right answer in isolation — each is honest about a different slice of reality:
   Rust-backed adapters (wolfxl, python-calamine, rust_xlsxwriter); fine for
   pure-Python adapters (openpyxl, xlsxwriter).
 
-- ``time``: spawn ``/usr/bin/time -l <cmd>`` in a fresh subprocess and parse
-  ``maximum resident set size`` from stderr. Honest about Rust allocations
-  because the measurement is from the OS. Slow because each iteration pays
-  Python startup + adapter import cost; that overhead is included in the
-  reported peak (a feature, not a bug — it answers "what does running this
-  library actually cost in a fresh process").
+- ``time``: spawn ``/usr/bin/time`` in a fresh subprocess (with ``-l`` on
+  macOS BSD time, ``-v`` on GNU/Linux time) and parse the peak RSS from
+  stderr. Honest about Rust allocations because the measurement is from the
+  OS. Slow because each iteration pays Python startup + adapter import cost;
+  that overhead is included in the reported peak (a feature, not a bug — it
+  answers "what does running this library actually cost in a fresh process").
 
 The composite ``all`` mode runs all three sequentially per iteration so the
 quarterly memory deep-dive can compare them directly.
@@ -52,7 +52,10 @@ class MemorySample:
 
 
 def includes_getrusage(mode: MemoryMode) -> bool:
-    return mode in ("getrusage", "all")
+    # getrusage is essentially free (one syscall), so we always populate
+    # rss_peak_mb in any in-process mode. This keeps the help text honest:
+    # tracemalloc-only runs still report RSS alongside the Python heap peak.
+    return mode in ("getrusage", "tracemalloc", "all")
 
 
 def includes_tracemalloc(mode: MemoryMode) -> bool:
@@ -120,21 +123,22 @@ def run_iteration_under_time_l(
     cwd: Path | None = None,
     timeout_s: float = 300.0,
 ) -> tuple[dict[str, float] | None, float | None]:
-    """Run ``/usr/bin/time -l <cli_args>`` and return (subprocess stdout JSON, peak RSS KB).
+    """Run ``/usr/bin/time`` and return (subprocess stdout JSON, peak RSS KB).
 
-    The subprocess is expected to print one JSON object to stdout containing
-    iteration metrics (wall_ms, cpu_ms). Stderr captures ``time -l`` output, from
-    which we extract ``maximum resident set size``.
+    The flag varies by platform: ``-l`` on macOS BSD time, ``-v`` on GNU/Linux
+    time. The subprocess is expected to print one JSON object to stdout
+    containing iteration metrics (wall_ms, cpu_ms). Stderr captures the time
+    output, from which we extract the peak RSS.
 
     Returns ``(metrics, rss_kb)``. Either may be ``None`` if parsing failed —
     callers should treat ``None`` as "measurement unavailable" (e.g., on
     Windows, where ``/usr/bin/time`` doesn't exist).
     """
-    time_l = _resolve_time_l_path()
-    if time_l is None:
+    time_bin = _resolve_time_l_path()
+    if time_bin is None:
         return None, None
 
-    cmd = [time_l, "-l", *cli_args]
+    cmd = [time_bin, _time_flag(), *cli_args]
     try:
         completed = subprocess.run(
             cmd,
@@ -163,10 +167,10 @@ def run_iteration_under_time_l(
 
 
 def parse_time_l_stderr(text: str) -> float | None:
-    """Extract peak RSS in KB from ``/usr/bin/time -l`` stderr output.
+    """Extract peak RSS in KB from ``/usr/bin/time`` stderr output.
 
-    Cross-platform: macOS reports bytes ("maximum resident set size") while
-    Linux's GNU time -l reports kilobytes ("Maximum resident set size (kbytes)").
+    Cross-platform: macOS BSD time emits bytes (``maximum resident set size``),
+    GNU/Linux time -v emits kilobytes (``Maximum resident set size (kbytes)``).
     """
     if not text:
         return None
@@ -177,7 +181,7 @@ def parse_time_l_stderr(text: str) -> float | None:
     if m:
         return float(m.group(1)) / 1024.0  # bytes → KB
 
-    # GNU coreutils time -l (rare): "Maximum resident set size (kbytes): 12345"
+    # GNU time -v (Linux): "Maximum resident set size (kbytes): 12345"
     gnu_kb_pattern = re.compile(
         r"^\s*Maximum resident set size \(kbytes\):\s*(\d+)", re.MULTILINE
     )
@@ -188,12 +192,24 @@ def parse_time_l_stderr(text: str) -> float | None:
     return None
 
 
+def _time_flag() -> str:
+    """Return the verbose-output flag accepted by the local ``/usr/bin/time``.
+
+    macOS ships BSD time which uses ``-l``; GNU coreutils time on Linux uses
+    ``-v`` (it does not accept ``-l`` and would error out). Both stderr formats
+    are handled by :func:`parse_time_l_stderr`.
+    """
+    if sys.platform == "darwin":
+        return "-l"
+    return "-v"
+
+
 def _resolve_time_l_path() -> str | None:
     """Return the absolute path to ``/usr/bin/time`` if available, else ``None``.
 
-    On macOS this is the BSD time supporting ``-l``. On Linux it is GNU time
-    (``-l`` is also accepted). On Windows there is no equivalent and we
-    return ``None`` so callers can fall back gracefully.
+    On macOS this is the BSD time supporting ``-l``; on Linux it is GNU time
+    which uses ``-v`` for the verbose output we need. On Windows there is no
+    equivalent and we return ``None`` so callers can fall back gracefully.
     """
     if sys.platform == "win32":
         return None

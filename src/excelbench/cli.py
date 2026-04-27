@@ -265,11 +265,12 @@ def perf(
         "--memory-mode",
         help=(
             "Memory measurement strategy. 'getrusage' (default) uses the cheap "
-            "in-process RUSAGE_SELF peak. 'tracemalloc' adds the Python heap "
-            "peak (misses Rust allocations). 'time' spawns each iteration "
-            "under /usr/bin/time -l for an OS-honest peak RSS (slow). "
-            "'all' runs every iteration in all three modes — quarterly deep-dive, "
-            "not the CI hot path."
+            "in-process RUSAGE_SELF peak. 'tracemalloc' reports getrusage RSS "
+            "plus the Python heap peak (misses Rust allocations). 'time' spawns "
+            "each iteration under /usr/bin/time (-l on macOS, -v on Linux) for "
+            "an OS-honest peak RSS — runs only the subprocess, not double-"
+            "executed in-process. 'all' runs every iteration in all three modes "
+            "— quarterly deep-dive, not the CI hot path."
         ),
     ),
 ) -> None:
