@@ -437,7 +437,9 @@ def _shape_fixtures_stale(
 ) -> bool:
     """Return True if shape fixtures should be regenerated.
 
-    Triggers: missing manifest, generator newer than manifest, or the requested
+    Triggers: missing manifest, generator newer than manifest, manifest
+    contains zero ``data_shape_*`` features (e.g. it was last written by
+    ``perf-file-shape`` against the same fixtures dir), or the requested
     1M tier isn't already represented in the manifest.
     """
     import json
@@ -447,12 +449,24 @@ def _shape_fixtures_stale(
     if generator_script.exists():
         if generator_script.stat().st_mtime > manifest_path.stat().st_mtime:
             return True
+
+    try:
+        data = json.loads(manifest_path.read_text())
+    except (OSError, ValueError):
+        return True
+    files = data.get("files", []) if isinstance(data, dict) else []
+
+    # Cross-command guard: a fresh-mtime manifest written by perf-file-shape
+    # has zero data_shape_* entries; treat as stale so we regenerate.
+    if not any(
+        isinstance(f, dict)
+        and isinstance(f.get("feature"), str)
+        and f["feature"].startswith("data_shape_")
+        for f in files
+    ):
+        return True
+
     if needs_1m:
-        try:
-            data = json.loads(manifest_path.read_text())
-        except (OSError, ValueError):
-            return True
-        files = data.get("files", []) if isinstance(data, dict) else []
         if not any(
             isinstance(f, dict)
             and isinstance(f.get("feature"), str)
@@ -534,6 +548,9 @@ def _file_shape_fixtures_stale(
     """Return True if file-shape fixtures should be regenerated.
 
     Mirrors :func:`_shape_fixtures_stale` for the file_shape_* feature prefix.
+    Always verifies at least one ``file_shape_*`` entry is present so a
+    manifest written by ``perf-shape`` (data_shape only) doesn't fool the
+    staleness check into skipping regeneration.
     """
     import json
 
@@ -542,12 +559,24 @@ def _file_shape_fixtures_stale(
     if generator_script.exists():
         if generator_script.stat().st_mtime > manifest_path.stat().st_mtime:
             return True
+
+    try:
+        data = json.loads(manifest_path.read_text())
+    except (OSError, ValueError):
+        return True
+    files = data.get("files", []) if isinstance(data, dict) else []
+
+    # Cross-command guard: a fresh-mtime manifest written by perf-shape has
+    # zero file_shape_* entries; treat as stale so we regenerate.
+    if not any(
+        isinstance(f, dict)
+        and isinstance(f.get("feature"), str)
+        and f["feature"].startswith("file_shape_")
+        for f in files
+    ):
+        return True
+
     if needs_1m:
-        try:
-            data = json.loads(manifest_path.read_text())
-        except (OSError, ValueError):
-            return True
-        files = data.get("files", []) if isinstance(data, dict) else []
         if not any(
             isinstance(f, dict)
             and isinstance(f.get("feature"), str)

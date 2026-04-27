@@ -401,6 +401,36 @@ def test_file_shape_fixtures_stale_recognizes_1m_via_many_sheets(tmp_path: Path)
     assert _file_shape_fixtures_stale(manifest, generator, needs_1m=True) is False
 
 
+def test_file_shape_fixtures_stale_data_shape_only_manifest_is_stale(tmp_path: Path) -> None:
+    """Cross-command guard: a manifest written by perf-shape (data_shape only)
+    must be treated as stale by perf-file-shape, regardless of needs_1m or
+    fresh mtime, so the file-shape fixtures get regenerated.
+    """
+    import os
+
+    from excelbench.cli import _file_shape_fixtures_stale
+
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "files": [
+                    {"feature": "data_shape_int_10k_bulk_read", "path": "x.xlsx"},
+                    {"feature": "data_shape_int_10k_bulk_write", "path": "x.xlsx"},
+                ]
+            }
+        )
+    )
+    generator = tmp_path / "gen.py"
+    generator.write_text("# generator")
+    later = generator.stat().st_mtime + 5.0
+    os.utime(manifest, (later, later))
+    # Both flag values must report stale: the manifest contains zero
+    # file_shape_* entries even though it's fresh on disk.
+    assert _file_shape_fixtures_stale(manifest, generator, needs_1m=False) is True
+    assert _file_shape_fixtures_stale(manifest, generator, needs_1m=True) is True
+
+
 # ---------------------------------------------------------------------------
 # Dashboard: _section_file_shape
 # ---------------------------------------------------------------------------

@@ -307,6 +307,36 @@ def test_shape_fixtures_stale_fresh_with_1m(tmp_path: Path) -> None:
     assert _shape_fixtures_stale(manifest, generator, needs_1m=False) is False
 
 
+def test_shape_fixtures_stale_file_shape_only_manifest_is_stale(tmp_path: Path) -> None:
+    """Cross-command guard: a manifest written by perf-file-shape (file_shape
+    only) must be treated as stale by perf-shape, regardless of needs_1m or
+    fresh mtime, so the data-shape fixtures get regenerated.
+    """
+    import os
+
+    from excelbench.cli import _shape_fixtures_stale
+
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "files": [
+                    {"feature": "file_shape_wide_10k_bulk_read", "path": "x.xlsx"},
+                    {"feature": "file_shape_wide_10k_bulk_write", "path": "x.xlsx"},
+                ]
+            }
+        )
+    )
+    generator = tmp_path / "gen.py"
+    generator.write_text("# generator")
+    later = generator.stat().st_mtime + 5.0
+    os.utime(manifest, (later, later))
+    # Both flag values must report stale: the manifest contains zero
+    # data_shape_* entries even though it's fresh on disk.
+    assert _shape_fixtures_stale(manifest, generator, needs_1m=False) is True
+    assert _shape_fixtures_stale(manifest, generator, needs_1m=True) is True
+
+
 # ---------------------------------------------------------------------------
 # Dashboard helper: _section_data_shape (renders read/write heatmaps).
 # ---------------------------------------------------------------------------
