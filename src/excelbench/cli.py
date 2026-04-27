@@ -377,12 +377,15 @@ _DATA_SHAPE_DTYPES: list[str] = [
     "mixed_realistic",
 ]
 
-# (label, max_cells) — ladder picks every tier whose cell count <= --rows.
+# (label, max_cells) — must mirror DATA_SHAPE_TIERS in
+# scripts/generate_throughput_fixtures.py. The 100k tier is 316×316 (=99,856),
+# not 100,000 — using the exact size keeps `--rows 99856` from silently
+# dropping the tier.
 _DATA_SHAPE_TIER_CAPS: list[tuple[str, int]] = [
-    ("1k", 1_000),
-    ("10k", 10_000),
-    ("100k", 100_000),
-    ("1m", 1_000_000),
+    ("1k", 1_000),  # 40×25 = 1,000
+    ("10k", 10_000),  # 100×100 = 10,000
+    ("100k", 99_856),  # 316×316 = 99,856
+    ("1m", 1_000_000),  # 1000×1000 = 1,000,000
 ]
 
 

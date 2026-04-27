@@ -1928,7 +1928,7 @@ def _section_data_shape(perf: dict[str, Any] | None) -> str:
         perf_op = (entry.get("perf") or {}).get(op) or {}
         wall = perf_op.get("wall_ms") or {}
         p50 = wall.get("p50")
-        if not isinstance(p50, int | float) or p50 <= 0:
+        if not isinstance(p50, (int, float)) or p50 <= 0:
             continue
         lib = entry.get("library")
         if not isinstance(lib, str):

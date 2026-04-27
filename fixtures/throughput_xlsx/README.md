@@ -108,6 +108,6 @@ To emit only the shape matrix (skipping legacy scenarios) for fast iteration:
 uv run python scripts/generate_throughput_fixtures.py --shape-only --include-1m
 ```
 
-The 40 shape feature names follow the pattern
-`data_shape_<dtype>_<tier>_bulk_<read|write>`, e.g.
-`data_shape_formula_cross_sheet_1m_bulk_read`.
+The 40 scenarios produce 80 shape feature names following the pattern
+`data_shape_<dtype>_<tier>_bulk_<read|write>` (one read + one write per
+scenario), e.g. `data_shape_formula_cross_sheet_1m_bulk_read`.

@@ -247,10 +247,13 @@ def _generate_data_shape_grid(
                     ws.write_string(r, c, s[:512])
             return
 
+        # The 1-based +1 offset keeps generator content in sync with
+        # _run_workload_write, which uses start=1 by default.
         if dtype == "boolean":
             for r in range(rows):
                 for c in range(cols):
-                    ws.write_boolean(r, c, bool((r * cols + c) % 2))
+                    v = r * cols + c + 1
+                    ws.write_boolean(r, c, bool(v % 2))
             return
 
         if dtype == "date":
@@ -258,7 +261,7 @@ def _generate_data_shape_grid(
             base = date(2020, 1, 1)
             for r in range(rows):
                 for c in range(cols):
-                    v = r * cols + c
+                    v = r * cols + c + 1
                     ws.write_datetime(r, c, base + timedelta(days=v), date_fmt)
             return
 
@@ -267,7 +270,7 @@ def _generate_data_shape_grid(
             base = datetime(2020, 1, 1)
             for r in range(rows):
                 for c in range(cols):
-                    v = r * cols + c
+                    v = r * cols + c + 1
                     ws.write_datetime(r, c, base + timedelta(seconds=v), dt_fmt)
             return
 
@@ -498,7 +501,12 @@ def main() -> None:
             files=files,
         )
         write_manifest(manifest, out / "manifest.json")
-        print(f"✓ Wrote {len(files)} data-shape fixture(s) to {out}")
+        # Each scenario is one .xlsx with two manifest rows (read + write).
+        n_scenarios = len(files) // 2
+        print(
+            f"✓ Wrote {n_scenarios} data-shape scenario(s) "
+            f"({len(files)} manifest rows) to {out}"
+        )
         print(f"  Manifest: {out / 'manifest.json'}")
         return
 
