@@ -4,14 +4,14 @@
 > self-contained sprint (one branch, one PR, one row flip). Resume cold by reading this file
 > and the most recent `[*INCOMPLETE*]` marker.
 
-**Last updated**: 2026-04-27 (S2 in progress)
+**Last updated**: 2026-04-27 (S2 shipped)
 
 ## Status Table
 
 | #  | Dimension                          | Status      | Sprint size | Branch                         | PR  | Acceptance commit range |
 |----|------------------------------------|-------------|-------------|--------------------------------|-----|-------------------------|
 | S1 | Memory honesty + Tracker bootstrap | Shipped     | S (3–5 d)   | `feat/perf-mem-honesty`        | #28 | `50dc104..HEAD@PR#28`   |
-| S2 | Data shape (int/str/date/formula)  | In Progress | M (1 wk)    | `feat/perf-data-shape`         | —   | —                       |
+| S2 | Data shape (int/str/date/formula)  | Shipped     | M (1 wk)    | `feat/perf-data-shape`         | #31 | `373c896..cbb530f`      |
 | S3 | File shape (wide/tall/sparse)      | Planned     | M (1 wk)    | `feat/perf-file-shape`         | —   | —                       |
 | S4 | High-cost operations               | Planned     | M (1 wk)    | `feat/perf-operations`         | —   | —                       |
 | S5 | Workbook complexity perf           | Planned     | M (1 wk)    | `feat/perf-complexity`         | —   | —                       |
@@ -61,6 +61,54 @@ Use this template when appending to **Acceptance Notes** below.
 ## Acceptance Notes
 
 <!-- Newest first. Append entries here as sprints ship. -->
+
+### S2 — Data shape (int/str/date/formula) (2026-04-27)
+
+**Branch**: `feat/perf-data-shape`  ·  **PR**: [#31](https://github.com/SynthGL/ExcelBench/pull/31)  ·  **Commit range**: `373c896..cbb530f`
+
+**What shipped**:
+- 10 dtypes × 4 cell-count tiers (1k/10k/100k/1m) data-shape benchmark matrix.
+  Dtypes: `int`, `float`, `string_short`, `string_long`, `boolean`, `date`,
+  `datetime`, `formula_simple`, `formula_cross_sheet`, `mixed_realistic`.
+- `excelbench perf-shape` CLI subcommand with on-demand fixture regen,
+  staleness detection, `--types`/`--rows` filtering, inherits Sprint 1's
+  `--memory-mode` plumbing.
+- `scripts/generate_throughput_fixtures.py` extended with
+  `generate_data_shape_scenarios()`, `--shape-only`, `--include-1m` flags.
+  Generator/runner content stays in lockstep via shared 1-based offset
+  convention (fixed in PR review).
+- `_run_workload_write` extended with 6 new `value_type` branches
+  (`date`, `datetime`, `boolean`, `formula_simple`, `formula_cross_sheet`,
+  `mixed_realistic`) plus float coverage via existing `number` path.
+- `_section_data_shape` dashboard helper — per-dtype log-normalized
+  heatmaps for read and write at the largest available tier; tooltip
+  shows the full per-tier curve.
+- `mixed_realistic` ratio (60/30/5/3/2 string/int/date/formula/blank)
+  documented in `fixtures/synthetic_calibration/sample_set.md`.
+- 31 new tests in `tests/test_perf_data_shape.py` covering all
+  `value_type` branches, CLI helpers, dashboard rendering, and end-to-end
+  perf_shape invocation.
+
+**Verification**:
+- `uv run pytest tests/` ✓ (1171 passed, 32 skipped, 6 xfailed)
+- `uv run ruff check src/ tests/ scripts/` ✓
+- `uv run mypy src/` ✓
+- Local coverage 67.64%, Linux CI ~65.9% (gate 65%).
+- All 5 CI jobs green: lint, test 3.11/3.12, benchmark, rust_smoke.
+- 9 Copilot inline review comments addressed (tier cap mismatch,
+  generator/runner offset for boolean/date/datetime, README wording,
+  scenario-vs-row count, isinstance form) with reply threads.
+
+**Decisions**: DEC-019 logged in `decisions.md`.
+
+**Deferred / out-of-scope**:
+- High-cost operations (`append_rows`, `iter_rows_values`,
+  `modify_one_cell`, `cell.font` access) — Sprint 4.
+- File shape (wide/tall/sparse/many-sheets) — Sprint 3.
+- Cold-import cost per dtype — Sprint 6 (subprocess isolation needed).
+- Calibration of `mixed_realistic` against a corpus larger than the
+  50-file sample — flagged in DEC-019, revisit if dashboard data
+  suggests the ratio is wrong.
 
 ### S1 — Memory honesty + Tracker bootstrap (2026-04-27)
 
