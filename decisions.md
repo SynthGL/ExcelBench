@@ -40,6 +40,120 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-020 — File-shape parametric scenarios + n_sheets fan-out (2026-04-27)
+
+**Context**: Sprint 2 (DEC-019) shipped the dtype × tier matrix that answers
+*"how does this library handle int vs string vs formula at 1M cells?"*. The
+orthogonal axis the dashboard still couldn't address is *layout cost* —
+"does this library handle 100k cells the same way regardless of whether
+they're 1000×100 (square), 10×10000 (wide), 100000×1 (tall), 1M-grid with
+90% blanks (sparse), or split across 100 sheets?". Real libraries diverge
+sharply on these: openpyxl loads each sheet on demand vs wolfxl/calamine
+load everything upfront, sparse libs differ by 10× on blank-handling
+strategies, and tall/wide expose row-iterator vs column-iterator code
+paths. Sprint 3 closes the layout gap.
+
+**Decision**:
+
+- **5 shape categories × 3 tiers = 12 scenarios** (degenerate combos
+  skipped). Categories: `wide` (many cols, few rows), `tall` (few cols,
+  many rows), `sparse` (90% blank via `sparse_every=10`), `many_sheets`
+  (same total cell count fanned across N sheets). Tiers are 10k / 100k /
+  1M based on **total** cell count (not per-sheet).
+
+- **Single dtype (`int`) held constant** across all shapes. File-shape
+  cost is mostly dtype-independent, so cross-producting with the 10
+  dtypes from S2 (= 60 scenarios) is ~5× the work for negligible
+  additional signal. Holds the dtype axis steady so the file-shape
+  dashboard heatmap stays clean.
+
+- **`n_sheets` + `sheet_pattern` workload fields** added to the existing
+  `bulk_write_grid` and `bulk_sheet_values` ops in
+  `_run_workload_write` / `_run_workload_read`. Default `n_sheets=1`
+  preserves single-sheet callers from S1/S2 unchanged. The pre-existing
+  `sparse_every` covers the sparse case without runner additions.
+
+- **`add_sheet` phase fans out**: `_measure_write_workload_iteration`
+  pre-creates Sheet1..SheetN before `_run_workload_write` runs, so the
+  many-sheets scenarios work with adapters whose `create_workbook()`
+  starts empty (e.g. openpyxl).
+
+- **`perf-file-shape` CLI subcommand** mirrors `perf-shape` exactly —
+  separate command rather than overloading `perf-shape` with a
+  `--shape-axis=file` flag, because *shape* is already overloaded
+  between dtype-shape and file-shape and cramming both into one command
+  hurts readability more than it saves wiring.
+
+- **Dashboard tab** renders one heatmap per direction (read, write) with
+  rows = library sorted by overall median, columns = 4 shape categories.
+  Cell = ms / 100k cells at the largest tier each (lib, category) was
+  run at; tooltip shows the per-tier curve. Color is log-scale,
+  normalized **per category-column** so many-sheets per-sheet XML
+  overhead doesn't wash out wide/tall/sparse columns.
+
+- **op_count semantics**: for `n_sheets > 1`, op_count =
+  per-sheet-cells × n_sheets (i.e. total cells touched across the fan-
+  out). For `sparse_every > 1`, op_count = filled cells only (matches
+  S2 convention). Both multipliers compose, so a many-sheets sparse
+  scenario would correctly count `(filled_cells_per_sheet × n_sheets)` —
+  not currently used in S3 but the math is composable.
+
+**Alternatives considered**:
+
+1. **Cross-product file-shape × all 10 dtypes (= 60 scenarios)** —
+   rejected. ~5× the runtime + storage for marginal signal; file-shape
+   cost is mostly orthogonal to dtype because adapters use the same
+   row/col iterators regardless of cell content. If a future adapter
+   shows dtype-dependent layout cost, that scenario can be added
+   point-wise without re-running the full matrix.
+
+2. **Extend `perf-shape` with `--shape-axis={dtype,file}` flag** —
+   rejected. The word *shape* is already overloaded between dtype-shape
+   and file-shape; cramming both behind one command makes the help text
+   harder to read and the `--types`/`--shapes` flag separation harder
+   to validate. Two commands with a shared helper extraction is cleaner.
+
+3. **New op `bulk_write_grid_multi_sheet`** instead of extending
+   `bulk_write_grid` with `n_sheets`** — rejected. Would duplicate the
+   ~70-line value-generation block (10 `value_type` branches) for the
+   sole benefit of dispatch separation. Single op with optional
+   `n_sheets` field keeps the dispatch table small and means future
+   value_types added in S4+ automatically work for many-sheets without
+   per-feature plumbing.
+
+4. **Sparse scenarios at 1k tier** — rejected. 1k grid × 10% sparse =
+   100 filled cells, dominated by allocator setup costs and not
+   representative of how libraries handle sparse storage at scale. 10k
+   minimum keeps the signal honest.
+
+5. **Streaming-read shapes (e.g. read-without-materialize)** — deferred
+   to a future sprint. Requires opt-in adapter support beyond
+   `read_sheet_values`, and openpyxl's `read_only=True` mode is the
+   only adapter that meaningfully supports it today.
+
+**Consequences**:
+
+- 12 fixtures + ~150MB scratch on first cold run (1M tier dominates).
+  Default (no `--include-1m`) emits 7 scenarios in <30s.
+- Many-sheets scenarios stress the per-sheet XML overhead path. Early
+  smoke runs on openpyxl show 100-sheet scenarios are ~3× slower per
+  cell than the equivalent single-sheet 100k case — confirming the
+  axis is informative.
+- The 100x10k and 1000x1k many-sheets scenarios are individually 1M
+  total cells but parsed differently than the 1000×1000 square case
+  (the 1000-sheet scenario opens 1000 workbook entries). This is
+  expected and is the headline data point S3 surfaces.
+- `n_sheets` is a generic runner extension, not file-shape specific.
+  Future sprints (S4 high-cost ops) can use it for "modify one cell
+  across N sheets" workloads without further runner changes.
+- New `file_shape_*` feature names are additive — schema unchanged.
+  The dashboard's File Shape tab only renders when at least one
+  `file_shape_*` entry is present in the loaded results.
+
+**Commit(s)**: Sprint 3, branch `feat/perf-file-shape`.
+
+---
+
 ### DEC-019 — Data-shape parametric scenarios + mixed-realistic ratio (2026-04-27)
 
 **Context**: Sprint 1 of the 7-Dimension Extension shipped honest memory
