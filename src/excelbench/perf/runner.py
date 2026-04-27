@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 from typing import Any
 
@@ -996,13 +996,32 @@ def _run_workload_write(
         if not isinstance(sparse_every, int) or sparse_every < 1:
             sparse_every = 1
 
+        # Mixed-realistic ratio: 60% string-short, 30% int, 5% date,
+        # 3% formula_simple, 2% None. See DEC-019.
+        mixed_date_epoch = date(2020, 1, 1)
+        date_epoch = date(2020, 1, 1)
+        datetime_epoch = datetime(2020, 1, 1)
+
+        def _padded_string(seed: Any, length: int | None) -> str:
+            s = str(seed)
+            if length is not None and length > 0:
+                if len(s) < length:
+                    s = s + ("x" * (length - len(s)))
+                else:
+                    s = s[:length]
+            return s
+
         values: list[list[Any]] = []
         v = start
         linear_idx = 0
-        for _r in range(rows):
+        for r_idx in range(rows):
             row_vals: list[Any] = []
             for _c in range(cols):
                 filled = (linear_idx % sparse_every) == 0
+                # Spreadsheet row number for formula references
+                # (1-based, offset by start cell row).
+                row_num = r0 + r_idx
+                linear_idx_val = linear_idx
                 linear_idx += 1
 
                 if not filled:
@@ -1012,17 +1031,42 @@ def _run_workload_write(
 
                 if value_type == "number":
                     row_vals.append(v)
+                elif value_type == "float":
+                    row_vals.append(v * 1.5)
                 elif value_type == "string":
                     if string_mode == "repeated":
                         s = string_value
                     else:
                         s = f"{string_prefix}{v}"
-                    if string_length is not None and string_length > 0:
-                        if len(s) < string_length:
-                            s = s + ("x" * (string_length - len(s)))
-                        else:
-                            s = s[:string_length]
-                    row_vals.append(s)
+                    row_vals.append(_padded_string(s, string_length))
+                elif value_type == "date":
+                    row_vals.append(date_epoch + timedelta(days=v))
+                elif value_type == "datetime":
+                    row_vals.append(datetime_epoch + timedelta(seconds=v))
+                elif value_type == "boolean":
+                    row_vals.append(bool(v % 2))
+                elif value_type == "formula_simple":
+                    row_vals.append(f"=SUM(A{row_num}:B{row_num})")
+                elif value_type == "formula_cross_sheet":
+                    row_vals.append(f"=Sheet2!A{row_num}")
+                elif value_type == "mixed_realistic":
+                    bucket = linear_idx_val % 100
+                    if bucket < 60:
+                        # 60% short string (≤16 chars) — most common in real
+                        # financial workbooks (labels, ticker symbols, codes).
+                        row_vals.append(_padded_string(f"S{v}", 16))
+                    elif bucket < 90:
+                        # 30% int
+                        row_vals.append(v)
+                    elif bucket < 95:
+                        # 5% date
+                        row_vals.append(mixed_date_epoch + timedelta(days=v))
+                    elif bucket < 98:
+                        # 3% formula
+                        row_vals.append(f"=SUM(A{row_num}:B{row_num})")
+                    else:
+                        # 2% blank
+                        row_vals.append(None)
                 else:
                     raise ValueError(f"Unsupported bulk_write_grid value_type: {value_type}")
 

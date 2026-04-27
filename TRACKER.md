@@ -4,14 +4,14 @@
 > self-contained sprint (one branch, one PR, one row flip). Resume cold by reading this file
 > and the most recent `[*INCOMPLETE*]` marker.
 
-**Last updated**: 2026-04-27 (S1 shipped)
+**Last updated**: 2026-04-27 (S2 in progress)
 
 ## Status Table
 
 | #  | Dimension                          | Status      | Sprint size | Branch                         | PR  | Acceptance commit range |
 |----|------------------------------------|-------------|-------------|--------------------------------|-----|-------------------------|
 | S1 | Memory honesty + Tracker bootstrap | Shipped     | S (3–5 d)   | `feat/perf-mem-honesty`        | #28 | `50dc104..HEAD@PR#28`   |
-| S2 | Data shape (int/str/date/formula)  | Planned     | M (1 wk)    | `feat/perf-data-shape`         | —   | —                       |
+| S2 | Data shape (int/str/date/formula)  | In Progress | M (1 wk)    | `feat/perf-data-shape`         | —   | —                       |
 | S3 | File shape (wide/tall/sparse)      | Planned     | M (1 wk)    | `feat/perf-file-shape`         | —   | —                       |
 | S4 | High-cost operations               | Planned     | M (1 wk)    | `feat/perf-operations`         | —   | —                       |
 | S5 | Workbook complexity perf           | Planned     | M (1 wk)    | `feat/perf-complexity`         | —   | —                       |

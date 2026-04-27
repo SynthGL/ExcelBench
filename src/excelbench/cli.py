@@ -361,6 +361,297 @@ def perf(
         raise typer.Exit(1)
 
 
+# Data-shape dispatch: kept in sync with scripts/generate_throughput_fixtures.py
+# (DATA_SHAPE_DTYPES / DATA_SHAPE_TIERS). Keep both lists in sync if either
+# changes; see DEC-019.
+_DATA_SHAPE_DTYPES: list[str] = [
+    "int",
+    "float",
+    "string_short",
+    "string_long",
+    "boolean",
+    "date",
+    "datetime",
+    "formula_simple",
+    "formula_cross_sheet",
+    "mixed_realistic",
+]
+
+# (label, max_cells) — must mirror DATA_SHAPE_TIERS in
+# scripts/generate_throughput_fixtures.py. The 100k tier is 316×316 (=99,856),
+# not 100,000 — using the exact size keeps `--rows 99856` from silently
+# dropping the tier.
+_DATA_SHAPE_TIER_CAPS: list[tuple[str, int]] = [
+    ("1k", 1_000),  # 40×25 = 1,000
+    ("10k", 10_000),  # 100×100 = 10,000
+    ("100k", 99_856),  # 316×316 = 99,856
+    ("1m", 1_000_000),  # 1000×1000 = 1,000,000
+]
+
+
+def _resolve_shape_features(
+    *, types_arg: str, rows: int
+) -> tuple[list[str], list[str], list[str]]:
+    """Translate --types and --rows into (read_features, write_features, tier_labels).
+
+    Tiers are chosen as every label whose canonical cell-count <= ``rows``, so
+    --rows 100000 runs 1k+10k+100k. Each (dtype, tier) pair contributes one
+    bulk-read and one bulk-write feature to match the manifest emitted by
+    ``generate_data_shape_scenarios``.
+    """
+    raw = types_arg.strip().lower()
+    if raw in {"", "all"}:
+        types = list(_DATA_SHAPE_DTYPES)
+    else:
+        wanted = [t.strip() for t in raw.split(",") if t.strip()]
+        unknown = [t for t in wanted if t not in _DATA_SHAPE_DTYPES]
+        if unknown:
+            raise ValueError(
+                f"Unknown --types: {', '.join(unknown)}. "
+                f"Valid: {', '.join(_DATA_SHAPE_DTYPES)} (or 'all')."
+            )
+        types = wanted
+
+    tier_labels = [label for label, cap in _DATA_SHAPE_TIER_CAPS if cap <= rows]
+    if not tier_labels:
+        raise ValueError(
+            f"--rows {rows} is below the smallest tier (1000); pick at least 1000."
+        )
+
+    read_features: list[str] = []
+    write_features: list[str] = []
+    for dtype in types:
+        for tier in tier_labels:
+            scenario = f"data_shape_{dtype}_{tier}"
+            read_features.append(f"{scenario}_bulk_read")
+            write_features.append(f"{scenario}_bulk_write")
+
+    return read_features, write_features, tier_labels
+
+
+def _shape_fixtures_stale(
+    manifest_path: Path,
+    generator_script: Path,
+    *,
+    needs_1m: bool,
+) -> bool:
+    """Return True if shape fixtures should be regenerated.
+
+    Triggers: missing manifest, generator newer than manifest, or the requested
+    1M tier isn't already represented in the manifest.
+    """
+    import json
+
+    if not manifest_path.exists():
+        return True
+    if generator_script.exists():
+        if generator_script.stat().st_mtime > manifest_path.stat().st_mtime:
+            return True
+    if needs_1m:
+        try:
+            data = json.loads(manifest_path.read_text())
+        except (OSError, ValueError):
+            return True
+        files = data.get("files", []) if isinstance(data, dict) else []
+        if not any(
+            isinstance(f, dict)
+            and isinstance(f.get("feature"), str)
+            and "_1m_" in f["feature"]
+            and f["feature"].startswith("data_shape_")
+            for f in files
+        ):
+            return True
+    return False
+
+
+@app.command("perf-shape")
+def perf_shape(
+    rows: int = typer.Option(
+        1_000_000,
+        "--rows",
+        help=(
+            "Largest tier to include. The runner walks 1k → 10k → 100k → 1M "
+            "and includes every tier whose cell count is <= this value."
+        ),
+    ),
+    types: str = typer.Option(
+        "all",
+        "--types",
+        help=(
+            "Comma-separated dtypes to run. 'all' (default) runs all 10. "
+            "Valid: int, float, string_short, string_long, boolean, date, "
+            "datetime, formula_simple, formula_cross_sheet, mixed_realistic."
+        ),
+    ),
+    output: Path = typer.Option(
+        Path("results/perf-shape"),
+        "--output",
+        "-o",
+        help="Root directory for results (writes to <output>/perf/results.json).",
+    ),
+    fixtures: Path = typer.Option(
+        Path("test_files/throughput_xlsx"),
+        "--fixtures",
+        help="Directory containing data-shape fixtures + manifest.json.",
+    ),
+    adapters: list[str] | None = typer.Option(
+        None,
+        "--adapter",
+        "-a",
+        help="Run only specified adapter(s) by name (repeatable).",
+    ),
+    warmup: int = typer.Option(1, "--warmup"),
+    iters: int = typer.Option(3, "--iters"),
+    iteration_policy: str = typer.Option(
+        "fixed",
+        "--iteration-policy",
+        help="Repeat-run stabilization policy (currently: fixed).",
+    ),
+    breakdown: bool = typer.Option(
+        False,
+        "--breakdown",
+        help="Collect phase breakdown timings.",
+    ),
+    memory_mode: str = typer.Option(
+        "getrusage",
+        "--memory-mode",
+        help=(
+            "Memory measurement strategy (see `excelbench perf --help`). "
+            "'getrusage' (default), 'tracemalloc', 'time', or 'all'."
+        ),
+    ),
+    regenerate: bool = typer.Option(
+        False,
+        "--regenerate",
+        help=(
+            "Force re-emit of synthetic fixtures even if the manifest looks "
+            "current. Useful after editing the generator."
+        ),
+    ),
+) -> None:
+    """Run the data-shape benchmark matrix (10 dtypes × 1k/10k/100k/1M).
+
+    Generates fixtures on-demand under ``--fixtures`` (gitignored), filters
+    the manifest down to the requested types × tiers, then runs the perf
+    harness. Inherits Sprint 1's --memory-mode plumbing.
+    """
+    import subprocess
+    import sys
+
+    from excelbench.harness.adapters import get_all_adapters
+    from excelbench.perf import render_perf_results, run_perf
+    from excelbench.perf.memory import VALID_MEMORY_MODES
+
+    if not isinstance(iteration_policy, str):
+        iteration_policy = "fixed"
+    if not isinstance(memory_mode, str):
+        memory_mode = "getrusage"
+
+    memory_mode_normalized = memory_mode.strip().lower()
+    if memory_mode_normalized not in VALID_MEMORY_MODES:
+        console.print(
+            f"[red]Error: --memory-mode must be one of {list(VALID_MEMORY_MODES)}; "
+            f"got {memory_mode!r}[/red]"
+        )
+        raise typer.Exit(1)
+
+    try:
+        read_features, write_features, tier_labels = _resolve_shape_features(
+            types_arg=types, rows=rows
+        )
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+    needs_1m = "1m" in tier_labels
+    manifest_path = fixtures / "manifest.json"
+    generator_script = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "generate_throughput_fixtures.py"
+    )
+
+    if regenerate or _shape_fixtures_stale(
+        manifest_path, generator_script, needs_1m=needs_1m
+    ):
+        gen_cmd = [
+            sys.executable,
+            str(generator_script),
+            "--shape-only",
+            "--output",
+            str(fixtures),
+        ]
+        if needs_1m:
+            gen_cmd.append("--include-1m")
+        console.print(f"[bold]Generating shape fixtures...[/bold] {' '.join(gen_cmd)}")
+        try:
+            subprocess.run(gen_cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            console.print(f"[red]Fixture generation failed (exit {e.returncode})[/red]")
+            raise typer.Exit(1)
+        except FileNotFoundError as e:
+            console.print(f"[red]Generator script not found: {e}[/red]")
+            raise typer.Exit(1)
+
+    available = get_all_adapters()
+    selected = available
+    if adapters:
+        wanted = [a.strip() for a in adapters if a.strip()]
+        by_name = {a.name: a for a in available}
+        missing = [a for a in wanted if a not in by_name]
+        if missing:
+            console.print(f"[red]Error: Unknown adapters: {', '.join(missing)}[/red]")
+            console.print(
+                f"[yellow]Available adapters: {', '.join(sorted(by_name.keys()))}[/yellow]"
+            )
+            raise typer.Exit(1)
+        selected = [by_name[name] for name in wanted]
+
+    feature_filter = read_features + write_features
+
+    console.print("[bold]Running data-shape benchmark...[/bold]")
+    console.print(f"  Fixtures: {fixtures}")
+    console.print(f"  Output: {output}/perf")
+    console.print(f"  Tiers: {', '.join(tier_labels)}")
+    console.print(f"  Dtypes: {types}")
+    console.print(
+        f"  Features: {len(feature_filter)} "
+        f"({len(read_features)} read + {len(write_features)} write)"
+    )
+    console.print(f"  Warmup: {warmup}  ·  Iterations: {iters}")
+    console.print(f"  Memory mode: {memory_mode_normalized}")
+    if adapters:
+        console.print(f"  Adapters: {', '.join([a.name for a in selected])}")
+    console.print()
+
+    try:
+        perf_results = run_perf(
+            fixtures,
+            adapters=selected,
+            features=feature_filter,
+            profile="xlsx",
+            warmup=warmup,
+            iters=iters,
+            iteration_policy=iteration_policy,
+            breakdown=breakdown,
+            memory_mode=memory_mode_normalized,  # type: ignore[arg-type]
+        )
+        render_perf_results(perf_results, output)
+
+        console.print(f"[green]✓ Data-shape results written to {output}/perf[/green]")
+        console.print(f"  - {output}/perf/results.json")
+        console.print(f"  - {output}/perf/README.md")
+        console.print(f"  - {output}/perf/matrix.csv")
+        console.print(f"  - {output}/perf/history.jsonl")
+
+    except FileNotFoundError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
 @app.command("generate-xls")
 def generate_xls_command(
     output_dir: Path = typer.Option(
