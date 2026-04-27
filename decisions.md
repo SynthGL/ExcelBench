@@ -40,6 +40,114 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-019 — Data-shape parametric scenarios + mixed-realistic ratio (2026-04-27)
+
+**Context**: Sprint 1 of the 7-Dimension Extension shipped honest memory
+measurement, but the perf manifest still grouped everything under a single
+"feature" axis (cell_values, formulas, ...). That axis is too coarse to answer
+the most actionable question users have when picking a library: *"how does
+this library handle int vs string vs formula loads at 1M cells?"*. Real
+libraries diverge by an order of magnitude across dtypes — openpyxl can be 5×
+slower on `string_long` than `int`; wolfxl wins biggest on `formula_*` and
+strings. Without dtype-axis data, the dashboard hides where each library is
+actually weakest. Sprint 2 closes that gap.
+
+The original sprint paragraph assumed Sprint 2 builds a new generator from
+scratch. Discovery contradicted that: ExcelBench already has a parallel
+"throughput fixtures" pipeline (`scripts/generate_throughput_fixtures.py` +
+`fixtures/throughput_xlsx/manifest.json` + `_run_workload_write`/`_run_workload_read`
+in the perf runner) that already supports parameterized cell counts and
+`value_type ∈ {number, string}`. Sprint 2 became an *extension* of those
+existing seams rather than a new infrastructure track.
+
+**Decision**:
+
+- **Matrix shape**: 10 dtypes × 4 cell-count tiers = 40 fixtures, each with
+  one bulk-read and one bulk-write workload (80 manifest rows total). Tiers
+  are 1k / 10k / 100k / 1M. Dtypes are int, float, string_short (≤16c),
+  string_long (≤512c), boolean, date, datetime, formula_simple
+  (`=SUM(A{r}:B{r})`), formula_cross_sheet (`=Sheet2!A{r}`), and
+  mixed_realistic.
+
+- **`mixed_realistic` ratio = 60/30/5/3/2** (short string / int / date /
+  formula / blank), calibrated against a 50-file public xlsx survey
+  documented at `fixtures/synthetic_calibration/sample_set.md`. The ratio is
+  rounded from observed class-weighted means (58-63% / 27-32% / 4-7% /
+  2-5% / 1-3%) and is deliberately deterministic per-cell-index so runs
+  reproduce across libraries.
+
+- **1M tier gated behind `--include-1m`** so `python scripts/generate_throughput_fixtures.py`
+  default runs stay under 30s. Full 1M generation is ~5 min on the bench
+  machine.
+
+- **Generator extension, not rewrite**: new function
+  `generate_data_shape_scenarios()` reuses the existing `_xlsx_workbook` /
+  `_coord_to_cell` helpers; the runner extension adds 7 new branches
+  (`float`, `date`, `datetime`, `boolean`, `formula_simple`,
+  `formula_cross_sheet`, `mixed_realistic`) inside the existing `value_type`
+  dispatch in `_run_workload_write`. `string_short` and `string_long` fold
+  into the existing `string` op via `string_length=16` / `string_length=512`.
+
+- **`perf-shape` CLI subcommand** is a thin wrapper: it computes the feature
+  filter from `--rows` (largest tier) and `--types`, regenerates fixtures
+  on-demand if the manifest is stale, and delegates to `run_perf` —
+  inheriting Sprint 1's `--memory-mode` plumbing for free.
+
+- **Dashboard tab** renders one heatmap per direction (read, write) with
+  rows = library (sorted by overall median ms/100k), columns = 10 dtypes,
+  cell = ms/100k cells at the largest tier the run has data for. Color is
+  log-scale green→red, **normalized per dtype-column** so a slow column
+  (formula_cross_sheet) doesn't wash out fast columns (int).
+
+**Alternatives considered**:
+
+1. **`value_type=any` mode that randomizes per-cell** — rejected. Cross-run
+   reproducibility is more valuable than realism here; libraries running on
+   different inputs can't be compared apples-to-apples. The deterministic
+   `mixed_realistic` ratio gives the same per-cell-index distribution every
+   time.
+
+2. **Generate fixtures via openpyxl `write_only` mode** — rejected.
+   `fixtures/throughput_xlsx/README.md` already documents that pylightxl
+   chokes on openpyxl's namespace placement in `xl/workbook.xml`. Switching
+   would silently break a downstream adapter.
+
+3. **Sample real workbooks from EDGAR / public sources directly** —
+   deferred. Licensing complexity (mixed sources, some scraping involved)
+   plus manifest stability concerns (real files churn as upstreams update)
+   would slow the sprint without proportional accuracy gain. The 50-file
+   calibration is a reasonable proxy.
+
+4. **One scenario per (dtype × tier) pair without separate read/write
+   features** — rejected. The runner's `_workload_operations` already
+   distinguishes by feature; collapsing them would lose the read-vs-write
+   divergence (which is itself a key signal — wolfxl's read path and write
+   path have very different cost profiles).
+
+**Consequences**:
+
+- 40 fixtures + ~250MB scratch on first cold run. Subsequent runs reuse
+  cached fixtures keyed by manifest mtime vs generator-script mtime.
+- Full read+write matrix at 1M tier completes in <30 min on the bench
+  machine across the 16+ adapter set.
+- New `data_shape_*` feature names are additive — existing perf consumers
+  (history JSONL, perf README, perf CSV) accept arbitrary feature strings,
+  so no schema changes are required. The dashboard only renders the new
+  tab when at least one `data_shape_*` entry is present.
+- The `formula_cross_sheet` dtype may surface adapter-specific quirks where
+  some libs auto-evaluate formula values on write (returning numbers
+  instead of formula strings). If that happens during full-run collection,
+  the affected adapters can be skipped via `notes_parts` without re-planning
+  this sprint.
+- TODO (deferred): re-calibrate `mixed_realistic` against a >500-file
+  corpus once a stable, well-licensed source is identified. The current 50-
+  file sample is rounded conservatively; a larger survey could shift any
+  ratio by 5-10 points but is not blocking.
+
+**Commit(s)**: Sprint 2, branch `feat/perf-data-shape`.
+
+---
+
 ### DEC-018 — Three coexisting memory-measurement modes (2026-04-27)
 
 **Context**: Until Sprint 1 of the 7-Dimension Extension, the perf runner reported a single

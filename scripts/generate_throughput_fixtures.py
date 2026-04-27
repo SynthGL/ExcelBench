@@ -12,14 +12,37 @@ from __future__ import annotations
 import argparse
 from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
+from typing import Any
 
 import xlsxwriter
 from xlsxwriter.worksheet import Worksheet
 
 from excelbench.generator.generate import write_manifest
 from excelbench.models import Importance, Manifest, TestCase, TestFile
+
+# Data-shape matrix: 10 dtypes × 4 tiers (1M tier gated behind --include-1m).
+# See DEC-019 for the rationale and the mixed_realistic ratio choice.
+DATA_SHAPE_DTYPES: list[str] = [
+    "int",
+    "float",
+    "string_short",
+    "string_long",
+    "boolean",
+    "date",
+    "datetime",
+    "formula_simple",
+    "formula_cross_sheet",
+    "mixed_realistic",
+]
+
+DATA_SHAPE_TIERS: list[tuple[str, int, int]] = [
+    ("1k", 40, 25),       # 1000 cells
+    ("10k", 100, 100),    # 10000 cells
+    ("100k", 316, 316),   # ~99856 cells
+    ("1m", 1000, 1000),   # 1000000 cells
+]
 
 
 @contextmanager
@@ -176,6 +199,255 @@ def _generate_borders_grid(
                 ws.write_string(r, c, "Border", fmt)
 
 
+def _generate_data_shape_grid(
+    *,
+    path: Path,
+    sheet: str,
+    rows: int,
+    cols: int,
+    dtype: str,
+) -> None:
+    """Generate one xlsx fixture for a (dtype, tier) pair.
+
+    Per-cell value generation mirrors the runner's `_run_workload_write` so that
+    a generated file roundtrips deterministically: the same per-cell-index value
+    that gets written by the bench is what's read back at iteration time. Keep
+    the two in sync if either side changes.
+    """
+    with _xlsx_workbook(path, sheet) as (wb, ws):
+        if dtype == "int":
+            for r in range(rows):
+                for c in range(cols):
+                    ws.write_number(r, c, r * cols + c + 1)
+            return
+
+        if dtype == "float":
+            for r in range(rows):
+                for c in range(cols):
+                    ws.write_number(r, c, (r * cols + c + 1) * 1.5)
+            return
+
+        if dtype == "string_short":
+            for r in range(rows):
+                for c in range(cols):
+                    v = r * cols + c + 1
+                    s = f"S{v}"
+                    if len(s) < 16:
+                        s = s + "x" * (16 - len(s))
+                    ws.write_string(r, c, s[:16])
+            return
+
+        if dtype == "string_long":
+            for r in range(rows):
+                for c in range(cols):
+                    v = r * cols + c + 1
+                    s = f"S{v}"
+                    if len(s) < 512:
+                        s = s + "x" * (512 - len(s))
+                    ws.write_string(r, c, s[:512])
+            return
+
+        if dtype == "boolean":
+            for r in range(rows):
+                for c in range(cols):
+                    ws.write_boolean(r, c, bool((r * cols + c) % 2))
+            return
+
+        if dtype == "date":
+            date_fmt = wb.add_format({"num_format": "yyyy-mm-dd"})
+            base = date(2020, 1, 1)
+            for r in range(rows):
+                for c in range(cols):
+                    v = r * cols + c
+                    ws.write_datetime(r, c, base + timedelta(days=v), date_fmt)
+            return
+
+        if dtype == "datetime":
+            dt_fmt = wb.add_format({"num_format": "yyyy-mm-dd hh:mm:ss"})
+            base = datetime(2020, 1, 1)
+            for r in range(rows):
+                for c in range(cols):
+                    v = r * cols + c
+                    ws.write_datetime(r, c, base + timedelta(seconds=v), dt_fmt)
+            return
+
+        if dtype == "formula_simple":
+            for r in range(rows):
+                for c in range(cols):
+                    ws.write_formula(r, c, f"=SUM(A{r + 1}:B{r + 1})")
+            return
+
+        if dtype == "formula_cross_sheet":
+            ws2 = wb.add_worksheet("Sheet2")
+            for r in range(rows):
+                ws2.write_number(r, 0, r + 1)
+            for r in range(rows):
+                for c in range(cols):
+                    ws.write_formula(r, c, f"=Sheet2!A{r + 1}")
+            return
+
+        if dtype == "mixed_realistic":
+            # 60% short string, 30% int, 5% date, 3% formula, 2% blank — DEC-019.
+            date_fmt = wb.add_format({"num_format": "yyyy-mm-dd"})
+            base = date(2020, 1, 1)
+            for r in range(rows):
+                for c in range(cols):
+                    idx = r * cols + c
+                    bucket = idx % 100
+                    v = idx + 1
+                    if bucket < 60:
+                        s = f"S{v}"
+                        if len(s) < 16:
+                            s = s + "x" * (16 - len(s))
+                        ws.write_string(r, c, s[:16])
+                    elif bucket < 90:
+                        ws.write_number(r, c, v)
+                    elif bucket < 95:
+                        ws.write_datetime(r, c, base + timedelta(days=v), date_fmt)
+                    elif bucket < 98:
+                        ws.write_formula(r, c, f"=SUM(A{r + 1}:B{r + 1})")
+                    else:
+                        ws.write_blank(r, c, None)
+            return
+
+        raise ValueError(f"Unsupported data-shape dtype: {dtype!r}")
+
+
+def _data_shape_write_workload(
+    *, dtype: str, sheet: str, rng: str, scenario: str
+) -> dict[str, Any]:
+    """Return the bulk_write_grid workload spec for a (dtype, scenario) pair.
+
+    The spec is interpreted by the runner's `_run_workload_write`. Most dtypes
+    map 1:1 to a runner `value_type`; the string sub-variants fold into the
+    existing `string` op via `string_length`.
+    """
+    base: dict[str, Any] = {
+        "scenario": scenario,
+        "op": "bulk_write_grid",
+        "operations": ["write"],
+        "sheet": sheet,
+        "range": rng,
+        "start": 1,
+        "step": 1,
+    }
+
+    if dtype == "int":
+        base["value_type"] = "number"
+    elif dtype == "float":
+        base["value_type"] = "float"
+    elif dtype == "string_short":
+        base["value_type"] = "string"
+        base["string_length"] = 16
+    elif dtype == "string_long":
+        base["value_type"] = "string"
+        base["string_length"] = 512
+    elif dtype in {
+        "boolean",
+        "date",
+        "datetime",
+        "formula_simple",
+        "formula_cross_sheet",
+        "mixed_realistic",
+    }:
+        base["value_type"] = dtype
+    else:
+        raise ValueError(f"Unsupported data-shape dtype: {dtype!r}")
+
+    return base
+
+
+def generate_data_shape_scenarios(
+    tier_dir: Path,
+    *,
+    include_1m: bool = False,
+) -> list[TestFile]:
+    """Emit (dtype × tier) fixtures and TestFile manifest entries.
+
+    Default emits 10 dtypes × 3 tiers (1k/10k/100k) = 30 fixtures, each with one
+    bulk_read and one bulk_write workload entry (60 manifest rows).
+
+    With ``include_1m=True`` adds the 1M tier (10 more fixtures, 20 more rows).
+    The 1M tier is gated because xlsxwriter spends ~3s per 100k cells generating
+    a fixture; full 1M run is ~30s × 10 dtypes ≈ 5 min on a bench machine.
+    """
+    files: list[TestFile] = []
+    sheet = "S1"
+
+    for dtype in DATA_SHAPE_DTYPES:
+        for tier_label, rows, cols in DATA_SHAPE_TIERS:
+            if tier_label == "1m" and not include_1m:
+                continue
+
+            scenario = f"data_shape_{dtype}_{tier_label}"
+            filename = f"00_{scenario}.xlsx"
+            end_cell = _coord_to_cell(rows, cols)
+            rng = f"A1:{end_cell}"
+
+            _generate_data_shape_grid(
+                path=tier_dir / filename,
+                sheet=sheet,
+                rows=rows,
+                cols=cols,
+                dtype=dtype,
+            )
+
+            read_feature = f"{scenario}_bulk_read"
+            files.append(
+                TestFile(
+                    path=f"tier0/{filename}",
+                    feature=read_feature,
+                    tier=0,
+                    file_format="xlsx",
+                    test_cases=[
+                        TestCase(
+                            id=read_feature,
+                            label=f"Data shape: {dtype} bulk read ({tier_label})",
+                            row=1,
+                            expected={
+                                "workload": {
+                                    "scenario": read_feature,
+                                    "op": "bulk_sheet_values",
+                                    "operations": ["read"],
+                                    "sheet": sheet,
+                                    "range": rng,
+                                }
+                            },
+                            importance=Importance.BASIC,
+                        )
+                    ],
+                )
+            )
+
+            write_feature = f"{scenario}_bulk_write"
+            files.append(
+                TestFile(
+                    path=f"tier0/{filename}",
+                    feature=write_feature,
+                    tier=0,
+                    file_format="xlsx",
+                    test_cases=[
+                        TestCase(
+                            id=write_feature,
+                            label=f"Data shape: {dtype} bulk write ({tier_label})",
+                            row=1,
+                            expected={
+                                "workload": _data_shape_write_workload(
+                                    dtype=dtype,
+                                    sheet=sheet,
+                                    rng=rng,
+                                    scenario=write_feature,
+                                ),
+                            },
+                            importance=Importance.BASIC,
+                        )
+                    ],
+                )
+            )
+
+    return files
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate ExcelBench throughput fixtures")
     parser.add_argument(
@@ -190,6 +462,22 @@ def main() -> None:
         action="store_true",
         help="Also generate a ~100k-cell fixture (can take a while).",
     )
+    parser.add_argument(
+        "--shape-only",
+        action="store_true",
+        help=(
+            "Skip legacy throughput scenarios; emit only the data-shape "
+            "matrix (10 dtypes × 1k/10k/100k tiers, +1M with --include-1m)."
+        ),
+    )
+    parser.add_argument(
+        "--include-1m",
+        action="store_true",
+        help=(
+            "Include the 1M-cell tier in the data-shape matrix. Generation "
+            "takes ~5 min on a bench machine."
+        ),
+    )
     args = parser.parse_args()
 
     out = Path(args.output)
@@ -197,6 +485,22 @@ def main() -> None:
     tier_dir.mkdir(parents=True, exist_ok=True)
 
     files: list[TestFile] = []
+
+    if args.shape_only:
+        files.extend(
+            generate_data_shape_scenarios(tier_dir, include_1m=args.include_1m)
+        )
+        manifest = Manifest(
+            generated_at=datetime.now(UTC),
+            excel_version="xlsxwriter-generated",
+            generator_version="throughput-0.2.0-shape",
+            file_format="xlsx",
+            files=files,
+        )
+        write_manifest(manifest, out / "manifest.json")
+        print(f"✓ Wrote {len(files)} data-shape fixture(s) to {out}")
+        print(f"  Manifest: {out / 'manifest.json'}")
+        return
 
     # 10k = 100x100
     scenario = "cell_values_10k"
@@ -1452,10 +1756,17 @@ def main() -> None:
             )
         )
 
+    # Append data-shape scenarios alongside legacy in default mode.
+    # 1M tier still gated behind --include-1m to keep default generation under
+    # 30s per the plan budget.
+    files.extend(
+        generate_data_shape_scenarios(tier_dir, include_1m=args.include_1m)
+    )
+
     manifest = Manifest(
         generated_at=datetime.now(UTC),
         excel_version="xlsxwriter-generated",
-        generator_version="throughput-0.1.0",
+        generator_version="throughput-0.2.0",
         file_format="xlsx",
         files=files,
     )

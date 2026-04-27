@@ -75,3 +75,39 @@ When `--include-100k` is enabled, the manifest also includes:
 - `cell_values_100k`
 - `cell_values_100k_bulk_read`
 - `cell_values_100k_bulk_write`
+
+## Data-shape matrix (Sprint 2 — `feat/perf-data-shape`)
+
+In addition to the legacy scenarios above, the generator emits a parametric
+`(dtype × tier)` matrix used by `excelbench perf-shape`. Each (dtype, tier)
+pair produces one fixture file plus two manifest entries (`_bulk_read` and
+`_bulk_write`).
+
+**Tiers**: `1k` (40×25), `10k` (100×100), `100k` (316×316), `1m` (1000×1000).
+The `1m` tier is gated behind `--include-1m` because xlsxwriter generation
+takes ~5 min for the full 1M slice. Default invocation emits 1k/10k/100k.
+
+**Dtypes** (10 total):
+
+- `int` — sequential integers
+- `float` — sequential integers × 1.5 (forces float type)
+- `string_short` — padded to 16 chars
+- `string_long` — padded to 512 chars
+- `boolean` — alternating True/False
+- `date` — `2020-01-01 + N days`
+- `datetime` — `2020-01-01 00:00:00 + N seconds`
+- `formula_simple` — `=SUM(A{r}:B{r})` (per row)
+- `formula_cross_sheet` — `=Sheet2!A{r}` (Sheet2 pre-populated)
+- `mixed_realistic` — 60/30/5/3/2 mix (short string / int / date / formula /
+  blank), calibrated from a 50-file survey; see
+  `fixtures/synthetic_calibration/sample_set.md` and DEC-019 for provenance.
+
+To emit only the shape matrix (skipping legacy scenarios) for fast iteration:
+
+```bash
+uv run python scripts/generate_throughput_fixtures.py --shape-only --include-1m
+```
+
+The 40 shape feature names follow the pattern
+`data_shape_<dtype>_<tier>_bulk_<read|write>`, e.g.
+`data_shape_formula_cross_sheet_1m_bulk_read`.
