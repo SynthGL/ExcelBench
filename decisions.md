@@ -40,6 +40,54 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-018 — Three coexisting memory-measurement modes (2026-04-27)
+
+**Context**: Until Sprint 1 of the 7-Dimension Extension, the perf runner reported a single
+memory number — peak RSS via `resource.getrusage(RUSAGE_SELF).ru_maxrss`. Two problems with
+that single number: (1) `getrusage` returns the **process-lifetime peak**, so once the first
+heavy iteration has allocated, subsequent iterations report the same sticky max even if they
+allocated less — making per-iteration comparisons misleading; (2) ad-hoc 100k → 1M cell
+benchmarks against openpyxl from the wolfxl 1.0 work showed the `getrusage` peak diverges
+from `/usr/bin/time -l` peaks by 30-300% on large workloads, depending on Rust allocator
+release behavior. There is no single right number — different libraries pay memory cost in
+different places (Python heap vs Rust heap vs OS pages) and the perf dashboard needs to be
+honest about that asymmetry rather than pretending a single column tells the truth.
+
+**Decision**: Coexist three modes via a new `--memory-mode` flag, all populating the existing
+`PerfOpResult` dataclass with separate fields:
+
+- `getrusage` (default, cheap): in-process `RUSAGE_SELF.ru_maxrss`. Preserved as the hot-path
+  default — fast, but documented as lifetime-peak-sticky.
+- `tracemalloc`: in-process `tracemalloc.get_traced_memory()`. Adds the Python heap peak.
+  Misleading for Rust-backed adapters (wolfxl, python-calamine, rust_xlsxwriter) because it
+  cannot see native allocations; honest for pure-Python adapters.
+- `time`: spawn each iteration under `/usr/bin/time -l` and parse peak RSS from stderr.
+  Honest about Rust allocations because the OS reports it. Slow (subprocess startup +
+  adapter import per iteration); quarterly deep-dive only.
+- `all`: composite — every iteration runs in-process (capturing getrusage + tracemalloc) AND
+  in a fresh subprocess (capturing time-l RSS). Used for the memory-deep-dive bench, not CI.
+
+The dashboard renders `RSS (MB) — getrusage / time -l` as a dual cell with a tooltip
+explaining the divergence whenever any entry has the time-l field populated.
+
+**Alternatives considered**: (1) Replace `getrusage` with `psutil.Process().memory_info().rss`
+polling — rejected: still in-process, still subject to allocator-release lag, and adds a
+mandatory third-party dependency to the runner. (2) Drop `getrusage` once `time -l` is
+available — rejected: `time -l` is 50-500x slower per iteration, breaking the CI hot path.
+(3) Single `multi_mode` field instead of three separate fields — rejected: makes the JSON
+schema lossy (can't tell which number came from which mode in a composite run).
+
+**Consequences**: `PerfOpResult` JSON now carries `rss_kb_via_time` and `python_heap_peak_kb`
+in addition to the existing `rss_peak_mb`. Downstream dashboards must accept these as
+optional fields. The `time` and `all` modes spawn one subprocess per iteration via the new
+private `excelbench.perf._iter_subprocess` module; on Windows where `/usr/bin/time` does not
+exist, `rss_kb_via_time` is silently `None`. Comparisons across past results remain valid
+because the existing `rss_peak_mb` field is unchanged.
+
+**Commit(s)**: Sprint 1, branch `feat/perf-mem-honesty`.
+
+---
+
 ### DEC-017 — Do not inject Excel alignment defaults in benchmark comparisons (2026-02-17)
 
 **Context**: Several value-focused adapters return an empty `CellFormat()` for alignment reads/writes.

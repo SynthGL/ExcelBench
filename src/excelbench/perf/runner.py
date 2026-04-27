@@ -8,10 +8,19 @@ Design principles:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
+
+from excelbench.perf.memory import (
+    VALID_MEMORY_MODES,
+    MemoryMode,
+    MemoryProbe,
+    includes_time,
+    run_iteration_under_time_l,
+)
 
 
 @dataclass(frozen=True)
@@ -38,6 +47,15 @@ class PerfOpResult:
     phase_attribution_ms: dict[str, float] | None = None
     op_count: int | None = None
     op_unit: str | None = None
+    # Honest peak RSS measured via `/usr/bin/time -l` in a fresh subprocess.
+    # ``None`` when memory_mode does not include ``time`` or the platform lacks
+    # ``/usr/bin/time``. Includes Python startup + adapter import cost (a feature,
+    # not a bug — see decisions.md DEC-018).
+    rss_kb_via_time: float | None = None
+    # Peak Python heap via tracemalloc. ``None`` when memory_mode does not
+    # include ``tracemalloc``. Misses Rust / PyO3 / native allocations — useful
+    # only for pure-Python adapters.
+    python_heap_peak_kb: float | None = None
 
 
 @dataclass(frozen=True)
@@ -81,6 +99,7 @@ def run_perf(
     iters: int = 25,
     iteration_policy: str = "fixed",
     breakdown: bool = False,
+    memory_mode: MemoryMode = "getrusage",
 ) -> PerfResults:
     import platform as _platform
 
@@ -97,6 +116,10 @@ def run_perf(
     iteration_policy_normalized = iteration_policy.strip().lower()
     if iteration_policy_normalized != "fixed":
         raise ValueError("iteration_policy must be 'fixed'")
+    if memory_mode not in VALID_MEMORY_MODES:
+        raise ValueError(
+            f"memory_mode must be one of {VALID_MEMORY_MODES}; got {memory_mode!r}"
+        )
 
     manifest = load_manifest(manifest_path)
 
@@ -165,6 +188,8 @@ def run_perf(
                             warmup=warmup,
                             iters=iters,
                             breakdown=breakdown,
+                            memory_mode=memory_mode,
+                            manifest_path=manifest_path,
                         )
                     except Exception as e:
                         notes_parts.append(f"Read failed: {type(e).__name__}: {e}")
@@ -181,6 +206,8 @@ def run_perf(
                             warmup=warmup,
                             iters=iters,
                             breakdown=breakdown,
+                            memory_mode=memory_mode,
+                            manifest_path=manifest_path,
                         )
                     except Exception as e:
                         notes_parts.append(f"Write failed: {type(e).__name__}: {e}")
@@ -241,6 +268,8 @@ def _op_result_to_dict(op: PerfOpResult | None) -> dict[str, Any] | None:
         "phase_attribution_ms": op.phase_attribution_ms,
         "op_count": op.op_count,
         "op_unit": op.op_unit,
+        "rss_kb_via_time": op.rss_kb_via_time,
+        "python_heap_peak_kb": op.python_heap_peak_kb,
     }
 
 
@@ -278,6 +307,8 @@ def _bench_read(
     warmup: int,
     iters: int,
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
+    manifest_path: Path | None = None,
 ) -> PerfOpResult:
     workload = _extract_single_workload(test_file)
     if workload is not None:
@@ -288,21 +319,33 @@ def _bench_read(
             iters=iters,
             breakdown=breakdown,
             workload=workload,
+            memory_mode=memory_mode,
+            manifest_path=manifest_path,
         )
 
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
     rss_samples: list[float] = []
+    heap_samples: list[float] = []
+    time_rss_samples: list[float] = []
 
     phase_samples: dict[str, list[float]] = {"open": [], "sheets": [], "exercise": [], "close": []}
     attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     for i in range(warmup + iters):
-        m = _measure_read_iteration(
-            adapter=adapter,
-            test_file=test_file,
-            file_path=file_path,
-            breakdown=breakdown,
+        m, rss_kb = _measure_one_sample(
+            memory_mode=memory_mode,
+            manifest_path=manifest_path,
+            adapter_name=adapter.name,
+            kind="read",
+            feature=test_file.feature,
+            in_process=lambda: _measure_read_iteration(
+                adapter=adapter,
+                test_file=test_file,
+                file_path=file_path,
+                breakdown=breakdown,
+                memory_mode=memory_mode,
+            ),
         )
         if i < warmup:
             continue
@@ -310,12 +353,17 @@ def _bench_read(
         cpu_samples.append(m["cpu_ms"])
         if m.get("rss_peak_mb") is not None:
             rss_samples.append(float(m["rss_peak_mb"]))
+        if m.get("python_heap_peak_kb") is not None:
+            heap_samples.append(float(m["python_heap_peak_kb"]))
         if breakdown and m.get("breakdown_ms"):
             for k, v in m["breakdown_ms"].items():
                 phase_samples.setdefault(k, []).append(float(v))
         coarse = _phase_attribution_from_measurement(op_kind="read", measurement=m)
         for k, v in coarse.items():
             attribution_samples.setdefault(k, []).append(float(v))
+
+        if rss_kb is not None:
+            time_rss_samples.append(rss_kb)
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -327,6 +375,8 @@ def _bench_read(
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
         phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
+        rss_kb_via_time=max(time_rss_samples) if time_rss_samples else None,
+        python_heap_peak_kb=max(heap_samples) if heap_samples else None,
     )
 
 
@@ -338,6 +388,8 @@ def _bench_read_workload(
     iters: int,
     breakdown: bool,
     workload: dict[str, Any],
+    memory_mode: MemoryMode = "getrusage",
+    manifest_path: Path | None = None,
 ) -> PerfOpResult:
     cells = _cells_from_range(workload["range"])
     op_count = len(cells)
@@ -345,16 +397,28 @@ def _bench_read_workload(
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
     rss_samples: list[float] = []
+    heap_samples: list[float] = []
+    time_rss_samples: list[float] = []
     phase_samples: dict[str, list[float]] = {"open": [], "sheets": [], "exercise": [], "close": []}
     attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
+    feature_name = str(workload.get("scenario") or workload.get("feature") or "")
+
     for i in range(warmup + iters):
-        m = _measure_read_workload_iteration(
-            adapter=adapter,
-            file_path=file_path,
-            workload=workload,
-            cells=cells,
-            breakdown=breakdown,
+        m, rss_kb = _measure_one_sample(
+            memory_mode=memory_mode,
+            manifest_path=manifest_path,
+            adapter_name=adapter.name,
+            kind="read",
+            feature=feature_name,
+            in_process=lambda: _measure_read_workload_iteration(
+                adapter=adapter,
+                file_path=file_path,
+                workload=workload,
+                cells=cells,
+                breakdown=breakdown,
+                memory_mode=memory_mode,
+            ),
         )
         if i < warmup:
             continue
@@ -362,12 +426,17 @@ def _bench_read_workload(
         cpu_samples.append(m["cpu_ms"])
         if m.get("rss_peak_mb") is not None:
             rss_samples.append(float(m["rss_peak_mb"]))
+        if m.get("python_heap_peak_kb") is not None:
+            heap_samples.append(float(m["python_heap_peak_kb"]))
         if breakdown and m.get("breakdown_ms"):
             for k, v in m["breakdown_ms"].items():
                 phase_samples.setdefault(k, []).append(float(v))
         coarse = _phase_attribution_from_measurement(op_kind="read", measurement=m)
         for k, v in coarse.items():
             attribution_samples.setdefault(k, []).append(float(v))
+
+        if rss_kb is not None:
+            time_rss_samples.append(rss_kb)
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -381,6 +450,8 @@ def _bench_read_workload(
         phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
         op_count=op_count,
         op_unit="cells",
+        rss_kb_via_time=max(time_rss_samples) if time_rss_samples else None,
+        python_heap_peak_kb=max(heap_samples) if heap_samples else None,
     )
 
 
@@ -390,62 +461,59 @@ def _measure_read_iteration(
     test_file: Any,
     file_path: Path,
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
 ) -> dict[str, Any]:
-    import resource
     import time
 
     from excelbench.harness import runner as fidelity
 
-    rss_before = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-
-    wall0 = time.perf_counter_ns()
-    cpu0 = time.process_time_ns()
-
     phases: dict[str, float] = {}
 
-    t0 = time.perf_counter_ns()
-    workbook = adapter.open_workbook(file_path)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["open"] = _ns_to_ms(t1 - t0)
+    with MemoryProbe(memory_mode) as probe:
+        wall0 = time.perf_counter_ns()
+        cpu0 = time.process_time_ns()
 
-    t0 = time.perf_counter_ns()
-    sheet_names = adapter.get_sheet_names(workbook)
-    default_sheet = sheet_names[0] if sheet_names else test_file.feature
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["sheets"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        workbook = adapter.open_workbook(file_path)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["open"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    for tc in test_file.test_cases:
-        _exercise_read_case(
-            fidelity=fidelity,
-            adapter=adapter,
-            workbook=workbook,
-            default_sheet=default_sheet,
-            test_case=tc,
-            feature=test_file.feature,
-        )
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["exercise"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        sheet_names = adapter.get_sheet_names(workbook)
+        default_sheet = sheet_names[0] if sheet_names else test_file.feature
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["sheets"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    adapter.close_workbook(workbook)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["close"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        for tc in test_file.test_cases:
+            _exercise_read_case(
+                fidelity=fidelity,
+                adapter=adapter,
+                workbook=workbook,
+                default_sheet=default_sheet,
+                test_case=tc,
+                feature=test_file.feature,
+            )
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["exercise"] = _ns_to_ms(t1 - t0)
 
-    wall1 = time.perf_counter_ns()
-    cpu1 = time.process_time_ns()
+        t0 = time.perf_counter_ns()
+        adapter.close_workbook(workbook)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["close"] = _ns_to_ms(t1 - t0)
 
-    rss_after = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    rss_peak = max(rss_before, rss_after)
+        wall1 = time.perf_counter_ns()
+        cpu1 = time.process_time_ns()
 
     return {
         "wall_ms": _ns_to_ms(wall1 - wall0),
         "cpu_ms": _ns_to_ms(cpu1 - cpu0),
-        "rss_peak_mb": rss_peak,
+        "rss_peak_mb": _kb_to_mb(probe.sample.rss_via_getrusage_kb),
+        "python_heap_peak_kb": probe.sample.python_heap_peak_kb,
         "breakdown_ms": phases if breakdown else None,
     }
 
@@ -508,6 +576,8 @@ def _bench_write(
     warmup: int,
     iters: int,
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
+    manifest_path: Path | None = None,
 ) -> PerfOpResult:
     workload = _extract_single_workload(test_file)
     if workload is not None:
@@ -517,6 +587,8 @@ def _bench_write(
             iters=iters,
             breakdown=breakdown,
             workload=workload,
+            memory_mode=memory_mode,
+            manifest_path=manifest_path,
         )
 
     import tempfile
@@ -524,6 +596,8 @@ def _bench_write(
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
     rss_samples: list[float] = []
+    heap_samples: list[float] = []
+    time_rss_samples: list[float] = []
     phase_samples: dict[str, list[float]] = {
         "create": [],
         "add_sheets": [],
@@ -541,11 +615,19 @@ def _bench_write(
         out_path = out_dir / f"{feature_stem}{ext}"
 
         for i in range(warmup + iters):
-            m = _measure_write_iteration(
-                adapter=adapter,
-                test_file=test_file,
-                output_path=out_path,
-                breakdown=breakdown,
+            m, rss_kb = _measure_one_sample(
+                memory_mode=memory_mode,
+                manifest_path=manifest_path,
+                adapter_name=adapter.name,
+                kind="write",
+                feature=test_file.feature,
+                in_process=lambda: _measure_write_iteration(
+                    adapter=adapter,
+                    test_file=test_file,
+                    output_path=out_path,
+                    breakdown=breakdown,
+                    memory_mode=memory_mode,
+                ),
             )
             if i < warmup:
                 continue
@@ -553,12 +635,17 @@ def _bench_write(
             cpu_samples.append(m["cpu_ms"])
             if m.get("rss_peak_mb") is not None:
                 rss_samples.append(float(m["rss_peak_mb"]))
+            if m.get("python_heap_peak_kb") is not None:
+                heap_samples.append(float(m["python_heap_peak_kb"]))
             if breakdown and m.get("breakdown_ms"):
                 for k, v in m["breakdown_ms"].items():
                     phase_samples.setdefault(k, []).append(float(v))
             coarse = _phase_attribution_from_measurement(op_kind="write", measurement=m)
             for k, v in coarse.items():
                 attribution_samples.setdefault(k, []).append(float(v))
+
+            if rss_kb is not None:
+                time_rss_samples.append(rss_kb)
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -570,6 +657,8 @@ def _bench_write(
         rss_peak_mb=max(rss_samples) if rss_samples else None,
         breakdown_ms=breakdown_out,
         phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
+        rss_kb_via_time=max(time_rss_samples) if time_rss_samples else None,
+        python_heap_peak_kb=max(heap_samples) if heap_samples else None,
     )
 
 
@@ -580,6 +669,8 @@ def _bench_write_workload(
     iters: int,
     breakdown: bool,
     workload: dict[str, Any],
+    memory_mode: MemoryMode = "getrusage",
+    manifest_path: Path | None = None,
 ) -> PerfOpResult:
     import tempfile
 
@@ -594,6 +685,8 @@ def _bench_write_workload(
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
     rss_samples: list[float] = []
+    heap_samples: list[float] = []
+    time_rss_samples: list[float] = []
     phase_samples: dict[str, list[float]] = {
         "create": [],
         "add_sheets": [],
@@ -603,6 +696,7 @@ def _bench_write_workload(
     attribution_samples: dict[str, list[float]] = {"parse": [], "write": [], "verify": []}
 
     feature_stem = Path(str(workload.get("scenario") or "workload")).name
+    feature_name = str(workload.get("scenario") or workload.get("feature") or "")
     ext = adapter.output_extension
 
     with tempfile.TemporaryDirectory() as tmpdir:
@@ -611,12 +705,20 @@ def _bench_write_workload(
         out_path = out_dir / f"{feature_stem}{ext}"
 
         for i in range(warmup + iters):
-            m = _measure_write_workload_iteration(
-                adapter=adapter,
-                output_path=out_path,
-                workload=workload,
-                cells=cells,
-                breakdown=breakdown,
+            m, rss_kb = _measure_one_sample(
+                memory_mode=memory_mode,
+                manifest_path=manifest_path,
+                adapter_name=adapter.name,
+                kind="write",
+                feature=feature_name,
+                in_process=lambda: _measure_write_workload_iteration(
+                    adapter=adapter,
+                    output_path=out_path,
+                    workload=workload,
+                    cells=cells,
+                    breakdown=breakdown,
+                    memory_mode=memory_mode,
+                ),
             )
             if i < warmup:
                 continue
@@ -624,12 +726,17 @@ def _bench_write_workload(
             cpu_samples.append(m["cpu_ms"])
             if m.get("rss_peak_mb") is not None:
                 rss_samples.append(float(m["rss_peak_mb"]))
+            if m.get("python_heap_peak_kb") is not None:
+                heap_samples.append(float(m["python_heap_peak_kb"]))
             if breakdown and m.get("breakdown_ms"):
                 for k, v in m["breakdown_ms"].items():
                     phase_samples.setdefault(k, []).append(float(v))
             coarse = _phase_attribution_from_measurement(op_kind="write", measurement=m)
             for k, v in coarse.items():
                 attribution_samples.setdefault(k, []).append(float(v))
+
+            if rss_kb is not None:
+                time_rss_samples.append(rss_kb)
 
     breakdown_out: dict[str, float] | None = None
     if breakdown:
@@ -643,6 +750,8 @@ def _bench_write_workload(
         phase_attribution_ms={k: _stats(v).p50 for k, v in attribution_samples.items() if v},
         op_count=op_count,
         op_unit="cells",
+        rss_kb_via_time=max(time_rss_samples) if time_rss_samples else None,
+        python_heap_peak_kb=max(heap_samples) if heap_samples else None,
     )
 
 
@@ -653,51 +762,48 @@ def _measure_read_workload_iteration(
     workload: dict[str, Any],
     cells: list[str],
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
 ) -> dict[str, Any]:
-    import resource
     import time
-
-    rss_before = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-
-    wall0 = time.perf_counter_ns()
-    cpu0 = time.process_time_ns()
 
     phases: dict[str, float] = {}
 
-    t0 = time.perf_counter_ns()
-    workbook = adapter.open_workbook(file_path)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["open"] = _ns_to_ms(t1 - t0)
+    with MemoryProbe(memory_mode) as probe:
+        wall0 = time.perf_counter_ns()
+        cpu0 = time.process_time_ns()
 
-    t0 = time.perf_counter_ns()
-    adapter.get_sheet_names(workbook)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["sheets"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        workbook = adapter.open_workbook(file_path)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["open"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    _run_workload_read(adapter=adapter, workbook=workbook, workload=workload, cells=cells)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["exercise"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        adapter.get_sheet_names(workbook)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["sheets"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    adapter.close_workbook(workbook)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["close"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        _run_workload_read(adapter=adapter, workbook=workbook, workload=workload, cells=cells)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["exercise"] = _ns_to_ms(t1 - t0)
 
-    wall1 = time.perf_counter_ns()
-    cpu1 = time.process_time_ns()
+        t0 = time.perf_counter_ns()
+        adapter.close_workbook(workbook)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["close"] = _ns_to_ms(t1 - t0)
 
-    rss_after = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    rss_peak = max(rss_before, rss_after)
+        wall1 = time.perf_counter_ns()
+        cpu1 = time.process_time_ns()
 
     return {
         "wall_ms": _ns_to_ms(wall1 - wall0),
         "cpu_ms": _ns_to_ms(cpu1 - cpu0),
-        "rss_peak_mb": rss_peak,
+        "rss_peak_mb": _kb_to_mb(probe.sample.rss_via_getrusage_kb),
+        "python_heap_peak_kb": probe.sample.python_heap_peak_kb,
         "breakdown_ms": phases if breakdown else None,
     }
 
@@ -709,52 +815,49 @@ def _measure_write_workload_iteration(
     workload: dict[str, Any],
     cells: list[str],
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
 ) -> dict[str, Any]:
-    import resource
     import time
-
-    rss_before = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-
-    wall0 = time.perf_counter_ns()
-    cpu0 = time.process_time_ns()
 
     phases: dict[str, float] = {}
 
-    t0 = time.perf_counter_ns()
-    workbook = adapter.create_workbook()
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["create"] = _ns_to_ms(t1 - t0)
+    with MemoryProbe(memory_mode) as probe:
+        wall0 = time.perf_counter_ns()
+        cpu0 = time.process_time_ns()
 
-    sheet = str(workload.get("sheet") or "S1")
-    t0 = time.perf_counter_ns()
-    adapter.add_sheet(workbook, sheet)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["add_sheets"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        workbook = adapter.create_workbook()
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["create"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    _run_workload_write(adapter=adapter, workbook=workbook, workload=workload, cells=cells)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["exercise"] = _ns_to_ms(t1 - t0)
+        sheet = str(workload.get("sheet") or "S1")
+        t0 = time.perf_counter_ns()
+        adapter.add_sheet(workbook, sheet)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["add_sheets"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    adapter.save_workbook(workbook, output_path)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["save"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        _run_workload_write(adapter=adapter, workbook=workbook, workload=workload, cells=cells)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["exercise"] = _ns_to_ms(t1 - t0)
 
-    wall1 = time.perf_counter_ns()
-    cpu1 = time.process_time_ns()
+        t0 = time.perf_counter_ns()
+        adapter.save_workbook(workbook, output_path)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["save"] = _ns_to_ms(t1 - t0)
 
-    rss_after = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    rss_peak = max(rss_before, rss_after)
+        wall1 = time.perf_counter_ns()
+        cpu1 = time.process_time_ns()
 
     return {
         "wall_ms": _ns_to_ms(wall1 - wall0),
         "cpu_ms": _ns_to_ms(cpu1 - cpu0),
-        "rss_peak_mb": rss_peak,
+        "rss_peak_mb": _kb_to_mb(probe.sample.rss_via_getrusage_kb),
+        "python_heap_peak_kb": probe.sample.python_heap_peak_kb,
         "breakdown_ms": phases if breakdown else None,
     }
 
@@ -1222,70 +1325,67 @@ def _measure_write_iteration(
     test_file: Any,
     output_path: Path,
     breakdown: bool,
+    memory_mode: MemoryMode = "getrusage",
 ) -> dict[str, Any]:
-    import resource
     import time
 
     from excelbench.harness import runner as fidelity
 
-    rss_before = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-
-    wall0 = time.perf_counter_ns()
-    cpu0 = time.process_time_ns()
-
     phases: dict[str, float] = {}
 
-    t0 = time.perf_counter_ns()
-    workbook = adapter.create_workbook()
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["create"] = _ns_to_ms(t1 - t0)
+    with MemoryProbe(memory_mode) as probe:
+        wall0 = time.perf_counter_ns()
+        cpu0 = time.process_time_ns()
 
-    t0 = time.perf_counter_ns()
-    sheet_names = fidelity._collect_sheet_names(test_file)  # noqa: SLF001
-    if not sheet_names:
-        sheet_names = [test_file.feature]
-    for name in sheet_names:
-        adapter.add_sheet(workbook, name)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["add_sheets"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        workbook = adapter.create_workbook()
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["create"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    for tc in test_file.test_cases:
-        if isinstance(tc.expected, dict) and "sheet_names" in tc.expected:
-            continue
-        target_sheet = tc.sheet or test_file.feature
-        target_cell = tc.cell or f"B{tc.row}"
-        _exercise_write_case(
-            fidelity=fidelity,
-            adapter=adapter,
-            workbook=workbook,
-            feature=test_file.feature,
-            sheet=target_sheet,
-            cell=target_cell,
-            test_case=tc,
-        )
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["exercise"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        sheet_names = fidelity._collect_sheet_names(test_file)  # noqa: SLF001
+        if not sheet_names:
+            sheet_names = [test_file.feature]
+        for name in sheet_names:
+            adapter.add_sheet(workbook, name)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["add_sheets"] = _ns_to_ms(t1 - t0)
 
-    t0 = time.perf_counter_ns()
-    adapter.save_workbook(workbook, output_path)
-    t1 = time.perf_counter_ns()
-    if breakdown:
-        phases["save"] = _ns_to_ms(t1 - t0)
+        t0 = time.perf_counter_ns()
+        for tc in test_file.test_cases:
+            if isinstance(tc.expected, dict) and "sheet_names" in tc.expected:
+                continue
+            target_sheet = tc.sheet or test_file.feature
+            target_cell = tc.cell or f"B{tc.row}"
+            _exercise_write_case(
+                fidelity=fidelity,
+                adapter=adapter,
+                workbook=workbook,
+                feature=test_file.feature,
+                sheet=target_sheet,
+                cell=target_cell,
+                test_case=tc,
+            )
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["exercise"] = _ns_to_ms(t1 - t0)
 
-    wall1 = time.perf_counter_ns()
-    cpu1 = time.process_time_ns()
+        t0 = time.perf_counter_ns()
+        adapter.save_workbook(workbook, output_path)
+        t1 = time.perf_counter_ns()
+        if breakdown:
+            phases["save"] = _ns_to_ms(t1 - t0)
 
-    rss_after = _ru_maxrss_mb(resource.getrusage(resource.RUSAGE_SELF).ru_maxrss)
-    rss_peak = max(rss_before, rss_after)
+        wall1 = time.perf_counter_ns()
+        cpu1 = time.process_time_ns()
 
     return {
         "wall_ms": _ns_to_ms(wall1 - wall0),
         "cpu_ms": _ns_to_ms(cpu1 - cpu0),
-        "rss_peak_mb": rss_peak,
+        "rss_peak_mb": _kb_to_mb(probe.sample.rss_via_getrusage_kb),
+        "python_heap_peak_kb": probe.sample.python_heap_peak_kb,
         "breakdown_ms": phases if breakdown else None,
     }
 
@@ -1359,10 +1459,163 @@ def _ns_to_ms(ns: int) -> float:
     return ns / 1_000_000.0
 
 
-def _ru_maxrss_mb(ru_maxrss: float) -> float:
+def _kb_to_mb(value_kb: float | None) -> float | None:
+    if value_kb is None:
+        return None
+    return float(value_kb) / 1024.0
+
+
+def _measure_one_sample(
+    *,
+    memory_mode: MemoryMode,
+    manifest_path: Path | None,
+    adapter_name: str,
+    kind: str,
+    feature: str,
+    in_process: Callable[[], dict[str, Any]],
+) -> tuple[dict[str, Any], float | None]:
+    """Run one bench-loop sample and return (metrics_dict, rss_kb_via_time_or_None).
+
+    Behavior by mode:
+
+    - ``time`` (only): run **only** the subprocess under ``/usr/bin/time`` and
+      use its JSON metrics for ``wall_ms``/``cpu_ms``. Avoids double-execution
+      that the previous "in-process + subprocess" sequence caused.
+    - ``all``: run the in-process iteration AND the subprocess. The divergence
+      is the whole point — we want both signals.
+    - ``getrusage`` / ``tracemalloc``: in-process only.
+
+    Falls back to in-process if the subprocess is unavailable (Windows) or
+    fails for any reason — better to have a partial measurement than none.
+    """
+    if memory_mode == "time" and manifest_path is not None and feature:
+        sub_metrics, rss_kb = _measure_iteration_under_time_l(
+            adapter_name=adapter_name,
+            kind=kind,
+            manifest_path=manifest_path,
+            feature=feature,
+        )
+        if sub_metrics is not None:
+            m: dict[str, Any] = {
+                "wall_ms": float(sub_metrics.get("wall_ms", 0.0)),
+                "cpu_ms": float(sub_metrics.get("cpu_ms", 0.0)),
+                "rss_peak_mb": sub_metrics.get("rss_peak_mb"),
+                "python_heap_peak_kb": sub_metrics.get("python_heap_peak_kb"),
+                "breakdown_ms": None,
+            }
+            return m, rss_kb
+        # Subprocess unavailable; fall through to in-process measurement.
+
+    m = in_process()
+    rss_kb_via_time: float | None = None
+    if includes_time(memory_mode) and manifest_path is not None and feature:
+        _, rss_kb_via_time = _measure_iteration_under_time_l(
+            adapter_name=adapter_name,
+            kind=kind,
+            manifest_path=manifest_path,
+            feature=feature,
+        )
+    return m, rss_kb_via_time
+
+
+def _measure_iteration_under_time_l(
+    *,
+    adapter_name: str,
+    kind: str,
+    manifest_path: Path,
+    feature: str,
+) -> tuple[dict[str, float] | None, float | None]:
+    """Run one iteration of (adapter, kind, feature) under ``/usr/bin/time``.
+
+    Returns ``(subprocess_metrics, rss_kb)``. Either may be ``None`` if the
+    platform lacks ``/usr/bin/time`` or the subprocess failed. The subprocess
+    is the ``excelbench.perf._iter_subprocess`` module — see that file for the
+    iteration body, which mirrors the in-process measure_*_iteration helpers.
+
+    When the bench loop is in ``time``-only mode, the subprocess metrics are
+    used directly for ``wall_ms``/``cpu_ms`` so the iteration is measured once,
+    not twice. In ``all`` mode the in-process loop also runs (the divergence
+    between the two is the whole point of the deep-dive).
+    """
     import sys
 
-    # macOS reports bytes; Linux reports kilobytes.
-    if sys.platform == "darwin":
-        return float(ru_maxrss) / (1024.0 * 1024.0)
-    return float(ru_maxrss) / 1024.0
+    cli_args = [
+        sys.executable,
+        "-m",
+        "excelbench.perf._iter_subprocess",
+        "--library",
+        adapter_name,
+        "--kind",
+        kind,
+        "--manifest",
+        str(manifest_path),
+        "--feature",
+        feature,
+    ]
+    return run_iteration_under_time_l(cli_args)
+
+
+def run_one_iteration(
+    *,
+    adapter: Any,
+    kind: str,
+    test_file: Any,
+    test_dir: Path,
+    memory_mode: MemoryMode = "getrusage",
+) -> dict[str, Any]:
+    """Run a single iteration of (adapter, kind, test_file) and return metrics.
+
+    Shared between the in-process bench loop and the ``time -l`` subprocess
+    entrypoint. The dispatch mirrors ``_bench_read``/``_bench_write``: workload-
+    based fixtures use the workload helpers, otherwise the test-case path runs.
+    """
+    import tempfile
+
+    workload = _extract_single_workload(test_file)
+    file_path = test_dir / test_file.path
+
+    if kind == "read":
+        if workload is not None:
+            cells = _cells_from_range(workload["range"])
+            return _measure_read_workload_iteration(
+                adapter=adapter,
+                file_path=file_path,
+                workload=workload,
+                cells=cells,
+                breakdown=False,
+                memory_mode=memory_mode,
+            )
+        return _measure_read_iteration(
+            adapter=adapter,
+            test_file=test_file,
+            file_path=file_path,
+            breakdown=False,
+            memory_mode=memory_mode,
+        )
+
+    if kind == "write":
+        feature_stem = Path(test_file.feature).name or "feature"
+        ext = adapter.output_extension
+        with tempfile.TemporaryDirectory() as tmpdir:
+            out_dir = Path(tmpdir) / adapter.name
+            out_dir.mkdir(parents=True, exist_ok=True)
+            out_path = out_dir / f"{feature_stem}{ext}"
+            if workload is not None:
+                cells = _cells_from_range(workload["range"])
+                return _measure_write_workload_iteration(
+                    adapter=adapter,
+                    output_path=out_path,
+                    workload=workload,
+                    cells=cells,
+                    breakdown=False,
+                    memory_mode=memory_mode,
+                )
+            return _measure_write_iteration(
+                adapter=adapter,
+                test_file=test_file,
+                output_path=out_path,
+                breakdown=False,
+                memory_mode=memory_mode,
+            )
+
+    raise ValueError(f"kind must be 'read' or 'write'; got {kind!r}")
