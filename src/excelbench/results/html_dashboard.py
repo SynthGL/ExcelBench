@@ -1903,6 +1903,24 @@ def _section_performance(perf: dict[str, Any] | None) -> str:
 
         for op in sorted(ops_present):
             rows.append(f"<h3 style='font-size:.9rem'>{op.title()}</h3>")
+            # Detect whether any entry in this op has the time-l RSS field; if so,
+            # show the dual-memory column header with a tooltip explaining
+            # divergence between getrusage (in-process, sticky) and time -l
+            # (subprocess, OS-honest, includes Rust allocations).
+            has_time_rss = any(
+                ((e.get("perf") or {}).get(op) or {}).get("rss_kb_via_time") is not None
+                for e in entries
+            )
+            rss_header = (
+                "<th class='sort' data-type='n' "
+                "title='Left: RSS via getrusage (in-process, lifetime peak — "
+                "sticky after first heavy iteration). Right: RSS via /usr/bin/time -l "
+                "(fresh subprocess per iteration — honest about Rust allocations, "
+                "includes Python startup + adapter import cost).'>"
+                "RSS (MB) — getrusage / time -l</th>"
+                if has_time_rss
+                else "<th class='sort' data-type='n'>RSS (MB)</th>"
+            )
             rows.append(
                 '<div class="table-scroll"><table><thead><tr>'
                 "<th class='sort'>Library</th>"
@@ -1910,7 +1928,7 @@ def _section_performance(perf: dict[str, Any] | None) -> str:
                 "<th class='sort' data-type='n'>p95 (ms)</th>"
                 "<th class='sort' data-type='n'>min (ms)</th>"
                 "<th class='sort' data-type='n'>CPU p50</th>"
-                "<th class='sort' data-type='n'>RSS (MB)</th>"
+                f"{rss_header}"
                 "<th class='sort'>Throughput</th>"
                 "<th>Phase Breakdown</th>"
                 "</tr></thead><tbody>"
@@ -1932,8 +1950,32 @@ def _section_performance(perf: dict[str, Any] | None) -> str:
                 wall = od.get("wall_ms", {})
                 cpu = od.get("cpu_ms", {})
                 rss = od.get("rss_peak_mb")
+                rss_time_kb = od.get("rss_kb_via_time")
+                rss_time_mb = (rss_time_kb / 1024.0) if rss_time_kb is not None else None
+                heap_kb = od.get("python_heap_peak_kb")
                 oc = od.get("op_count")
                 rate = _fmt_rate(oc, wall.get("p50"))
+
+                if has_time_rss:
+                    rss_cell_inner = (
+                        f"{_fmt_mb(rss)} / {_fmt_mb(rss_time_mb)}"
+                        if rss_time_mb is not None
+                        else f"{_fmt_mb(rss)} / —"
+                    )
+                    rss_tooltip = (
+                        f" title='getrusage: {_fmt_mb(rss)} (sticky lifetime peak); "
+                        f"time -l: {_fmt_mb(rss_time_mb)} (subprocess peak)"
+                        + (
+                            f"; Python heap (tracemalloc): "
+                            f"{(heap_kb / 1024.0):.1f} MB"
+                            if heap_kb is not None
+                            else ""
+                        )
+                        + "'"
+                    )
+                else:
+                    rss_cell_inner = _fmt_mb(rss)
+                    rss_tooltip = ""
 
                 # Breakdown bar
                 bd = od.get("breakdown_ms", {})
@@ -1953,13 +1995,16 @@ def _section_performance(perf: dict[str, Any] | None) -> str:
                         bar_html = f'<div class="bbar">{"".join(bar_parts)}</div>'
 
                 perf_row_cls = " class='wolfxl-row'" if lib == "wolfxl" else ""
+                # Sort by the most honest available number: prefer time -l peak
+                # when present, else fall back to getrusage.
+                rss_sort_value = rss_time_mb if rss_time_mb is not None else (rss or 9e9)
                 rows.append(
                     f"<tr{perf_row_cls}><td><b>{_esc(lib)}</b></td>"
                     f"<td data-v='{wall.get('p50', 9e9)}'>{_fmt_ms(wall.get('p50'))}</td>"
                     f"<td data-v='{wall.get('p95', 9e9)}'>{_fmt_ms(wall.get('p95'))}</td>"
                     f"<td data-v='{wall.get('min', 9e9)}'>{_fmt_ms(wall.get('min'))}</td>"
                     f"<td data-v='{cpu.get('p50', 9e9)}'>{_fmt_ms(cpu.get('p50'))}</td>"
-                    f"<td data-v='{rss or 9e9}'>{_fmt_mb(rss)}</td>"
+                    f"<td data-v='{rss_sort_value}'{rss_tooltip}>{rss_cell_inner}</td>"
                     f"<td>{rate}</td>"
                     f"<td>{bar_html}</td></tr>"
                 )

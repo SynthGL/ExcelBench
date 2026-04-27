@@ -260,6 +260,18 @@ def perf(
         "--profile",
         help="Benchmark profile: xlsx (default) or xls.",
     ),
+    memory_mode: str = typer.Option(
+        "getrusage",
+        "--memory-mode",
+        help=(
+            "Memory measurement strategy. 'getrusage' (default) uses the cheap "
+            "in-process RUSAGE_SELF peak. 'tracemalloc' adds the Python heap "
+            "peak (misses Rust allocations). 'time' spawns each iteration "
+            "under /usr/bin/time -l for an OS-honest peak RSS (slow). "
+            "'all' runs every iteration in all three modes — quarterly deep-dive, "
+            "not the CI hot path."
+        ),
+    ),
 ) -> None:
     """Run performance benchmarks (speed + best-effort memory).
 
@@ -269,13 +281,24 @@ def perf(
 
     from excelbench.harness.adapters import get_all_adapters
     from excelbench.perf import render_perf_results, run_perf
+    from excelbench.perf.memory import VALID_MEMORY_MODES
 
     if not isinstance(iteration_policy, str):
         iteration_policy = "fixed"
+    if not isinstance(memory_mode, str):
+        memory_mode = "getrusage"
 
     profile = profile.strip().lower()
     if profile not in {"xlsx", "xls"}:
         console.print("[red]Error: profile must be one of: xlsx, xls[/red]")
+        raise typer.Exit(1)
+
+    memory_mode_normalized = memory_mode.strip().lower()
+    if memory_mode_normalized not in VALID_MEMORY_MODES:
+        console.print(
+            f"[red]Error: --memory-mode must be one of {list(VALID_MEMORY_MODES)}; "
+            f"got {memory_mode!r}[/red]"
+        )
         raise typer.Exit(1)
 
     if profile == "xls" and test_dir.resolve() == PERF_XLSX_PROFILE_DEFAULT_TEST_DIR.resolve():
@@ -304,6 +327,7 @@ def perf(
     console.print(f"  Iterations: {iters}")
     console.print(f"  Iteration policy: {iteration_policy}")
     console.print(f"  Breakdown: {breakdown}")
+    console.print(f"  Memory mode: {memory_mode_normalized}")
     if adapters:
         console.print(f"  Adapters: {', '.join([a.name for a in selected])}")
     console.print()
@@ -318,6 +342,7 @@ def perf(
             iters=iters,
             iteration_policy=iteration_policy,
             breakdown=breakdown,
+            memory_mode=memory_mode_normalized,  # type: ignore[arg-type]
         )
         render_perf_results(perf_results, output_dir)
 
