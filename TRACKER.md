@@ -10,7 +10,7 @@
 
 | #  | Dimension                          | Status      | Sprint size | Branch                         | PR  | Acceptance commit range |
 |----|------------------------------------|-------------|-------------|--------------------------------|-----|-------------------------|
-| S1 | Memory honesty + Tracker bootstrap | Shipped     | S (3–5 d)   | `feat/perf-mem-honesty`        | —   | _pending PR_            |
+| S1 | Memory honesty + Tracker bootstrap | Shipped     | S (3–5 d)   | `feat/perf-mem-honesty`        | #28 | `50dc104..HEAD@PR#28`   |
 | S2 | Data shape (int/str/date/formula)  | Planned     | M (1 wk)    | `feat/perf-data-shape`         | —   | —                       |
 | S3 | File shape (wide/tall/sparse)      | Planned     | M (1 wk)    | `feat/perf-file-shape`         | —   | —                       |
 | S4 | High-cost operations               | Planned     | M (1 wk)    | `feat/perf-operations`         | —   | —                       |
@@ -64,7 +64,7 @@ Use this template when appending to **Acceptance Notes** below.
 
 ### S1 — Memory honesty + Tracker bootstrap (2026-04-27)
 
-**Branch**: `feat/perf-mem-honesty`  ·  **PR**: _pending_  ·  **Commit range**: _pending push_
+**Branch**: `feat/perf-mem-honesty`  ·  **PR**: [#28](https://github.com/SynthGL/ExcelBench/pull/28)  ·  **Commit range**: `50dc104..HEAD` (final range fills in on merge)
 
 **What shipped**:
 - `TRACKER.md` (this file) — 7-row sprint table, row-flip protocol, acceptance template.
