@@ -51,6 +51,22 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/worksheets/sheet1.xml",
             ),
             notes="ClosedXML pivot/cache/table/conditional-formatting package layout.",
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "Data", "cell": "A1", "expected": "Region"},
+                {"kind": "cell_value", "sheet": "Data", "cell": "C4", "expected": 140},
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "conditionalFormatting",
+                    "label": "conditional formatting survives",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/tables/table1.xml",
+                    "contains": "ClosedXmlSales",
+                    "label": "table name survives",
+                },
+            ),
         ),
         ExternalFixtureSpec(
             fixture_id="closedxml_rich_comment_protection",
@@ -91,5 +107,26 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/worksheets/sheet1.xml",
             ),
             notes="ClosedXML rich text, legacy comments, and sheet protection.",
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "Review", "cell": "A1", "expected": "Finding"},
+                {
+                    "kind": "comment_text",
+                    "sheet": "Review",
+                    "cell": "B2",
+                    "contains": "Tie this status",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "sheetProtection",
+                    "label": "sheet protection survives",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/sharedStrings.xml",
+                    "contains": ":r>",
+                    "label": "rich text runs survive",
+                },
+            ),
         ),
     ]

@@ -106,5 +106,33 @@ def exceljs_fixture_specs() -> list[ExternalFixtureSpec]:
                 "ExcelJS table, formula, data validation, rich text, comment, hyperlink, "
                 "image, merge, freeze panes, and sheet protection."
             ),
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "ExcelJS", "cell": "A1", "expected": "Metric"},
+                {
+                    "kind": "cell_formula",
+                    "sheet": "ExcelJS",
+                    "cell": "B4",
+                    "expected": "=SUM(B2:B3)",
+                },
+                {
+                    "kind": "comment_text",
+                    "sheet": "ExcelJS",
+                    "cell": "B4",
+                    "contains": "Formula result",
+                },
+                {"kind": "merged_range", "sheet": "ExcelJS", "range": "D1:F1"},
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "dataValidations",
+                    "label": "data validation survives",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/tables/table1.xml",
+                    "contains": "ExcelJsReviewTable",
+                    "label": "table name survives",
+                },
+            ),
         )
     ]

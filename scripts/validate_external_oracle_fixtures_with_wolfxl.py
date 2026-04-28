@@ -27,6 +27,8 @@ def main() -> int:
         print(f"{status} {result.fixture_id}: {result.modified_workbook}")
         if result.missing_parts_after_save:
             print(f"  missing parts: {', '.join(result.missing_parts_after_save)}")
+        if result.readback_failures:
+            print(f"  readback failures: {'; '.join(result.readback_failures)}")
         if result.error:
             print(f"  error: {result.error}")
     return 0 if all(result.passed for result in results) else 1
@@ -34,4 +36,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

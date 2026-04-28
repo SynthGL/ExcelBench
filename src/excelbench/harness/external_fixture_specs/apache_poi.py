@@ -26,5 +26,33 @@ def apache_poi_fixture_specs() -> list[ExternalFixtureSpec]:
                 "Apache POI table, formula, data validation, rich text, comment, hyperlink, "
                 "image, merge, freeze panes, and sheet protection."
             ),
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "POI", "cell": "A1", "expected": "Metric"},
+                {
+                    "kind": "cell_formula",
+                    "sheet": "POI",
+                    "cell": "B4",
+                    "expected": "=SUM(B2:B3)",
+                },
+                {
+                    "kind": "comment_text",
+                    "sheet": "POI",
+                    "cell": "B4",
+                    "contains": "POI formula",
+                },
+                {"kind": "merged_range", "sheet": "POI", "range": "D1:F1"},
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "dataValidations",
+                    "label": "data validation survives",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/tables/table1.xml",
+                    "contains": "PoiReviewTable",
+                    "label": "table name survives",
+                },
+            ),
         )
     ]

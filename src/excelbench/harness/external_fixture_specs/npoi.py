@@ -53,5 +53,27 @@ def npoi_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/worksheets/sheet1.xml",
             ),
             notes="NPOI formula, rich text, legacy comments, merged range, and protection.",
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "NPOI", "cell": "A1", "expected": "Account"},
+                {
+                    "kind": "cell_formula",
+                    "sheet": "NPOI",
+                    "cell": "B4",
+                    "expected": "=SUM(B2:B3)",
+                },
+                {
+                    "kind": "comment_text",
+                    "sheet": "NPOI",
+                    "cell": "B4",
+                    "contains": "Formula result",
+                },
+                {"kind": "merged_range", "sheet": "NPOI", "range": "D1:F1"},
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "sheetProtection",
+                    "label": "sheet protection survives",
+                },
+            ),
         )
     ]

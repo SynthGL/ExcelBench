@@ -47,6 +47,7 @@ class FixtureGenerationResult:
     workbook_path: Path
     write_result: ExternalOracleResult
     expected_parts: tuple[str, ...]
+    readback_probes: tuple[JSONDict, ...]
     missing_parts: tuple[str, ...]
     validations: tuple[ExternalOracleResult, ...] = field(default_factory=tuple)
 
@@ -67,6 +68,7 @@ class FixtureGenerationResult:
             "workbook": str(self.workbook_path.relative_to(output_root)),
             "passed": self.passed,
             "expected_parts": list(self.expected_parts),
+            "readback_probes": list(self.readback_probes),
             "missing_parts": list(self.missing_parts),
             "write_result": _oracle_result_to_json(self.write_result),
             "validations": [_oracle_result_to_json(result) for result in self.validations],
@@ -138,6 +140,7 @@ def generate_external_fixture_pack(
                 workbook_path=workbook_path,
                 write_result=write_result,
                 expected_parts=spec.expected_parts,
+                readback_probes=spec.readback_probes,
                 missing_parts=missing_parts,
                 validations=tuple(validations),
             )

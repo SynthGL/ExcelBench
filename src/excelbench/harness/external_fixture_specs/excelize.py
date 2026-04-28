@@ -72,6 +72,22 @@ def excelize_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/drawings/drawing1.xml",
             ),
             notes="Pivots, slicers, charts, CF, tables, and drawings in one workbook.",
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "Data", "cell": "A1", "expected": "Region"},
+                {"kind": "cell_value", "sheet": "Data", "cell": "C6", "expected": 115},
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "conditionalFormatting",
+                    "label": "conditional formatting survives",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "slicerList",
+                    "label": "slicer extension survives",
+                },
+            ),
         ),
         ExternalFixtureSpec(
             fixture_id="excelize_chart_points_formula_cf",
@@ -137,6 +153,21 @@ def excelize_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/worksheets/sheet1.xml",
             ),
             notes="Per-point chart styling, formulas, and conditional-formatting rules.",
+            readback_probes=(
+                {"kind": "cell_value", "sheet": "Metrics", "cell": "A1", "expected": "Month"},
+                {
+                    "kind": "cell_formula",
+                    "sheet": "Metrics",
+                    "cell": "B5",
+                    "expected": "=SUM(B2:B4)",
+                },
+                {
+                    "kind": "zip_contains",
+                    "part": "xl/worksheets/sheet1.xml",
+                    "contains": "conditionalFormatting",
+                    "label": "conditional formatting survives",
+                },
+            ),
         ),
     ]
 

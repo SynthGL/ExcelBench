@@ -33,6 +33,8 @@ def test_excelize_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "excelize" for spec in specs)
     assert "xl/pivotTables/pivotTable1.xml" in specs[0].expected_parts
     assert "xl/charts/chart1.xml" in specs[1].expected_parts
+    assert any(probe["kind"] == "zip_contains" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "cell_formula" for probe in specs[1].readback_probes)
 
 
 def test_closedxml_fixture_specs_are_stable() -> None:
@@ -47,6 +49,7 @@ def test_closedxml_fixture_specs_are_stable() -> None:
     assert "pivotCache/pivotCacheDefinition1.xml" in specs[0].expected_parts
     assert "xl/comments1.xml" in specs[1].expected_parts
     assert "xl/drawings/vmldrawing.vml" in specs[1].expected_parts
+    assert any(probe["kind"] == "comment_text" for probe in specs[1].readback_probes)
     assert [spec.fixture_id for spec in external_fixture_specs()] == [
         "excelize_sales_pivot_slicer_chart",
         "excelize_chart_points_formula_cf",
@@ -65,6 +68,7 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "apache-poi" for spec in specs)
     assert "xl/tables/table1.xml" in specs[0].expected_parts
     assert "xl/drawings/vmlDrawing0.vml" in specs[0].expected_parts
+    assert any(probe["kind"] == "merged_range" for probe in specs[0].readback_probes)
 
 
 def test_exceljs_fixture_specs_are_stable() -> None:
@@ -74,6 +78,7 @@ def test_exceljs_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "exceljs" for spec in specs)
     assert "xl/tables/table1.xml" in specs[0].expected_parts
     assert "xl/media/image1.png" in specs[0].expected_parts
+    assert any(probe["kind"] == "cell_formula" for probe in specs[0].readback_probes)
 
 
 def test_npoi_fixture_specs_are_stable() -> None:
@@ -83,6 +88,7 @@ def test_npoi_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "npoi" for spec in specs)
     assert "xl/comments1.xml" in specs[0].expected_parts
     assert "xl/drawings/vmlDrawing1.vml" in specs[0].expected_parts
+    assert any(probe["kind"] == "comment_text" for probe in specs[0].readback_probes)
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")
@@ -204,3 +210,5 @@ def test_validate_wolfxl_external_fixture_pack(tmp_path: Path) -> None:
     assert all(result.passed for result in results)
     assert (tmp_path / "wolfxl-validation.json").exists()
     assert all(not result.missing_parts_after_save for result in results)
+    assert all(not result.readback_failures for result in results)
+    assert any(result.readback_probes for result in results)
