@@ -35,6 +35,8 @@ def test_repo_catalog_points_excelize_at_go_helper() -> None:
     assert tool.cwd == repo_root / "tools" / "external-oracles" / "excelize"
     assert catalog["libreoffice"].command[0] == sys.executable
     assert catalog["libreoffice"].command[1].endswith("libreoffice_oracle.py")
+    assert catalog["closedxml"].command[0] == "dotnet"
+    assert any(part.endswith("closedxml-oracle.csproj") for part in catalog["closedxml"].command)
 
 
 def test_missing_oracle_helper_is_structured_skip() -> None:
@@ -237,6 +239,66 @@ def test_excelize_go_helper_writes_advanced_fixture(tmp_path: Path) -> None:
     assert "xl/pivotTables/pivotTable1.xml" in names
     assert "xl/slicerCaches/slicerCache1.xml" in names
     assert "xl/charts/chart1.xml" in names
+
+
+@pytest.mark.skipif(shutil.which("dotnet") is None, reason=".NET SDK is required for ClosedXML")
+def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    output_path = tmp_path / "closedxml-smoke.xlsx"
+    tool = external_oracle_catalog(repo_root=repo_root)["closedxml"]
+
+    result = run_external_oracle(
+        tool,
+        ExternalOracleRequest(
+            fixture_id="closedxml-smoke",
+            operation="write_fixture",
+            output_path=output_path,
+            payload={
+                "sheets": [{"name": "Data"}, {"name": "Pivot"}],
+                "cells": [
+                    {"sheet": "Data", "cell": "A1", "value": "Region"},
+                    {"sheet": "Data", "cell": "B1", "value": "Product"},
+                    {"sheet": "Data", "cell": "C1", "value": "Sales"},
+                    {"sheet": "Data", "cell": "A2", "value": "West"},
+                    {"sheet": "Data", "cell": "B2", "value": "Widgets"},
+                    {"sheet": "Data", "cell": "C2", "value": 120},
+                    {"sheet": "Data", "cell": "A3", "value": "East"},
+                    {"sheet": "Data", "cell": "B3", "value": "Services"},
+                    {"sheet": "Data", "cell": "C3", "value": 95},
+                    {"sheet": "Data", "cell": "A4", "value": "West"},
+                    {"sheet": "Data", "cell": "B4", "value": "Services"},
+                    {"sheet": "Data", "cell": "C4", "value": 140},
+                ],
+                "tables": [{"sheet": "Data", "range": "A1:C4", "name": "ClosedXmlSales"}],
+                "conditional_formats": [
+                    {"sheet": "Data", "range": "C2:C4", "type": "3_color_scale"},
+                    {"sheet": "Data", "range": "C2:C4", "type": "data_bar"},
+                ],
+                "pivots": [
+                    {
+                        "data_range": "Data!A1:C4",
+                        "cell": "Pivot!A3",
+                        "name": "ClosedXmlPivot",
+                        "rows": [{"name": "Region"}],
+                        "columns": [{"name": "Product"}],
+                        "data": [{"name": "Sales"}],
+                    }
+                ],
+            },
+        ),
+        timeout_seconds=180,
+    )
+
+    assert result.passed is True, result
+    assert output_path.exists()
+    assert result.payload["counts"]["pivots"] == 1
+    with ZipFile(output_path) as workbook:
+        names = set(workbook.namelist())
+        sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+    assert "xl/tables/table1.xml" in names
+    assert any(part.endswith("pivotTables/pivotTable.xml") for part in names)
+    assert any(part.endswith("pivotCache/pivotCacheDefinition1.xml") for part in names)
+    assert "conditionalFormatting" in sheet_xml
 
 
 def test_libreoffice_helper_renders_pdf_or_skips(tmp_path: Path) -> None:

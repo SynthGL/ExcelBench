@@ -130,6 +130,20 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             sys.executable,
             str(repo_root / "tools" / "external-oracles" / "libreoffice" / "libreoffice_oracle.py"),
         )
+    closedxml_command: tuple[str, ...] = ("excelbench-closedxml-oracle",)
+    if repo_root is not None:
+        closedxml_command = (
+            "dotnet",
+            "run",
+            "--project",
+            str(repo_root / "tools" / "external-oracles" / "closedxml" / "closedxml-oracle.csproj"),
+            "--configuration",
+            "Release",
+            "--no-launch-profile",
+            "--verbosity",
+            "quiet",
+            "--",
+        )
 
     return {
         "excelize": ExternalOracleTool(
@@ -156,7 +170,7 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
         ),
         "closedxml": ExternalOracleTool(
             name="closedxml",
-            command=("excelbench-closedxml-oracle",),
+            command=closedxml_command,
             language="dotnet",
             homepage="https://docs.closedxml.io/",
             capabilities=frozenset({"read", "write", "pivots", "conditional_formatting"}),

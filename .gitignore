@@ -54,6 +54,10 @@ Cargo.lock
 !rust/**/Cargo.lock
 rust/**/uv.lock
 
+# .NET external oracle build outputs
+tools/external-oracles/**/bin/
+tools/external-oracles/**/obj/
+
 # Jupyter
 .ipynb_checkpoints/
 

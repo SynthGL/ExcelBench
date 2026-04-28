@@ -85,6 +85,8 @@ Most-touched top-level directories:
     Excelize. Run from that directory with `go run .`.
   - `libreoffice/`: Python helper that runs LibreOffice headless open/save and
     PDF render validation.
+  - `closedxml/`: .NET helper that generates workbooks with ClosedXML tables,
+    pivots, and conditional formatting.
 
 - `rust/excelbench_rust/` (optional, local-only)
   - PyO3 crate for ExcelBench-specific Rust backends (umya-spreadsheet, basic calamine)

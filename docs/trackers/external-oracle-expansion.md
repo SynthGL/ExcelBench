@@ -30,8 +30,8 @@ not to replace the existing ExcelBench adapter matrix.
 - The helper catalog currently reserves entrypoints or source helpers for:
   - `tools/external-oracles/excelize` (`go run .`)
   - `tools/external-oracles/libreoffice/libreoffice_oracle.py`
+  - `tools/external-oracles/closedxml` (`dotnet run --project ...`)
   - `excelbench-poi-oracle`
-  - `excelbench-closedxml-oracle`
 
 ## Excelize helper
 
@@ -85,14 +85,35 @@ Current smoke coverage:
 - WolfXL validator, 2026-04-28: both generated fixture-pack workbooks passed
   read + in-place modify-save preservation after WolfXL commit `634be84`.
 
+## ClosedXML helper
+
+Implemented: `tools/external-oracles/closedxml`
+
+Supported operations:
+
+- `write_fixture`: writes sheets, cells, tables, conditional formats, and pivot
+  tables through ClosedXML.
+- `read_metadata`: inspects package parts for tables, pivot tables, pivot
+  caches, and worksheets.
+
+Current smoke coverage:
+
+- .NET integration smoke writes a table + pivot + conditional-format workbook
+  through `run_external_oracle()` when `dotnet` is available.
+- Manual ClosedXML truth pass, 2026-04-28: ClosedXML generated a workbook with
+  a table, pivot cache, pivot table, and conditional-format extension records.
+  WolfXL initially preserved the parts but inserted the smoke marker without
+  the worksheet namespace prefix; WolfXL commit `7640a3f` fixed the patcher,
+  and the same workbook now passes read + in-place modify-save preservation.
+
 ## Candidate tools
 
 | Tool | Runtime | Initial role | Status |
 |---|---|---|---|
 | Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | Initial helper implemented. |
 | LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | Initial helper implemented. |
+| ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first manual truth pass complete; pending fixture-pack promotion. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
-| ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | P1 after contract settles. |
 | NPOI | .NET | POI-like .NET comparison if ClosedXML/POI leave .NET-specific gaps. | P2 research. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
 
