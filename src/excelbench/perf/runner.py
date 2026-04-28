@@ -393,6 +393,10 @@ def _bench_read_workload(
 ) -> PerfOpResult:
     cells = _cells_from_range(workload["range"])
     op_count = len(cells)
+    # Many-sheets fan-out: total cells read = per-sheet × n_sheets.
+    n_sheets_raw = workload.get("n_sheets")
+    if isinstance(n_sheets_raw, int) and n_sheets_raw > 1:
+        op_count *= n_sheets_raw
 
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
@@ -681,6 +685,10 @@ def _bench_write_workload(
         if isinstance(sparse_every, int) and sparse_every > 1:
             # Count only the filled cells for throughput reporting.
             op_count = (op_count + sparse_every - 1) // sparse_every
+        # Many-sheets fan-out: total cells written = per-sheet × n_sheets.
+        n_sheets_raw = workload.get("n_sheets")
+        if isinstance(n_sheets_raw, int) and n_sheets_raw > 1:
+            op_count *= n_sheets_raw
 
     wall_samples: list[float] = []
     cpu_samples: list[float] = []
@@ -832,8 +840,18 @@ def _measure_write_workload_iteration(
             phases["create"] = _ns_to_ms(t1 - t0)
 
         sheet = str(workload.get("sheet") or "S1")
+        # Many-sheets fan-out (S3): pre-create Sheet1..SheetN before the
+        # write workload runs. Default n_sheets=1 keeps single-sheet callers
+        # unchanged.
+        n_sheets_raw = workload.get("n_sheets")
+        n_sheets = int(n_sheets_raw) if isinstance(n_sheets_raw, int) else 1
+        sheet_pattern = str(workload.get("sheet_pattern") or "Sheet{i}")
         t0 = time.perf_counter_ns()
-        adapter.add_sheet(workbook, sheet)
+        if n_sheets <= 1:
+            adapter.add_sheet(workbook, sheet)
+        else:
+            for i in range(1, n_sheets + 1):
+                adapter.add_sheet(workbook, sheet_pattern.format(i=i))
         t1 = time.perf_counter_ns()
         if breakdown:
             phases["add_sheets"] = _ns_to_ms(t1 - t0)
@@ -885,20 +903,32 @@ def _run_workload_read(
 
         # Prefer passing a range if supported.
         cell_range = str(workload.get("range") or "")
-        try:
-            data = fn(workbook, sheet, cell_range)
-        except TypeError:
-            data = fn(workbook, sheet)
 
-        # Best-effort: touch output to avoid lazy containers.
-        _touch = None
-        if hasattr(data, "to_numpy"):
-            _touch = data.to_numpy()
-        elif hasattr(data, "values"):
-            _touch = data.values  # pandas-style
+        # Many-sheets fan-out (S3): read the same range from N sheets named via
+        # sheet_pattern. Default n_sheets=1 preserves single-sheet callers.
+        n_sheets_raw = workload.get("n_sheets")
+        n_sheets = int(n_sheets_raw) if isinstance(n_sheets_raw, int) else 1
+        sheets_to_read: list[str]
+        if n_sheets <= 1:
+            sheets_to_read = [sheet]
         else:
-            _touch = data
-        _ = _touch
+            sheet_pattern = str(workload.get("sheet_pattern") or "Sheet{i}")
+            sheets_to_read = [sheet_pattern.format(i=i) for i in range(1, n_sheets + 1)]
+
+        for s in sheets_to_read:
+            try:
+                data = fn(workbook, s, cell_range)
+            except TypeError:
+                data = fn(workbook, s)
+
+            # Best-effort: touch output to avoid lazy containers.
+            if hasattr(data, "to_numpy"):
+                _touch = data.to_numpy()
+            elif hasattr(data, "values"):
+                _touch = data.values  # pandas-style
+            else:
+                _touch = data
+            _ = _touch
         return
 
     if op == "bulk_sheet_values_raw":
@@ -1073,7 +1103,18 @@ def _run_workload_write(
                 v += step
             values.append(row_vals)
 
-        fn(workbook, sheet, start_cell, values)
+        # Many-sheets fan-out (S3): write the same value grid into n_sheets
+        # sheets named via sheet_pattern (default "Sheet{i}", 1-indexed).
+        # Default n_sheets=1 preserves single-sheet callers from S2.
+        n_sheets_raw = workload.get("n_sheets")
+        n_sheets = int(n_sheets_raw) if isinstance(n_sheets_raw, int) else 1
+        if n_sheets <= 1:
+            fn(workbook, sheet, start_cell, values)
+        else:
+            sheet_pattern = str(workload.get("sheet_pattern") or "Sheet{i}")
+            for sheet_idx in range(1, n_sheets + 1):
+                sheet_name = sheet_pattern.format(i=sheet_idx)
+                fn(workbook, sheet_name, start_cell, values)
         return
 
     if op == "bulk_write_styled_grid":

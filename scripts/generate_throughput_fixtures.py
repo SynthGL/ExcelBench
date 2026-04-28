@@ -44,6 +44,32 @@ DATA_SHAPE_TIERS: list[tuple[str, int, int]] = [
     ("1m", 1000, 1000),   # 1000000 cells
 ]
 
+# (label, rows, cols, n_sheets, sparse_every) — see DEC-020. n_sheets > 1
+# fans out the same per-sheet grid into N sheets named Sheet1..SheetN.
+# sparse_every > 1 leaves (sparse_every - 1)/sparse_every cells blank.
+# A single dtype (int) is held constant across all shapes so file-shape cost
+# is orthogonal to the dtype axis covered by S2.
+FILE_SHAPE_SCENARIOS: list[tuple[str, int, int, int, int]] = [
+    # Wide: many cols, few rows. Stresses column-iterator paths.
+    ("wide_10k", 10, 1000, 1, 1),         # 10 rows × 1000 cols = 10k
+    ("wide_100k", 100, 1000, 1, 1),       # 100 × 1000 = 100k
+    ("wide_1m", 1000, 1000, 1, 1),        # 1000 × 1000 = 1M (square at the limit)
+    # Tall: many rows, few cols. Stresses row-iterator + streaming paths.
+    ("tall_10k", 10000, 1, 1, 1),         # 10k × 1 = 10k
+    ("tall_100k", 100000, 1, 1, 1),       # 100k × 1 = 100k
+    ("tall_1m", 1000000, 1, 1, 1),        # 1M × 1 = 1M
+    # Sparse: filled cells only every Nth position, total grid is much
+    # larger than the filled cell count. Stresses how libraries store empties.
+    ("sparse_10pct_10k", 100, 100, 1, 10),    # 10k grid, ~1k filled
+    ("sparse_10pct_100k", 316, 316, 1, 10),   # ~100k grid, ~10k filled
+    ("sparse_10pct_1m", 1000, 1000, 1, 10),   # 1M grid, ~100k filled
+    # Many-sheets: same total cell count fanned across N sheets. Stresses
+    # per-sheet XML overhead and adapter sheet-discovery paths.
+    ("many_sheets_10x10k", 100, 100, 10, 1),   # 10 sheets × 10k = 100k total
+    ("many_sheets_100x10k", 100, 100, 100, 1), # 100 sheets × 10k = 1M total
+    ("many_sheets_1000x1k", 40, 25, 1000, 1),  # 1000 sheets × 1k = 1M total (sheet-count stress)
+]
+
 
 @contextmanager
 def _xlsx_workbook(path: Path, sheet: str) -> Iterator[tuple[xlsxwriter.Workbook, Worksheet]]:
@@ -451,6 +477,168 @@ def generate_data_shape_scenarios(
     return files
 
 
+def _generate_file_shape_grid(
+    *,
+    path: Path,
+    sheet: str,
+    rows: int,
+    cols: int,
+    n_sheets: int,
+    sparse_every: int,
+) -> None:
+    """Emit one .xlsx for a (rows × cols × n_sheets, sparse_every) shape.
+
+    The dtype is always int (held constant across S3 to keep file-shape cost
+    orthogonal to S2's dtype axis). Sparse cells are written as None
+    (xlsxwriter's write_blank). Many-sheets fans the same grid into N sheets
+    named Sheet1..SheetN — matching the runner's default sheet_pattern.
+    """
+    path.parent.mkdir(parents=True, exist_ok=True)
+    wb = xlsxwriter.Workbook(str(path))
+    try:
+        for sheet_idx in range(1, n_sheets + 1):
+            ws_name = f"Sheet{sheet_idx}" if n_sheets > 1 else sheet
+            ws = wb.add_worksheet(ws_name)
+            for r in range(rows):
+                for c in range(cols):
+                    v = r * cols + c + 1
+                    if sparse_every > 1 and ((r * cols + c) % sparse_every) != 0:
+                        ws.write_blank(r, c, None)
+                    else:
+                        ws.write_number(r, c, v)
+    finally:
+        wb.close()
+
+
+def _file_shape_write_workload(
+    *,
+    sheet: str,
+    rng: str,
+    scenario: str,
+    n_sheets: int,
+    sparse_every: int,
+) -> dict[str, Any]:
+    """Return the bulk_write_grid workload spec for a file-shape scenario.
+
+    All file-shape scenarios use ``value_type=number`` and let the runner
+    re-use the n_sheets / sparse_every logic that ``_run_workload_write``
+    already supports.
+    """
+    base: dict[str, Any] = {
+        "scenario": scenario,
+        "op": "bulk_write_grid",
+        "operations": ["write"],
+        "sheet": sheet,
+        "range": rng,
+        "value_type": "number",
+        "start": 1,
+        "step": 1,
+    }
+    if n_sheets > 1:
+        base["n_sheets"] = n_sheets
+        base["sheet_pattern"] = "Sheet{i}"
+    if sparse_every > 1:
+        base["sparse_every"] = sparse_every
+    return base
+
+
+def generate_file_shape_scenarios(
+    tier_dir: Path,
+    *,
+    include_1m: bool = False,
+) -> list[TestFile]:
+    """Emit (shape × tier) fixtures and TestFile manifest entries for S3.
+
+    Default emits 9 scenarios: 2 wide + 2 tall + 2 sparse + 2 many-sheets at
+    the 10k/100k tier. With ``include_1m=True`` adds the 3 corresponding 1M
+    tier entries (3 more fixtures).
+
+    Each scenario produces one bulk_read + one bulk_write manifest row, so
+    default = 18 rows, +6 with --include-1m.
+    """
+    files: list[TestFile] = []
+    sheet = "S1"
+
+    for label, rows, cols, n_sheets, sparse_every in FILE_SHAPE_SCENARIOS:
+        # Gate any scenario whose total cell count is ≥ 1M behind --include-1m.
+        total_cells = rows * cols * n_sheets
+        if total_cells >= 1_000_000 and not include_1m:
+            continue
+
+        scenario = f"file_shape_{label}"
+        filename = f"00_{scenario}.xlsx"
+        end_cell = _coord_to_cell(rows, cols)
+        rng = f"A1:{end_cell}"
+
+        _generate_file_shape_grid(
+            path=tier_dir / filename,
+            sheet=sheet,
+            rows=rows,
+            cols=cols,
+            n_sheets=n_sheets,
+            sparse_every=sparse_every,
+        )
+
+        # Build read workload.
+        read_feature = f"{scenario}_bulk_read"
+        read_workload: dict[str, Any] = {
+            "scenario": read_feature,
+            "op": "bulk_sheet_values",
+            "operations": ["read"],
+            "sheet": sheet if n_sheets <= 1 else "Sheet1",
+            "range": rng,
+        }
+        if n_sheets > 1:
+            read_workload["n_sheets"] = n_sheets
+            read_workload["sheet_pattern"] = "Sheet{i}"
+
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature=read_feature,
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id=read_feature,
+                        label=f"File shape: {label} bulk read",
+                        row=1,
+                        expected={"workload": read_workload},
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+
+        write_feature = f"{scenario}_bulk_write"
+        files.append(
+            TestFile(
+                path=f"tier0/{filename}",
+                feature=write_feature,
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    TestCase(
+                        id=write_feature,
+                        label=f"File shape: {label} bulk write",
+                        row=1,
+                        expected={
+                            "workload": _file_shape_write_workload(
+                                sheet=sheet,
+                                rng=rng,
+                                scenario=write_feature,
+                                n_sheets=n_sheets,
+                                sparse_every=sparse_every,
+                            ),
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        )
+    return files
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="Generate ExcelBench throughput fixtures")
     parser.add_argument(
@@ -474,11 +662,20 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--file-shape-only",
+        action="store_true",
+        help=(
+            "Skip legacy + data-shape scenarios; emit only the file-shape "
+            "matrix (wide/tall/sparse/many-sheets at 10k/100k tiers, +1M "
+            "with --include-1m). Used by `excelbench perf-file-shape`."
+        ),
+    )
+    parser.add_argument(
         "--include-1m",
         action="store_true",
         help=(
-            "Include the 1M-cell tier in the data-shape matrix. Generation "
-            "takes ~5 min on a bench machine."
+            "Include the 1M-cell tier in the data-shape or file-shape "
+            "matrix. Generation takes ~5 min on a bench machine."
         ),
     )
     args = parser.parse_args()
@@ -505,6 +702,26 @@ def main() -> None:
         n_scenarios = len(files) // 2
         print(
             f"✓ Wrote {n_scenarios} data-shape scenario(s) "
+            f"({len(files)} manifest rows) to {out}"
+        )
+        print(f"  Manifest: {out / 'manifest.json'}")
+        return
+
+    if args.file_shape_only:
+        files.extend(
+            generate_file_shape_scenarios(tier_dir, include_1m=args.include_1m)
+        )
+        manifest = Manifest(
+            generated_at=datetime.now(UTC),
+            excel_version="xlsxwriter-generated",
+            generator_version="throughput-0.3.0-file-shape",
+            file_format="xlsx",
+            files=files,
+        )
+        write_manifest(manifest, out / "manifest.json")
+        n_scenarios = len(files) // 2
+        print(
+            f"✓ Wrote {n_scenarios} file-shape scenario(s) "
             f"({len(files)} manifest rows) to {out}"
         )
         print(f"  Manifest: {out / 'manifest.json'}")

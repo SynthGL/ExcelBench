@@ -437,7 +437,9 @@ def _shape_fixtures_stale(
 ) -> bool:
     """Return True if shape fixtures should be regenerated.
 
-    Triggers: missing manifest, generator newer than manifest, or the requested
+    Triggers: missing manifest, generator newer than manifest, manifest
+    contains zero ``data_shape_*`` features (e.g. it was last written by
+    ``perf-file-shape`` against the same fixtures dir), or the requested
     1M tier isn't already represented in the manifest.
     """
     import json
@@ -447,17 +449,140 @@ def _shape_fixtures_stale(
     if generator_script.exists():
         if generator_script.stat().st_mtime > manifest_path.stat().st_mtime:
             return True
+
+    try:
+        data = json.loads(manifest_path.read_text())
+    except (OSError, ValueError):
+        return True
+    files = data.get("files", []) if isinstance(data, dict) else []
+
+    # Cross-command guard: a fresh-mtime manifest written by perf-file-shape
+    # has zero data_shape_* entries; treat as stale so we regenerate.
+    if not any(
+        isinstance(f, dict)
+        and isinstance(f.get("feature"), str)
+        and f["feature"].startswith("data_shape_")
+        for f in files
+    ):
+        return True
+
     if needs_1m:
-        try:
-            data = json.loads(manifest_path.read_text())
-        except (OSError, ValueError):
-            return True
-        files = data.get("files", []) if isinstance(data, dict) else []
         if not any(
             isinstance(f, dict)
             and isinstance(f.get("feature"), str)
             and "_1m_" in f["feature"]
             and f["feature"].startswith("data_shape_")
+            for f in files
+        ):
+            return True
+    return False
+
+
+# File-shape (S3) — kept in sync with FILE_SHAPE_SCENARIOS in
+# scripts/generate_throughput_fixtures.py. Each entry is (label, total_cells)
+# where total_cells = rows × cols × n_sheets. The label categories
+# (wide/tall/sparse/many_sheets) are exposed via --shapes for filtering.
+_FILE_SHAPE_LABELS: list[tuple[str, int]] = [
+    ("wide_10k", 10_000),
+    ("wide_100k", 100_000),
+    ("wide_1m", 1_000_000),
+    ("tall_10k", 10_000),
+    ("tall_100k", 100_000),
+    ("tall_1m", 1_000_000),
+    ("sparse_10pct_10k", 10_000),
+    ("sparse_10pct_100k", 99_856),
+    ("sparse_10pct_1m", 1_000_000),
+    ("many_sheets_10x10k", 100_000),
+    ("many_sheets_100x10k", 1_000_000),
+    ("many_sheets_1000x1k", 1_000_000),
+]
+_FILE_SHAPE_CATEGORIES: list[str] = ["wide", "tall", "sparse", "many_sheets"]
+
+
+def _resolve_file_shape_features(
+    *, shapes_arg: str, rows: int
+) -> tuple[list[str], list[str], list[str]]:
+    """Translate --shapes and --rows into (read_features, write_features, labels).
+
+    Each label whose total cell count <= ``rows`` is included. ``--shapes`` is
+    a comma-separated list of categories (wide/tall/sparse/many_sheets) or
+    'all'.
+    """
+    raw = shapes_arg.strip().lower()
+    if raw in {"", "all"}:
+        wanted_cats = list(_FILE_SHAPE_CATEGORIES)
+    else:
+        wanted_cats = [c.strip() for c in raw.split(",") if c.strip()]
+        unknown = [c for c in wanted_cats if c not in _FILE_SHAPE_CATEGORIES]
+        if unknown:
+            raise ValueError(
+                f"Unknown --shapes: {', '.join(unknown)}. "
+                f"Valid: {', '.join(_FILE_SHAPE_CATEGORIES)} (or 'all')."
+            )
+
+    selected: list[str] = []
+    for label, total_cells in _FILE_SHAPE_LABELS:
+        if total_cells > rows:
+            continue
+        category = next((c for c in _FILE_SHAPE_CATEGORIES if label.startswith(c)), None)
+        if category in wanted_cats:
+            selected.append(label)
+
+    if not selected:
+        raise ValueError(
+            f"No file-shape scenarios match --shapes={shapes_arg!r} --rows={rows}. "
+            f"Smallest scenarios are 10k cells; pick at least 10000."
+        )
+
+    read_features = [f"file_shape_{label}_bulk_read" for label in selected]
+    write_features = [f"file_shape_{label}_bulk_write" for label in selected]
+    return read_features, write_features, selected
+
+
+def _file_shape_fixtures_stale(
+    manifest_path: Path,
+    generator_script: Path,
+    *,
+    needs_1m: bool,
+) -> bool:
+    """Return True if file-shape fixtures should be regenerated.
+
+    Mirrors :func:`_shape_fixtures_stale` for the file_shape_* feature prefix.
+    Always verifies at least one ``file_shape_*`` entry is present so a
+    manifest written by ``perf-shape`` (data_shape only) doesn't fool the
+    staleness check into skipping regeneration.
+    """
+    import json
+
+    if not manifest_path.exists():
+        return True
+    if generator_script.exists():
+        if generator_script.stat().st_mtime > manifest_path.stat().st_mtime:
+            return True
+
+    try:
+        data = json.loads(manifest_path.read_text())
+    except (OSError, ValueError):
+        return True
+    files = data.get("files", []) if isinstance(data, dict) else []
+
+    # Cross-command guard: a fresh-mtime manifest written by perf-shape has
+    # zero file_shape_* entries; treat as stale so we regenerate.
+    if not any(
+        isinstance(f, dict)
+        and isinstance(f.get("feature"), str)
+        and f["feature"].startswith("file_shape_")
+        for f in files
+    ):
+        return True
+
+    if needs_1m:
+        if not any(
+            isinstance(f, dict)
+            and isinstance(f.get("feature"), str)
+            and f["feature"].startswith("file_shape_")
+            and ("_1m" in f["feature"] or "_100x10k_" in f["feature"]
+                 or "_1000x1k_" in f["feature"])
             for f in files
         ):
             return True
@@ -639,6 +764,195 @@ def perf_shape(
         render_perf_results(perf_results, output)
 
         console.print(f"[green]✓ Data-shape results written to {output}/perf[/green]")
+        console.print(f"  - {output}/perf/results.json")
+        console.print(f"  - {output}/perf/README.md")
+        console.print(f"  - {output}/perf/matrix.csv")
+        console.print(f"  - {output}/perf/history.jsonl")
+
+    except FileNotFoundError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command("perf-file-shape")
+def perf_file_shape(
+    rows: int = typer.Option(
+        100_000,
+        "--rows",
+        help=(
+            "Largest total-cell-count scenario to include. Smallest scenario "
+            "is 10k cells; default 100k skips the 1M tier (which takes ~5min "
+            "to generate and run)."
+        ),
+    ),
+    shapes: str = typer.Option(
+        "all",
+        "--shapes",
+        help=(
+            "Comma-separated shape categories. 'all' (default) runs all 4. "
+            "Valid: wide, tall, sparse, many_sheets."
+        ),
+    ),
+    output: Path = typer.Option(
+        Path("results/perf-file-shape"),
+        "--output",
+        "-o",
+        help="Root directory for results (writes to <output>/perf/results.json).",
+    ),
+    fixtures: Path = typer.Option(
+        Path("test_files/throughput_xlsx"),
+        "--fixtures",
+        help="Directory containing file-shape fixtures + manifest.json.",
+    ),
+    adapters: list[str] | None = typer.Option(
+        None,
+        "--adapter",
+        "-a",
+        help="Run only specified adapter(s) by name (repeatable).",
+    ),
+    warmup: int = typer.Option(1, "--warmup"),
+    iters: int = typer.Option(3, "--iters"),
+    iteration_policy: str = typer.Option(
+        "fixed",
+        "--iteration-policy",
+        help="Repeat-run stabilization policy (currently: fixed).",
+    ),
+    breakdown: bool = typer.Option(
+        False,
+        "--breakdown",
+        help="Collect phase breakdown timings.",
+    ),
+    memory_mode: str = typer.Option(
+        "getrusage",
+        "--memory-mode",
+        help=(
+            "Memory measurement strategy (see `excelbench perf --help`). "
+            "'getrusage' (default), 'tracemalloc', 'time', or 'all'."
+        ),
+    ),
+    regenerate: bool = typer.Option(
+        False,
+        "--regenerate",
+        help=(
+            "Force re-emit of synthetic fixtures even if the manifest looks "
+            "current. Useful after editing the generator."
+        ),
+    ),
+) -> None:
+    """Run the file-shape benchmark matrix (wide/tall/sparse/many-sheets).
+
+    Holds dtype constant (int) so file-shape cost is orthogonal to S2's dtype
+    axis. Generates fixtures on-demand under ``--fixtures`` (gitignored) and
+    inherits Sprint 1's ``--memory-mode`` plumbing.
+    """
+    import subprocess
+    import sys
+
+    from excelbench.harness.adapters import get_all_adapters
+    from excelbench.perf import render_perf_results, run_perf
+    from excelbench.perf.memory import VALID_MEMORY_MODES
+
+    if not isinstance(iteration_policy, str):
+        iteration_policy = "fixed"
+    if not isinstance(memory_mode, str):
+        memory_mode = "getrusage"
+
+    memory_mode_normalized = memory_mode.strip().lower()
+    if memory_mode_normalized not in VALID_MEMORY_MODES:
+        console.print(
+            f"[red]Error: --memory-mode must be one of {list(VALID_MEMORY_MODES)}; "
+            f"got {memory_mode!r}[/red]"
+        )
+        raise typer.Exit(1)
+
+    try:
+        read_features, write_features, labels = _resolve_file_shape_features(
+            shapes_arg=shapes, rows=rows
+        )
+    except ValueError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+    needs_1m = any(label.endswith("_1m") for label in labels) or any(
+        "100x10k" in label or "1000x1k" in label for label in labels
+    )
+    manifest_path = fixtures / "manifest.json"
+    generator_script = (
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "generate_throughput_fixtures.py"
+    )
+
+    if regenerate or _file_shape_fixtures_stale(
+        manifest_path, generator_script, needs_1m=needs_1m
+    ):
+        gen_cmd = [
+            sys.executable,
+            str(generator_script),
+            "--file-shape-only",
+            "--output",
+            str(fixtures),
+        ]
+        if needs_1m:
+            gen_cmd.append("--include-1m")
+        console.print(f"[bold]Generating file-shape fixtures...[/bold] {' '.join(gen_cmd)}")
+        try:
+            subprocess.run(gen_cmd, check=True)
+        except subprocess.CalledProcessError as e:
+            console.print(f"[red]Fixture generation failed (exit {e.returncode})[/red]")
+            raise typer.Exit(1)
+        except FileNotFoundError as e:
+            console.print(f"[red]Generator script not found: {e}[/red]")
+            raise typer.Exit(1)
+
+    available = get_all_adapters()
+    selected = available
+    if adapters:
+        wanted = [a.strip() for a in adapters if a.strip()]
+        by_name = {a.name: a for a in available}
+        missing = [a for a in wanted if a not in by_name]
+        if missing:
+            console.print(f"[red]Error: Unknown adapters: {', '.join(missing)}[/red]")
+            console.print(
+                f"[yellow]Available adapters: {', '.join(sorted(by_name.keys()))}[/yellow]"
+            )
+            raise typer.Exit(1)
+        selected = [by_name[name] for name in wanted]
+
+    feature_filter = read_features + write_features
+
+    console.print("[bold]Running file-shape benchmark...[/bold]")
+    console.print(f"  Fixtures: {fixtures}")
+    console.print(f"  Output: {output}/perf")
+    console.print(f"  Shapes: {', '.join(labels)}")
+    console.print(
+        f"  Features: {len(feature_filter)} "
+        f"({len(read_features)} read + {len(write_features)} write)"
+    )
+    console.print(f"  Warmup: {warmup}  ·  Iterations: {iters}")
+    console.print(f"  Memory mode: {memory_mode_normalized}")
+    if adapters:
+        console.print(f"  Adapters: {', '.join([a.name for a in selected])}")
+    console.print()
+
+    try:
+        perf_results = run_perf(
+            fixtures,
+            adapters=selected,
+            features=feature_filter,
+            profile="xlsx",
+            warmup=warmup,
+            iters=iters,
+            iteration_policy=iteration_policy,
+            breakdown=breakdown,
+            memory_mode=memory_mode_normalized,  # type: ignore[arg-type]
+        )
+        render_perf_results(perf_results, output)
+
+        console.print(f"[green]✓ File-shape results written to {output}/perf[/green]")
         console.print(f"  - {output}/perf/results.json")
         console.print(f"  - {output}/perf/README.md")
         console.print(f"  - {output}/perf/matrix.csv")

@@ -111,3 +111,37 @@ uv run python scripts/generate_throughput_fixtures.py --shape-only --include-1m
 The 40 scenarios produce 80 shape feature names following the pattern
 `data_shape_<dtype>_<tier>_bulk_<read|write>` (one read + one write per
 scenario), e.g. `data_shape_formula_cross_sheet_1m_bulk_read`.
+
+## File-shape matrix (Sprint 3 — DEC-020)
+
+Sprint 3 added a parametric **file-shape** axis orthogonal to the dtype
+matrix above: same total cell count, different geometries. Holds dtype
+constant (int) so file-shape cost is isolated from dtype cost.
+
+**Scenarios** (12 total, 1M tier gated behind `--include-1m`):
+
+- `wide_{10k,100k,1m}` — many cols, few rows (`10/100/1000` × 1000 cols).
+  Stresses column-iterator paths.
+- `tall_{10k,100k,1m}` — many rows, few cols (`10000/100000/1000000` × 1
+  col). Stresses row-iterator + streaming paths.
+- `sparse_10pct_{10k,100k,1m}` — 100×100 / 316×316 / 1000×1000 grids
+  with `sparse_every=10` (90% blank). Stresses how libraries store
+  empties.
+- `many_sheets_10x10k`, `many_sheets_100x10k`, `many_sheets_1000x1k` —
+  10/100/1000 sheets × small data each. Stresses per-sheet XML overhead
+  and adapter sheet-discovery paths.
+
+To emit only the file-shape matrix:
+
+```bash
+uv run python scripts/generate_throughput_fixtures.py --file-shape-only --include-1m
+```
+
+The 12 scenarios produce 24 file-shape feature names following the pattern
+`file_shape_<label>_bulk_<read|write>`, e.g.
+`file_shape_many_sheets_100x10k_bulk_read`.
+
+The runner consumes new optional workload fields `n_sheets` and
+`sheet_pattern` (default `"Sheet{i}"`) to fan a single workload across
+multiple sheets. Default `n_sheets=1` preserves single-sheet callers
+unchanged.
