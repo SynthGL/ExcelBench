@@ -15,8 +15,12 @@ not to replace the existing ExcelBench adapter matrix.
 - `src/excelbench/harness/external_oracles.py` defines the subprocess contract.
 - `src/excelbench/harness/external_fixture_pack.py` defines the first local
   fixture pack and writes a `manifest.json` under `results_dev_external/`.
+- `src/excelbench/harness/external_wolfxl_validation.py` validates generated
+  fixtures through WolfXL read + in-place modify-save part preservation.
 - `scripts/generate_external_oracle_fixtures.py` regenerates the local fixture
   pack.
+- `scripts/validate_external_oracle_fixtures_with_wolfxl.py` runs the WolfXL
+  preservation check and writes `wolfxl-validation.json`.
 - External helpers receive a JSON request on stdin and return JSON diagnostics
   on stdout.
 - Missing helpers return a structured skip, so Go/Java/.NET/LibreOffice are not
@@ -78,6 +82,8 @@ Current smoke coverage:
   opened in openpyxl with the expected unsupported-extension warning, read
   values correctly through WolfXL, and rendered to PDF through LibreOffice
   without stderr.
+- WolfXL validator, 2026-04-28: both generated fixture-pack workbooks passed
+  read + in-place modify-save preservation after WolfXL commit `634be84`.
 
 ## Candidate tools
 
@@ -98,6 +104,7 @@ Regenerate locally:
 
 ```bash
 uv run python scripts/generate_external_oracle_fixtures.py
+uv run python scripts/validate_external_oracle_fixtures_with_wolfxl.py
 ```
 
 Fixtures:
