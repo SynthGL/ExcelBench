@@ -13,7 +13,9 @@ not to replace the existing ExcelBench adapter matrix.
 ## Current scaffold
 
 - `src/excelbench/harness/external_oracles.py` defines the subprocess contract.
-- `src/excelbench/harness/external_fixture_pack.py` defines the first local
+- `src/excelbench/harness/external_fixture_specs/` defines tool-specific
+  fixture specifications.
+- `src/excelbench/harness/external_fixture_pack.py` orchestrates the local
   fixture pack and writes a `manifest.json` under `results_dev_external/`.
 - `src/excelbench/harness/external_wolfxl_validation.py` validates generated
   fixtures through WolfXL read + in-place modify-save part preservation.
@@ -147,6 +149,48 @@ Current smoke coverage:
 | NPOI | .NET | POI-like .NET comparison for formulas, comments, rich strings, merged ranges, and protection. | Initial helper implemented; first fixture-pack case passing. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
 
+## Additional oracle research
+
+2026-04-28 local runtime inventory:
+
+- Available locally: `java`, `javac`, `node`, `npm`, `pnpm`, `bun`, `go`,
+  `dotnet`, `php`, `ruby`, and `soffice`.
+- Missing locally: `mvn`, `gradle`, `composer`, `ssconvert`, and
+  `libreoffice` as a direct executable name.
+
+High-signal next candidates:
+
+1. Apache POI. POI's XSSF API exposes pivot-table creation/inspection, tables,
+   sheet protection, conditional-formatting access, comments/VML drawing
+   surfaces, and shared formula metadata. It remains the best missing
+   independent OOXML writer, but the helper should avoid assuming Maven/Gradle
+   are installed on developer machines. Source: [POI XSSFSheet API][poi-xssf].
+2. ExcelJS. The project documents XLSX read/write, styles, merged cells,
+   defined names, data validations, comments, tables, rich text, conditional
+   formatting, images, sheet protection, streaming I/O, formula values, shared
+   formulas, and array formulas. This is a strong Node oracle for style/value
+   and streaming edge cases, with pivot support still newer and limited. Source:
+   [ExcelJS README][exceljs-readme].
+3. xlsx-populate. This is useful for template-preservation and mutation tests:
+   it is explicitly a parser/generator focused on preserving existing workbook
+   features and styles, with documented support for styles, rich text, data
+   validation, hyperlinks, print options, panes, and encryption. Source:
+   [xlsx-populate README][xlsx-populate-readme].
+4. PhpSpreadsheet. This can independently generate formulas, charts, styles,
+   images, merged cells, freeze panes, and sheet protection, but it needs a
+   Composer bootstrap before becoming an ergonomic local oracle. Sources:
+   [PhpSpreadsheet site][phpspreadsheet-site] and
+   [feature cross-reference][phpspreadsheet-features].
+5. libxlsxwriter. This C writer can generate formulas, hyperlinks, formatting,
+   merged cells, charts, data validation, conditional formatting, images,
+   comments, macros, and large-file memory-optimized outputs. It overlaps with
+   Rust writer coverage, but gives a different native package producer for XML
+   shape comparison. Source: [libxlsxwriter README][libxlsxwriter-readme].
+6. Gnumeric `ssconvert`. This is better as a conversion/open-save oracle than a
+   fixture generator. It is not installed locally, and LibreOffice already covers
+   the current conversion/render validation path. Source:
+   [Gnumeric ssconvert manual][gnumeric-ssconvert].
+
 ## First fixture pack
 
 The first external oracle pack should stay small and high-signal:
@@ -182,3 +226,11 @@ Fixtures:
 - WolfXL read/modify/save behavior is explicitly classified as pass, fix-now,
   documented defer, or out of scope.
 - Stable cases graduate into checked-in fixtures only after a manual truth pass.
+
+[exceljs-readme]: https://raw.githubusercontent.com/exceljs/exceljs/master/README.md
+[gnumeric-ssconvert]: https://gnome.pages.gitlab.gnome.org/gnumeric/manual/sect-files-ssconvert.html
+[libxlsxwriter-readme]: https://github.com/jmcnamara/libxlsxwriter
+[phpspreadsheet-features]: https://phpspreadsheet.readthedocs.io/en/stable/references/features-cross-reference/
+[phpspreadsheet-site]: https://phpspreadsheet.com/
+[poi-xssf]: https://poi.apache.org/apidocs/5.0/org/apache/poi/xssf/usermodel/XSSFSheet.html
+[xlsx-populate-readme]: https://raw.githubusercontent.com/dtjohnson/xlsx-populate/master/README.md

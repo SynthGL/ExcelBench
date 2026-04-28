@@ -1,0 +1,22 @@
+"""Tool-specific external fixture specifications."""
+
+from __future__ import annotations
+
+from excelbench.harness.external_fixture_specs.closedxml import closedxml_fixture_specs
+from excelbench.harness.external_fixture_specs.excelize import excelize_fixture_specs
+from excelbench.harness.external_fixture_specs.npoi import npoi_fixture_specs
+
+from .base import ExternalFixtureSpec
+
+__all__ = [
+    "ExternalFixtureSpec",
+    "closedxml_fixture_specs",
+    "excelize_fixture_specs",
+    "external_fixture_specs",
+    "npoi_fixture_specs",
+]
+
+
+def external_fixture_specs() -> list[ExternalFixtureSpec]:
+    """Return all implemented external fixture specifications."""
+    return [*excelize_fixture_specs(), *closedxml_fixture_specs(), *npoi_fixture_specs()]

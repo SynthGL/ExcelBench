@@ -71,6 +71,8 @@ Most-touched top-level directories:
   - `models.py`: dataclasses/contracts (CellValue, CellFormat, BorderInfo, ...)
   - `generator/`: fixture generation (xlwings + Excel)
   - `harness/`: fidelity benchmark runner, adapters, and optional external oracle helpers
+  - `harness/external_fixture_specs/`: tool-specific external oracle fixture
+    definitions imported by the fixture-pack generator
   - `perf/`: performance runner + renderer
   - `results/`: fidelity result renderers (md/csv) + dashboards/plots
 
