@@ -31,6 +31,7 @@ def test_catalog_lists_planned_external_oracles() -> None:
     }
     assert "pivots" in catalog["excelize"].capabilities
     assert "open_save_validate" in catalog["libreoffice"].capabilities
+    assert "data_validations" in catalog["apache-poi"].capabilities
     assert "data_validations" in catalog["exceljs"].capabilities
     assert "rich_text" in catalog["npoi"].capabilities
 
@@ -44,6 +45,10 @@ def test_repo_catalog_points_excelize_at_go_helper() -> None:
     assert tool.cwd == repo_root / "tools" / "external-oracles" / "excelize"
     assert catalog["libreoffice"].command[0] == sys.executable
     assert catalog["libreoffice"].command[1].endswith("libreoffice_oracle.py")
+    assert catalog["apache-poi"].command[0] == sys.executable
+    assert catalog["apache-poi"].command[1].endswith("poi_oracle.py")
+    assert catalog["apache-poi"].cwd == repo_root / "tools" / "external-oracles" / "apache-poi"
+    assert catalog["apache-poi"].required_paths
     assert catalog["exceljs"].command[0] == "node"
     assert catalog["exceljs"].command[1].endswith("exceljs-oracle.cjs")
     assert catalog["exceljs"].cwd == repo_root / "tools" / "external-oracles" / "exceljs"
@@ -520,6 +525,65 @@ def test_exceljs_node_helper_writes_table_validation_fixture(tmp_path: Path) -> 
     assert "xl/tables/table1.xml" in names
     assert "xl/comments1.xml" in names
     assert "xl/drawings/vmlDrawing1.vml" in names
+    assert "xl/drawings/drawing1.xml" in names
+    assert "xl/media/image1.png" in names
+    assert "dataValidations" in sheet_xml
+    assert "sheetProtection" in sheet_xml
+    assert "mergeCell" in sheet_xml
+    assert "<f>SUM(B2:B3)</f>" in sheet_xml
+    assert "<r>" in shared_strings_xml
+
+
+@pytest.mark.skipif(
+    not (
+        (
+            Path("/opt/homebrew/opt/openjdk/bin/java").exists()
+            or shutil.which("java")
+        )
+        and (
+            Path(__file__).resolve().parents[1]
+            / "tools"
+            / "external-oracles"
+            / "apache-poi"
+            / "build"
+            / "classes"
+            / "PoiOracle.class"
+        ).exists()
+    ),
+    reason="Java and built Apache POI helper classes are required for Apache POI",
+)
+def test_apache_poi_helper_writes_table_validation_fixture(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    output_path = tmp_path / "apache-poi-smoke.xlsx"
+    tool = external_oracle_catalog(repo_root=repo_root)["apache-poi"]
+
+    result = run_external_oracle(
+        tool,
+        ExternalOracleRequest(
+            fixture_id="apache-poi-smoke",
+            operation="write_fixture",
+            output_path=output_path,
+            payload={},
+        ),
+        timeout_seconds=180,
+    )
+
+    assert result.passed is True, result
+    assert output_path.exists()
+    assert result.payload["counts"]["formulas"] == 1
+    assert result.payload["counts"]["comments"] == 1
+    assert result.payload["counts"]["rich_text"] == 1
+    assert result.payload["counts"]["hyperlinks"] == 1
+    assert result.payload["counts"]["tables"] == 1
+    assert result.payload["counts"]["data_validations"] == 1
+    assert result.payload["counts"]["images"] == 1
+    with ZipFile(output_path) as workbook:
+        names = set(workbook.namelist())
+        sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+        shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+    assert "xl/tables/table1.xml" in names
+    assert "xl/comments1.xml" in names
+    assert "xl/drawings/vmlDrawing0.vml" in names
     assert "xl/drawings/drawing1.xml" in names
     assert "xl/media/image1.png" in names
     assert "dataValidations" in sheet_xml

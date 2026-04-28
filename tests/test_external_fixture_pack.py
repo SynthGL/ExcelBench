@@ -10,6 +10,7 @@ from zipfile import ZipFile
 import pytest
 
 from excelbench.harness.external_fixture_pack import (
+    apache_poi_fixture_specs,
     closedxml_fixture_specs,
     excelize_fixture_specs,
     exceljs_fixture_specs,
@@ -53,7 +54,17 @@ def test_closedxml_fixture_specs_are_stable() -> None:
         "closedxml_rich_comment_protection",
         "npoi_formula_comment_merge_protection",
         "exceljs_table_validation_image_comment",
+        "apache_poi_table_validation_image_comment",
     ]
+
+
+def test_apache_poi_fixture_specs_are_stable() -> None:
+    specs = apache_poi_fixture_specs()
+
+    assert [spec.fixture_id for spec in specs] == ["apache_poi_table_validation_image_comment"]
+    assert all(spec.tool == "apache-poi" for spec in specs)
+    assert "xl/tables/table1.xml" in specs[0].expected_parts
+    assert "xl/drawings/vmlDrawing0.vml" in specs[0].expected_parts
 
 
 def test_exceljs_fixture_specs_are_stable() -> None:
@@ -145,6 +156,33 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
         assert "dataValidations" in exceljs_sheet_xml
         assert "sheetProtection" in exceljs_sheet_xml
         assert "<r>" in exceljs_shared_strings_xml
+    apache_poi_classes = (
+        repo_root
+        / "tools"
+        / "external-oracles"
+        / "apache-poi"
+        / "build"
+        / "classes"
+        / "PoiOracle.class"
+    )
+    if (
+        (Path("/opt/homebrew/opt/openjdk/bin/java").exists() or shutil.which("java") is not None)
+        and apache_poi_classes.exists()
+    ):
+        apache_poi_fixture = tmp_path / "apache-poi-table-validation-image-comment.xlsx"
+        assert apache_poi_fixture.exists()
+        with ZipFile(apache_poi_fixture) as workbook:
+            apache_poi_names = set(workbook.namelist())
+            apache_poi_sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+            apache_poi_shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+        assert "xl/tables/table1.xml" in apache_poi_names
+        assert "xl/comments1.xml" in apache_poi_names
+        assert "xl/drawings/vmlDrawing0.vml" in apache_poi_names
+        assert "xl/drawings/drawing1.xml" in apache_poi_names
+        assert "xl/media/image1.png" in apache_poi_names
+        assert "dataValidations" in apache_poi_sheet_xml
+        assert "sheetProtection" in apache_poi_sheet_xml
+        assert "<r>" in apache_poi_shared_strings_xml
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

@@ -10,6 +10,7 @@ from zipfile import ZipFile
 
 from excelbench.harness.external_fixture_specs import (
     ExternalFixtureSpec,
+    apache_poi_fixture_specs,
     closedxml_fixture_specs,
     excelize_fixture_specs,
     exceljs_fixture_specs,
@@ -27,6 +28,7 @@ from excelbench.harness.external_oracles import (
 __all__ = [
     "ExternalFixtureSpec",
     "FixtureGenerationResult",
+    "apache_poi_fixture_specs",
     "closedxml_fixture_specs",
     "exceljs_fixture_specs",
     "excelize_fixture_specs",

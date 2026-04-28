@@ -90,6 +90,9 @@ Most-touched top-level directories:
   - `exceljs/`: Node helper that generates workbooks with ExcelJS tables,
     formulas, data validations, rich strings, comments, hyperlinks, images,
     merges, freeze panes, and sheet protection.
+  - `apache-poi/`: Java helper that generates workbooks with Apache POI tables,
+    formulas, data validations, rich strings, comments, hyperlinks, images,
+    merges, freeze panes, and sheet protection.
   - `closedxml/`: .NET helper that generates workbooks with ClosedXML tables,
     pivots, and conditional formatting.
   - `npoi/`: .NET helper that generates POI-style workbooks with NPOI formulas,

@@ -170,6 +170,19 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
         exceljs_cwd = repo_root / "tools" / "external-oracles" / "exceljs"
         exceljs_command = ("node", str(exceljs_cwd / "exceljs-oracle.cjs"))
         exceljs_required_paths = (exceljs_cwd / "node_modules" / "exceljs" / "package.json",)
+    apache_poi_command: tuple[str, ...] = ("excelbench-poi-oracle",)
+    apache_poi_cwd = None
+    apache_poi_required_paths: tuple[Path, ...] = ()
+    if repo_root is not None:
+        apache_poi_cwd = repo_root / "tools" / "external-oracles" / "apache-poi"
+        apache_poi_command = (
+            sys.executable,
+            str(apache_poi_cwd / "poi_oracle.py"),
+        )
+        apache_poi_required_paths = (
+            apache_poi_cwd / "build" / "classes" / "PoiOracle.class",
+            apache_poi_cwd / "deps" / "lib" / "poi-ooxml-5.5.1.jar",
+        )
 
     return {
         "excelize": ExternalOracleTool(
@@ -189,10 +202,22 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
         ),
         "apache-poi": ExternalOracleTool(
             name="apache-poi",
-            command=("excelbench-poi-oracle",),
+            command=apache_poi_command,
             language="java",
             homepage="https://poi.apache.org/components/spreadsheet/",
-            capabilities=frozenset({"read", "write", "charts", "pivots"}),
+            capabilities=frozenset(
+                {
+                    "read",
+                    "write",
+                    "comments",
+                    "data_validations",
+                    "images",
+                    "rich_text",
+                    "tables",
+                }
+            ),
+            cwd=apache_poi_cwd,
+            required_paths=apache_poi_required_paths,
         ),
         "exceljs": ExternalOracleTool(
             name="exceljs",

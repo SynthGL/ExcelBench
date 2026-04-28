@@ -61,6 +61,10 @@ tools/external-oracles/**/obj/
 # Node external oracle dependencies
 tools/external-oracles/**/node_modules/
 
+# Java external oracle build/dependency outputs
+tools/external-oracles/**/deps/lib/
+tools/external-oracles/**/build/classes/
+
 # Jupyter
 .ipynb_checkpoints/
 

@@ -33,9 +33,9 @@ not to replace the existing ExcelBench adapter matrix.
   - `tools/external-oracles/excelize` (`go run .`)
   - `tools/external-oracles/libreoffice/libreoffice_oracle.py`
   - `tools/external-oracles/exceljs` (`node exceljs-oracle.cjs`)
+  - `tools/external-oracles/apache-poi/poi_oracle.py`
   - `tools/external-oracles/closedxml` (`dotnet run --project ...`)
   - `tools/external-oracles/npoi` (`dotnet run --project ...`)
-  - `excelbench-poi-oracle`
 
 ## Excelize helper
 
@@ -145,6 +145,36 @@ Current smoke coverage:
   overrides transitive `uuid` to 14.0.0, producing a local `npm audit` result
   with zero reported vulnerabilities.
 
+## Apache POI helper
+
+Implemented: `tools/external-oracles/apache-poi`
+
+Supported operations:
+
+- `write_fixture`: writes the current POI fixture with tables, formulas, rich
+  text, comments, hyperlinks, data validations, merged ranges, freeze panes,
+  images, and sheet protection through Apache POI.
+- `read_metadata`: inspects package parts for worksheets, shared strings,
+  comments, VML drawings, tables, drawings, media, and calc-chain metadata.
+
+Current smoke coverage:
+
+- Java integration smoke writes a table + formula + data-validation + rich text
+  + comment + hyperlink + image + merged range + freeze panes + sheet-protection
+  workbook through `run_external_oracle()` when Java and the local POI helper
+  build are available.
+- Fixture-pack promotion, 2026-04-28:
+  `apache_poi_table_validation_image_comment` is included when the helper has
+  been bootstrapped with `tools/external-oracles/apache-poi/build.sh`.
+- Manual Apache POI truth pass, 2026-04-28: the full seven-workbook pack,
+  including the POI table/validation/image/comment/rich-text case, passes
+  LibreOffice open/render validation and WolfXL read + in-place modify-save
+  preservation.
+- Dependency hygiene, 2026-04-28: `fetch_deps.py` pins Apache POI 5.5.1 and
+  required runtime jars from Maven Central, then verifies Maven Central checksum
+  sidecars before compilation. Maven Central reported `poi-ooxml` latest/release
+  as 5.5.1 during this pass.
+
 ## NPOI helper
 
 Implemented: `tools/external-oracles/npoi`
@@ -174,7 +204,7 @@ Current smoke coverage:
 | Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | Initial helper implemented. |
 | LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | Initial helper implemented. |
 | ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first two fixture-pack cases passing. |
-| Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
+| Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | Initial helper implemented; first fixture-pack case passing. |
 | NPOI | .NET | POI-like .NET comparison for formulas, comments, rich strings, merged ranges, and protection. | Initial helper implemented; first fixture-pack case passing. |
 | ExcelJS | JavaScript | Generate style/value, table, validation, comment, rich text, hyperlink, image, protection, and streaming edge cases. | Initial helper implemented; first fixture-pack case passing. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
@@ -248,8 +278,11 @@ Fixtures:
 6. `exceljs_table_validation_image_comment`: ExcelJS formula cell, table,
    data validation, rich shared string, legacy comment, hyperlink, image,
    merged range, freeze panes, and sheet protection. **Implemented.**
-7. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
-8. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
+7. `apache_poi_table_validation_image_comment`: Apache POI formula cell, table,
+   data validation, rich shared string, legacy comment, hyperlink, image, merged
+   range, freeze panes, and sheet protection. **Implemented.**
+8. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+9. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 
