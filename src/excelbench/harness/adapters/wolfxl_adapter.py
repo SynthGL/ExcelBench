@@ -35,8 +35,20 @@ except ImportError as e:  # pragma: no cover
 
 if getattr(_excelbench_rust, "CalamineStyledBook", None) is None:  # pragma: no cover
     raise ImportError("wolfxl._rust built without calamine backend")
-if getattr(_excelbench_rust, "RustXlsxWriterBook", None) is None:  # pragma: no cover
-    raise ImportError("wolfxl._rust built without rust_xlsxwriter backend")
+if (
+    getattr(_excelbench_rust, "NativeWorkbook", None) is None
+    and getattr(_excelbench_rust, "RustXlsxWriterBook", None) is None
+):  # pragma: no cover
+    raise ImportError("wolfxl._rust built without a native writer backend")
+
+
+def _writer_class(rust_module: Any) -> Any:
+    """Return the current WolfXL writer class, with legacy fallback."""
+
+    native = getattr(rust_module, "NativeWorkbook", None)
+    if native is not None:
+        return native
+    return getattr(rust_module, "RustXlsxWriterBook")
 
 
 class WolfxlAdapter(ExcelAdapter):
@@ -51,6 +63,8 @@ class WolfxlAdapter(ExcelAdapter):
     def info(self) -> LibraryInfo:
         cal_ver = get_rust_backend_version("calamine")
         rxw_ver = get_rust_backend_version("rust_xlsxwriter")
+        if rxw_ver == "unknown":
+            rxw_ver = get_rust_backend_version("native")
         return LibraryInfo(
             name="wolfxl",
             version=f"cal={cal_ver}+rxw={rxw_ver}",
@@ -201,14 +215,15 @@ class WolfxlAdapter(ExcelAdapter):
         return dict(workbook.read_freeze_panes(sheet))
 
     # =========================================================================
-    # Write — delegates to RustXlsxWriterBook
+    # Write — delegates to NativeWorkbook (WolfXL 2.0+) or RustXlsxWriterBook
+    # on older WolfXL releases.
     # =========================================================================
 
     def create_workbook(self) -> Any:
         import wolfxl._rust as rust
 
         m: Any = rust
-        return getattr(m, "RustXlsxWriterBook")()
+        return _writer_class(m)()
 
     def add_sheet(self, workbook: Any, name: str) -> None:
         workbook.add_sheet(name)
@@ -224,7 +239,7 @@ class WolfxlAdapter(ExcelAdapter):
         start_cell: str,
         values: list[list[Any]],
     ) -> None:
-        """Bulk write a grid of values via RustXlsxWriterBook.write_sheet_values()."""
+        """Bulk write a grid of values via the native writer."""
         workbook.write_sheet_values(sheet, start_cell, values)
 
     def write_cell_format(self, workbook: Any, sheet: str, cell: str, format: CellFormat) -> None:
@@ -239,7 +254,7 @@ class WolfxlAdapter(ExcelAdapter):
         start_cell: str,
         formats: list[list[dict[str, Any] | None]],
     ) -> None:
-        """Bulk write a grid of format dicts via RustXlsxWriterBook.write_sheet_formats()."""
+        """Bulk write a grid of format dicts via the native writer."""
         workbook.write_sheet_formats(sheet, start_cell, formats)
 
     def write_cell_border(self, workbook: Any, sheet: str, cell: str, border: BorderInfo) -> None:
@@ -254,7 +269,7 @@ class WolfxlAdapter(ExcelAdapter):
         start_cell: str,
         borders: list[list[dict[str, Any] | None]],
     ) -> None:
-        """Bulk write a grid of border dicts via RustXlsxWriterBook.write_sheet_borders()."""
+        """Bulk write a grid of border dicts via the native writer."""
         workbook.write_sheet_borders(sheet, start_cell, borders)
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
