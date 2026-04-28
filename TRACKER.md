@@ -4,7 +4,7 @@
 > self-contained sprint (one branch, one PR, one row flip). Resume cold by reading this file
 > and the most recent `[*INCOMPLETE*]` marker.
 
-**Last updated**: 2026-04-27 (S3 in progress)
+**Last updated**: 2026-04-27 (S3 shipped)
 
 ## Status Table
 
@@ -12,7 +12,7 @@
 |----|------------------------------------|-------------|-------------|--------------------------------|-----|-------------------------|
 | S1 | Memory honesty + Tracker bootstrap | Shipped     | S (3–5 d)   | `feat/perf-mem-honesty`        | #28 | `50dc104..HEAD@PR#28`   |
 | S2 | Data shape (int/str/date/formula)  | Shipped     | M (1 wk)    | `feat/perf-data-shape`         | #31 | `373c896..cbb530f`      |
-| S3 | File shape (wide/tall/sparse)      | In Progress | M (1 wk)    | `feat/perf-file-shape`         | —   | —                       |
+| S3 | File shape (wide/tall/sparse)      | Shipped     | M (1 wk)    | `feat/perf-file-shape`         | #32 | `eb89aba..c7cf25d`      |
 | S4 | High-cost operations               | Planned     | M (1 wk)    | `feat/perf-operations`         | —   | —                       |
 | S5 | Workbook complexity perf           | Planned     | M (1 wk)    | `feat/perf-complexity`         | —   | —                       |
 | S6 | Cold-start / warm path             | Planned     | S (3–5 d)   | `feat/perf-cold-start`         | —   | —                       |
@@ -61,6 +61,30 @@ Use this template when appending to **Acceptance Notes** below.
 ## Acceptance Notes
 
 <!-- Newest first. Append entries here as sprints ship. -->
+
+### S3 — File shape (wide/tall/sparse) (2026-04-27)
+
+**Branch**: `feat/perf-file-shape`  ·  **PR**: [#32](https://github.com/SynthGL/ExcelBench/pull/32)  ·  **Commit range**: `eb89aba..c7cf25d`
+
+**What shipped**:
+- 12 file-shape benchmark scenarios across wide, tall, sparse, and many-sheets categories.
+- `excelbench perf-file-shape` CLI with category filtering, tier caps, on-demand fixture regeneration, and Sprint 1 memory-mode support.
+- `n_sheets` / `sheet_pattern` workload fan-out so many-sheets runs exercise per-sheet overhead without duplicating dtype logic.
+- `_section_file_shape` dashboard heatmaps for read/write throughput by shape category.
+- Cross-command staleness guards for `data_shape_*` and `file_shape_*` manifests, fixing the Codex P1 review finding.
+- 54 focused data-shape/file-shape tests covering CLI helpers, staleness detection, runner fan-out, and dashboard rendering.
+
+**Verification**:
+- `uv run pytest tests/test_perf_file_shape.py tests/test_perf_data_shape.py -v --no-cov` ✓ (54 passed)
+- `uv run ruff check src/ tests/ scripts/` ✓
+- `uv run mypy src/` ✓
+- PR #32 CI ✓: lint, test 3.11, test 3.12, benchmark, rust_smoke.
+
+**Decisions**: DEC-020 logged in `decisions.md`.
+
+**Deferred / out-of-scope**:
+- Full 16+ adapter run at the 1M tier remains a bench-machine task.
+- Cross-product of file shape × dtype remains deferred until dashboard data shows that interaction is worth the matrix cost.
 
 ### S2 — Data shape (int/str/date/formula) (2026-04-27)
 
