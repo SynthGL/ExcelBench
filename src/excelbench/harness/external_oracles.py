@@ -144,6 +144,20 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             "quiet",
             "--",
         )
+    npoi_command: tuple[str, ...] = ("excelbench-npoi-oracle",)
+    if repo_root is not None:
+        npoi_command = (
+            "dotnet",
+            "run",
+            "--project",
+            str(repo_root / "tools" / "external-oracles" / "npoi" / "npoi-oracle.csproj"),
+            "--configuration",
+            "Release",
+            "--no-launch-profile",
+            "--verbosity",
+            "quiet",
+            "--",
+        )
 
     return {
         "excelize": ExternalOracleTool(
@@ -174,6 +188,13 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             language="dotnet",
             homepage="https://docs.closedxml.io/",
             capabilities=frozenset({"read", "write", "pivots", "conditional_formatting"}),
+        ),
+        "npoi": ExternalOracleTool(
+            name="npoi",
+            command=npoi_command,
+            language="dotnet",
+            homepage="https://github.com/nissl-lab/npoi",
+            capabilities=frozenset({"read", "write", "comments", "rich_text", "protection"}),
         ),
     }
 

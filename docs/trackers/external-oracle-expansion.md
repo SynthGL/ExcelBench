@@ -31,6 +31,7 @@ not to replace the existing ExcelBench adapter matrix.
   - `tools/external-oracles/excelize` (`go run .`)
   - `tools/external-oracles/libreoffice/libreoffice_oracle.py`
   - `tools/external-oracles/closedxml` (`dotnet run --project ...`)
+  - `tools/external-oracles/npoi` (`dotnet run --project ...`)
   - `excelbench-poi-oracle`
 
 ## Excelize helper
@@ -113,6 +114,28 @@ Current smoke coverage:
   sheet protection. The full four-workbook pack passes LibreOffice
   open/render validation and WolfXL read + in-place modify-save preservation.
 
+## NPOI helper
+
+Implemented: `tools/external-oracles/npoi`
+
+Supported operations:
+
+- `write_fixture`: writes sheets, cells, formulas, rich text, legacy comments,
+  merged ranges, and sheet protection through NPOI.
+- `read_metadata`: inspects package parts for worksheets, shared strings,
+  comments, VML drawings, and calc-chain metadata.
+
+Current smoke coverage:
+
+- .NET integration smoke writes a formula + rich text + comment + merged range
+  + sheet-protection workbook through `run_external_oracle()` when `dotnet` is
+  available.
+- Fixture-pack promotion, 2026-04-28: `npoi_formula_comment_merge_protection`
+  is included when `dotnet` is available.
+- Manual NPOI truth pass, 2026-04-28: the full five-workbook pack, including
+  the NPOI formula/comment/rich-text/merge/protection case, passes LibreOffice
+  open/render validation and WolfXL read + in-place modify-save preservation.
+
 ## Candidate tools
 
 | Tool | Runtime | Initial role | Status |
@@ -121,7 +144,7 @@ Current smoke coverage:
 | LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | Initial helper implemented. |
 | ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first two fixture-pack cases passing. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
-| NPOI | .NET | POI-like .NET comparison if ClosedXML/POI leave .NET-specific gaps. | P2 research. |
+| NPOI | .NET | POI-like .NET comparison for formulas, comments, rich strings, merged ranges, and protection. | Initial helper implemented; first fixture-pack case passing. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
 
 ## First fixture pack
@@ -146,8 +169,10 @@ Fixtures:
    conditional-formatting package layout. **Implemented.**
 4. `closedxml_rich_comment_protection`: ClosedXML rich shared strings, legacy
    comments, VML comment drawings, and sheet protection. **Implemented.**
-5. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
-6. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
+5. `npoi_formula_comment_merge_protection`: NPOI formula cell, rich shared
+   string, legacy comment, merged range, and sheet protection. **Implemented.**
+6. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+7. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 

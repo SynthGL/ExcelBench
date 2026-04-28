@@ -87,6 +87,8 @@ Most-touched top-level directories:
     PDF render validation.
   - `closedxml/`: .NET helper that generates workbooks with ClosedXML tables,
     pivots, and conditional formatting.
+  - `npoi/`: .NET helper that generates POI-style workbooks with NPOI formulas,
+    comments, rich text, merged ranges, and sheet protection.
 
 - `rust/excelbench_rust/` (optional, local-only)
   - PyO3 crate for ExcelBench-specific Rust backends (umya-spreadsheet, basic calamine)

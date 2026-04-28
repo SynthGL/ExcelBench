@@ -14,6 +14,7 @@ from excelbench.harness.external_fixture_pack import (
     excelize_fixture_specs,
     external_fixture_specs,
     generate_external_fixture_pack,
+    npoi_fixture_specs,
 )
 from excelbench.harness.external_wolfxl_validation import (
     validate_wolfxl_external_fixture_pack,
@@ -49,7 +50,17 @@ def test_closedxml_fixture_specs_are_stable() -> None:
         "excelize_chart_points_formula_cf",
         "closedxml_pivot_cf_table",
         "closedxml_rich_comment_protection",
+        "npoi_formula_comment_merge_protection",
     ]
+
+
+def test_npoi_fixture_specs_are_stable() -> None:
+    specs = npoi_fixture_specs()
+
+    assert [spec.fixture_id for spec in specs] == ["npoi_formula_comment_merge_protection"]
+    assert all(spec.tool == "npoi" for spec in specs)
+    assert "xl/comments1.xml" in specs[0].expected_parts
+    assert "xl/drawings/vmlDrawing1.vml" in specs[0].expected_parts
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")
@@ -88,6 +99,17 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
         assert "xl/drawings/vmldrawing.vml" in rich_names
         assert "sheetProtection" in sheet_xml
         assert ":r>" in shared_strings_xml
+        npoi_fixture = tmp_path / "npoi-formula-comment-merge-protection.xlsx"
+        assert npoi_fixture.exists()
+        with ZipFile(npoi_fixture) as workbook:
+            npoi_names = set(workbook.namelist())
+            npoi_sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+            npoi_shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+        assert "xl/comments1.xml" in npoi_names
+        assert "xl/drawings/vmlDrawing1.vml" in npoi_names
+        assert "sheetProtection" in npoi_sheet_xml
+        assert "mergeCell" in npoi_sheet_xml
+        assert "<r>" in npoi_shared_strings_xml
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

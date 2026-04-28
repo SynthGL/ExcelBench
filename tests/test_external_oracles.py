@@ -21,9 +21,10 @@ from excelbench.harness.external_oracles import (
 def test_catalog_lists_planned_external_oracles() -> None:
     catalog = external_oracle_catalog()
 
-    assert set(catalog) == {"excelize", "libreoffice", "apache-poi", "closedxml"}
+    assert set(catalog) == {"excelize", "libreoffice", "apache-poi", "closedxml", "npoi"}
     assert "pivots" in catalog["excelize"].capabilities
     assert "open_save_validate" in catalog["libreoffice"].capabilities
+    assert "rich_text" in catalog["npoi"].capabilities
 
 
 def test_repo_catalog_points_excelize_at_go_helper() -> None:
@@ -37,6 +38,8 @@ def test_repo_catalog_points_excelize_at_go_helper() -> None:
     assert catalog["libreoffice"].command[1].endswith("libreoffice_oracle.py")
     assert catalog["closedxml"].command[0] == "dotnet"
     assert any(part.endswith("closedxml-oracle.csproj") for part in catalog["closedxml"].command)
+    assert catalog["npoi"].command[0] == "dotnet"
+    assert any(part.endswith("npoi-oracle.csproj") for part in catalog["npoi"].command)
 
 
 def test_missing_oracle_helper_is_structured_skip() -> None:
@@ -326,6 +329,80 @@ def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
     assert "conditionalFormatting" in sheet_xml
     assert "sheetProtection" in sheet_xml
     assert ":r>" in shared_strings_xml
+
+
+@pytest.mark.skipif(shutil.which("dotnet") is None, reason=".NET SDK is required for NPOI")
+def test_npoi_dotnet_helper_writes_formula_comment_fixture(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    output_path = tmp_path / "npoi-smoke.xlsx"
+    tool = external_oracle_catalog(repo_root=repo_root)["npoi"]
+
+    result = run_external_oracle(
+        tool,
+        ExternalOracleRequest(
+            fixture_id="npoi-smoke",
+            operation="write_fixture",
+            output_path=output_path,
+            payload={
+                "sheets": [{"name": "NPOI"}],
+                "cells": [
+                    {"sheet": "NPOI", "cell": "A1", "value": "Account"},
+                    {"sheet": "NPOI", "cell": "B1", "value": "Amount"},
+                    {"sheet": "NPOI", "cell": "A2", "value": "Revenue"},
+                    {"sheet": "NPOI", "cell": "B2", "value": 1250},
+                    {"sheet": "NPOI", "cell": "A3", "value": "COGS"},
+                    {"sheet": "NPOI", "cell": "B3", "value": -400},
+                    {"sheet": "NPOI", "cell": "A4", "value": "Gross profit"},
+                    {
+                        "sheet": "NPOI",
+                        "cell": "B4",
+                        "type": "formula",
+                        "formula": "SUM(B2:B3)",
+                    },
+                    {"sheet": "NPOI", "cell": "D1", "value": "Merged review header"},
+                ],
+                "rich_text": [
+                    {
+                        "sheet": "NPOI",
+                        "cell": "D3",
+                        "runs": [
+                            {"text": "NPOI ", "bold": True},
+                            {"text": "rich text", "italic": True},
+                        ],
+                    }
+                ],
+                "comments": [
+                    {
+                        "sheet": "NPOI",
+                        "cell": "B4",
+                        "text": "Formula result should preserve calc metadata.",
+                        "author": "NPOI Oracle",
+                    }
+                ],
+                "merged_ranges": [{"sheet": "NPOI", "range": "D1:F1"}],
+                "protection": [{"sheet": "NPOI", "password": "audit"}],
+            },
+        ),
+        timeout_seconds=180,
+    )
+
+    assert result.passed is True, result
+    assert output_path.exists()
+    assert result.payload["counts"]["formulas"] == 1
+    assert result.payload["counts"]["comments"] == 1
+    assert result.payload["counts"]["rich_text"] == 1
+    assert result.payload["counts"]["merged_ranges"] == 1
+    assert result.payload["counts"]["protected_sheets"] == 1
+    with ZipFile(output_path) as workbook:
+        names = set(workbook.namelist())
+        sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+        shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+    assert "xl/comments1.xml" in names
+    assert "xl/drawings/vmlDrawing1.vml" in names
+    assert "sheetProtection" in sheet_xml
+    assert "mergeCell" in sheet_xml
+    assert "<f>SUM(B2:B3)</f>" in sheet_xml
+    assert "<r>" in shared_strings_xml
 
 
 def test_libreoffice_helper_renders_pdf_or_skips(tmp_path: Path) -> None:
