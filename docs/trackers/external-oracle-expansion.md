@@ -105,6 +105,8 @@ Current smoke coverage:
   WolfXL initially preserved the parts but inserted the smoke marker without
   the worksheet namespace prefix; WolfXL commit `7640a3f` fixed the patcher,
   and the same workbook now passes read + in-place modify-save preservation.
+- Fixture-pack promotion, 2026-04-28: `closedxml_pivot_cf_table` is included
+  when `dotnet` is available.
 
 ## Candidate tools
 
@@ -135,8 +137,10 @@ Fixtures:
    picture. **Implemented.**
 2. `excelize_chart_points_formula_cf`: per-point chart styling, formula cell,
    data bar, and cell-rule conditional formatting. **Implemented.**
-6. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
-7. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
+3. `closedxml_pivot_cf_table`: ClosedXML table + pivot cache/table +
+   conditional-formatting package layout. **Implemented.**
+4. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+5. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 

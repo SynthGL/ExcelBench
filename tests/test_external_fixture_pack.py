@@ -10,7 +10,9 @@ from zipfile import ZipFile
 import pytest
 
 from excelbench.harness.external_fixture_pack import (
+    closedxml_fixture_specs,
     excelize_fixture_specs,
+    external_fixture_specs,
     generate_external_fixture_pack,
 )
 from excelbench.harness.external_wolfxl_validation import (
@@ -28,6 +30,20 @@ def test_excelize_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "excelize" for spec in specs)
     assert "xl/pivotTables/pivotTable1.xml" in specs[0].expected_parts
     assert "xl/charts/chart1.xml" in specs[1].expected_parts
+
+
+def test_closedxml_fixture_specs_are_stable() -> None:
+    specs = closedxml_fixture_specs()
+
+    assert [spec.fixture_id for spec in specs] == ["closedxml_pivot_cf_table"]
+    assert all(spec.tool == "closedxml" for spec in specs)
+    assert "xl/pivotTables/pivotTable.xml" in specs[0].expected_parts
+    assert "pivotCache/pivotCacheDefinition1.xml" in specs[0].expected_parts
+    assert [spec.fixture_id for spec in external_fixture_specs()] == [
+        "excelize_sales_pivot_slicer_chart",
+        "excelize_chart_points_formula_cf",
+        "closedxml_pivot_cf_table",
+    ]
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")
@@ -48,6 +64,14 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
     assert "xl/pivotTables/pivotTable1.xml" in names
     assert "xl/slicerCaches/slicerCache1.xml" in names
     assert "xl/charts/chart1.xml" in names
+    if shutil.which("dotnet") is not None:
+        closedxml_fixture = tmp_path / "closedxml-pivot-cf-table.xlsx"
+        assert closedxml_fixture.exists()
+        with ZipFile(closedxml_fixture) as workbook:
+            closedxml_names = set(workbook.namelist())
+        assert "xl/tables/table1.xml" in closedxml_names
+        assert "xl/pivotTables/pivotTable.xml" in closedxml_names
+        assert "pivotCache/pivotCacheDefinition1.xml" in closedxml_names
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

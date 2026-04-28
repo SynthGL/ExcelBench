@@ -211,6 +211,61 @@ def excelize_fixture_specs() -> list[ExternalFixtureSpec]:
     ]
 
 
+def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
+    """Return the initial ClosedXML fixture pack."""
+    return [
+        ExternalFixtureSpec(
+            fixture_id="closedxml_pivot_cf_table",
+            tool="closedxml",
+            filename="closedxml-pivot-cf-table.xlsx",
+            payload={
+                "sheets": [{"name": "Data"}, {"name": "Pivot"}],
+                "cells": [
+                    {"sheet": "Data", "cell": "A1", "value": "Region"},
+                    {"sheet": "Data", "cell": "B1", "value": "Product"},
+                    {"sheet": "Data", "cell": "C1", "value": "Sales"},
+                    {"sheet": "Data", "cell": "A2", "value": "West"},
+                    {"sheet": "Data", "cell": "B2", "value": "Widgets"},
+                    {"sheet": "Data", "cell": "C2", "value": 120},
+                    {"sheet": "Data", "cell": "A3", "value": "East"},
+                    {"sheet": "Data", "cell": "B3", "value": "Services"},
+                    {"sheet": "Data", "cell": "C3", "value": 95},
+                    {"sheet": "Data", "cell": "A4", "value": "West"},
+                    {"sheet": "Data", "cell": "B4", "value": "Services"},
+                    {"sheet": "Data", "cell": "C4", "value": 140},
+                ],
+                "tables": [{"sheet": "Data", "range": "A1:C4", "name": "ClosedXmlSales"}],
+                "conditional_formats": [
+                    {"sheet": "Data", "range": "C2:C4", "type": "3_color_scale"},
+                    {"sheet": "Data", "range": "C2:C4", "type": "data_bar"},
+                ],
+                "pivots": [
+                    {
+                        "data_range": "Data!A1:C4",
+                        "cell": "Pivot!A3",
+                        "name": "ClosedXmlPivot",
+                        "rows": [{"name": "Region"}],
+                        "columns": [{"name": "Product"}],
+                        "data": [{"name": "Sales"}],
+                    }
+                ],
+            },
+            expected_parts=(
+                "xl/tables/table1.xml",
+                "xl/pivotTables/pivotTable.xml",
+                "pivotCache/pivotCacheDefinition1.xml",
+                "xl/worksheets/sheet1.xml",
+            ),
+            notes="ClosedXML pivot/cache/table/conditional-formatting package layout.",
+        )
+    ]
+
+
+def external_fixture_specs() -> list[ExternalFixtureSpec]:
+    """Return all implemented external fixture specifications."""
+    return [*excelize_fixture_specs(), *closedxml_fixture_specs()]
+
+
 def generate_external_fixture_pack(
     output_root: Path,
     *,
@@ -224,7 +279,9 @@ def generate_external_fixture_pack(
     catalog = external_oracle_catalog(repo_root=repo_root)
     results: list[FixtureGenerationResult] = []
 
-    for spec in excelize_fixture_specs():
+    for spec in external_fixture_specs():
+        if not catalog[spec.tool].is_available():
+            continue
         workbook_path = output_root / spec.filename
         write_result = run_external_oracle(
             catalog[spec.tool],
