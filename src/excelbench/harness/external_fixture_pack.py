@@ -257,7 +257,47 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                 "xl/worksheets/sheet1.xml",
             ),
             notes="ClosedXML pivot/cache/table/conditional-formatting package layout.",
-        )
+        ),
+        ExternalFixtureSpec(
+            fixture_id="closedxml_rich_comment_protection",
+            tool="closedxml",
+            filename="closedxml-rich-comment-protection.xlsx",
+            payload={
+                "sheets": [{"name": "Review"}],
+                "cells": [
+                    {"sheet": "Review", "cell": "A1", "value": "Finding"},
+                    {"sheet": "Review", "cell": "B1", "value": "Status"},
+                    {"sheet": "Review", "cell": "A2", "value": "Revenue cutoff"},
+                    {"sheet": "Review", "cell": "B2", "value": "Open"},
+                ],
+                "rich_text": [
+                    {
+                        "sheet": "Review",
+                        "cell": "A4",
+                        "runs": [
+                            {"text": "Priority: ", "bold": True, "font_color": "#C00000"},
+                            {"text": "management response needed", "italic": True},
+                        ],
+                    }
+                ],
+                "comments": [
+                    {
+                        "sheet": "Review",
+                        "cell": "B2",
+                        "text": "Tie this status to final PBC evidence.",
+                        "author": "ClosedXML Oracle",
+                    }
+                ],
+                "protection": [{"sheet": "Review", "password": "audit"}],
+            },
+            expected_parts=(
+                "xl/sharedStrings.xml",
+                "xl/comments1.xml",
+                "xl/drawings/vmldrawing.vml",
+                "xl/worksheets/sheet1.xml",
+            ),
+            notes="ClosedXML rich text, legacy comments, and sheet protection.",
+        ),
     ]
 
 

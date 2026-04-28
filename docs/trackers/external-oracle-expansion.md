@@ -92,14 +92,15 @@ Implemented: `tools/external-oracles/closedxml`
 Supported operations:
 
 - `write_fixture`: writes sheets, cells, tables, conditional formats, and pivot
-  tables through ClosedXML.
+  tables, rich text, comments, and sheet protection through ClosedXML.
 - `read_metadata`: inspects package parts for tables, pivot tables, pivot
-  caches, and worksheets.
+  caches, comments, VML drawings, and worksheets.
 
 Current smoke coverage:
 
-- .NET integration smoke writes a table + pivot + conditional-format workbook
-  through `run_external_oracle()` when `dotnet` is available.
+- .NET integration smoke writes a table + pivot + conditional-format + rich
+  text + comment + sheet-protection workbook through `run_external_oracle()`
+  when `dotnet` is available.
 - Manual ClosedXML truth pass, 2026-04-28: ClosedXML generated a workbook with
   a table, pivot cache, pivot table, and conditional-format extension records.
   WolfXL initially preserved the parts but inserted the smoke marker without
@@ -107,6 +108,10 @@ Current smoke coverage:
   and the same workbook now passes read + in-place modify-save preservation.
 - Fixture-pack promotion, 2026-04-28: `closedxml_pivot_cf_table` is included
   when `dotnet` is available.
+- Fixture-pack expansion, 2026-04-28: `closedxml_rich_comment_protection`
+  covers rich shared strings, legacy comments, VML comment drawing parts, and
+  sheet protection. The full four-workbook pack passes LibreOffice
+  open/render validation and WolfXL read + in-place modify-save preservation.
 
 ## Candidate tools
 
@@ -114,7 +119,7 @@ Current smoke coverage:
 |---|---|---|---|
 | Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | Initial helper implemented. |
 | LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | Initial helper implemented. |
-| ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first manual truth pass complete; pending fixture-pack promotion. |
+| ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first two fixture-pack cases passing. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
 | NPOI | .NET | POI-like .NET comparison if ClosedXML/POI leave .NET-specific gaps. | P2 research. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
@@ -139,8 +144,10 @@ Fixtures:
    data bar, and cell-rule conditional formatting. **Implemented.**
 3. `closedxml_pivot_cf_table`: ClosedXML table + pivot cache/table +
    conditional-formatting package layout. **Implemented.**
-4. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
-5. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
+4. `closedxml_rich_comment_protection`: ClosedXML rich shared strings, legacy
+   comments, VML comment drawings, and sheet protection. **Implemented.**
+5. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+6. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 

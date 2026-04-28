@@ -43,9 +43,12 @@ static object WriteFixture(OracleRequest request)
     using var workbook = new XLWorkbook();
     ConfigureSheets(workbook, payload.Sheets);
     ApplyCells(workbook, payload.Cells);
+    ApplyRichText(workbook, payload.RichText);
+    ApplyComments(workbook, payload.Comments);
     ApplyTables(workbook, payload.Tables);
     ApplyConditionalFormats(workbook, payload.ConditionalFormats);
     ApplyPivots(workbook, payload.Pivots);
+    ApplyProtection(workbook, payload.Protection);
     workbook.SaveAs(request.OutputPath);
 
     return new
@@ -58,9 +61,12 @@ static object WriteFixture(OracleRequest request)
         {
             sheets = workbook.Worksheets.Count,
             cells = payload.Cells.Count,
+            rich_text = payload.RichText.Count,
+            comments = payload.Comments.Count,
             tables = payload.Tables.Count,
             conditional_formats = payload.ConditionalFormats.Count,
-            pivots = payload.Pivots.Count
+            pivots = payload.Pivots.Count,
+            protected_sheets = payload.Protection.Count
         }
     };
 }
@@ -88,6 +94,8 @@ static object ReadMetadata(OracleRequest request)
             tables = CountParts(partNames, "tables/table"),
             pivot_tables = CountParts(partNames, "pivotTables/pivotTable"),
             pivot_caches = CountParts(partNames, "pivotCache/pivotCacheDefinition"),
+            comments = CountParts(partNames, "comments"),
+            vml_drawings = CountParts(partNames, "drawings/vmlDrawing"),
             worksheet_parts = CountParts(partNames, "worksheets/sheet")
         }
     };
@@ -139,6 +147,43 @@ static void ApplyCells(XLWorkbook workbook, List<CellSpec> cells)
                 target.Value = cell.Value.ToString();
                 break;
         }
+    }
+}
+
+static void ApplyRichText(XLWorkbook workbook, List<RichTextSpec> items)
+{
+    foreach (var item in items)
+    {
+        var richText = workbook.Worksheet(item.Sheet).Cell(item.Cell).CreateRichText();
+        foreach (var run in item.Runs)
+        {
+            var richString = richText.AddText(run.Text);
+            if (run.Bold)
+            {
+                richString.SetBold();
+            }
+            if (run.Italic)
+            {
+                richString.SetItalic();
+            }
+            if (!string.IsNullOrWhiteSpace(run.FontColor))
+            {
+                richString.SetFontColor(XLColor.FromHtml(run.FontColor));
+            }
+        }
+    }
+}
+
+static void ApplyComments(XLWorkbook workbook, List<CommentSpec> comments)
+{
+    foreach (var item in comments)
+    {
+        var comment = workbook.Worksheet(item.Sheet).Cell(item.Cell).CreateComment();
+        if (!string.IsNullOrWhiteSpace(item.Author))
+        {
+            comment.Author = item.Author;
+        }
+        comment.AddText(item.Text);
     }
 }
 
@@ -217,6 +262,22 @@ static void ApplyPivots(XLWorkbook workbook, List<PivotSpec> pivots)
     }
 }
 
+static void ApplyProtection(XLWorkbook workbook, List<ProtectionSpec> protections)
+{
+    foreach (var protection in protections)
+    {
+        var worksheet = workbook.Worksheet(protection.Sheet);
+        if (string.IsNullOrWhiteSpace(protection.Password))
+        {
+            worksheet.Protect();
+        }
+        else
+        {
+            worksheet.Protect(protection.Password);
+        }
+    }
+}
+
 static IXLRange ResolveRange(XLWorkbook workbook, string reference)
 {
     var parts = reference.Split('!', 2);
@@ -258,6 +319,12 @@ sealed class WritePayload
     [JsonPropertyName("cells")]
     public List<CellSpec> Cells { get; set; } = [];
 
+    [JsonPropertyName("rich_text")]
+    public List<RichTextSpec> RichText { get; set; } = [];
+
+    [JsonPropertyName("comments")]
+    public List<CommentSpec> Comments { get; set; } = [];
+
     [JsonPropertyName("tables")]
     public List<TableSpec> Tables { get; set; } = [];
 
@@ -266,6 +333,9 @@ sealed class WritePayload
 
     [JsonPropertyName("pivots")]
     public List<PivotSpec> Pivots { get; set; } = [];
+
+    [JsonPropertyName("protection")]
+    public List<ProtectionSpec> Protection { get; set; } = [];
 }
 
 sealed record SheetSpec([property: JsonPropertyName("name")] string Name);
@@ -276,6 +346,23 @@ sealed record CellSpec(
     [property: JsonPropertyName("type")] string? Type,
     [property: JsonPropertyName("value")] JsonElement Value,
     [property: JsonPropertyName("formula")] string? Formula);
+
+sealed record RichTextSpec(
+    [property: JsonPropertyName("sheet")] string Sheet,
+    [property: JsonPropertyName("cell")] string Cell,
+    [property: JsonPropertyName("runs")] List<RichRunSpec> Runs);
+
+sealed record RichRunSpec(
+    [property: JsonPropertyName("text")] string Text,
+    [property: JsonPropertyName("bold")] bool Bold,
+    [property: JsonPropertyName("italic")] bool Italic,
+    [property: JsonPropertyName("font_color")] string? FontColor);
+
+sealed record CommentSpec(
+    [property: JsonPropertyName("sheet")] string Sheet,
+    [property: JsonPropertyName("cell")] string Cell,
+    [property: JsonPropertyName("text")] string Text,
+    [property: JsonPropertyName("author")] string? Author);
 
 sealed record TableSpec(
     [property: JsonPropertyName("sheet")] string Sheet,
@@ -298,6 +385,10 @@ sealed record PivotSpec(
     [property: JsonPropertyName("data")] List<PivotField> Data);
 
 sealed record PivotField([property: JsonPropertyName("name")] string Name);
+
+sealed record ProtectionSpec(
+    [property: JsonPropertyName("sheet")] string Sheet,
+    [property: JsonPropertyName("password")] string? Password);
 
 static class JsonOptions
 {

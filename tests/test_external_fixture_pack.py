@@ -35,14 +35,20 @@ def test_excelize_fixture_specs_are_stable() -> None:
 def test_closedxml_fixture_specs_are_stable() -> None:
     specs = closedxml_fixture_specs()
 
-    assert [spec.fixture_id for spec in specs] == ["closedxml_pivot_cf_table"]
+    assert [spec.fixture_id for spec in specs] == [
+        "closedxml_pivot_cf_table",
+        "closedxml_rich_comment_protection",
+    ]
     assert all(spec.tool == "closedxml" for spec in specs)
     assert "xl/pivotTables/pivotTable.xml" in specs[0].expected_parts
     assert "pivotCache/pivotCacheDefinition1.xml" in specs[0].expected_parts
+    assert "xl/comments1.xml" in specs[1].expected_parts
+    assert "xl/drawings/vmldrawing.vml" in specs[1].expected_parts
     assert [spec.fixture_id for spec in external_fixture_specs()] == [
         "excelize_sales_pivot_slicer_chart",
         "excelize_chart_points_formula_cf",
         "closedxml_pivot_cf_table",
+        "closedxml_rich_comment_protection",
     ]
 
 
@@ -72,6 +78,16 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
         assert "xl/tables/table1.xml" in closedxml_names
         assert "xl/pivotTables/pivotTable.xml" in closedxml_names
         assert "pivotCache/pivotCacheDefinition1.xml" in closedxml_names
+        rich_fixture = tmp_path / "closedxml-rich-comment-protection.xlsx"
+        assert rich_fixture.exists()
+        with ZipFile(rich_fixture) as workbook:
+            rich_names = set(workbook.namelist())
+            sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+            shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+        assert "xl/comments1.xml" in rich_names
+        assert "xl/drawings/vmldrawing.vml" in rich_names
+        assert "sheetProtection" in sheet_xml
+        assert ":r>" in shared_strings_xml
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

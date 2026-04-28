@@ -274,6 +274,25 @@ def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
                     {"sheet": "Data", "range": "C2:C4", "type": "3_color_scale"},
                     {"sheet": "Data", "range": "C2:C4", "type": "data_bar"},
                 ],
+                "rich_text": [
+                    {
+                        "sheet": "Data",
+                        "cell": "E1",
+                        "runs": [
+                            {"text": "Review ", "bold": True, "font_color": "#C00000"},
+                            {"text": "note", "italic": True},
+                        ],
+                    }
+                ],
+                "comments": [
+                    {
+                        "sheet": "Data",
+                        "cell": "C2",
+                        "text": "ClosedXML comment smoke.",
+                        "author": "ExcelBench",
+                    }
+                ],
+                "protection": [{"sheet": "Data", "password": "audit"}],
                 "pivots": [
                     {
                         "data_range": "Data!A1:C4",
@@ -292,13 +311,21 @@ def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
     assert result.passed is True, result
     assert output_path.exists()
     assert result.payload["counts"]["pivots"] == 1
+    assert result.payload["counts"]["comments"] == 1
+    assert result.payload["counts"]["rich_text"] == 1
+    assert result.payload["counts"]["protected_sheets"] == 1
     with ZipFile(output_path) as workbook:
         names = set(workbook.namelist())
         sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+        shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
     assert "xl/tables/table1.xml" in names
+    assert "xl/comments1.xml" in names
+    assert "xl/drawings/vmldrawing.vml" in names
     assert any(part.endswith("pivotTables/pivotTable.xml") for part in names)
     assert any(part.endswith("pivotCache/pivotCacheDefinition1.xml") for part in names)
     assert "conditionalFormatting" in sheet_xml
+    assert "sheetProtection" in sheet_xml
+    assert ":r>" in shared_strings_xml
 
 
 def test_libreoffice_helper_renders_pdf_or_skips(tmp_path: Path) -> None:
