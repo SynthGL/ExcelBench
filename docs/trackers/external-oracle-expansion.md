@@ -13,6 +13,10 @@ not to replace the existing ExcelBench adapter matrix.
 ## Current scaffold
 
 - `src/excelbench/harness/external_oracles.py` defines the subprocess contract.
+- `src/excelbench/harness/external_fixture_pack.py` defines the first local
+  fixture pack and writes a `manifest.json` under `results_dev_external/`.
+- `scripts/generate_external_oracle_fixtures.py` regenerates the local fixture
+  pack.
 - External helpers receive a JSON request on stdin and return JSON diagnostics
   on stdout.
 - Missing helpers return a structured skip, so Go/Java/.NET/LibreOffice are not
@@ -90,11 +94,19 @@ Current smoke coverage:
 
 The first external oracle pack should stay small and high-signal:
 
-1. Excelize pivot cache + pivot table with saved records. **Scaffolded.**
-2. Excelize slicer attached to a table or pivot table. **Table slicer scaffolded.**
-3. Excelize chart with data labels, point colors, and alt text. **Basic chart scaffolded.**
-4. Excelize conditional formatting with icon sets, color scales, and data bars. **Scaffolded.**
-5. Excelize drawing/image anchors with one-cell/two-cell positions. **Basic picture scaffolded.**
+Regenerate locally:
+
+```bash
+uv run python scripts/generate_external_oracle_fixtures.py
+```
+
+Fixtures:
+
+1. `excelize_sales_pivot_slicer_chart`: pivot cache + pivot table with saved
+   records, table slicer, chart, icon set, color scale, data bar, table, and
+   picture. **Implemented.**
+2. `excelize_chart_points_formula_cf`: per-point chart styling, formula cell,
+   data bar, and cell-rule conditional formatting. **Implemented.**
 6. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
 7. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
