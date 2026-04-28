@@ -33,6 +33,7 @@ def test_excelize_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "excelize" for spec in specs)
     assert "xl/pivotTables/pivotTable1.xml" in specs[0].expected_parts
     assert "xl/charts/chart1.xml" in specs[1].expected_parts
+    assert any(probe["kind"] == "conditional_formatting" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "zip_contains" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "cell_formula" for probe in specs[1].readback_probes)
 
@@ -47,6 +48,7 @@ def test_closedxml_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "closedxml" for spec in specs)
     assert "xl/pivotTables/pivotTable.xml" in specs[0].expected_parts
     assert "pivotCache/pivotCacheDefinition1.xml" in specs[0].expected_parts
+    assert any(probe["kind"] == "conditional_formatting" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "table_metadata" for probe in specs[0].readback_probes)
     assert "xl/comments1.xml" in specs[1].expected_parts
     assert "xl/drawings/vmldrawing.vml" in specs[1].expected_parts
@@ -72,6 +74,7 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
     assert any(probe["kind"] == "data_validation" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "hyperlink_target" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "merged_range" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "relationship_target" for probe in specs[0].readback_probes)
 
 
 def test_exceljs_fixture_specs_are_stable() -> None:

@@ -20,9 +20,9 @@ class ExternalFixtureSpec:
         expected_parts: OOXML package parts expected in the generated workbook.
         readback_probes: Declarative checks run after WolfXL modify-save. Probe
             kinds currently include ``cell_value``, ``cell_formula``,
-            ``cell_style``, ``comment_text``, ``hyperlink_target``,
-            ``data_validation``, ``merged_range``, ``table_metadata``, and
-            ``zip_contains``.
+            ``cell_style``, ``conditional_formatting``, ``comment_text``,
+            ``hyperlink_target``, ``data_validation``, ``merged_range``,
+            ``table_metadata``, ``relationship_target``, and ``zip_contains``.
         notes: Human-readable reason this fixture exists.
     """
 

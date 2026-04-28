@@ -61,6 +61,13 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                     "label": "conditional formatting survives",
                 },
                 {
+                    "kind": "conditional_formatting",
+                    "sheet": "Data",
+                    "sqref": "C2:C4",
+                    "type": "dataBar",
+                    "priority": 2,
+                },
+                {
                     "kind": "zip_contains",
                     "part": "xl/tables/table1.xml",
                     "contains": "ClosedXmlSales",

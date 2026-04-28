@@ -148,6 +148,13 @@ def exceljs_fixture_specs() -> list[ExternalFixtureSpec]:
                     "style": "TableStyleMedium2",
                 },
                 {
+                    "kind": "relationship_target",
+                    "part": "xl/drawings/_rels/drawing1.xml.rels",
+                    "target": "../media/image1.png",
+                    "type_contains": "/image",
+                    "label": "image drawing relationship survives",
+                },
+                {
                     "kind": "zip_contains",
                     "part": "xl/worksheets/sheet1.xml",
                     "contains": "dataValidations",

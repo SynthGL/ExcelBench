@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import shutil
+import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, cast
@@ -211,6 +212,8 @@ def _run_readback_probes(
                 _check_cell_formula(workbook, probe)
             elif kind == "cell_style":
                 _check_cell_style(workbook, probe)
+            elif kind == "conditional_formatting":
+                _check_conditional_formatting(workbook, probe)
             elif kind == "comment_text":
                 _check_comment_text(workbook, probe)
             elif kind == "hyperlink_target":
@@ -221,6 +224,8 @@ def _run_readback_probes(
                 _check_merged_range(workbook, probe)
             elif kind == "table_metadata":
                 _check_table_metadata(workbook, probe)
+            elif kind == "relationship_target":
+                _check_relationship_target(workbook_path, probe)
             elif kind == "zip_contains":
                 _check_zip_contains(workbook_path, probe)
             else:
@@ -263,6 +268,35 @@ def _check_comment_text(workbook: Any, probe: JSONDict) -> None:
     expected = str(probe["contains"])
     if comment is None or expected not in comment.text:
         raise AssertionError(f"expected comment containing {expected!r}")
+
+
+def _check_conditional_formatting(workbook: Any, probe: JSONDict) -> None:
+    sheet = workbook[str(probe["sheet"])]
+    expected_sqref = str(probe["sqref"])
+    expected_type = str(probe["type"])
+    expected_priority = probe.get("priority")
+    expected_operator = probe.get("operator")
+    expected_formula = probe.get("formula")
+    for formatting in sheet.conditional_formatting:
+        if str(formatting.sqref) != expected_sqref:
+            continue
+        for rule in formatting.rules:
+            if rule.type != expected_type:
+                continue
+            if expected_priority is not None and rule.priority != expected_priority:
+                raise AssertionError(
+                    f"expected priority {expected_priority!r}, got {rule.priority!r}"
+                )
+            if expected_operator is not None and rule.operator != expected_operator:
+                raise AssertionError(
+                    f"expected operator {expected_operator!r}, got {rule.operator!r}"
+                )
+            if expected_formula is not None and list(rule.formula or []) != [expected_formula]:
+                raise AssertionError(
+                    f"expected formula {[expected_formula]!r}, got {list(rule.formula or [])!r}"
+                )
+            return
+    raise AssertionError(f"expected {expected_type!r} conditional format on {expected_sqref!r}")
 
 
 def _check_hyperlink_target(workbook: Any, probe: JSONDict) -> None:
@@ -316,6 +350,26 @@ def _check_table_metadata(workbook: Any, probe: JSONDict) -> None:
     actual_style = style.name if style is not None else None
     if expected_style is not None and actual_style != expected_style:
         raise AssertionError(f"expected table style {expected_style!r}, got {actual_style!r}")
+
+
+def _check_relationship_target(workbook_path: Path, probe: JSONDict) -> None:
+    part = str(probe["part"])
+    expected_target = str(probe["target"])
+    expected_type_contains = probe.get("type_contains")
+    with ZipFile(workbook_path) as workbook_zip:
+        root = ET.fromstring(workbook_zip.read(part))
+    for relationship in root:
+        target = relationship.attrib.get("Target")
+        rel_type = relationship.attrib.get("Type", "")
+        if target != expected_target:
+            continue
+        if expected_type_contains is not None and str(expected_type_contains) not in rel_type:
+            raise AssertionError(
+                "expected relationship type containing "
+                f"{expected_type_contains!r}, got {rel_type!r}"
+            )
+        return
+    raise AssertionError(f"expected relationship target {expected_target!r} in {part}")
 
 
 def _check_zip_contains(workbook_path: Path, probe: JSONDict) -> None:
