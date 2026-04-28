@@ -8,6 +8,7 @@ from pathlib import Path
 from zipfile import ZipFile
 
 import pytest
+from openpyxl import Workbook
 
 from excelbench.harness.external_oracles import (
     ExternalOracleRequest,
@@ -27,10 +28,13 @@ def test_catalog_lists_planned_external_oracles() -> None:
 
 def test_repo_catalog_points_excelize_at_go_helper() -> None:
     repo_root = Path(__file__).resolve().parents[1]
-    tool = external_oracle_catalog(repo_root=repo_root)["excelize"]
+    catalog = external_oracle_catalog(repo_root=repo_root)
+    tool = catalog["excelize"]
 
     assert tool.command == ("go", "run", ".")
     assert tool.cwd == repo_root / "tools" / "external-oracles" / "excelize"
+    assert catalog["libreoffice"].command[0] == sys.executable
+    assert catalog["libreoffice"].command[1].endswith("libreoffice_oracle.py")
 
 
 def test_missing_oracle_helper_is_structured_skip() -> None:
@@ -233,3 +237,34 @@ def test_excelize_go_helper_writes_advanced_fixture(tmp_path: Path) -> None:
     assert "xl/pivotTables/pivotTable1.xml" in names
     assert "xl/slicerCaches/slicerCache1.xml" in names
     assert "xl/charts/chart1.xml" in names
+
+
+def test_libreoffice_helper_renders_pdf_or_skips(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    input_path = tmp_path / "input.xlsx"
+    output_path = tmp_path / "output.pdf"
+    workbook = Workbook()
+    sheet = workbook.active
+    sheet.title = "Data"
+    sheet["A1"] = "Hello"
+    sheet["B1"] = 42
+    workbook.save(input_path)
+
+    result = run_external_oracle(
+        external_oracle_catalog(repo_root=repo_root)["libreoffice"],
+        ExternalOracleRequest(
+            fixture_id="libreoffice-render-smoke",
+            operation="render_validate",
+            input_path=input_path,
+            output_path=output_path,
+            payload={},
+        ),
+        timeout_seconds=180,
+    )
+
+    if result.skipped:
+        assert result.notes == "LibreOffice executable not found"
+        return
+    assert result.passed is True, result
+    assert output_path.exists()
+    assert result.payload["bytes"] > 0

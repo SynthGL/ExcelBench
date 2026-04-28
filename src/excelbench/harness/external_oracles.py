@@ -6,6 +6,7 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -123,6 +124,12 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
     if repo_root is not None:
         excelize_command = ("go", "run", ".")
         excelize_cwd = repo_root / "tools" / "external-oracles" / "excelize"
+    libreoffice_command: tuple[str, ...] = ("excelbench-libreoffice-oracle",)
+    if repo_root is not None:
+        libreoffice_command = (
+            sys.executable,
+            str(repo_root / "tools" / "external-oracles" / "libreoffice" / "libreoffice_oracle.py"),
+        )
 
     return {
         "excelize": ExternalOracleTool(
@@ -135,7 +142,7 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
         ),
         "libreoffice": ExternalOracleTool(
             name="libreoffice",
-            command=("excelbench-libreoffice-oracle",),
+            command=libreoffice_command,
             language="cli",
             homepage="https://www.libreoffice.org/",
             capabilities=frozenset({"open_save_validate", "render_validate"}),

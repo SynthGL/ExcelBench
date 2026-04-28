@@ -21,7 +21,7 @@ not to replace the existing ExcelBench adapter matrix.
   `external_oracle_catalog(repo_root=...)`.
 - The helper catalog currently reserves entrypoints or source helpers for:
   - `tools/external-oracles/excelize` (`go run .`)
-  - `excelbench-libreoffice-oracle`
+  - `tools/external-oracles/libreoffice/libreoffice_oracle.py`
   - `excelbench-poi-oracle`
   - `excelbench-closedxml-oracle`
 
@@ -54,12 +54,33 @@ Current smoke coverage:
 - Python integration smoke runs the same helper through
   `run_external_oracle()` when Go is available.
 
+## LibreOffice helper
+
+Implemented: `tools/external-oracles/libreoffice/libreoffice_oracle.py`
+
+Supported operations:
+
+- `open_save_validate`: opens an input workbook and saves it back through
+  LibreOffice's Calc Office Open XML export filter.
+- `render_validate` / `render_pdf`: opens an input workbook and exports it to
+  PDF through `calc_pdf_Export`.
+
+Current smoke coverage:
+
+- Python integration smoke creates a simple workbook and asks the helper to
+  render PDF. Missing LibreOffice returns a structured skip.
+- Manual Excelize truth pass, 2026-04-28: the Excelize-generated workbook with
+  table, pivot cache, pivot table, slicer, chart, drawing, and picture parts
+  opened in openpyxl with the expected unsupported-extension warning, read
+  values correctly through WolfXL, and rendered to PDF through LibreOffice
+  without stderr.
+
 ## Candidate tools
 
 | Tool | Runtime | Initial role | Status |
 |---|---|---|---|
 | Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | Initial helper implemented. |
-| LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | P0 next implementation target. |
+| LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | Initial helper implemented. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
 | ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | P1 after contract settles. |
 | NPOI | .NET | POI-like .NET comparison if ClosedXML/POI leave .NET-specific gaps. | P2 research. |
@@ -74,8 +95,8 @@ The first external oracle pack should stay small and high-signal:
 3. Excelize chart with data labels, point colors, and alt text. **Basic chart scaffolded.**
 4. Excelize conditional formatting with icon sets, color scales, and data bars. **Scaffolded.**
 5. Excelize drawing/image anchors with one-cell/two-cell positions. **Basic picture scaffolded.**
-6. LibreOffice open/save smoke for the same outputs.
-7. LibreOffice PDF/export smoke where visual corruption would be obvious.
+6. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+7. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 

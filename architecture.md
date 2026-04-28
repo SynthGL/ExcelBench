@@ -83,6 +83,8 @@ Most-touched top-level directories:
   - Optional subprocess helpers for non-Python oracle tools.
   - `excelize/`: Go helper that generates and inspects `.xlsx` fixtures with
     Excelize. Run from that directory with `go run .`.
+  - `libreoffice/`: Python helper that runs LibreOffice headless open/save and
+    PDF render validation.
 
 - `rust/excelbench_rust/` (optional, local-only)
   - PyO3 crate for ExcelBench-specific Rust backends (umya-spreadsheet, basic calamine)
