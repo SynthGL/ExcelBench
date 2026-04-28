@@ -23,13 +23,14 @@ A key design principle is reproducibility:
 
 ## Core Layers
 
-At a high level, ExcelBench is split into five layers:
+At a high level, ExcelBench is split into six layers:
 
 1. Fixtures + generator (Excel as ground truth)
 2. Fidelity harness (adapters + scoring + diagnostics)
-3. Performance harness (throughput workloads + best-effort memory)
-4. Rendering + publishing (markdown/csv + HTML dashboard + plots)
-5. Optional Rust acceleration (PyO3 extension + Rust-backed adapters)
+3. External oracle helpers (optional subprocess validators/generators)
+4. Performance harness (throughput workloads + best-effort memory)
+5. Rendering + publishing (markdown/csv + HTML dashboard + plots)
+6. Optional Rust acceleration (PyO3 extension + Rust-backed adapters)
 
 ## Dependency Direction (No Cycles)
 
@@ -69,7 +70,7 @@ Most-touched top-level directories:
   - `cli.py`: Typer CLI entrypoint (`excelbench ...`)
   - `models.py`: dataclasses/contracts (CellValue, CellFormat, BorderInfo, ...)
   - `generator/`: fixture generation (xlwings + Excel)
-  - `harness/`: fidelity benchmark runner + adapters
+  - `harness/`: fidelity benchmark runner, adapters, and optional external oracle helpers
   - `perf/`: performance runner + renderer
   - `results/`: fidelity result renderers (md/csv) + dashboards/plots
 
@@ -104,6 +105,11 @@ Common starting points by intent:
 - Add a new adapter:
   - `src/excelbench/harness/adapters/base.py`
   - `src/excelbench/harness/adapters/__init__.py`
+
+- Add a new external oracle:
+  - `src/excelbench/harness/external_oracles.py`
+  - `docs/trackers/external-oracle-expansion.md`
+  - Keep helpers optional and subprocess-isolated until promoted into normal benchmark flows.
 
 - Add a new scored feature:
   - Generator: `src/excelbench/generator/features/`
@@ -149,7 +155,21 @@ fixtures + manifest
 
 Command: `uv run excelbench benchmark --tests fixtures/excel --output results`
 
-### 3) Performance benchmark (speed/memory)
+### 3) External oracle pass (optional pre-release hardening)
+
+```
+JSON fixture manifest
+  -> external_oracles.py launches helper subprocess
+  -> Excelize / LibreOffice / Apache POI / ClosedXML helper creates or validates workbook
+  -> helper prints JSON diagnostics
+  -> local-only results are reviewed before promoting stable cases to fixtures
+```
+
+External oracle helpers are intentionally not part of `get_all_adapters()` yet.
+Missing Go/Java/.NET/LibreOffice commands should skip cleanly, not fail the core
+suite.
+
+### 4) Performance benchmark (speed/memory)
 
 ```
 fixtures + throughput fixtures
@@ -161,7 +181,7 @@ fixtures + throughput fixtures
 
 Command: `uv run excelbench perf --tests fixtures/excel --output results`
 
-### 4) Publishing
+### 5) Publishing
 
 - Local: `uv run excelbench html`, `uv run excelbench scatter`, `uv run excelbench heatmap`
 - CI: `.github/workflows/deploy-dashboard.yml` auto-builds and deploys the HTML dashboard to Vercel

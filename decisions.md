@@ -40,6 +40,49 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-021 — Optional external oracle subprocess contract (2026-04-28)
+
+**Context**: WolfXL's pre-release parity pass is now green against the existing
+openpyxl-centered matrix, but openpyxl does not construct or validate every
+advanced OOXML structure that matters for a production-grade Excel library.
+The next audit needs fixtures from tools such as Excelize, LibreOffice, Apache
+POI, and ClosedXML without forcing Go/Java/.NET/LibreOffice onto every
+ExcelBench install or CI job.
+
+**Decision**:
+
+- Add `src/excelbench/harness/external_oracles.py` as a subprocess-only JSON
+  contract for optional non-Python helpers.
+- External helpers receive one JSON request on stdin and return one JSON
+  payload on stdout. Missing helper commands produce structured skips rather
+  than failures.
+- Keep external oracles out of `get_all_adapters()` until each helper and
+  fixture pack is deterministic, audited, and ready for normal benchmark
+  flows.
+- Track the rollout in `docs/trackers/external-oracle-expansion.md`; initial
+  reserved helpers are Excelize, LibreOffice, Apache POI, and ClosedXML.
+
+**Alternatives considered**:
+
+1. **Register each external tool as a normal adapter immediately** — rejected.
+   That would make local runtimes and helper build systems part of ordinary
+   benchmark discovery before the fixture semantics are stable.
+2. **Use ad hoc scripts outside the package** — rejected. The contract needs
+   unit tests, versioned semantics, and stable skip/failure behavior.
+3. **Depend directly on Go/Java/.NET packages from Python** — rejected. It adds
+   packaging complexity and hides process/runtime failures that should be
+   visible in diagnostics.
+
+**Consequences**:
+
+- Core ExcelBench tests remain hermetic when optional helpers are missing.
+- The first oracle sprint can focus on helper binaries/scripts and fixture
+  truth-passing without changing benchmark scoring.
+- Promotion into public results requires a later explicit decision once the
+  generated workbooks are deterministic and manually audited.
+
+**Commit(s)**: this commit.
+
 ### DEC-020 — File-shape parametric scenarios + n_sheets fan-out (2026-04-27)
 
 **Context**: Sprint 2 (DEC-019) shipped the dtype × tier matrix that answers
