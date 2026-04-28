@@ -66,6 +66,13 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                     "contains": "ClosedXmlSales",
                     "label": "table name survives",
                 },
+                {
+                    "kind": "table_metadata",
+                    "sheet": "Data",
+                    "name": "ClosedXmlSales",
+                    "ref": "A1:C4",
+                    "style": "TableStyleMedium2",
+                },
             ),
         ),
         ExternalFixtureSpec(

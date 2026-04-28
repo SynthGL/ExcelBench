@@ -87,6 +87,13 @@ def excelize_fixture_specs() -> list[ExternalFixtureSpec]:
                     "contains": "slicerList",
                     "label": "slicer extension survives",
                 },
+                {
+                    "kind": "table_metadata",
+                    "sheet": "Data",
+                    "name": "SalesTable",
+                    "ref": "A1:C6",
+                    "style": "TableStyleMedium9",
+                },
             ),
         ),
         ExternalFixtureSpec(

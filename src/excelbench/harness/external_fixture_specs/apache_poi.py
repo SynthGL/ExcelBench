@@ -35,12 +35,38 @@ def apache_poi_fixture_specs() -> list[ExternalFixtureSpec]:
                     "expected": "=SUM(B2:B3)",
                 },
                 {
+                    "kind": "cell_style",
+                    "sheet": "POI",
+                    "cell": "B2",
+                    "expected": {"number_format": "$#,##0"},
+                },
+                {
                     "kind": "comment_text",
                     "sheet": "POI",
                     "cell": "B4",
                     "contains": "POI formula",
                 },
+                {
+                    "kind": "hyperlink_target",
+                    "sheet": "POI",
+                    "cell": "D4",
+                    "target": "https://poi.apache.org/",
+                },
+                {
+                    "kind": "data_validation",
+                    "sheet": "POI",
+                    "cell": "C2",
+                    "type": "list",
+                    "formula1": '"Open,Closed,Review"',
+                },
                 {"kind": "merged_range", "sheet": "POI", "range": "D1:F1"},
+                {
+                    "kind": "table_metadata",
+                    "sheet": "POI",
+                    "name": "PoiReviewTable",
+                    "ref": "F1:G4",
+                    "style": "TableStyleMedium2",
+                },
                 {
                     "kind": "zip_contains",
                     "part": "xl/worksheets/sheet1.xml",

@@ -47,6 +47,7 @@ def test_closedxml_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "closedxml" for spec in specs)
     assert "xl/pivotTables/pivotTable.xml" in specs[0].expected_parts
     assert "pivotCache/pivotCacheDefinition1.xml" in specs[0].expected_parts
+    assert any(probe["kind"] == "table_metadata" for probe in specs[0].readback_probes)
     assert "xl/comments1.xml" in specs[1].expected_parts
     assert "xl/drawings/vmldrawing.vml" in specs[1].expected_parts
     assert any(probe["kind"] == "comment_text" for probe in specs[1].readback_probes)
@@ -68,6 +69,8 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "apache-poi" for spec in specs)
     assert "xl/tables/table1.xml" in specs[0].expected_parts
     assert "xl/drawings/vmlDrawing0.vml" in specs[0].expected_parts
+    assert any(probe["kind"] == "data_validation" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "hyperlink_target" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "merged_range" for probe in specs[0].readback_probes)
 
 
@@ -78,6 +81,7 @@ def test_exceljs_fixture_specs_are_stable() -> None:
     assert all(spec.tool == "exceljs" for spec in specs)
     assert "xl/tables/table1.xml" in specs[0].expected_parts
     assert "xl/media/image1.png" in specs[0].expected_parts
+    assert any(probe["kind"] == "cell_style" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "cell_formula" for probe in specs[0].readback_probes)
 
 

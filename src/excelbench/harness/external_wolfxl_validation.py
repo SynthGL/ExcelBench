@@ -209,10 +209,18 @@ def _run_readback_probes(
                 _check_cell_value(workbook, probe)
             elif kind == "cell_formula":
                 _check_cell_formula(workbook, probe)
+            elif kind == "cell_style":
+                _check_cell_style(workbook, probe)
             elif kind == "comment_text":
                 _check_comment_text(workbook, probe)
+            elif kind == "hyperlink_target":
+                _check_hyperlink_target(workbook, probe)
+            elif kind == "data_validation":
+                _check_data_validation(workbook, probe)
             elif kind == "merged_range":
                 _check_merged_range(workbook, probe)
+            elif kind == "table_metadata":
+                _check_table_metadata(workbook, probe)
             elif kind == "zip_contains":
                 _check_zip_contains(workbook_path, probe)
             else:
@@ -236,6 +244,20 @@ def _check_cell_formula(workbook: Any, probe: JSONDict) -> None:
         raise AssertionError(f"expected formula {expected!r}, got {value!r}")
 
 
+def _check_cell_style(workbook: Any, probe: JSONDict) -> None:
+    cell = workbook[str(probe["sheet"])][str(probe["cell"])]
+    expected = cast(JSONDict, probe.get("expected", {}))
+    checks = {
+        "number_format": cell.number_format,
+        "font_bold": cell.font.bold,
+        "font_italic": cell.font.italic,
+    }
+    for key, expected_value in expected.items():
+        actual = checks.get(str(key))
+        if actual != expected_value:
+            raise AssertionError(f"expected {key}={expected_value!r}, got {actual!r}")
+
+
 def _check_comment_text(workbook: Any, probe: JSONDict) -> None:
     comment = workbook[str(probe["sheet"])][str(probe["cell"])].comment
     expected = str(probe["contains"])
@@ -243,11 +265,57 @@ def _check_comment_text(workbook: Any, probe: JSONDict) -> None:
         raise AssertionError(f"expected comment containing {expected!r}")
 
 
+def _check_hyperlink_target(workbook: Any, probe: JSONDict) -> None:
+    hyperlink = workbook[str(probe["sheet"])][str(probe["cell"])].hyperlink
+    expected = str(probe["target"])
+    actual = hyperlink.target if hyperlink is not None else None
+    if actual != expected:
+        raise AssertionError(f"expected hyperlink target {expected!r}, got {actual!r}")
+
+
+def _check_data_validation(workbook: Any, probe: JSONDict) -> None:
+    sheet = workbook[str(probe["sheet"])]
+    expected_cell = str(probe["cell"])
+    expected_type = probe.get("type")
+    expected_formula1 = probe.get("formula1")
+    for validation in sheet.data_validations.dataValidation:
+        sqref = str(validation.sqref)
+        cells = {part.strip() for part in sqref.split()}
+        if expected_cell not in cells:
+            continue
+        if expected_type is not None and validation.type != expected_type:
+            raise AssertionError(
+                f"expected validation type {expected_type!r}, got {validation.type!r}"
+            )
+        if expected_formula1 is not None and validation.formula1 != expected_formula1:
+            raise AssertionError(
+                f"expected validation formula1 {expected_formula1!r}, got {validation.formula1!r}"
+            )
+        return
+    raise AssertionError(f"expected data validation covering {expected_cell!r}")
+
+
 def _check_merged_range(workbook: Any, probe: JSONDict) -> None:
     ranges = {str(cell_range) for cell_range in workbook[str(probe["sheet"])].merged_cells.ranges}
     expected = str(probe["range"])
     if expected not in ranges:
         raise AssertionError(f"expected merged range {expected!r}, got {sorted(ranges)}")
+
+
+def _check_table_metadata(workbook: Any, probe: JSONDict) -> None:
+    sheet = workbook[str(probe["sheet"])]
+    table_name = str(probe["name"])
+    if table_name not in sheet.tables:
+        raise AssertionError(f"expected table {table_name!r}, got {sorted(sheet.tables)}")
+    table = sheet.tables[table_name]
+    expected_ref = probe.get("ref")
+    if expected_ref is not None and table.ref != expected_ref:
+        raise AssertionError(f"expected table ref {expected_ref!r}, got {table.ref!r}")
+    expected_style = probe.get("style")
+    style = getattr(table, "tableStyleInfo", None)
+    actual_style = style.name if style is not None else None
+    if expected_style is not None and actual_style != expected_style:
+        raise AssertionError(f"expected table style {expected_style!r}, got {actual_style!r}")
 
 
 def _check_zip_contains(workbook_path: Path, probe: JSONDict) -> None:
