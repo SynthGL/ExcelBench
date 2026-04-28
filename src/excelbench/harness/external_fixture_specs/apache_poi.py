@@ -14,6 +14,7 @@ def apache_poi_fixture_specs() -> list[ExternalFixtureSpec]:
             filename="apache-poi-table-validation-image-comment.xlsx",
             payload={},
             expected_parts=(
+                "xl/workbook.xml",
                 "xl/sharedStrings.xml",
                 "xl/comments1.xml",
                 "xl/drawings/vmlDrawing0.vml",
@@ -97,6 +98,11 @@ def apache_poi_fixture_specs() -> list[ExternalFixtureSpec]:
                     "min_runs": 2,
                     "contains": ["Apache POI", "rich text"],
                     "label": "rich text runs survive",
+                },
+                {
+                    "kind": "workbook_protection",
+                    "expected": {"lockStructure": True},
+                    "label": "workbook structure protection survives",
                 },
             ),
         )

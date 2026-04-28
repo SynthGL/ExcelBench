@@ -60,6 +60,7 @@ public final class PoiOracle {
 
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             workbook.getProperties().getCoreProperties().setCreator("ExcelBench Apache POI Oracle");
+            workbook.lockStructure();
             XSSFSheet sheet = workbook.createSheet("POI");
             sheet.createFreezePane(1, 1);
             sheet.setColumnWidth(0, 18 * 256);
@@ -111,7 +112,8 @@ public final class PoiOracle {
             + "\"data_validations\":1,"
             + "\"merged_ranges\":1,"
             + "\"images\":1,"
-            + "\"protected_sheets\":1"
+            + "\"protected_sheets\":1,"
+            + "\"protected_workbook\":1"
             + "}}");
     }
 

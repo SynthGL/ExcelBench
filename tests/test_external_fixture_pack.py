@@ -72,6 +72,7 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
 
     assert [spec.fixture_id for spec in specs] == ["apache_poi_table_validation_image_comment"]
     assert all(spec.tool == "apache-poi" for spec in specs)
+    assert "xl/workbook.xml" in specs[0].expected_parts
     assert "xl/tables/table1.xml" in specs[0].expected_parts
     assert "xl/drawings/vmlDrawing0.vml" in specs[0].expected_parts
     assert any(probe["kind"] == "data_validation" for probe in specs[0].readback_probes)
@@ -80,6 +81,7 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
     assert any(probe["kind"] == "relationship_target" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "sheet_protection" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "rich_text_runs" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "workbook_protection" for probe in specs[0].readback_probes)
 
 
 def test_exceljs_fixture_specs_are_stable() -> None:
@@ -222,8 +224,11 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
         assert apache_poi_fixture.exists()
         with ZipFile(apache_poi_fixture) as workbook:
             apache_poi_names = set(workbook.namelist())
+            apache_poi_workbook_xml = workbook.read("xl/workbook.xml").decode()
             apache_poi_sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
             apache_poi_shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+        assert "workbookProtection" in apache_poi_workbook_xml
+        assert "lockStructure" in apache_poi_workbook_xml
         assert "xl/tables/table1.xml" in apache_poi_names
         assert "xl/comments1.xml" in apache_poi_names
         assert "xl/drawings/vmlDrawing0.vml" in apache_poi_names
