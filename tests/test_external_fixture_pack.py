@@ -19,6 +19,7 @@ from excelbench.harness.external_fixture_pack import (
     npoi_fixture_specs,
 )
 from excelbench.harness.external_wolfxl_validation import (
+    _run_readback_probes,
     validate_wolfxl_external_fixture_pack,
 )
 
@@ -53,6 +54,8 @@ def test_closedxml_fixture_specs_are_stable() -> None:
     assert "xl/comments1.xml" in specs[1].expected_parts
     assert "xl/drawings/vmldrawing.vml" in specs[1].expected_parts
     assert any(probe["kind"] == "comment_text" for probe in specs[1].readback_probes)
+    assert any(probe["kind"] == "sheet_protection" for probe in specs[1].readback_probes)
+    assert any(probe["kind"] == "rich_text_runs" for probe in specs[1].readback_probes)
     assert [spec.fixture_id for spec in external_fixture_specs()] == [
         "excelize_sales_pivot_slicer_chart",
         "excelize_chart_points_formula_cf",
@@ -75,6 +78,8 @@ def test_apache_poi_fixture_specs_are_stable() -> None:
     assert any(probe["kind"] == "hyperlink_target" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "merged_range" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "relationship_target" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "sheet_protection" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "rich_text_runs" for probe in specs[0].readback_probes)
 
 
 def test_exceljs_fixture_specs_are_stable() -> None:
@@ -86,6 +91,8 @@ def test_exceljs_fixture_specs_are_stable() -> None:
     assert "xl/media/image1.png" in specs[0].expected_parts
     assert any(probe["kind"] == "cell_style" for probe in specs[0].readback_probes)
     assert any(probe["kind"] == "cell_formula" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "sheet_protection" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "rich_text_runs" for probe in specs[0].readback_probes)
 
 
 def test_npoi_fixture_specs_are_stable() -> None:
@@ -96,6 +103,35 @@ def test_npoi_fixture_specs_are_stable() -> None:
     assert "xl/comments1.xml" in specs[0].expected_parts
     assert "xl/drawings/vmlDrawing1.vml" in specs[0].expected_parts
     assert any(probe["kind"] == "comment_text" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "sheet_protection" for probe in specs[0].readback_probes)
+    assert any(probe["kind"] == "rich_text_runs" for probe in specs[0].readback_probes)
+
+
+def test_workbook_protection_probe_reads_workbook_xml(tmp_path: Path) -> None:
+    openpyxl = pytest.importorskip("openpyxl")
+
+    workbook_path = tmp_path / "protected-workbook.xlsx"
+    workbook = openpyxl.Workbook()
+    workbook.security.lockStructure = True
+    workbook.save(workbook_path)
+    workbook.close()
+
+    roundtrip = openpyxl.load_workbook(workbook_path)
+    try:
+        failures = _run_readback_probes(
+            roundtrip,
+            workbook_path,
+            (
+                {
+                    "kind": "workbook_protection",
+                    "expected": {"lockStructure": True},
+                },
+            ),
+        )
+    finally:
+        roundtrip.close()
+
+    assert failures == ()
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

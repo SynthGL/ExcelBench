@@ -166,6 +166,18 @@ def exceljs_fixture_specs() -> list[ExternalFixtureSpec]:
                     "contains": "ExcelJsReviewTable",
                     "label": "table name survives",
                 },
+                {
+                    "kind": "sheet_protection",
+                    "sheet": "ExcelJS",
+                    "expected": {"sheet": True},
+                },
+                {
+                    "kind": "rich_text_runs",
+                    "part": "xl/sharedStrings.xml",
+                    "min_runs": 2,
+                    "contains": ["ExcelJS ", "rich text"],
+                    "label": "rich text runs survive",
+                },
             ),
         )
     ]

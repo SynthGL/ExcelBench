@@ -74,6 +74,18 @@ def npoi_fixture_specs() -> list[ExternalFixtureSpec]:
                     "contains": "sheetProtection",
                     "label": "sheet protection survives",
                 },
+                {
+                    "kind": "sheet_protection",
+                    "sheet": "NPOI",
+                    "expected": {"sheet": True, "objects": True, "scenarios": True},
+                },
+                {
+                    "kind": "rich_text_runs",
+                    "part": "xl/sharedStrings.xml",
+                    "min_runs": 2,
+                    "contains": ["NPOI ", "rich text"],
+                    "label": "rich text runs survive",
+                },
             ),
         )
     ]

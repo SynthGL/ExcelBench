@@ -86,6 +86,18 @@ def apache_poi_fixture_specs() -> list[ExternalFixtureSpec]:
                     "contains": "PoiReviewTable",
                     "label": "table name survives",
                 },
+                {
+                    "kind": "sheet_protection",
+                    "sheet": "POI",
+                    "expected": {"sheet": True, "objects": True, "scenarios": True},
+                },
+                {
+                    "kind": "rich_text_runs",
+                    "part": "xl/sharedStrings.xml",
+                    "min_runs": 2,
+                    "contains": ["Apache POI", "rich text"],
+                    "label": "rich text runs survive",
+                },
             ),
         )
     ]

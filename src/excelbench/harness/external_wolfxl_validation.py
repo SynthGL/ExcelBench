@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
@@ -224,6 +225,12 @@ def _run_readback_probes(
                 _check_merged_range(workbook, probe)
             elif kind == "table_metadata":
                 _check_table_metadata(workbook, probe)
+            elif kind == "sheet_protection":
+                _check_sheet_protection(workbook, probe)
+            elif kind == "workbook_protection":
+                _check_workbook_protection(workbook_path, probe)
+            elif kind == "rich_text_runs":
+                _check_rich_text_runs(workbook_path, probe)
             elif kind == "relationship_target":
                 _check_relationship_target(workbook_path, probe)
             elif kind == "zip_contains":
@@ -352,6 +359,56 @@ def _check_table_metadata(workbook: Any, probe: JSONDict) -> None:
         raise AssertionError(f"expected table style {expected_style!r}, got {actual_style!r}")
 
 
+def _check_sheet_protection(workbook: Any, probe: JSONDict) -> None:
+    sheet = workbook[str(probe["sheet"])]
+    expected = cast(JSONDict, probe.get("expected", {"sheet": True}))
+    for key, expected_value in expected.items():
+        actual = getattr(sheet.protection, str(key))
+        if actual != expected_value:
+            raise AssertionError(
+                f"expected sheet protection {key}={expected_value!r}, got {actual!r}"
+            )
+
+
+def _check_workbook_protection(workbook_path: Path, probe: JSONDict) -> None:
+    expected = cast(JSONDict, probe.get("expected", {}))
+    with ZipFile(workbook_path) as workbook_zip:
+        root = ET.fromstring(workbook_zip.read("xl/workbook.xml"))
+    protection = _find_first_child(root, "workbookProtection")
+    if protection is None:
+        raise AssertionError("expected xl/workbook.xml to contain workbookProtection")
+    for key, expected_value in expected.items():
+        actual = protection.attrib.get(str(key))
+        if isinstance(expected_value, bool):
+            actual_value: Any = _xml_bool(actual)
+        else:
+            actual_value = actual
+        if actual_value != expected_value:
+            raise AssertionError(
+                f"expected workbook protection {key}={expected_value!r}, got {actual_value!r}"
+            )
+
+
+def _check_rich_text_runs(workbook_path: Path, probe: JSONDict) -> None:
+    part = str(probe.get("part", "xl/sharedStrings.xml"))
+    min_runs = int(probe.get("min_runs", 1))
+    expected_fragments = [str(item) for item in probe.get("contains", [])]
+    with ZipFile(workbook_path) as workbook_zip:
+        text = workbook_zip.read(part).decode("utf-8", errors="ignore")
+    try:
+        root = ET.fromstring(text)
+        run_count = sum(1 for element in root.iter() if _local_name(element.tag) == "r")
+        visible_text = "".join(root.itertext())
+    except ET.ParseError:
+        run_count = len(re.findall(r"<(?:[A-Za-z0-9_]+:)?r[\s>]", text))
+        visible_text = text
+    if run_count < min_runs:
+        raise AssertionError(f"expected at least {min_runs} rich-text runs, got {run_count}")
+    for fragment in expected_fragments:
+        if fragment not in visible_text:
+            raise AssertionError(f"expected rich-text content containing {fragment!r}")
+
+
 def _check_relationship_target(workbook_path: Path, probe: JSONDict) -> None:
     part = str(probe["part"])
     expected_target = str(probe["target"])
@@ -379,6 +436,21 @@ def _check_zip_contains(workbook_path: Path, probe: JSONDict) -> None:
         text = workbook_zip.read(part).decode("utf-8", errors="ignore")
     if expected not in text:
         raise AssertionError(f"expected {part} to contain {expected!r}")
+
+
+def _find_first_child(root: ET.Element, local_name: str) -> ET.Element | None:
+    for child in root:
+        if _local_name(child.tag) == local_name:
+            return child
+    return None
+
+
+def _local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _xml_bool(value: str | None) -> bool:
+    return str(value).lower() in {"1", "true"}
 
 
 def _display_path(path: Path, root: Path) -> str:

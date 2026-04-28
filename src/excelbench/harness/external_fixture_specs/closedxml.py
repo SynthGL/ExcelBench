@@ -136,9 +136,15 @@ def closedxml_fixture_specs() -> list[ExternalFixtureSpec]:
                     "label": "sheet protection survives",
                 },
                 {
-                    "kind": "zip_contains",
+                    "kind": "sheet_protection",
+                    "sheet": "Review",
+                    "expected": {"sheet": True, "objects": True},
+                },
+                {
+                    "kind": "rich_text_runs",
                     "part": "xl/sharedStrings.xml",
-                    "contains": ":r>",
+                    "min_runs": 2,
+                    "contains": ["Priority: ", "management response needed"],
                     "label": "rich text runs survive",
                 },
             ),
