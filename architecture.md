@@ -79,6 +79,11 @@ Most-touched top-level directories:
   - `excel_xls/`: canonical .xls fixtures
   - `throughput_xlsx/`: scale fixtures for perf/throughput workloads
 
+- `tools/external-oracles/`
+  - Optional subprocess helpers for non-Python oracle tools.
+  - `excelize/`: Go helper that generates and inspects `.xlsx` fixtures with
+    Excelize. Run from that directory with `go run .`.
+
 - `rust/excelbench_rust/` (optional, local-only)
   - PyO3 crate for ExcelBench-specific Rust backends (umya-spreadsheet, basic calamine)
   - The core WolfXL backends (calamine-styled, rust_xlsxwriter, xlsx patcher) are now in the

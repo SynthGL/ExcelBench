@@ -27,6 +27,8 @@ class ExternalOracleTool:
         capabilities: Coarse capability labels such as ``write`` or
             ``open_save_validate``.
         env: Extra environment variables for the subprocess.
+        cwd: Optional working directory for helper commands that are checked
+            into this repository.
     """
 
     name: str
@@ -35,6 +37,7 @@ class ExternalOracleTool:
     homepage: str
     capabilities: frozenset[str]
     env: Mapping[str, str] = field(default_factory=dict)
+    cwd: Path | None = None
 
     def resolve_executable(self) -> str | None:
         """Resolve the command executable without running it."""
@@ -108,20 +111,27 @@ class ExternalOracleResult:
     notes: str | None = None
 
 
-def external_oracle_catalog() -> dict[str, ExternalOracleTool]:
+def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, ExternalOracleTool]:
     """Return the planned external-oracle helper catalog.
 
     The commands are helper entrypoints, not raw runtime commands. They are
     intentionally absent from normal installs until each oracle is implemented
     and audited.
     """
+    excelize_command: tuple[str, ...] = ("excelbench-excelize-oracle",)
+    excelize_cwd = None
+    if repo_root is not None:
+        excelize_command = ("go", "run", ".")
+        excelize_cwd = repo_root / "tools" / "external-oracles" / "excelize"
+
     return {
         "excelize": ExternalOracleTool(
             name="excelize",
-            command=("excelbench-excelize-oracle",),
+            command=excelize_command,
             language="go",
             homepage="https://github.com/qax-os/excelize",
             capabilities=frozenset({"read", "write", "charts", "pivots", "slicers"}),
+            cwd=excelize_cwd,
         ),
         "libreoffice": ExternalOracleTool(
             name="libreoffice",
@@ -183,7 +193,7 @@ def run_external_oracle(
             capture_output=True,
             check=False,
             timeout=timeout_seconds,
-            cwd=cwd,
+            cwd=cwd if cwd is not None else tool.cwd,
             env=env,
         )
     except subprocess.TimeoutExpired as exc:
@@ -230,4 +240,3 @@ def _parse_stdout_payload(stdout: str) -> JSONDict:
     if isinstance(parsed, dict):
         return parsed
     return {"payload": parsed}
-

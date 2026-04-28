@@ -17,17 +17,48 @@ not to replace the existing ExcelBench adapter matrix.
   on stdout.
 - Missing helpers return a structured skip, so Go/Java/.NET/LibreOffice are not
   required for the normal test suite.
-- The helper catalog currently reserves entrypoints for:
-  - `excelbench-excelize-oracle`
+- The helper catalog can point at repo-local helpers when called with
+  `external_oracle_catalog(repo_root=...)`.
+- The helper catalog currently reserves entrypoints or source helpers for:
+  - `tools/external-oracles/excelize` (`go run .`)
   - `excelbench-libreoffice-oracle`
   - `excelbench-poi-oracle`
   - `excelbench-closedxml-oracle`
+
+## Excelize helper
+
+Implemented: `tools/external-oracles/excelize`
+
+Supported operations:
+
+- `write_fixture`: writes an `.xlsx` workbook from the JSON subprocess request.
+- `read_metadata`: opens an `.xlsx` workbook and reports sheet-level counts for
+  tables, pivots, slicers, and conditional-formatting ranges.
+
+Supported write payload keys:
+
+- `sheets`
+- `cells`
+- `columns`
+- `tables`
+- `conditional_formats`
+- `charts`
+- `pivots`
+- `slicers`
+- `pictures`
+
+Current smoke coverage:
+
+- Go unit smoke checks that a single request emits table, pivot, pivot cache,
+  slicer, slicer cache, chart, drawing, and image-related workbook parts.
+- Python integration smoke runs the same helper through
+  `run_external_oracle()` when Go is available.
 
 ## Candidate tools
 
 | Tool | Runtime | Initial role | Status |
 |---|---|---|---|
-| Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | P0 next implementation target. |
+| Excelize | Go | Generate xlsx fixtures for pivots, slicers, charts, conditional formatting, tables, rich formatting, images, and streaming paths. | Initial helper implemented. |
 | LibreOffice Calc | CLI / UNO | Open/save/render validator for corruption, repair, and visual/export smoke checks. | P0 next implementation target. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
 | ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | P1 after contract settles. |
@@ -38,11 +69,11 @@ not to replace the existing ExcelBench adapter matrix.
 
 The first external oracle pack should stay small and high-signal:
 
-1. Excelize pivot cache + pivot table with saved records.
-2. Excelize slicer attached to a table or pivot table.
-3. Excelize chart with data labels, point colors, and alt text.
-4. Excelize conditional formatting with icon sets, color scales, and data bars.
-5. Excelize drawing/image anchors with one-cell/two-cell positions.
+1. Excelize pivot cache + pivot table with saved records. **Scaffolded.**
+2. Excelize slicer attached to a table or pivot table. **Table slicer scaffolded.**
+3. Excelize chart with data labels, point colors, and alt text. **Basic chart scaffolded.**
+4. Excelize conditional formatting with icon sets, color scales, and data bars. **Scaffolded.**
+5. Excelize drawing/image anchors with one-cell/two-cell positions. **Basic picture scaffolded.**
 6. LibreOffice open/save smoke for the same outputs.
 7. LibreOffice PDF/export smoke where visual corruption would be obvious.
 
@@ -54,4 +85,3 @@ The first external oracle pack should stay small and high-signal:
 - WolfXL read/modify/save behavior is explicitly classified as pass, fix-now,
   documented defer, or out of scope.
 - Stable cases graduate into checked-in fixtures only after a manual truth pass.
-
