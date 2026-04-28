@@ -58,6 +58,9 @@ rust/**/uv.lock
 tools/external-oracles/**/bin/
 tools/external-oracles/**/obj/
 
+# Node external oracle dependencies
+tools/external-oracles/**/node_modules/
+
 # Jupyter
 .ipynb_checkpoints/
 

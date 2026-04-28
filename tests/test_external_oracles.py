@@ -21,9 +21,17 @@ from excelbench.harness.external_oracles import (
 def test_catalog_lists_planned_external_oracles() -> None:
     catalog = external_oracle_catalog()
 
-    assert set(catalog) == {"excelize", "libreoffice", "apache-poi", "closedxml", "npoi"}
+    assert set(catalog) == {
+        "excelize",
+        "libreoffice",
+        "apache-poi",
+        "exceljs",
+        "closedxml",
+        "npoi",
+    }
     assert "pivots" in catalog["excelize"].capabilities
     assert "open_save_validate" in catalog["libreoffice"].capabilities
+    assert "data_validations" in catalog["exceljs"].capabilities
     assert "rich_text" in catalog["npoi"].capabilities
 
 
@@ -36,6 +44,10 @@ def test_repo_catalog_points_excelize_at_go_helper() -> None:
     assert tool.cwd == repo_root / "tools" / "external-oracles" / "excelize"
     assert catalog["libreoffice"].command[0] == sys.executable
     assert catalog["libreoffice"].command[1].endswith("libreoffice_oracle.py")
+    assert catalog["exceljs"].command[0] == "node"
+    assert catalog["exceljs"].command[1].endswith("exceljs-oracle.cjs")
+    assert catalog["exceljs"].cwd == repo_root / "tools" / "external-oracles" / "exceljs"
+    assert catalog["exceljs"].required_paths
     assert catalog["closedxml"].command[0] == "dotnet"
     assert any(part.endswith("closedxml-oracle.csproj") for part in catalog["closedxml"].command)
     assert catalog["npoi"].command[0] == "dotnet"
@@ -399,6 +411,118 @@ def test_npoi_dotnet_helper_writes_formula_comment_fixture(tmp_path: Path) -> No
         shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
     assert "xl/comments1.xml" in names
     assert "xl/drawings/vmlDrawing1.vml" in names
+    assert "sheetProtection" in sheet_xml
+    assert "mergeCell" in sheet_xml
+    assert "<f>SUM(B2:B3)</f>" in sheet_xml
+    assert "<r>" in shared_strings_xml
+
+
+@pytest.mark.skipif(
+    not (
+        shutil.which("node")
+        and (
+            Path(__file__).resolve().parents[1]
+            / "tools"
+            / "external-oracles"
+            / "exceljs"
+            / "node_modules"
+            / "exceljs"
+            / "package.json"
+        ).exists()
+    ),
+    reason="Node and npm-installed ExcelJS dependencies are required for ExcelJS",
+)
+def test_exceljs_node_helper_writes_table_validation_fixture(tmp_path: Path) -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    output_path = tmp_path / "exceljs-smoke.xlsx"
+    tool = external_oracle_catalog(repo_root=repo_root)["exceljs"]
+
+    result = run_external_oracle(
+        tool,
+        ExternalOracleRequest(
+            fixture_id="exceljs-smoke",
+            operation="write_fixture",
+            output_path=output_path,
+            payload={
+                "sheets": [{"name": "ExcelJS", "freeze_panes": {"x_split": 1, "y_split": 1}}],
+                "cells": [
+                    {"sheet": "ExcelJS", "cell": "A1", "value": "Metric"},
+                    {"sheet": "ExcelJS", "cell": "B1", "value": "Value"},
+                    {"sheet": "ExcelJS", "cell": "A2", "value": "Revenue"},
+                    {"sheet": "ExcelJS", "cell": "B2", "value": 1200},
+                    {"sheet": "ExcelJS", "cell": "A3", "value": "COGS"},
+                    {"sheet": "ExcelJS", "cell": "B3", "value": -450},
+                    {
+                        "sheet": "ExcelJS",
+                        "cell": "B4",
+                        "type": "formula",
+                        "formula": "SUM(B2:B3)",
+                        "result": 750,
+                    },
+                ],
+                "rich_text": [
+                    {
+                        "sheet": "ExcelJS",
+                        "cell": "D2",
+                        "runs": [
+                            {"text": "ExcelJS ", "bold": True},
+                            {"text": "rich text", "italic": True},
+                        ],
+                    }
+                ],
+                "comments": [{"sheet": "ExcelJS", "cell": "B4", "text": "Formula comment."}],
+                "hyperlinks": [
+                    {
+                        "sheet": "ExcelJS",
+                        "cell": "D4",
+                        "text": "ExcelJS project",
+                        "url": "https://github.com/exceljs/exceljs",
+                    }
+                ],
+                "merged_ranges": [{"sheet": "ExcelJS", "range": "D1:F1"}],
+                "data_validations": [
+                    {
+                        "sheet": "ExcelJS",
+                        "cell": "C2",
+                        "type": "list",
+                        "formulae": ['"Open,Closed"'],
+                    }
+                ],
+                "tables": [
+                    {
+                        "sheet": "ExcelJS",
+                        "name": "ExcelJsTable",
+                        "ref": "F1:G3",
+                        "columns": [{"name": "Item"}, {"name": "Status"}],
+                        "rows": [["Revenue", "Open"], ["COGS", "Closed"]],
+                    }
+                ],
+                "images": [{"sheet": "ExcelJS", "range": "D6:E8"}],
+                "protection": [{"sheet": "ExcelJS", "password": "audit"}],
+            },
+        ),
+        timeout_seconds=180,
+    )
+
+    assert result.passed is True, result
+    assert output_path.exists()
+    assert result.payload["counts"]["formulas"] == 1
+    assert result.payload["counts"]["comments"] == 1
+    assert result.payload["counts"]["rich_text"] == 1
+    assert result.payload["counts"]["hyperlinks"] == 1
+    assert result.payload["counts"]["tables"] == 1
+    assert result.payload["counts"]["data_validations"] == 1
+    assert result.payload["counts"]["images"] == 1
+    with ZipFile(output_path) as workbook:
+        names = set(workbook.namelist())
+        sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+        shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+    assert "xl/tables/table1.xml" in names
+    assert "xl/comments1.xml" in names
+    assert "xl/drawings/vmlDrawing1.vml" in names
+    assert "xl/drawings/drawing1.xml" in names
+    assert "xl/media/image1.png" in names
+    assert "dataValidations" in sheet_xml
     assert "sheetProtection" in sheet_xml
     assert "mergeCell" in sheet_xml
     assert "<f>SUM(B2:B3)</f>" in sheet_xml

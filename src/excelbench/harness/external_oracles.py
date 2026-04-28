@@ -30,6 +30,8 @@ class ExternalOracleTool:
         env: Extra environment variables for the subprocess.
         cwd: Optional working directory for helper commands that are checked
             into this repository.
+        required_paths: Optional files/directories that must exist before the
+            helper is considered available.
     """
 
     name: str
@@ -39,6 +41,7 @@ class ExternalOracleTool:
     capabilities: frozenset[str]
     env: Mapping[str, str] = field(default_factory=dict)
     cwd: Path | None = None
+    required_paths: tuple[Path, ...] = ()
 
     def resolve_executable(self) -> str | None:
         """Resolve the command executable without running it."""
@@ -51,7 +54,9 @@ class ExternalOracleTool:
 
     def is_available(self) -> bool:
         """Return whether the helper command is available on this machine."""
-        return self.resolve_executable() is not None
+        return self.resolve_executable() is not None and all(
+            required_path.exists() for required_path in self.required_paths
+        )
 
     def resolved_command(self) -> tuple[str, ...] | None:
         """Return the command with the executable resolved to an absolute path."""
@@ -158,6 +163,13 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             "quiet",
             "--",
         )
+    exceljs_command: tuple[str, ...] = ("excelbench-exceljs-oracle",)
+    exceljs_cwd = None
+    exceljs_required_paths: tuple[Path, ...] = ()
+    if repo_root is not None:
+        exceljs_cwd = repo_root / "tools" / "external-oracles" / "exceljs"
+        exceljs_command = ("node", str(exceljs_cwd / "exceljs-oracle.cjs"))
+        exceljs_required_paths = (exceljs_cwd / "node_modules" / "exceljs" / "package.json",)
 
     return {
         "excelize": ExternalOracleTool(
@@ -181,6 +193,25 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             language="java",
             homepage="https://poi.apache.org/components/spreadsheet/",
             capabilities=frozenset({"read", "write", "charts", "pivots"}),
+        ),
+        "exceljs": ExternalOracleTool(
+            name="exceljs",
+            command=exceljs_command,
+            language="node",
+            homepage="https://github.com/exceljs/exceljs",
+            capabilities=frozenset(
+                {
+                    "read",
+                    "write",
+                    "comments",
+                    "data_validations",
+                    "images",
+                    "rich_text",
+                    "tables",
+                }
+            ),
+            cwd=exceljs_cwd,
+            required_paths=exceljs_required_paths,
         ),
         "closedxml": ExternalOracleTool(
             name="closedxml",

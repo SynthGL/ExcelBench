@@ -12,6 +12,7 @@ from excelbench.harness.external_fixture_specs import (
     ExternalFixtureSpec,
     closedxml_fixture_specs,
     excelize_fixture_specs,
+    exceljs_fixture_specs,
     external_fixture_specs,
     npoi_fixture_specs,
 )
@@ -27,6 +28,7 @@ __all__ = [
     "ExternalFixtureSpec",
     "FixtureGenerationResult",
     "closedxml_fixture_specs",
+    "exceljs_fixture_specs",
     "excelize_fixture_specs",
     "external_fixture_specs",
     "generate_external_fixture_pack",

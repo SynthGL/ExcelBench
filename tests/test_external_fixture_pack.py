@@ -12,6 +12,7 @@ import pytest
 from excelbench.harness.external_fixture_pack import (
     closedxml_fixture_specs,
     excelize_fixture_specs,
+    exceljs_fixture_specs,
     external_fixture_specs,
     generate_external_fixture_pack,
     npoi_fixture_specs,
@@ -51,7 +52,17 @@ def test_closedxml_fixture_specs_are_stable() -> None:
         "closedxml_pivot_cf_table",
         "closedxml_rich_comment_protection",
         "npoi_formula_comment_merge_protection",
+        "exceljs_table_validation_image_comment",
     ]
+
+
+def test_exceljs_fixture_specs_are_stable() -> None:
+    specs = exceljs_fixture_specs()
+
+    assert [spec.fixture_id for spec in specs] == ["exceljs_table_validation_image_comment"]
+    assert all(spec.tool == "exceljs" for spec in specs)
+    assert "xl/tables/table1.xml" in specs[0].expected_parts
+    assert "xl/media/image1.png" in specs[0].expected_parts
 
 
 def test_npoi_fixture_specs_are_stable() -> None:
@@ -110,6 +121,30 @@ def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> No
         assert "sheetProtection" in npoi_sheet_xml
         assert "mergeCell" in npoi_sheet_xml
         assert "<r>" in npoi_shared_strings_xml
+    exceljs_deps = (
+        repo_root
+        / "tools"
+        / "external-oracles"
+        / "exceljs"
+        / "node_modules"
+        / "exceljs"
+        / "package.json"
+    )
+    if shutil.which("node") is not None and exceljs_deps.exists():
+        exceljs_fixture = tmp_path / "exceljs-table-validation-image-comment.xlsx"
+        assert exceljs_fixture.exists()
+        with ZipFile(exceljs_fixture) as workbook:
+            exceljs_names = set(workbook.namelist())
+            exceljs_sheet_xml = workbook.read("xl/worksheets/sheet1.xml").decode()
+            exceljs_shared_strings_xml = workbook.read("xl/sharedStrings.xml").decode()
+        assert "xl/tables/table1.xml" in exceljs_names
+        assert "xl/comments1.xml" in exceljs_names
+        assert "xl/drawings/vmlDrawing1.vml" in exceljs_names
+        assert "xl/drawings/drawing1.xml" in exceljs_names
+        assert "xl/media/image1.png" in exceljs_names
+        assert "dataValidations" in exceljs_sheet_xml
+        assert "sheetProtection" in exceljs_sheet_xml
+        assert "<r>" in exceljs_shared_strings_xml
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")

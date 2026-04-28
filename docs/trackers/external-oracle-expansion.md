@@ -32,6 +32,7 @@ not to replace the existing ExcelBench adapter matrix.
 - The helper catalog currently reserves entrypoints or source helpers for:
   - `tools/external-oracles/excelize` (`go run .`)
   - `tools/external-oracles/libreoffice/libreoffice_oracle.py`
+  - `tools/external-oracles/exceljs` (`node exceljs-oracle.cjs`)
   - `tools/external-oracles/closedxml` (`dotnet run --project ...`)
   - `tools/external-oracles/npoi` (`dotnet run --project ...`)
   - `excelbench-poi-oracle`
@@ -116,6 +117,34 @@ Current smoke coverage:
   sheet protection. The full four-workbook pack passes LibreOffice
   open/render validation and WolfXL read + in-place modify-save preservation.
 
+## ExcelJS helper
+
+Implemented: `tools/external-oracles/exceljs`
+
+Supported operations:
+
+- `write_fixture`: writes sheets, cells, formulas, styles, rich text, comments,
+  hyperlinks, tables, data validations, merged ranges, freeze panes, images,
+  and sheet protection through ExcelJS.
+- `read_metadata`: inspects package parts for worksheets, tables, drawings,
+  media, comments, VML drawings, shared strings, and calc-chain metadata.
+
+Current smoke coverage:
+
+- Node integration smoke writes a table + formula + data-validation + rich text
+  + comment + hyperlink + image + merged range + freeze panes + sheet-protection
+  workbook through `run_external_oracle()` when `node` and local `npm install`
+  dependencies are available.
+- Fixture-pack promotion, 2026-04-28:
+  `exceljs_table_validation_image_comment` is included when ExcelJS
+  dependencies are installed.
+- Manual ExcelJS truth pass, 2026-04-28: the full six-workbook pack, including
+  the ExcelJS table/validation/image/comment/rich-text case, passes LibreOffice
+  open/render validation and WolfXL read + in-place modify-save preservation.
+- Dependency hygiene, 2026-04-28: `package-lock.json` pins ExcelJS 4.4.0 and
+  overrides transitive `uuid` to 14.0.0, producing a local `npm audit` result
+  with zero reported vulnerabilities.
+
 ## NPOI helper
 
 Implemented: `tools/external-oracles/npoi`
@@ -147,6 +176,7 @@ Current smoke coverage:
 | ClosedXML | .NET | Generate high-level table, pivot, conditional-formatting, and rich-cell fixtures. | Initial helper implemented; first two fixture-pack cases passing. |
 | Apache POI | Java | Generate and inspect OOXML fixtures with a mature usermodel plus documented chart/pivot limits. | P1 after contract settles. |
 | NPOI | .NET | POI-like .NET comparison for formulas, comments, rich strings, merged ranges, and protection. | Initial helper implemented; first fixture-pack case passing. |
+| ExcelJS | JavaScript | Generate style/value, table, validation, comment, rich text, hyperlink, image, protection, and streaming edge cases. | Initial helper implemented; first fixture-pack case passing. |
 | SheetJS CE | JavaScript | Broad-format value/formula sanity checks; advanced styling/charts/pivots appear better suited to Pro. | P2 limited scope. |
 
 ## Additional oracle research
@@ -215,8 +245,11 @@ Fixtures:
    comments, VML comment drawings, and sheet protection. **Implemented.**
 5. `npoi_formula_comment_merge_protection`: NPOI formula cell, rich shared
    string, legacy comment, merged range, and sheet protection. **Implemented.**
-6. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
-7. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
+6. `exceljs_table_validation_image_comment`: ExcelJS formula cell, table,
+   data validation, rich shared string, legacy comment, hyperlink, image,
+   merged range, freeze panes, and sheet protection. **Implemented.**
+7. LibreOffice open/save smoke for the same outputs. **Helper scaffolded.**
+8. LibreOffice PDF/export smoke where visual corruption would be obvious. **Helper scaffolded.**
 
 ## Promotion gates
 
