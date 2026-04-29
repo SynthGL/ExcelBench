@@ -35,6 +35,8 @@ test_files/
 # Results - regenerated on demand (but we may want to commit some)
 # results/
 results_dev*/
+results-cross-language-smoke*/
+tools/external-oracles/**/results-*/
 
 # IDE
 .idea/
@@ -53,6 +55,17 @@ target/
 Cargo.lock
 !rust/**/Cargo.lock
 rust/**/uv.lock
+
+# .NET external oracle build outputs
+tools/external-oracles/**/bin/
+tools/external-oracles/**/obj/
+
+# Node external oracle dependencies
+tools/external-oracles/**/node_modules/
+
+# Java external oracle build/dependency outputs
+tools/external-oracles/**/deps/lib/
+tools/external-oracles/**/build/classes/
 
 # Jupyter
 .ipynb_checkpoints/

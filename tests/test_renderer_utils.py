@@ -22,6 +22,7 @@ from excelbench.results.renderer import (
     _render_fidelity_deltas,
     _render_per_test_table,
     render_markdown,
+    render_results,
     score_emoji,
 )
 
@@ -288,6 +289,36 @@ def test_render_markdown_hides_pyumya_and_includes_modify_label(tmp_path: Path) 
     content = out.read_text()
     assert "modify: Rewrite" in content
     assert "pyumya" not in content
+
+
+def test_render_results_removes_stale_why_failed_when_all_pass(tmp_path: Path) -> None:
+    failed = _make_results(
+        scores=[
+            FeatureScore(
+                feature="cell_values",
+                library="openpyxl",
+                read_score=0,
+                test_results=[_make_tr("tc1", OperationType.READ, passed=False)],
+            )
+        ]
+    )
+    passed = _make_results(
+        scores=[
+            FeatureScore(
+                feature="cell_values",
+                library="openpyxl",
+                read_score=3,
+                test_results=[_make_tr("tc1", OperationType.READ, passed=True)],
+            )
+        ]
+    )
+
+    render_results(failed, tmp_path)
+    assert (tmp_path / "WHY_FAILED.md").exists()
+
+    render_results(passed, tmp_path)
+
+    assert not (tmp_path / "WHY_FAILED.md").exists()
 
 
 # ─────────────────────────────────────────────────

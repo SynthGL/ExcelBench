@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from excelbench.models import BenchmarkResults, Diagnostic, FeatureScore, OperationType, TestResult
+from excelbench.results.failure_explainer import explain_diagnostic, render_why_failed
 from excelbench.results.report_policy import is_visible_library, modify_mode_label
 
 # Feature tier assignments
@@ -89,6 +90,7 @@ def render_results(results: BenchmarkResults, output_dir: Path) -> None:
     render_json(results, output_dir / "results.json")
     render_markdown(results, output_dir / "README.md")
     render_csv(results, output_dir / "matrix.csv")
+    _render_why_failed(results, output_dir / "WHY_FAILED.md")
     _append_history(results, output_dir)
     _render_fidelity_deltas(output_dir)
 
@@ -688,7 +690,10 @@ def _group_test_cases(test_results: list[TestResult]) -> dict[str, Any]:
             "expected": tr.expected,
             "actual": tr.actual,
             "notes": tr.notes,
-            "diagnostics": [_diagnostic_to_json(d) for d in tr.diagnostics],
+            "diagnostics": [
+                _diagnostic_to_json(d, expected=tr.expected, actual=tr.actual)
+                for d in tr.diagnostics
+            ],
             "importance": tr.importance.value if tr.importance else None,
             "label": tr.label,
         }
@@ -841,7 +846,13 @@ def _compute_fidelity_deltas(
     return deltas
 
 
-def _diagnostic_to_json(diagnostic: Diagnostic) -> dict[str, Any]:
+def _diagnostic_to_json(
+    diagnostic: Diagnostic,
+    *,
+    expected: dict[str, Any] | None = None,
+    actual: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    explanation = explain_diagnostic(diagnostic, expected, actual)
     return {
         "category": diagnostic.category.value,
         "severity": diagnostic.severity.value,
@@ -853,8 +864,25 @@ def _diagnostic_to_json(diagnostic: Diagnostic) -> dict[str, Any]:
             "cell": diagnostic.location.cell,
         },
         "adapter_message": diagnostic.adapter_message,
-        "probable_cause": diagnostic.probable_cause,
+        "probable_cause": diagnostic.probable_cause
+        or (explanation.probable_cause if explanation else None),
+        "root_cause_code": diagnostic.root_cause_code
+        or (explanation.code if explanation else None),
+        "suggested_next_step": diagnostic.suggested_next_step
+        or (explanation.next_step if explanation else None),
+        "explanation": explanation.to_json_dict() if explanation else None,
     }
+
+
+def _render_why_failed(results: BenchmarkResults, path: Path) -> None:
+    rows: list[tuple[str, str, TestResult]] = []
+    for score in results.scores:
+        for tr in score.test_results:
+            rows.append((score.feature, score.library, tr))
+    if not any(not tr.passed for _, _, tr in rows):
+        path.unlink(missing_ok=True)
+        return
+    path.write_text(render_why_failed(rows))
 
 
 def _render_diagnostics_summary(results: BenchmarkResults) -> list[str]:

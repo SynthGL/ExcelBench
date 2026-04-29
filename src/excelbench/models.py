@@ -188,6 +188,8 @@ class Diagnostic:
     location: DiagnosticLocation
     adapter_message: str
     probable_cause: str | None = None
+    root_cause_code: str | None = None
+    suggested_next_step: str | None = None
 
 
 # =============================================================================

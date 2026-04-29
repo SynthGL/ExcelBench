@@ -1,0 +1,76 @@
+{
+  "metadata": {
+    "run_date": "2026-04-29T14:43:42.836195+00:00",
+    "platform": "Darwin-arm64",
+    "fixture_path": "fixtures/excel/tier2/15_pivot_tables.xlsx"
+  },
+  "fixture": {
+    "exists": true,
+    "contains_pivot_parts": false,
+    "pivot_related_parts": []
+  },
+  "helpers": {
+    "apache-poi": {
+      "available": true,
+      "fixture_read_detects_pivot": false,
+      "fixture_metadata": {
+        "counts": {
+          "calc_chain": 0,
+          "comments": 0,
+          "drawings": 0,
+          "media": 0,
+          "shared_strings": 1,
+          "tables": 0,
+          "vml_drawings": 0,
+          "worksheets": 1
+        },
+        "fixture_id": "pivot-read",
+        "input_path": "fixtures/excel/tier2/15_pivot_tables.xlsx",
+        "operation": "read_metadata",
+        "tool": "apache-poi"
+      },
+      "fixture_error": null
+    },
+    "excelize": {
+      "available": true,
+      "fixture_read_detects_pivot": false,
+      "fixture_metadata": {
+        "fixture_id": "pivot-read",
+        "operation": "read_metadata",
+        "sheets": [
+          {
+            "conditional_formats": 0,
+            "name": "pivot_tables",
+            "pivots": 0,
+            "slicers": 0,
+            "tables": 0
+          }
+        ],
+        "tool": "excelize"
+      },
+      "fixture_error": null
+    }
+  },
+  "probes": {
+    "apache_poi": {
+      "supported": false,
+      "reason": "ApachePoiAdapter does not implement pivot table creation yet."
+    },
+    "excelize": {
+      "supported": true,
+      "output_path": "results-cross-language-pivots/excelize-pivot-probe.xlsx",
+      "pivot_related_parts": [
+        "xl/pivotCache/pivotCacheDefinition1.xml",
+        "xl/pivotTables/_rels/pivotTable1.xml.rels",
+        "xl/pivotTables/pivotTable1.xml"
+      ],
+      "openpyxl_readback": [
+        {
+          "name": "SalesPivot",
+          "source_range": "Data!A1:D5",
+          "target_cell": "Pivot!B3:E10"
+        }
+      ]
+    }
+  }
+}

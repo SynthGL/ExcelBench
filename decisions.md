@@ -40,6 +40,92 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-022 — Semantic diff and context lanes stay additive (2026-04-29)
+
+**Context**: ExcelBench needed better evidence for workbook drift, roundtrip
+idempotence, openpyxl-style compatibility, charts, macros, and future
+cross-language promotion without overloading the existing scored fidelity
+matrix. The existing runner diagnostics could say a test failed, but not
+produce a reusable workbook-level explanation.
+
+**Decision**:
+
+- Add workbook semantic snapshot/diff tooling as public infrastructure via
+  `excelbench diff-workbooks`.
+- Reuse that diff infrastructure from additive context lanes:
+  `roundtrip-context`, `compatibility-context`,
+  `cross-language-chart-context`, and `macro-context`.
+- Keep these lanes separate from normal fidelity scores. Unsupported adapters
+  produce explicit skip rows rather than silent passes or broad score changes.
+- Enrich rendered diagnostics with structured failure explanations and write
+  `WHY_FAILED.md` when a rendered benchmark directory contains failures.
+
+**Alternatives considered**:
+
+1. **Fold roundtrip and compatibility into the main scored matrix immediately**
+   - rejected because the adapter API does not expose a uniform
+   read-modify-save or openpyxl-compatible snippet surface.
+2. **Keep semantic diff internal-only** - rejected because a public CLI gives
+   direct reproducibility and a simple debugging tool for future lanes.
+3. **Use only package-part checks for charts/macros** - rejected for charts;
+   chart lanes should also inspect drawing relationships and chart references.
+   Macro v1 remains preserve-only because macro execution/semantic validation
+   is a separate trust boundary.
+
+**Consequences**:
+
+- New context outputs are comparable as evidence artifacts but not as headline
+  fidelity scores.
+- Some broad-adapter requests legitimately become skip rows until adapters
+  expose compatible APIs.
+- Future promotion of ClosedXML, ExcelJS, and NPOI into scored/context adapters
+  can reuse the same diff and explanation surfaces.
+
+**Commit(s)**: this commit.
+
+### DEC-021 — Optional external oracle subprocess contract (2026-04-28)
+
+**Context**: WolfXL's pre-release parity pass is now green against the existing
+openpyxl-centered matrix, but openpyxl does not construct or validate every
+advanced OOXML structure that matters for a production-grade Excel library.
+The next audit needs fixtures from tools such as Excelize, LibreOffice, Apache
+POI, and ClosedXML without forcing Go/Java/.NET/LibreOffice onto every
+ExcelBench install or CI job.
+
+**Decision**:
+
+- Add `src/excelbench/harness/external_oracles.py` as a subprocess-only JSON
+  contract for optional non-Python helpers.
+- External helpers receive one JSON request on stdin and return one JSON
+  payload on stdout. Missing helper commands produce structured skips rather
+  than failures.
+- Keep external oracles out of `get_all_adapters()` until each helper and
+  fixture pack is deterministic, audited, and ready for normal benchmark
+  flows.
+- Track the rollout in `docs/trackers/external-oracle-expansion.md`; initial
+  reserved helpers are Excelize, LibreOffice, Apache POI, and ClosedXML.
+
+**Alternatives considered**:
+
+1. **Register each external tool as a normal adapter immediately** — rejected.
+   That would make local runtimes and helper build systems part of ordinary
+   benchmark discovery before the fixture semantics are stable.
+2. **Use ad hoc scripts outside the package** — rejected. The contract needs
+   unit tests, versioned semantics, and stable skip/failure behavior.
+3. **Depend directly on Go/Java/.NET packages from Python** — rejected. It adds
+   packaging complexity and hides process/runtime failures that should be
+   visible in diagnostics.
+
+**Consequences**:
+
+- Core ExcelBench tests remain hermetic when optional helpers are missing.
+- The first oracle sprint can focus on helper binaries/scripts and fixture
+  truth-passing without changing benchmark scoring.
+- Promotion into public results requires a later explicit decision once the
+  generated workbooks are deterministic and manually audited.
+
+**Commit(s)**: this commit.
+
 ### DEC-020 — File-shape parametric scenarios + n_sheets fan-out (2026-04-27)
 
 **Context**: Sprint 2 (DEC-019) shipped the dtype × tier matrix that answers

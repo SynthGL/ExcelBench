@@ -7,6 +7,15 @@ from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 
 AdapterClass: TypeAlias = type[ExcelAdapter]
 
+
+def _is_available_adapter(adapter: AdapterClass | None) -> bool:
+    if adapter is None:
+        return False
+    is_available = getattr(adapter, "is_available", None)
+    if is_available is None:
+        return True
+    return bool(is_available())
+
 try:
     from excelbench.harness.adapters.xlsxwriter_adapter import (
         XlsxwriterAdapter as _XlsxwriterAdapter,
@@ -141,6 +150,20 @@ except ImportError:
 else:
     ExcelOracleAdapter = _ExcelOracleAdapter
 
+try:
+    from excelbench.harness.adapters.apache_poi_adapter import ApachePoiAdapter as _ApachePoiAdapter
+except ImportError:
+    ApachePoiAdapter: AdapterClass | None = None
+else:
+    ApachePoiAdapter = _ApachePoiAdapter
+
+try:
+    from excelbench.harness.adapters.excelize_adapter import ExcelizeAdapter as _ExcelizeAdapter
+except ImportError:
+    ExcelizeAdapter: AdapterClass | None = None
+else:
+    ExcelizeAdapter = _ExcelizeAdapter
+
 __all__ = [
     "ExcelAdapter",
     "ReadOnlyAdapter",
@@ -183,6 +206,10 @@ if PolarsAdapter is not None:
     __all__.append("PolarsAdapter")
 if TablibAdapter is not None:
     __all__.append("TablibAdapter")
+if ApachePoiAdapter is not None:
+    __all__.append("ApachePoiAdapter")
+if ExcelizeAdapter is not None:
+    __all__.append("ExcelizeAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -222,4 +249,8 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(PolarsAdapter())
     if TablibAdapter is not None:
         adapters.append(TablibAdapter())
+    if ApachePoiAdapter is not None and _is_available_adapter(ApachePoiAdapter):
+        adapters.append(ApachePoiAdapter())
+    if ExcelizeAdapter is not None and _is_available_adapter(ExcelizeAdapter):
+        adapters.append(ExcelizeAdapter())
     return adapters
