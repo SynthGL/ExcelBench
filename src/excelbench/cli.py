@@ -1055,6 +1055,159 @@ def benchmark_profiles(
     console.print(f"  - {output_dir}/README.md")
 
 
+@app.command("diff-workbooks")
+def diff_workbooks_cli(
+    left: Path = typer.Option(..., "--left", help="Left workbook path."),
+    right: Path = typer.Option(..., "--right", help="Right workbook path."),
+    output_dir: Path = typer.Option(
+        Path("results-workbook-diff"),
+        "--output",
+        "-o",
+        help="Directory to save semantic diff artifacts.",
+    ),
+) -> None:
+    """Diff two workbooks by normalized workbook semantics and package parts."""
+    from excelbench.harness.semantic_diff import write_diff_artifacts
+
+    try:
+        diff = write_diff_artifacts(left, right, output_dir)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+    status = "no deltas" if diff.passed else f"{len(diff.deltas)} deltas"
+    console.print(f"[green]✓ Workbook diff written to {output_dir} ({status})[/green]")
+    console.print(f"  - {output_dir}/summary.json")
+    console.print(f"  - {output_dir}/summary.md")
+    console.print(f"  - {output_dir}/categories/")
+
+
+@app.command("roundtrip-context")
+def roundtrip_context(
+    test_dir: Path = typer.Option(
+        PERF_XLSX_PROFILE_DEFAULT_TEST_DIR,
+        "--tests",
+        "-t",
+        help="Directory containing .xlsx tests and manifest.json.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results-roundtrip"),
+        "--output",
+        "-o",
+        help="Directory to save roundtrip context artifacts.",
+    ),
+    adapters: list[str] | None = typer.Option(
+        None,
+        "--adapter",
+        "-a",
+        help="Run only specified adapter(s) by name. Repeatable.",
+    ),
+    cycles: int = typer.Option(2, "--cycles", min=1, help="Number of open/save cycles."),
+) -> None:
+    """Measure semantic drift after repeated workbook open/save cycles."""
+    from excelbench.harness.adapters import get_all_adapters
+    from excelbench.harness.roundtrip_runner import run_roundtrip_context
+
+    available = {adapter.name: adapter for adapter in get_all_adapters()}
+    selected_names = adapters or sorted(available)
+    selected = [available[name] for name in selected_names if name in available]
+    missing = [name for name in selected_names if name not in available]
+    if missing:
+        console.print(f"[yellow]Skipping unavailable adapters: {', '.join(missing)}[/yellow]")
+    if not selected:
+        console.print("[red]Error: No selected adapters are available.[/red]")
+        raise typer.Exit(1)
+
+    results = run_roundtrip_context(test_dir, output_dir, adapters=selected, cycles=cycles)
+    failures = [result for result in results if not result.passed and not result.skipped]
+    console.print(f"[green]✓ Roundtrip context written to {output_dir}[/green]")
+    console.print(f"  - {output_dir}/roundtrip.json")
+    console.print(f"  - {output_dir}/ROUNDTRIP.md")
+    console.print(f"  - failures: {len(failures)}")
+
+
+@app.command("compatibility-context")
+def compatibility_context(
+    output_dir: Path = typer.Option(
+        Path("results-compatibility"),
+        "--output",
+        "-o",
+        help="Directory to save compatibility context artifacts.",
+    ),
+    adapters: list[str] | None = typer.Option(
+        None,
+        "--adapter",
+        "-a",
+        help="Run only specified adapter(s) by name. Repeatable.",
+    ),
+) -> None:
+    """Run openpyxl-style snippets against compatible adapters."""
+    from excelbench.harness.compat_cases import run_compatibility_context
+
+    payload = run_compatibility_context(output_dir, adapter_names=adapters)
+    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    console.print(f"[green]✓ Compatibility context written to {output_dir}[/green]")
+    console.print(f"  - {output_dir}/compatibility.json")
+    console.print(f"  - {output_dir}/COMPATIBILITY.md")
+    console.print(f"  - failures: {len(failures)}")
+
+
+@app.command("cross-language-chart-context")
+def cross_language_chart_context(
+    fixture_dir: Path = typer.Option(
+        Path("fixtures/excel"),
+        "--fixtures",
+        help="Directory containing chart-bearing .xlsx fixtures.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results-cross-language-charts"),
+        "--output",
+        "-o",
+        help="Directory to save chart artifact context.",
+    ),
+) -> None:
+    """Validate chart-specific artifact evidence structurally."""
+    from excelbench.harness.artifact_context import run_chart_context
+
+    payload = run_chart_context(fixture_dir, output_dir)
+    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    console.print(f"[green]✓ Chart context written to {output_dir}[/green]")
+    console.print(f"  - {output_dir}/results.json")
+    console.print(f"  - {output_dir}/README.md")
+    console.print(f"  - failures: {len(failures)}")
+
+
+@app.command("macro-context")
+def macro_context(
+    test_dir: Path = typer.Option(
+        Path("fixtures/excel_xlsm"),
+        "--tests",
+        "-t",
+        help="Directory containing .xlsm fixtures.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results-macros"),
+        "--output",
+        "-o",
+        help="Directory to save macro artifact context.",
+    ),
+    preserve_with_wolfxl: bool = typer.Option(
+        True,
+        "--wolfxl-preserve/--no-wolfxl-preserve",
+        help="Attempt WolfXL modify-save preservation when wolfxl is installed.",
+    ),
+) -> None:
+    """Validate macro package preservation evidence."""
+    from excelbench.harness.artifact_context import run_macro_context
+
+    payload = run_macro_context(test_dir, output_dir, preserve_with_wolfxl=preserve_with_wolfxl)
+    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    console.print(f"[green]✓ Macro context written to {output_dir}[/green]")
+    console.print(f"  - {output_dir}/results.json")
+    console.print(f"  - {output_dir}/README.md")
+    console.print(f"  - failures: {len(failures)}")
+
+
 def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
     from datetime import datetime
 
@@ -1121,6 +1274,8 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
                                     ),
                                     adapter_message=d["adapter_message"],
                                     probable_cause=d.get("probable_cause"),
+                                    root_cause_code=d.get("root_cause_code"),
+                                    suggested_next_step=d.get("suggested_next_step"),
                                 )
                                 for d in op_data.get("diagnostics", [])
                             ],

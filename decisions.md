@@ -40,6 +40,49 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-022 — Semantic diff and context lanes stay additive (2026-04-29)
+
+**Context**: ExcelBench needed better evidence for workbook drift, roundtrip
+idempotence, openpyxl-style compatibility, charts, macros, and future
+cross-language promotion without overloading the existing scored fidelity
+matrix. The existing runner diagnostics could say a test failed, but not
+produce a reusable workbook-level explanation.
+
+**Decision**:
+
+- Add workbook semantic snapshot/diff tooling as public infrastructure via
+  `excelbench diff-workbooks`.
+- Reuse that diff infrastructure from additive context lanes:
+  `roundtrip-context`, `compatibility-context`,
+  `cross-language-chart-context`, and `macro-context`.
+- Keep these lanes separate from normal fidelity scores. Unsupported adapters
+  produce explicit skip rows rather than silent passes or broad score changes.
+- Enrich rendered diagnostics with structured failure explanations and write
+  `WHY_FAILED.md` when a rendered benchmark directory contains failures.
+
+**Alternatives considered**:
+
+1. **Fold roundtrip and compatibility into the main scored matrix immediately**
+   - rejected because the adapter API does not expose a uniform
+   read-modify-save or openpyxl-compatible snippet surface.
+2. **Keep semantic diff internal-only** - rejected because a public CLI gives
+   direct reproducibility and a simple debugging tool for future lanes.
+3. **Use only package-part checks for charts/macros** - rejected for charts;
+   chart lanes should also inspect drawing relationships and chart references.
+   Macro v1 remains preserve-only because macro execution/semantic validation
+   is a separate trust boundary.
+
+**Consequences**:
+
+- New context outputs are comparable as evidence artifacts but not as headline
+  fidelity scores.
+- Some broad-adapter requests legitimately become skip rows until adapters
+  expose compatible APIs.
+- Future promotion of ClosedXML, ExcelJS, and NPOI into scored/context adapters
+  can reuse the same diff and explanation surfaces.
+
+**Commit(s)**: this commit.
+
 ### DEC-021 — Optional external oracle subprocess contract (2026-04-28)
 
 **Context**: WolfXL's pre-release parity pass is now green against the existing
