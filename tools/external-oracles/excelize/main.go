@@ -1,6 +1,8 @@
 package main
 
 import (
+	"archive/zip"
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -9,7 +11,10 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/xuri/excelize/v2"
 )
@@ -25,7 +30,16 @@ type oracleRequest struct {
 type writePayload struct {
 	Sheets             []sheetSpec             `json:"sheets"`
 	Cells              []cellSpec              `json:"cells"`
+	Formats            []formatSpec            `json:"formats"`
+	Borders            []borderSpec            `json:"borders"`
 	Columns            []columnSpec            `json:"columns"`
+	RowHeights         []rowHeightSpec         `json:"row_heights"`
+	Merges             []mergeSpec             `json:"merges"`
+	Validations        []validationSpec        `json:"validations"`
+	Hyperlinks         []hyperlinkSpec         `json:"hyperlinks"`
+	Comments           []commentSpec           `json:"comments"`
+	Panes              []paneSpec              `json:"panes"`
+	NamedRanges        []namedRangeSpec        `json:"named_ranges"`
 	Tables             []tableSpec             `json:"tables"`
 	ConditionalFormats []conditionalFormatSpec `json:"conditional_formats"`
 	Charts             []chartSpec             `json:"charts"`
@@ -46,6 +60,25 @@ type cellSpec struct {
 	Formula string      `json:"formula"`
 }
 
+type formatSpec struct {
+	Sheet         string   `json:"sheet"`
+	Cell          string   `json:"cell"`
+	Bold          *bool    `json:"bold"`
+	Italic        *bool    `json:"italic"`
+	Underline     string   `json:"underline"`
+	Strikethrough *bool    `json:"strikethrough"`
+	FontName      string   `json:"font_name"`
+	FontSize      *float64 `json:"font_size"`
+	FontColor     string   `json:"font_color"`
+	BGColor       string   `json:"bg_color"`
+	NumberFormat  string   `json:"number_format"`
+	HAlign        string   `json:"h_align"`
+	VAlign        string   `json:"v_align"`
+	Wrap          *bool    `json:"wrap"`
+	Rotation      *int     `json:"rotation"`
+	Indent        *int     `json:"indent"`
+}
+
 type columnSpec struct {
 	Sheet string  `json:"sheet"`
 	Start string  `json:"start"`
@@ -53,13 +86,76 @@ type columnSpec struct {
 	Width float64 `json:"width"`
 }
 
-type tableSpec struct {
+type borderSpec struct {
+	Sheet  string                 `json:"sheet"`
+	Cell   string                 `json:"cell"`
+	Border map[string]interface{} `json:"border"`
+}
+
+type rowHeightSpec struct {
+	Sheet  string  `json:"sheet"`
+	Row    int     `json:"row"`
+	Height float64 `json:"height"`
+}
+
+type mergeSpec struct {
+	Sheet string `json:"sheet"`
+	Range string `json:"range"`
+}
+
+type validationSpec struct {
 	Sheet          string `json:"sheet"`
 	Range          string `json:"range"`
-	Name           string `json:"name"`
-	Style          string `json:"style"`
-	ShowHeaderRow  *bool  `json:"show_header_row"`
-	ShowRowStripes *bool  `json:"show_row_stripes"`
+	ValidationType string `json:"validation_type"`
+	Operator       string `json:"operator"`
+	Formula1       string `json:"formula1"`
+	Formula2       string `json:"formula2"`
+	AllowBlank     *bool  `json:"allow_blank"`
+	ErrorTitle     string `json:"error_title"`
+	Error          string `json:"error"`
+}
+
+type hyperlinkSpec struct {
+	Sheet    string `json:"sheet"`
+	Cell     string `json:"cell"`
+	Target   string `json:"target"`
+	Display  string `json:"display"`
+	Tooltip  string `json:"tooltip"`
+	Internal bool   `json:"internal"`
+}
+
+type commentSpec struct {
+	Sheet  string `json:"sheet"`
+	Cell   string `json:"cell"`
+	Text   string `json:"text"`
+	Author string `json:"author"`
+}
+
+type paneSpec struct {
+	Sheet       string `json:"sheet"`
+	Mode        string `json:"mode"`
+	XSplit      int    `json:"x_split"`
+	YSplit      int    `json:"y_split"`
+	TopLeftCell string `json:"top_left_cell"`
+}
+
+type namedRangeSpec struct {
+	Sheet    string `json:"sheet"`
+	Name     string `json:"name"`
+	Scope    string `json:"scope"`
+	RefersTo string `json:"refers_to"`
+}
+
+type tableSpec struct {
+	Sheet          string   `json:"sheet"`
+	Range          string   `json:"range"`
+	Name           string   `json:"name"`
+	Style          string   `json:"style"`
+	ShowHeaderRow  *bool    `json:"show_header_row"`
+	ShowRowStripes *bool    `json:"show_row_stripes"`
+	TotalsRow      bool     `json:"totals_row"`
+	Columns        []string `json:"columns"`
+	AutoFilter     bool     `json:"autofilter"`
 }
 
 type conditionalFormatSpec struct {
@@ -68,6 +164,7 @@ type conditionalFormatSpec struct {
 	Type           string `json:"type"`
 	Criteria       string `json:"criteria"`
 	Value          string `json:"value"`
+	BGColor        string `json:"bg_color"`
 	MinType        string `json:"min_type"`
 	MidType        string `json:"mid_type"`
 	MaxType        string `json:"max_type"`
@@ -201,7 +298,34 @@ func writeFixture(output io.Writer, request oracleRequest) error {
 	if err := applyCells(workbook, payload.Cells); err != nil {
 		return err
 	}
+	if err := applyFormats(workbook, payload.Formats); err != nil {
+		return err
+	}
+	if err := applyBorders(workbook, payload.Borders); err != nil {
+		return err
+	}
 	if err := applyColumns(workbook, payload.Columns); err != nil {
+		return err
+	}
+	if err := applyRowHeights(workbook, payload.RowHeights); err != nil {
+		return err
+	}
+	if err := applyMerges(workbook, payload.Merges); err != nil {
+		return err
+	}
+	if err := applyDataValidations(workbook, payload.Validations); err != nil {
+		return err
+	}
+	if err := applyHyperlinks(workbook, payload.Hyperlinks); err != nil {
+		return err
+	}
+	if err := applyComments(workbook, payload.Comments); err != nil {
+		return err
+	}
+	if err := applyPanes(workbook, payload.Panes); err != nil {
+		return err
+	}
+	if err := applyNamedRanges(workbook, payload.NamedRanges); err != nil {
 		return err
 	}
 	if err := applyTables(workbook, payload.Tables); err != nil {
@@ -229,6 +353,12 @@ func writeFixture(output io.Writer, request oracleRequest) error {
 	if err := workbook.SaveAs(request.OutputPath); err != nil {
 		return fmt.Errorf("save workbook: %w", err)
 	}
+	if err := normalizeExcelizeConditionalFormats(request.OutputPath, payload.ConditionalFormats); err != nil {
+		return err
+	}
+	if err := normalizeExcelizeTables(request.OutputPath, payload.Tables); err != nil {
+		return err
+	}
 
 	return json.NewEncoder(output).Encode(map[string]interface{}{
 		"fixture_id":  request.FixtureID,
@@ -238,6 +368,15 @@ func writeFixture(output io.Writer, request oracleRequest) error {
 		"counts": map[string]int{
 			"sheets":              len(workbook.GetSheetList()),
 			"cells":               len(payload.Cells),
+			"formats":             len(payload.Formats),
+			"borders":             len(payload.Borders),
+			"merges":              len(payload.Merges),
+			"row_heights":         len(payload.RowHeights),
+			"validations":         len(payload.Validations),
+			"hyperlinks":          len(payload.Hyperlinks),
+			"comments":            len(payload.Comments),
+			"panes":               len(payload.Panes),
+			"named_ranges":        len(payload.NamedRanges),
 			"tables":              len(payload.Tables),
 			"conditional_formats": len(payload.ConditionalFormats),
 			"charts":              len(payload.Charts),
@@ -310,19 +449,136 @@ func applyCells(workbook *excelize.File, cells []cellSpec) error {
 		if cell.Sheet == "" || cell.Cell == "" {
 			return errors.New("cell entries require sheet and cell")
 		}
+		if cell.Type == "blank" {
+			continue
+		}
 		if cell.Type == "formula" || cell.Formula != "" {
 			formula := cell.Formula
 			if formula == "" {
 				formula = stringify(cell.Value)
 			}
+			formula = trimFormulaEquals(formula)
 			if err := workbook.SetCellFormula(cell.Sheet, cell.Cell, formula); err != nil {
 				return fmt.Errorf("set formula %s!%s: %w", cell.Sheet, cell.Cell, err)
+			}
+			continue
+		}
+		if cell.Type == "date" || cell.Type == "datetime" {
+			parsed, err := parseTemporalCell(cell.Type, cell.Value)
+			if err != nil {
+				return fmt.Errorf("parse %s %s!%s: %w", cell.Type, cell.Sheet, cell.Cell, err)
+			}
+			if err := workbook.SetCellValue(cell.Sheet, cell.Cell, parsed); err != nil {
+				return fmt.Errorf("set %s %s!%s: %w", cell.Type, cell.Sheet, cell.Cell, err)
+			}
+			continue
+		}
+		if cell.Type == "error" {
+			if err := workbook.SetCellValue(cell.Sheet, cell.Cell, stringify(cell.Value)); err != nil {
+				return fmt.Errorf("set error %s!%s: %w", cell.Sheet, cell.Cell, err)
 			}
 			continue
 		}
 		value := normalizeValue(cell.Value)
 		if err := workbook.SetCellValue(cell.Sheet, cell.Cell, value); err != nil {
 			return fmt.Errorf("set value %s!%s: %w", cell.Sheet, cell.Cell, err)
+		}
+	}
+	return nil
+}
+
+func applyBorders(workbook *excelize.File, borders []borderSpec) error {
+	for _, spec := range borders {
+		if spec.Sheet == "" || spec.Cell == "" {
+			return errors.New("border entries require sheet and cell")
+		}
+		style := &excelize.Style{Border: buildBorders(spec.Border)}
+		styleID, err := workbook.NewStyle(style)
+		if err != nil {
+			return fmt.Errorf("new border style %s!%s: %w", spec.Sheet, spec.Cell, err)
+		}
+		if err := workbook.SetCellStyle(spec.Sheet, spec.Cell, spec.Cell, styleID); err != nil {
+			return fmt.Errorf("set border style %s!%s: %w", spec.Sheet, spec.Cell, err)
+		}
+	}
+	return nil
+}
+
+func applyFormats(workbook *excelize.File, formats []formatSpec) error {
+	for _, spec := range formats {
+		if spec.Sheet == "" || spec.Cell == "" {
+			return errors.New("format entries require sheet and cell")
+		}
+		style := &excelize.Style{}
+		var hasStyle bool
+		if spec.Bold != nil || spec.Italic != nil || spec.Underline != "" || spec.Strikethrough != nil || spec.FontName != "" || spec.FontSize != nil || spec.FontColor != "" {
+			font := &excelize.Font{}
+			if spec.Bold != nil {
+				font.Bold = *spec.Bold
+			}
+			if spec.Italic != nil {
+				font.Italic = *spec.Italic
+			}
+			if spec.Underline != "" {
+				font.Underline = spec.Underline
+			}
+			if spec.Strikethrough != nil {
+				font.Strike = *spec.Strikethrough
+			}
+			if spec.FontName != "" {
+				font.Family = spec.FontName
+			}
+			if spec.FontSize != nil {
+				font.Size = *spec.FontSize
+			}
+			if spec.FontColor != "" {
+				font.Color = trimHash(spec.FontColor)
+			}
+			style.Font = font
+			hasStyle = true
+		}
+		if spec.BGColor != "" {
+			style.Fill = excelize.Fill{Type: "pattern", Pattern: 1, Color: []string{trimHash(spec.BGColor)}}
+			hasStyle = true
+		}
+		if spec.HAlign != "" || spec.VAlign != "" || spec.Wrap != nil || spec.Rotation != nil || spec.Indent != nil {
+			align := &excelize.Alignment{}
+			if spec.HAlign != "" {
+				align.Horizontal = spec.HAlign
+			}
+			if spec.VAlign != "" {
+				align.Vertical = spec.VAlign
+			}
+			if spec.Wrap != nil {
+				align.WrapText = *spec.Wrap
+			}
+			if spec.Rotation != nil {
+				align.TextRotation = *spec.Rotation
+			}
+			if spec.Indent != nil {
+				align.Indent = *spec.Indent
+			}
+			style.Alignment = align
+			hasStyle = true
+		}
+		if spec.NumberFormat != "" {
+			if numFmt, ok := builtinNumFmt(spec.NumberFormat); ok {
+				style.NumFmt = numFmt
+			} else {
+				custom := spec.NumberFormat
+				style.CustomNumFmt = &custom
+			}
+			hasStyle = true
+		}
+		if !hasStyle {
+			continue
+		}
+		styleID, err := workbook.NewStyle(style)
+		if err != nil {
+			return fmt.Errorf("new style %s!%s: %w", spec.Sheet, spec.Cell, err)
+		}
+		if err := workbook.SetCellStyle(spec.Sheet, spec.Cell, spec.Cell, styleID); err != nil {
+			return fmt.Errorf("set style %s!%s: %w", spec.Sheet, spec.Cell, err)
 		}
 	}
 	return nil
@@ -335,6 +591,141 @@ func applyColumns(workbook *excelize.File, columns []columnSpec) error {
 		}
 		if err := workbook.SetColWidth(column.Sheet, column.Start, column.End, column.Width); err != nil {
 			return fmt.Errorf("set column width %s!%s:%s: %w", column.Sheet, column.Start, column.End, err)
+		}
+	}
+	return nil
+}
+
+func applyRowHeights(workbook *excelize.File, rows []rowHeightSpec) error {
+	for _, spec := range rows {
+		if spec.Sheet == "" || spec.Row <= 0 {
+			return errors.New("row height entries require sheet and row")
+		}
+		if err := workbook.SetRowHeight(spec.Sheet, spec.Row, spec.Height); err != nil {
+			return fmt.Errorf("set row height %s!%d: %w", spec.Sheet, spec.Row, err)
+		}
+	}
+	return nil
+}
+
+func applyMerges(workbook *excelize.File, merges []mergeSpec) error {
+	for _, merge := range merges {
+		if merge.Sheet == "" || merge.Range == "" {
+			return errors.New("merge entries require sheet and range")
+		}
+		start, end, ok := splitRange(merge.Range)
+		if !ok {
+			return fmt.Errorf("invalid merge range %q", merge.Range)
+		}
+		if err := workbook.MergeCell(merge.Sheet, start, end); err != nil {
+			return fmt.Errorf("merge cells %s!%s: %w", merge.Sheet, merge.Range, err)
+		}
+	}
+	return nil
+}
+
+func applyDataValidations(workbook *excelize.File, validations []validationSpec) error {
+	for _, spec := range validations {
+		if spec.Sheet == "" || spec.Range == "" || spec.ValidationType == "" {
+			return errors.New("validation entries require sheet, range, and validation_type")
+		}
+		dv := excelize.NewDataValidation(boolPtrDefault(spec.AllowBlank, true))
+		dv.Sqref = spec.Range
+		switch spec.ValidationType {
+		case "list":
+			if strings.HasPrefix(spec.Formula1, "\"") && strings.HasSuffix(spec.Formula1, "\"") {
+				body := strings.Trim(spec.Formula1, "\"")
+				if err := dv.SetDropList(strings.Split(body, ",")); err != nil {
+					return fmt.Errorf("set validation drop list %s!%s: %w", spec.Sheet, spec.Range, err)
+				}
+			} else {
+				dv.Type = "list"
+				dv.Formula1 = spec.Formula1
+			}
+		case "custom":
+			dv.Type = "custom"
+			dv.Formula1 = spec.Formula1
+		case "whole":
+			if err := dv.SetRange(spec.Formula1, spec.Formula2, excelize.DataValidationTypeWhole, validationOperator(spec.Operator)); err != nil {
+				return fmt.Errorf("set validation range %s!%s: %w", spec.Sheet, spec.Range, err)
+			}
+		default:
+			return fmt.Errorf("unsupported validation type %q", spec.ValidationType)
+		}
+		if spec.ErrorTitle != "" || spec.Error != "" {
+			dv.SetError(excelize.DataValidationErrorStyleStop, spec.ErrorTitle, spec.Error)
+		}
+		if err := workbook.AddDataValidation(spec.Sheet, dv); err != nil {
+			return fmt.Errorf("add data validation %s!%s: %w", spec.Sheet, spec.Range, err)
+		}
+	}
+	return nil
+}
+
+func applyHyperlinks(workbook *excelize.File, links []hyperlinkSpec) error {
+	for _, spec := range links {
+		if spec.Sheet == "" || spec.Cell == "" || spec.Target == "" {
+			return errors.New("hyperlink entries require sheet, cell, and target")
+		}
+		display := spec.Display
+		if display != "" {
+			if err := workbook.SetCellValue(spec.Sheet, spec.Cell, display); err != nil {
+				return fmt.Errorf("set hyperlink display %s!%s: %w", spec.Sheet, spec.Cell, err)
+			}
+		}
+		tooltip := spec.Tooltip
+		linkType := "External"
+		if spec.Internal {
+			linkType = "Location"
+		}
+		if err := workbook.SetCellHyperLink(spec.Sheet, spec.Cell, spec.Target, linkType, excelize.HyperlinkOpts{Display: stringPtrIfSet(display), Tooltip: stringPtrIfSet(tooltip)}); err != nil {
+			return fmt.Errorf("set hyperlink %s!%s: %w", spec.Sheet, spec.Cell, err)
+		}
+	}
+	return nil
+}
+
+func applyComments(workbook *excelize.File, comments []commentSpec) error {
+	for _, spec := range comments {
+		if spec.Sheet == "" || spec.Cell == "" {
+			return errors.New("comment entries require sheet and cell")
+		}
+		comment := excelize.Comment{Cell: spec.Cell, Author: spec.Author, Paragraph: []excelize.RichTextRun{{Text: spec.Text}}}
+		if err := workbook.AddComment(spec.Sheet, comment); err != nil {
+			return fmt.Errorf("add comment %s!%s: %w", spec.Sheet, spec.Cell, err)
+		}
+	}
+	return nil
+}
+
+func applyPanes(workbook *excelize.File, panes []paneSpec) error {
+	for _, spec := range panes {
+		if spec.Sheet == "" {
+			return errors.New("pane entries require sheet")
+		}
+		mode := spec.Mode
+		if mode == "" {
+			mode = "freeze"
+		}
+		panesSpec := &excelize.Panes{Freeze: mode == "freeze", Split: mode == "split", XSplit: spec.XSplit, YSplit: spec.YSplit, TopLeftCell: spec.TopLeftCell, ActivePane: activePane(spec.XSplit, spec.YSplit, mode)}
+		if err := workbook.SetPanes(spec.Sheet, panesSpec); err != nil {
+			return fmt.Errorf("set panes %s: %w", spec.Sheet, err)
+		}
+	}
+	return nil
+}
+
+func applyNamedRanges(workbook *excelize.File, names []namedRangeSpec) error {
+	for _, spec := range names {
+		if spec.Name == "" || spec.RefersTo == "" {
+			return errors.New("named range entries require name and refers_to")
+		}
+		defined := &excelize.DefinedName{Name: spec.Name, RefersTo: spec.RefersTo}
+		if spec.Scope == "sheet" {
+			defined.Scope = spec.Sheet
+		}
+		if err := workbook.SetDefinedName(defined); err != nil {
+			return fmt.Errorf("set defined name %s: %w", spec.Name, err)
 		}
 	}
 	return nil
@@ -382,6 +773,9 @@ func applyConditionalFormats(workbook *excelize.File, formats []conditionalForma
 			IconStyle:      format.IconStyle,
 			StopIfTrue:     format.StopIfTrue,
 		}
+		if option.Type == "formula" {
+			option.Criteria = format.Criteria
+		}
 		if option.Type == "3_color_scale" && option.MidType == "" {
 			option.MidType = "percentile"
 			option.MidColor = defaultString(option.MidColor, "#FFEB84")
@@ -395,13 +789,21 @@ func applyConditionalFormats(workbook *excelize.File, formats []conditionalForma
 		if option.Type == "cell" && option.Value == "" {
 			option.Value = "0"
 		}
-		if option.Type == "cell" {
+		if option.Type == "cell" || option.Type == "formula" {
 			style, err := workbook.NewConditionalStyle(&excelize.Style{
 				Font: &excelize.Font{Color: "9A0511"},
 				Fill: excelize.Fill{Type: "pattern", Color: []string{"FEC7CE"}, Pattern: 1},
 			})
 			if err != nil {
 				return fmt.Errorf("new conditional style: %w", err)
+			}
+			if format.BGColor != "" {
+				style, err = workbook.NewConditionalStyle(&excelize.Style{
+					Fill: excelize.Fill{Type: "pattern", Color: []string{format.BGColor}, Pattern: 1},
+				})
+				if err != nil {
+					return fmt.Errorf("new conditional fill style: %w", err)
+				}
 			}
 			option.Format = &style
 		}
@@ -626,6 +1028,373 @@ func stringify(value interface{}) string {
 	}
 }
 
+func trimFormulaEquals(value string) string {
+	return strings.TrimPrefix(value, "=")
+}
+
+func trimHash(value string) string {
+	return strings.TrimPrefix(value, "#")
+}
+
+func splitRange(ref string) (string, string, bool) {
+	parts := strings.Split(ref, ":")
+	if len(parts) != 2 {
+		return "", "", false
+	}
+	return parts[0], parts[1], true
+}
+
+func boolPtrDefault(value *bool, fallback bool) bool {
+	if value == nil {
+		return fallback
+	}
+	return *value
+}
+
+func stringPtrIfSet(value string) *string {
+	if value == "" {
+		return nil
+	}
+	return &value
+}
+
+func activePane(xSplit int, ySplit int, mode string) string {
+	if mode == "split" {
+		if xSplit > 0 && ySplit > 0 {
+			return "bottomRight"
+		}
+		if xSplit > 0 {
+			return "topRight"
+		}
+		if ySplit > 0 {
+			return "bottomLeft"
+		}
+		return "topLeft"
+	}
+	if xSplit > 0 && ySplit == 0 {
+		return "topRight"
+	}
+	if ySplit > 0 {
+		return "bottomLeft"
+	}
+	return "topLeft"
+}
+
+func builtinNumFmt(value string) (int, bool) {
+	switch value {
+	case "0.00%":
+		return 10, true
+	case "0.00E+00":
+		return 11, true
+	default:
+		return 0, false
+	}
+}
+
+func buildBorders(border map[string]interface{}) []excelize.Border {
+	if border == nil {
+		return nil
+	}
+	order := []struct {
+		key      string
+		typeName string
+	}{
+		{"top", "top"},
+		{"bottom", "bottom"},
+		{"left", "left"},
+		{"right", "right"},
+		{"diagonal_up", "diagonalUp"},
+		{"diagonal_down", "diagonalDown"},
+	}
+	result := make([]excelize.Border, 0)
+	for _, item := range order {
+		raw, ok := border[item.key].(map[string]interface{})
+		if !ok || raw == nil {
+			continue
+		}
+		styleName, _ := raw["style"].(string)
+		if styleName == "" || styleName == "none" {
+			continue
+		}
+		color, _ := raw["color"].(string)
+		result = append(result, excelize.Border{Type: item.typeName, Color: trimHash(color), Style: borderStyle(styleName)})
+	}
+	return result
+}
+
+func borderStyle(value string) int {
+	switch value {
+	case "thin":
+		return 1
+	case "medium":
+		return 2
+	case "dashed":
+		return 3
+	case "dotted":
+		return 4
+	case "thick":
+		return 5
+	case "double":
+		return 6
+	case "hair":
+		return 7
+	case "mediumDashed":
+		return 8
+	case "dashDot":
+		return 9
+	case "mediumDashDot":
+		return 10
+	case "dashDotDot":
+		return 11
+	case "mediumDashDotDot":
+		return 12
+	case "slantDashDot":
+		return 13
+	default:
+		return 1
+	}
+}
+
+func normalizeExcelizeTables(path string, tables []tableSpec) error {
+	if len(tables) == 0 {
+		return nil
+	}
+	reader, err := zip.OpenReader(path)
+	if err != nil {
+		return fmt.Errorf("open generated workbook for table normalization: %w", err)
+	}
+	defer reader.Close()
+
+	var buf bytes.Buffer
+	writer := zip.NewWriter(&buf)
+	for _, file := range reader.File {
+		rc, err := file.Open()
+		if err != nil {
+			return fmt.Errorf("open zip member %s: %w", file.Name, err)
+		}
+		data, err := io.ReadAll(rc)
+		_ = rc.Close()
+		if err != nil {
+			return fmt.Errorf("read zip member %s: %w", file.Name, err)
+		}
+		if strings.HasPrefix(file.Name, "xl/tables/table") && strings.HasSuffix(file.Name, ".xml") {
+			idxText := strings.TrimSuffix(strings.TrimPrefix(file.Name, "xl/tables/table"), ".xml")
+			if idx, convErr := strconv.Atoi(idxText); convErr == nil && idx >= 1 && idx <= len(tables) {
+				data = []byte(patchTableXML(string(data), tables[idx-1]))
+			}
+		}
+		hdr := file.FileHeader
+		w, err := writer.CreateHeader(&hdr)
+		if err != nil {
+			return fmt.Errorf("create zip member %s: %w", file.Name, err)
+		}
+		if _, err := w.Write(data); err != nil {
+			return fmt.Errorf("write zip member %s: %w", file.Name, err)
+		}
+	}
+	if err := writer.Close(); err != nil {
+		return fmt.Errorf("close normalized workbook zip: %w", err)
+	}
+	if err := os.WriteFile(path, buf.Bytes(), 0o644); err != nil {
+		return fmt.Errorf("rewrite normalized workbook: %w", err)
+	}
+	return nil
+}
+
+func normalizeExcelizeConditionalFormats(path string, formats []conditionalFormatSpec) error {
+	if len(formats) == 0 {
+		return nil
+	}
+	reader, err := zip.OpenReader(path)
+	if err != nil {
+		return fmt.Errorf("open generated workbook for CF normalization: %w", err)
+	}
+	defer reader.Close()
+
+	var buf bytes.Buffer
+	writer := zip.NewWriter(&buf)
+	styleColors := make([]string, 0)
+	for _, spec := range formats {
+		if spec.BGColor != "" {
+			styleColors = append(styleColors, trimHash(spec.BGColor))
+		}
+	}
+	for _, file := range reader.File {
+		rc, err := file.Open()
+		if err != nil {
+			return fmt.Errorf("open zip member %s: %w", file.Name, err)
+		}
+		data, err := io.ReadAll(rc)
+		_ = rc.Close()
+		if err != nil {
+			return fmt.Errorf("read zip member %s: %w", file.Name, err)
+		}
+		if file.Name == "xl/styles.xml" && len(styleColors) > 0 {
+			data = []byte(patchStylesDxfColors(string(data), styleColors))
+		}
+		hdr := file.FileHeader
+		w, err := writer.CreateHeader(&hdr)
+		if err != nil {
+			return fmt.Errorf("create zip member %s: %w", file.Name, err)
+		}
+		if _, err := w.Write(data); err != nil {
+			return fmt.Errorf("write zip member %s: %w", file.Name, err)
+		}
+	}
+	if err := writer.Close(); err != nil {
+		return fmt.Errorf("close normalized workbook zip: %w", err)
+	}
+	if err := os.WriteFile(path, buf.Bytes(), 0o644); err != nil {
+		return fmt.Errorf("rewrite normalized workbook: %w", err)
+	}
+	return nil
+}
+
+func patchTableXML(xml string, spec tableSpec) string {
+	if spec.Range != "" {
+		xml = replaceXMLAttr(xml, "ref", spec.Range)
+		xml = replaceXMLAttr(xml, "xr:uid", "")
+	}
+	if spec.ShowHeaderRow != nil {
+		xml = replaceXMLBoolAttr(xml, "headerRowCount", boolToIntString(*spec.ShowHeaderRow, 1, 0))
+	}
+	if spec.Style == "" {
+		xml = removeTableStyleInfo(xml)
+	}
+	if spec.TotalsRow {
+		xml = ensureXMLAttr(xml, "totalsRowCount", "1")
+		xml = ensureXMLAttr(xml, "totalsRowShown", "1")
+	} else {
+		xml = ensureXMLAttr(xml, "totalsRowCount", "0")
+		xml = ensureXMLAttr(xml, "totalsRowShown", "0")
+	}
+	xml = ensureAutoFilterRef(xml, spec.Range)
+	return xml
+}
+
+func patchStylesDxfColors(xml string, colors []string) string {
+	re := regexp.MustCompile(`<patternFill patternType="solid"><bgColor rgb="([A-Fa-f0-9]{6,8})"></bgColor>`)
+	xml = re.ReplaceAllStringFunc(xml, func(match string) string {
+		inner := re.FindStringSubmatch(match)
+		if len(inner) < 2 {
+			return match
+		}
+		argb := inner[1]
+		if len(argb) == 6 {
+			argb = "FF" + argb
+		}
+		return `<patternFill patternType="solid"><fgColor rgb="` + argb + `"/><bgColor rgb="` + argb + `"></bgColor>`
+	})
+	for _, color := range colors {
+		argb := color
+		if len(argb) == 6 {
+			argb = "FF" + argb
+		}
+		if strings.Contains(xml, "<bgColor rgb=\"00000000\"") {
+			xml = strings.Replace(xml, "<bgColor rgb=\"00000000\"", "<bgColor rgb=\""+argb+"\"", 1)
+		}
+	}
+	return xml
+}
+
+func replaceXMLAttr(xml string, attr string, value string) string {
+	prefix := attr + "=\""
+	if value == "" {
+		return xml
+	}
+	if start := strings.Index(xml, prefix); start >= 0 {
+		start += len(prefix)
+		end := strings.Index(xml[start:], "\"")
+		if end >= 0 {
+			return xml[:start] + value + xml[start+end:]
+		}
+	}
+	return xml
+}
+
+func ensureXMLAttr(xml string, attr string, value string) string {
+	prefix := attr + "=\""
+	if start := strings.Index(xml, prefix); start >= 0 {
+		start += len(prefix)
+		end := strings.Index(xml[start:], "\"")
+		if end >= 0 {
+			return xml[:start] + value + xml[start+end:]
+		}
+	}
+	tableStart := strings.Index(xml, "<table ")
+	if tableStart >= 0 {
+		if idx := strings.Index(xml[tableStart:], ">"); idx >= 0 {
+			idx += tableStart
+			return xml[:idx] + " " + attr + "=\"" + value + "\"" + xml[idx:]
+		}
+	}
+	return xml
+}
+
+func replaceXMLBoolAttr(xml string, attr string, value string) string {
+	return ensureXMLAttr(xml, attr, value)
+}
+
+func removeTableStyleInfo(xml string) string {
+	start := strings.Index(xml, "<tableStyleInfo")
+	if start < 0 {
+		return xml
+	}
+	if end := strings.Index(xml[start:], "/>"); end >= 0 {
+		end += start + 2
+		return xml[:start] + xml[end:]
+	}
+	if end := strings.Index(xml[start:], "</tableStyleInfo>"); end >= 0 {
+		end += start + len("</tableStyleInfo>")
+		return xml[:start] + xml[end:]
+	}
+	return xml
+}
+
+func ensureAutoFilterRef(xml string, ref string) string {
+	if ref == "" {
+		return xml
+	}
+	prefix := "<autoFilter ref=\""
+	if start := strings.Index(xml, prefix); start >= 0 {
+		start += len(prefix)
+		if end := strings.Index(xml[start:], "\""); end >= 0 {
+			return xml[:start] + ref + xml[start+end:]
+		}
+	}
+	return xml
+}
+
+func boolToIntString(value bool, trueValue int, falseValue int) string {
+	if value {
+		return strconv.Itoa(trueValue)
+	}
+	return strconv.Itoa(falseValue)
+}
+
+func validationOperator(value string) excelize.DataValidationOperator {
+	switch value {
+	case "between":
+		return excelize.DataValidationOperatorBetween
+	case "greaterThan":
+		return excelize.DataValidationOperatorGreaterThan
+	case "greaterThanOrEqual":
+		return excelize.DataValidationOperatorGreaterThanOrEqual
+	case "lessThan":
+		return excelize.DataValidationOperatorLessThan
+	case "lessThanOrEqual":
+		return excelize.DataValidationOperatorLessThanOrEqual
+	case "equal":
+		return excelize.DataValidationOperatorEqual
+	case "notBetween":
+		return excelize.DataValidationOperatorNotBetween
+	case "notEqual":
+		return excelize.DataValidationOperatorNotEqual
+	default:
+		return excelize.DataValidationOperatorBetween
+	}
+}
+
 func defaultString(value string, fallback string) string {
 	if value == "" {
 		return fallback
@@ -645,4 +1414,15 @@ func nonzeroFloat(value float64, fallback float64) float64 {
 		return fallback
 	}
 	return value
+}
+
+func parseTemporalCell(cellType string, value interface{}) (time.Time, error) {
+	text := stringify(value)
+	if cellType == "date" {
+		return time.Parse("2006-01-02", text)
+	}
+	if parsed, err := time.Parse(time.RFC3339, text); err == nil {
+		return parsed, nil
+	}
+	return time.Parse("2006-01-02T15:04:05", text)
 }

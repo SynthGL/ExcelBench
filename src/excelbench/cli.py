@@ -20,6 +20,7 @@ console = Console()
 XLS_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel_xls")
 XLSX_PROFILE_DEFAULT_TEST_DIR = Path("test_files")
 PERF_XLSX_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel")
+CROSS_LANGUAGE_ADAPTER_NAMES = ("apache-poi", "excelize")
 
 
 @app.command()
@@ -389,9 +390,7 @@ _DATA_SHAPE_TIER_CAPS: list[tuple[str, int]] = [
 ]
 
 
-def _resolve_shape_features(
-    *, types_arg: str, rows: int
-) -> tuple[list[str], list[str], list[str]]:
+def _resolve_shape_features(*, types_arg: str, rows: int) -> tuple[list[str], list[str], list[str]]:
     """Translate --types and --rows into (read_features, write_features, tier_labels).
 
     Tiers are chosen as every label whose canonical cell-count <= ``rows``, so
@@ -414,9 +413,7 @@ def _resolve_shape_features(
 
     tier_labels = [label for label, cap in _DATA_SHAPE_TIER_CAPS if cap <= rows]
     if not tier_labels:
-        raise ValueError(
-            f"--rows {rows} is below the smallest tier (1000); pick at least 1000."
-        )
+        raise ValueError(f"--rows {rows} is below the smallest tier (1000); pick at least 1000.")
 
     read_features: list[str] = []
     write_features: list[str] = []
@@ -581,8 +578,9 @@ def _file_shape_fixtures_stale(
             isinstance(f, dict)
             and isinstance(f.get("feature"), str)
             and f["feature"].startswith("file_shape_")
-            and ("_1m" in f["feature"] or "_100x10k_" in f["feature"]
-                 or "_1000x1k_" in f["feature"])
+            and (
+                "_1m" in f["feature"] or "_100x10k_" in f["feature"] or "_1000x1k_" in f["feature"]
+            )
             for f in files
         ):
             return True
@@ -691,14 +689,10 @@ def perf_shape(
     needs_1m = "1m" in tier_labels
     manifest_path = fixtures / "manifest.json"
     generator_script = (
-        Path(__file__).resolve().parents[2]
-        / "scripts"
-        / "generate_throughput_fixtures.py"
+        Path(__file__).resolve().parents[2] / "scripts" / "generate_throughput_fixtures.py"
     )
 
-    if regenerate or _shape_fixtures_stale(
-        manifest_path, generator_script, needs_1m=needs_1m
-    ):
+    if regenerate or _shape_fixtures_stale(manifest_path, generator_script, needs_1m=needs_1m):
         gen_cmd = [
             sys.executable,
             str(generator_script),
@@ -881,14 +875,10 @@ def perf_file_shape(
     )
     manifest_path = fixtures / "manifest.json"
     generator_script = (
-        Path(__file__).resolve().parents[2]
-        / "scripts"
-        / "generate_throughput_fixtures.py"
+        Path(__file__).resolve().parents[2] / "scripts" / "generate_throughput_fixtures.py"
     )
 
-    if regenerate or _file_shape_fixtures_stale(
-        manifest_path, generator_script, needs_1m=needs_1m
-    ):
+    if regenerate or _file_shape_fixtures_stale(manifest_path, generator_script, needs_1m=needs_1m):
         gen_cmd = [
             sys.executable,
             str(generator_script),
@@ -1208,6 +1198,97 @@ def macro_context(
     console.print(f"  - failures: {len(failures)}")
 
 
+@app.command("cross-language-context")
+def cross_language_context(
+    test_dir: Path = typer.Option(
+        PERF_XLSX_PROFILE_DEFAULT_TEST_DIR,
+        "--tests",
+        "-t",
+        help="Directory containing .xlsx tests and manifest.json.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results-cross-language"),
+        "--output",
+        "-o",
+        help="Directory to save cross-language context results.",
+    ),
+) -> None:
+    """Run a dedicated cross-language context snapshot.
+
+    This keeps POI/Excelize-style ecosystem comparisons separate from the
+    Python-first benchmark story.
+    """
+    from excelbench.harness.adapters import get_all_adapters
+    from excelbench.harness.runner import run_benchmark
+    from excelbench.results import render_results
+
+    available = {adapter.name: adapter for adapter in get_all_adapters()}
+    selected = [available[name] for name in CROSS_LANGUAGE_ADAPTER_NAMES if name in available]
+
+    if not selected:
+        console.print(
+            "[red]Error: No cross-language adapters available. "
+            "Build the Apache POI and/or Excelize helpers first.[/red]"
+        )
+        raise typer.Exit(1)
+
+    console.print("[bold]Running cross-language context snapshot...[/bold]")
+    console.print(f"  Test files: {test_dir}")
+    console.print(f"  Output: {output_dir}")
+    console.print(f"  Adapters: {', '.join(a.name for a in selected)}")
+    console.print()
+
+    try:
+        results = run_benchmark(test_dir, adapters=selected, profile="xlsx")
+        render_results(results, output_dir)
+        _write_cross_language_index(output_dir, [a.name for a in selected])
+        console.print()
+        console.print(f"[green]✓ Cross-language context results written to {output_dir}[/green]")
+        console.print(f"  - {output_dir}/results.json")
+        console.print(f"  - {output_dir}/README.md")
+        console.print(f"  - {output_dir}/matrix.csv")
+        console.print(f"  - {output_dir}/CONTEXT.md")
+    except FileNotFoundError as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command("cross-language-pivot-context")
+def cross_language_pivot_context(
+    fixture_path: Path = typer.Option(
+        Path("fixtures/excel/tier2/15_pivot_tables.xlsx"),
+        "--fixture",
+        help="Pivot fixture path to inspect.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results-cross-language-pivots"),
+        "--output",
+        "-o",
+        help="Directory to save cross-language pivot context artifacts.",
+    ),
+) -> None:
+    """Generate a separate cross-language pivot context artifact.
+
+    This lane exists because the main cross-language snapshot does not score
+    pivot tables on macOS. It reports what the helpers can detect from the
+    shipped fixture and whether Excelize can emit a pivot-bearing workbook.
+    """
+    import json
+
+    output_dir.mkdir(parents=True, exist_ok=True)
+    results = _collect_cross_language_pivot_context(fixture_path, output_dir)
+    (output_dir / "results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    _write_cross_language_pivot_readme(output_dir, results)
+    _write_cross_language_pivot_context_note(output_dir)
+    console.print(f"[green]✓ Cross-language pivot context written to {output_dir}[/green]")
+    console.print(f"  - {output_dir}/results.json")
+    console.print(f"  - {output_dir}/README.md")
+    console.print(f"  - {output_dir}/CONTEXT.md")
+
+
 def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
     from datetime import datetime
 
@@ -1351,6 +1432,321 @@ def _write_profile_index(output_dir: Path) -> None:
         ]
     )
     (output_dir / "README.md").write_text(content)
+
+
+def _write_cross_language_index(output_dir: Path, adapters: list[str]) -> None:
+    output_dir.mkdir(parents=True, exist_ok=True)
+    adapter_lines = "\n".join(f"- `{adapter}`" for adapter in adapters)
+    content = "\n".join(
+        [
+            "# ExcelBench Cross-Language Context",
+            "",
+            "This snapshot is for ecosystem context, not Python migration decisions.",
+            "",
+            "Use this snapshot to answer: how does WolfXL compare to mature "
+            "spreadsheet tooling outside Python?",
+            "",
+            "Included adapters:",
+            adapter_lines,
+            "",
+            "Artifacts:",
+            "- [README](./README.md)",
+            "- [results.json](./results.json)",
+            "- [matrix.csv](./matrix.csv)",
+            "",
+            "Interpretation guidance:",
+            "- Keep this separate from the Python hero table.",
+            "- Cite the artifact path and generation date.",
+            "- Treat write-only adapters as ecosystem context, not drop-in migration advice.",
+            "",
+            "> Do not compare this table directly against the Python-first hero table "
+            "without naming the scope. "
+            "This run exists to position WolfXL against non-Python spreadsheet tooling.",
+            "",
+        ]
+    )
+    (output_dir / "CONTEXT.md").write_text(content)
+
+
+def _collect_cross_language_pivot_context(fixture_path: Path, output_dir: Path) -> dict[str, Any]:
+    import platform as _platform
+    from datetime import UTC, datetime
+    from zipfile import ZipFile
+
+    from excelbench.harness.external_oracles import (
+        ExternalOracleRequest,
+        external_oracle_catalog,
+        run_external_oracle,
+    )
+
+    repo_root = Path(__file__).resolve().parents[2]
+    fixture_path = fixture_path.resolve()
+    catalog = external_oracle_catalog(repo_root=repo_root)
+
+    fixture_parts: list[str] = []
+    fixture_contains_pivot_parts = False
+    if fixture_path.exists():
+        with ZipFile(fixture_path) as zf:
+            fixture_parts = sorted(
+                name
+                for name in zf.namelist()
+                if "pivot" in name.lower() or "cache" in name.lower()
+            )
+        fixture_contains_pivot_parts = bool(fixture_parts)
+
+    helpers: dict[str, Any] = {}
+    for name in CROSS_LANGUAGE_ADAPTER_NAMES:
+        tool = catalog[name]
+        helper_info: dict[str, Any] = {
+            "available": tool.is_available(),
+            "fixture_read_detects_pivot": False,
+            "fixture_metadata": None,
+            "fixture_error": None,
+        }
+        if tool.is_available() and fixture_path.exists():
+            res = run_external_oracle(
+                tool,
+                ExternalOracleRequest(
+                    fixture_id="pivot-read",
+                    operation="read_metadata",
+                    input_path=fixture_path,
+                    payload={},
+                ),
+            )
+            helper_info["fixture_metadata"] = res.payload
+            if res.passed:
+                helper_info["fixture_read_detects_pivot"] = _helper_detects_pivot(name, res.payload)
+            else:
+                helper_info["fixture_error"] = (
+                    res.payload.get("message") or res.stderr or res.stdout
+                )
+        helpers[name] = helper_info
+
+    excelize_probe = _run_excelize_pivot_probe(output_dir / "excelize-pivot-probe.xlsx")
+    apache_poi_probe = {
+        "supported": False,
+        "reason": "ApachePoiAdapter does not implement pivot table creation yet.",
+    }
+
+    return {
+        "metadata": {
+            "run_date": datetime.now(UTC).isoformat(),
+            "platform": f"{_platform.system()}-{_platform.machine()}",
+            "fixture_path": str(fixture_path),
+        },
+        "fixture": {
+            "exists": fixture_path.exists(),
+            "contains_pivot_parts": fixture_contains_pivot_parts,
+            "pivot_related_parts": fixture_parts,
+        },
+        "helpers": helpers,
+        "probes": {
+            "apache_poi": apache_poi_probe,
+            "excelize": excelize_probe,
+        },
+    }
+
+
+def _helper_detects_pivot(helper_name: str, payload: dict[str, Any]) -> bool:
+    if helper_name == "excelize":
+        sheets = payload.get("sheets") or []
+        return any(int(sheet.get("pivots", 0)) > 0 for sheet in sheets)
+    counts = payload.get("counts") or {}
+    return any("pivot" in key.lower() and int(value) > 0 for key, value in counts.items())
+
+
+def _run_excelize_pivot_probe(output_path: Path) -> dict[str, Any]:
+    from zipfile import ZipFile
+
+    from excelbench.harness.adapters.excelize_adapter import ExcelizeAdapter
+    from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
+    from excelbench.models import CellType, CellValue
+
+    adapter = ExcelizeAdapter()
+    if not adapter.is_available():
+        return {"supported": False, "reason": "Excelize helper is not available."}
+    output_path = output_path.resolve()
+
+    workbook = adapter.create_workbook()
+    adapter.add_sheet(workbook, "Data")
+    adapter.add_sheet(workbook, "Pivot")
+    headers = ["Region", "Quarter", "Revenue", "Units"]
+    rows = [
+        ["North", "Q1", 1000, 10],
+        ["North", "Q2", 1200, 12],
+        ["South", "Q1", 900, 9],
+        ["South", "Q2", 1100, 11],
+    ]
+    for col, header in enumerate(headers, start=1):
+        adapter.write_cell_value(
+            workbook,
+            "Data",
+            _pivot_coord_to_cell(1, col),
+            CellValue(type=CellType.STRING, value=header),
+        )
+    for row_index, row in enumerate(rows, start=2):
+        for col, value in enumerate(row, start=1):
+            adapter.write_cell_value(
+                workbook,
+                "Data",
+                _pivot_coord_to_cell(row_index, col),
+                CellValue(
+                    type=CellType.STRING if isinstance(value, str) else CellType.NUMBER,
+                    value=value,
+                ),
+            )
+    adapter.add_pivot_table(
+        workbook,
+        "Pivot",
+        {
+            "pivot": {
+                "name": "SalesPivot",
+                "data_range": "Data!A1:D5",
+                "range": "Pivot!B3:E10",
+                "rows": [{"name": "Region"}],
+                "columns": [{"name": "Quarter"}],
+                "data": [{"name": "Revenue", "subtotal": "Sum"}],
+            }
+        },
+    )
+    try:
+        adapter.save_workbook(workbook, output_path)
+    except Exception as exc:
+        return {"supported": False, "reason": str(exc)}
+
+    pivot_parts: list[str] = []
+    with ZipFile(output_path) as zf:
+        pivot_parts = sorted(
+            name for name in zf.namelist() if "pivot" in name.lower() or "cache" in name.lower()
+        )
+    verifier = OpenpyxlAdapter()
+    wb = verifier.open_workbook(output_path)
+    try:
+        pivots = verifier.read_pivot_tables(wb, "Pivot")
+    finally:
+        verifier.close_workbook(wb)
+    return {
+        "supported": True,
+        "output_path": str(output_path),
+        "pivot_related_parts": pivot_parts,
+        "openpyxl_readback": pivots,
+    }
+
+
+def _pivot_coord_to_cell(row: int, col: int) -> str:
+    letters = ""
+    while col > 0:
+        col, rem = divmod(col - 1, 26)
+        letters = chr(65 + rem) + letters
+    return f"{letters}{row}"
+
+
+def _write_cross_language_pivot_readme(output_dir: Path, results: dict[str, Any]) -> None:
+    import json
+
+    fixture = results["fixture"]
+    helpers = results["helpers"]
+    probes = results["probes"]
+    fixture_parts = fixture.get("pivot_related_parts") or []
+    fixture_summary = "Yes" if fixture.get("contains_pivot_parts") else "No"
+    excelize_probe = probes["excelize"]
+    apache_probe = probes["apache_poi"]
+    lines = [
+        "# Cross-Language Pivot Context",
+        "",
+        "This artifact exists because the main cross-language benchmark lane does "
+        "not score pivot tables on macOS.",
+        "",
+        "## Fixture Check",
+        "",
+        f"- Shipped fixture contains pivot OOXML parts: **{fixture_summary}**",
+        f"- Fixture path: `{results['metadata']['fixture_path']}`",
+    ]
+    if fixture_parts:
+        lines.extend(
+            ["- Fixture pivot-related parts:"] + [f"  - `{part}`" for part in fixture_parts]
+        )
+    else:
+        lines.append("- Fixture pivot-related parts: none detected")
+    lines.extend(
+        [
+            "",
+            "## Helper Detection",
+            "",
+            "| Helper | Available | Detects pivots in shipped fixture | Notes |",
+            "|---|---:|---:|---|",
+            _pivot_helper_row("apache-poi", helpers, "package metadata helper"),
+            _pivot_helper_row("excelize", helpers, "sheet metadata helper"),
+            "",
+            "## Write Probes",
+            "",
+            "| Tool | Pivot write support | Evidence |",
+            "|---|---:|---|",
+            _pivot_probe_row("apache-poi", apache_probe, ""),
+            _pivot_probe_row("excelize", excelize_probe, "OOXML parts + openpyxl readback"),
+        ]
+    )
+    if excelize_probe.get("supported"):
+        lines.extend(
+            [
+                "",
+                "### Excelize Probe Details",
+                "",
+                f"- Output workbook: `{excelize_probe['output_path']}`",
+                "- Pivot-related OOXML parts:",
+            ]
+            + [f"  - `{part}`" for part in excelize_probe.get("pivot_related_parts", [])]
+            + [
+                "- Openpyxl readback:",
+                "```json\n"
+                f"{json.dumps(excelize_probe.get('openpyxl_readback', []), indent=2)}\n"
+                "```",
+            ]
+        )
+    lines.extend(
+        [
+            "",
+            "## Interpretation",
+            "",
+            "- The main cross-language scorecard remains correct to mark "
+            "`pivot_tables` as not scored on macOS.",
+            "- The shipped fixture currently does not provide scoreable pivot evidence "
+            "for this lane.",
+            "- `excelize` can still emit pivot-bearing workbooks, and this artifact "
+            "captures that separately from the main scorecard.",
+        ]
+    )
+    (output_dir / "README.md").write_text("\n".join(lines), encoding="utf-8")
+
+
+def _pivot_helper_row(helper_name: str, helpers: dict[str, Any], notes: str) -> str:
+    helper = helpers[helper_name]
+    available = "Yes" if helper["available"] else "No"
+    detects = "Yes" if helper["fixture_read_detects_pivot"] else "No"
+    return f"| {helper_name} | {available} | {detects} | {notes} |"
+
+
+def _pivot_probe_row(tool_name: str, probe: dict[str, Any], success_evidence: str) -> str:
+    supported = "Yes" if probe.get("supported") else "No"
+    evidence = success_evidence if probe.get("supported") else str(probe.get("reason", ""))
+    return f"| {tool_name} | {supported} | {evidence} |"
+
+
+def _write_cross_language_pivot_context_note(output_dir: Path) -> None:
+    content = "\n".join(
+        [
+            "# Pivot Context Note",
+            "",
+            "This directory is a capability artifact, not a scored benchmark lane.",
+            "",
+            "Use it when you want to answer: can the cross-language helpers detect "
+            "or emit pivot-bearing workbooks?",
+            "",
+            "Keep it separate from the main `results-cross-language/` scoreboard.",
+            "",
+        ]
+    )
+    (output_dir / "CONTEXT.md").write_text(content, encoding="utf-8")
 
 
 @app.command()
@@ -1503,8 +1899,7 @@ def html_dashboard(
     try:
         perf = perf_path if perf_path.exists() else None
         sdir = scatter_dir if scatter_dir.exists() else None
-        mem = (memory_path if isinstance(memory_path, Path) and memory_path.exists()
-               else None)
+        mem = memory_path if isinstance(memory_path, Path) and memory_path.exists() else None
         render_html_dashboard(fidelity_path, perf, output_path, sdir, memory_json=mem)
         console.print(f"  [green]✓[/green] {output_path}")
     except Exception as e:
