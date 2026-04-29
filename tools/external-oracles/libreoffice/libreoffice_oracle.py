@@ -75,9 +75,10 @@ def run_conversion(
     filter_name: str,
 ) -> tuple[JSONDict, int]:
     """Run LibreOffice headless conversion and return structured diagnostics."""
-    input_path = Path(str(request.get("input_path") or request.get("output_path") or ""))
-    if not input_path:
+    input_path_value = request.get("input_path") or request.get("output_path")
+    if input_path_value is None or not str(input_path_value).strip():
         return {"error": "missing_input_path", "message": "input_path is required"}, 1
+    input_path = Path(str(input_path_value))
     if not input_path.exists():
         return {"error": "missing_input_path", "message": f"{input_path} does not exist"}, 1
 

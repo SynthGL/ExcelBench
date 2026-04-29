@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import subprocess
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -22,6 +23,18 @@ from excelbench.harness.external_wolfxl_validation import (
     _run_readback_probes,
     validate_wolfxl_external_fixture_pack,
 )
+
+
+def _missing_dotnet_runtime(prefix: str) -> bool:
+    if shutil.which("dotnet") is None:
+        return True
+    completed = subprocess.run(
+        ["dotnet", "--list-runtimes"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return completed.returncode != 0 or f"Microsoft.NETCore.App {prefix}" not in completed.stdout
 
 
 def test_excelize_fixture_specs_are_stable() -> None:
@@ -137,6 +150,10 @@ def test_workbook_protection_probe_reads_workbook_xml(tmp_path: Path) -> None:
 
 
 @pytest.mark.skipif(shutil.which("go") is None, reason="Go is required for Excelize fixture pack")
+@pytest.mark.skipif(
+    _missing_dotnet_runtime("8."),
+    reason="Installed dotnet command lacks the .NET 8 runtime used by optional helpers",
+)
 def test_generate_external_fixture_pack_without_validators(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
 

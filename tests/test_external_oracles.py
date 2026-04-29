@@ -3,7 +3,9 @@
 from __future__ import annotations
 
 import shutil
+import subprocess
 import sys
+from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
 from zipfile import ZipFile
 
@@ -16,6 +18,18 @@ from excelbench.harness.external_oracles import (
     external_oracle_catalog,
     run_external_oracle,
 )
+
+
+def _missing_dotnet_runtime(prefix: str) -> bool:
+    if shutil.which("dotnet") is None:
+        return True
+    completed = subprocess.run(
+        ["dotnet", "--list-runtimes"],
+        text=True,
+        capture_output=True,
+        check=False,
+    )
+    return completed.returncode != 0 or f"Microsoft.NETCore.App {prefix}" not in completed.stdout
 
 
 def test_catalog_lists_planned_external_oracles() -> None:
@@ -100,6 +114,26 @@ def test_oracle_request_serializes_paths() -> None:
         "input_path": "input.xlsx",
         "output_path": "output.xlsx",
     }
+
+
+def test_libreoffice_helper_rejects_blank_input_path() -> None:
+    repo_root = Path(__file__).resolve().parents[1]
+    helper_path = repo_root / "tools" / "external-oracles" / "libreoffice" / "libreoffice_oracle.py"
+    spec = spec_from_file_location("excelbench_libreoffice_oracle", helper_path)
+    assert spec is not None
+    assert spec.loader is not None
+    module = module_from_spec(spec)
+    spec.loader.exec_module(module)
+
+    response, exit_code = module.run_conversion(
+        soffice="/usr/bin/false",
+        request={"operation": "open_save_validate", "input_path": "   "},
+        extension="xlsx",
+        filter_name="Calc Office Open XML",
+    )
+
+    assert exit_code == 1
+    assert response["error"] == "missing_input_path"
 
 
 def test_successful_oracle_helper_parses_json_stdout() -> None:
@@ -261,7 +295,10 @@ def test_excelize_go_helper_writes_advanced_fixture(tmp_path: Path) -> None:
     assert "xl/charts/chart1.xml" in names
 
 
-@pytest.mark.skipif(shutil.which("dotnet") is None, reason=".NET SDK is required for ClosedXML")
+@pytest.mark.skipif(
+    _missing_dotnet_runtime("8."),
+    reason=".NET 8 runtime is required for ClosedXML",
+)
 def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
     output_path = tmp_path / "closedxml-smoke.xlsx"
@@ -348,7 +385,7 @@ def test_closedxml_dotnet_helper_writes_pivot_fixture(tmp_path: Path) -> None:
     assert ":r>" in shared_strings_xml
 
 
-@pytest.mark.skipif(shutil.which("dotnet") is None, reason=".NET SDK is required for NPOI")
+@pytest.mark.skipif(_missing_dotnet_runtime("8."), reason=".NET 8 runtime is required for NPOI")
 def test_npoi_dotnet_helper_writes_formula_comment_fixture(tmp_path: Path) -> None:
     repo_root = Path(__file__).resolve().parents[1]
     output_path = tmp_path / "npoi-smoke.xlsx"
