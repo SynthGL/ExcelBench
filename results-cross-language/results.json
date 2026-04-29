@@ -1,0 +1,5288 @@
+{
+  "metadata": {
+    "benchmark_version": "0.1.0",
+    "run_date": "2026-04-29T14:26:38.301955+00:00",
+    "excel_version": "16.105.3",
+    "platform": "Darwin-arm64",
+    "profile": "xlsx"
+  },
+  "libraries": {
+    "apache-poi": {
+      "name": "apache-poi",
+      "version": "5.5.1",
+      "language": "java",
+      "capabilities": [
+        "write"
+      ]
+    },
+    "excelize": {
+      "name": "excelize",
+      "version": "go-helper",
+      "language": "go",
+      "capabilities": [
+        "write"
+      ]
+    }
+  },
+  "results": [
+    {
+      "feature": "cell_values",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "string_simple": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Hello World"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Hello World"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - simple"
+          }
+        },
+        "string_unicode": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+            },
+            "actual": {
+              "type": "string",
+              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - unicode"
+          }
+        },
+        "string_empty": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "type": "blank"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - empty"
+          }
+        },
+        "string_long": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            },
+            "actual": {
+              "type": "string",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - long (1000 chars)"
+          }
+        },
+        "string_newline": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Line 1\nLine 2\nLine 3"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Line 1\nLine 2\nLine 3"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - with newlines"
+          }
+        },
+        "number_integer": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 42
+            },
+            "actual": {
+              "type": "number",
+              "value": 42.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - integer"
+          }
+        },
+        "number_float": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 3.14159265358979
+            },
+            "actual": {
+              "type": "number",
+              "value": 3.14159265358979
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - float"
+          }
+        },
+        "number_negative": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": -100.5
+            },
+            "actual": {
+              "type": "number",
+              "value": -100.5
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - negative"
+          }
+        },
+        "number_large": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 1234567890123456
+            },
+            "actual": {
+              "type": "number",
+              "value": 1234567890123456.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - large"
+          }
+        },
+        "number_scientific": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 1.23e-10
+            },
+            "actual": {
+              "type": "number",
+              "value": 1.23e-10
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - scientific notation"
+          }
+        },
+        "date_standard": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "date",
+              "value": "2026-02-04"
+            },
+            "actual": {
+              "type": "date",
+              "value": "2026-02-04"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Date - standard"
+          }
+        },
+        "datetime": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "datetime",
+              "value": "2026-02-04T10:30:45"
+            },
+            "actual": {
+              "type": "datetime",
+              "value": "2026-02-04T10:30:45"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DateTime - with time"
+          }
+        },
+        "boolean_true": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "boolean",
+              "value": true
+            },
+            "actual": {
+              "type": "boolean",
+              "value": true
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Boolean - TRUE"
+          }
+        },
+        "boolean_false": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "boolean",
+              "value": false
+            },
+            "actual": {
+              "type": "boolean",
+              "value": false
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Boolean - FALSE"
+          }
+        },
+        "error_div0": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#DIV/0!"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#DIV/0!"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #DIV/0!"
+          }
+        },
+        "error_na": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#N/A"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#N/A"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #N/A"
+          }
+        },
+        "error_value": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#VALUE!"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#VALUE!"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #VALUE!"
+          }
+        },
+        "blank": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "type": "blank"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Blank cell"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "cell_values",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "string_simple": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Hello World"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Hello World"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - simple"
+          }
+        },
+        "string_unicode": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+            },
+            "actual": {
+              "type": "string",
+              "value": "\u65e5\u672c\u8a9e\ud83c\udf89\u00e9mojis"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - unicode"
+          }
+        },
+        "string_empty": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "type": "blank"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - empty"
+          }
+        },
+        "string_long": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            },
+            "actual": {
+              "type": "string",
+              "value": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - long (1000 chars)"
+          }
+        },
+        "string_newline": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Line 1\nLine 2\nLine 3"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Line 1\nLine 2\nLine 3"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "String - with newlines"
+          }
+        },
+        "number_integer": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 42
+            },
+            "actual": {
+              "type": "number",
+              "value": 42
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - integer"
+          }
+        },
+        "number_float": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 3.14159265358979
+            },
+            "actual": {
+              "type": "number",
+              "value": 3.14159265358979
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - float"
+          }
+        },
+        "number_negative": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": -100.5
+            },
+            "actual": {
+              "type": "number",
+              "value": -100.5
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - negative"
+          }
+        },
+        "number_large": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 1234567890123456
+            },
+            "actual": {
+              "type": "number",
+              "value": 1234567890123456
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - large"
+          }
+        },
+        "number_scientific": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "number",
+              "value": 1.23e-10
+            },
+            "actual": {
+              "type": "number",
+              "value": 1.23e-10
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Number - scientific notation"
+          }
+        },
+        "date_standard": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "date",
+              "value": "2026-02-04"
+            },
+            "actual": {
+              "type": "date",
+              "value": "2026-02-04"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Date - standard"
+          }
+        },
+        "datetime": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "datetime",
+              "value": "2026-02-04T10:30:45"
+            },
+            "actual": {
+              "type": "datetime",
+              "value": "2026-02-04T10:30:45"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DateTime - with time"
+          }
+        },
+        "boolean_true": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "boolean",
+              "value": true
+            },
+            "actual": {
+              "type": "boolean",
+              "value": true
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Boolean - TRUE"
+          }
+        },
+        "boolean_false": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "boolean",
+              "value": false
+            },
+            "actual": {
+              "type": "boolean",
+              "value": false
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Boolean - FALSE"
+          }
+        },
+        "error_div0": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#DIV/0!"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#DIV/0!"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #DIV/0!"
+          }
+        },
+        "error_na": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#N/A"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#N/A"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #N/A"
+          }
+        },
+        "error_value": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "error",
+              "value": "#VALUE!"
+            },
+            "actual": {
+              "type": "error",
+              "value": "#VALUE!"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Error - #VALUE!"
+          }
+        },
+        "blank": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "blank"
+            },
+            "actual": {
+              "type": "blank"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Blank cell"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "formula_sum": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=SUM(1,2,3)"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=SUM(1,2,3)"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - SUM"
+          }
+        },
+        "formula_cell_ref": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=A3*2"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=A3*2"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - cell reference"
+          }
+        },
+        "formula_concat": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=A4&\" \"&A5"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=A4&\" \"&A5"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - concat"
+          }
+        },
+        "formula_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "='References'!B2"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "='References'!B2"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - cross sheet"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "formulas",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "formula_sum": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=SUM(1,2,3)"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=SUM(1,2,3)"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - SUM"
+          }
+        },
+        "formula_cell_ref": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=A3*2"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=A3*2"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - cell reference"
+          }
+        },
+        "formula_concat": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "=A4&\" \"&A5"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "=A4&\" \"&A5"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - concat"
+          }
+        },
+        "formula_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "formula",
+              "formula": "='References'!B2"
+            },
+            "actual": {
+              "type": "formula",
+              "formula": "='References'!B2"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Formula - cross sheet"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "text_formatting",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "bold": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true
+            },
+            "actual": {
+              "bold": true,
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Bold"
+          }
+        },
+        "italic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "italic": true
+            },
+            "actual": {
+              "italic": true,
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Italic"
+          }
+        },
+        "underline_single": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "underline": "single"
+            },
+            "actual": {
+              "underline": "single",
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Underline - single"
+          }
+        },
+        "underline_double": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "underline": "double"
+            },
+            "actual": {
+              "underline": "double",
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Underline - double"
+          }
+        },
+        "strikethrough": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "strikethrough": true
+            },
+            "actual": {
+              "strikethrough": true,
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Strikethrough"
+          }
+        },
+        "bold_italic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true,
+              "italic": true
+            },
+            "actual": {
+              "bold": true,
+              "italic": true,
+              "font_name": "Calibri",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Bold + Italic"
+          }
+        },
+        "font_size_8": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 8
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 8.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 8"
+          }
+        },
+        "font_size_14": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 14
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 14.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 14"
+          }
+        },
+        "font_size_24": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 24
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 24.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 24"
+          }
+        },
+        "font_size_36": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 36
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 36.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 36"
+          }
+        },
+        "font_arial": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Arial"
+            },
+            "actual": {
+              "font_name": "Arial",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Arial"
+          }
+        },
+        "font_times": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Times New Roman"
+            },
+            "actual": {
+              "font_name": "Times New Roman",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Times New Roman"
+          }
+        },
+        "font_courier": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Courier New"
+            },
+            "actual": {
+              "font_name": "Courier New",
+              "font_size": 11.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Courier New"
+          }
+        },
+        "color_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 11.0,
+              "font_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - red"
+          }
+        },
+        "color_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#0000FF"
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 11.0,
+              "font_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - blue"
+          }
+        },
+        "color_green": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#00FF00"
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 11.0,
+              "font_color": "#00FF00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - green"
+          }
+        },
+        "color_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#8B4513"
+            },
+            "actual": {
+              "font_name": "Calibri",
+              "font_size": 11.0,
+              "font_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - custom (#8B4513)"
+          }
+        },
+        "combined": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true,
+              "font_size": 16,
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "bold": true,
+              "font_name": "Calibri",
+              "font_size": 16.0,
+              "font_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Combined - bold, 16pt, red"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "text_formatting",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "bold": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true
+            },
+            "actual": {
+              "bold": true,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Bold"
+          }
+        },
+        "italic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "italic": true
+            },
+            "actual": {
+              "italic": true,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Italic"
+          }
+        },
+        "underline_single": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "underline": "single"
+            },
+            "actual": {
+              "underline": "single",
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Underline - single"
+          }
+        },
+        "underline_double": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "underline": "double"
+            },
+            "actual": {
+              "underline": "double",
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Underline - double"
+          }
+        },
+        "strikethrough": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "strikethrough": true
+            },
+            "actual": {
+              "strikethrough": true,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Strikethrough"
+          }
+        },
+        "bold_italic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true,
+              "italic": true
+            },
+            "actual": {
+              "bold": true,
+              "italic": true,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Bold + Italic"
+          }
+        },
+        "font_size_8": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 8
+            },
+            "actual": {
+              "font_size": 8.0,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 8"
+          }
+        },
+        "font_size_14": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 14
+            },
+            "actual": {
+              "font_size": 14.0,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 14"
+          }
+        },
+        "font_size_24": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 24
+            },
+            "actual": {
+              "font_size": 24.0,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 24"
+          }
+        },
+        "font_size_36": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_size": 36
+            },
+            "actual": {
+              "font_size": 36.0,
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font size 36"
+          }
+        },
+        "font_arial": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Arial"
+            },
+            "actual": {
+              "font_name": "Arial",
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Arial"
+          }
+        },
+        "font_times": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Times New Roman"
+            },
+            "actual": {
+              "font_name": "Times New Roman",
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Times New Roman"
+          }
+        },
+        "font_courier": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_name": "Courier New"
+            },
+            "actual": {
+              "font_name": "Courier New",
+              "font_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font - Courier New"
+          }
+        },
+        "color_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "font_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - red"
+          }
+        },
+        "color_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#0000FF"
+            },
+            "actual": {
+              "font_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - blue"
+          }
+        },
+        "color_green": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#00FF00"
+            },
+            "actual": {
+              "font_color": "#00FF00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - green"
+          }
+        },
+        "color_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "font_color": "#8B4513"
+            },
+            "actual": {
+              "font_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Font color - custom (#8B4513)"
+          }
+        },
+        "combined": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bold": true,
+              "font_size": 16,
+              "font_color": "#FF0000"
+            },
+            "actual": {
+              "bold": true,
+              "font_size": 16.0,
+              "font_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Combined - bold, 16pt, red"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "bg_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#FF0000"
+            },
+            "actual": {
+              "bg_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - red"
+          }
+        },
+        "bg_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#0000FF"
+            },
+            "actual": {
+              "bg_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - blue"
+          }
+        },
+        "bg_green": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#00FF00"
+            },
+            "actual": {
+              "bg_color": "#00FF00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - green"
+          }
+        },
+        "bg_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#8B4513"
+            },
+            "actual": {
+              "bg_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - custom (#8B4513)"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "background_colors",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "bg_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#FF0000"
+            },
+            "actual": {
+              "bg_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - red"
+          }
+        },
+        "bg_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#0000FF"
+            },
+            "actual": {
+              "bg_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - blue"
+          }
+        },
+        "bg_green": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#00FF00"
+            },
+            "actual": {
+              "bg_color": "#00FF00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - green"
+          }
+        },
+        "bg_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "bg_color": "#8B4513"
+            },
+            "actual": {
+              "bg_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Background - custom (#8B4513)"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "numfmt_currency": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "$#,##0.00"
+            },
+            "actual": {
+              "number_format": "$#,##0.00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - currency"
+          }
+        },
+        "numfmt_percent": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "0.00%"
+            },
+            "actual": {
+              "number_format": "0.00%"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - percent"
+          }
+        },
+        "numfmt_date": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "yyyy-mm-dd"
+            },
+            "actual": {
+              "number_format": "yyyy-mm-dd"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - date"
+          }
+        },
+        "numfmt_scientific": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "0.00E+00"
+            },
+            "actual": {
+              "number_format": "0.00E+00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - scientific"
+          }
+        },
+        "numfmt_custom_text": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "\"USD\" 0.00"
+            },
+            "actual": {
+              "number_format": "\"USD\" 0.00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - custom text"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "number_formats",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "numfmt_currency": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "$#,##0.00"
+            },
+            "actual": {
+              "number_format": "$#,##0.00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - currency"
+          }
+        },
+        "numfmt_percent": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "0.00%"
+            },
+            "actual": {
+              "number_format": "0.00%"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - percent"
+          }
+        },
+        "numfmt_date": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "yyyy-mm-dd"
+            },
+            "actual": {
+              "number_format": "yyyy-mm-dd"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - date"
+          }
+        },
+        "numfmt_scientific": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "0.00E+00"
+            },
+            "actual": {
+              "number_format": "0.00E+00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - scientific"
+          }
+        },
+        "numfmt_custom_text": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "number_format": "\"USD\" 0.00"
+            },
+            "actual": {
+              "number_format": "\"USD\" 0.00"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Format - custom text"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "h_left": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "left"
+            },
+            "actual": {
+              "h_align": "left"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - left"
+          }
+        },
+        "h_center": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "center"
+            },
+            "actual": {
+              "h_align": "center"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - center"
+          }
+        },
+        "h_right": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "right"
+            },
+            "actual": {
+              "h_align": "right"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - right"
+          }
+        },
+        "v_top": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "top"
+            },
+            "actual": {
+              "v_align": "top"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - top"
+          }
+        },
+        "v_center": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "center"
+            },
+            "actual": {
+              "v_align": "center"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - center"
+          }
+        },
+        "v_bottom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "bottom"
+            },
+            "actual": {
+              "v_align": "bottom"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - bottom"
+          }
+        },
+        "wrap_text": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "wrap": true
+            },
+            "actual": {
+              "wrap": true
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - wrap text"
+          }
+        },
+        "rotation_45": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "rotation": 45
+            },
+            "actual": {
+              "rotation": 45
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - rotation 45"
+          }
+        },
+        "indent_2": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "indent": 2
+            },
+            "actual": {
+              "indent": 2.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - indent 2"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "alignment",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "h_left": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "left"
+            },
+            "actual": {
+              "h_align": "left"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - left"
+          }
+        },
+        "h_center": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "center"
+            },
+            "actual": {
+              "h_align": "center"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - center"
+          }
+        },
+        "h_right": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "h_align": "right"
+            },
+            "actual": {
+              "h_align": "right"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - right"
+          }
+        },
+        "v_top": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "top"
+            },
+            "actual": {
+              "v_align": "top"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - top"
+          }
+        },
+        "v_center": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "center"
+            },
+            "actual": {
+              "v_align": "center"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - center"
+          }
+        },
+        "v_bottom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "v_align": "bottom"
+            },
+            "actual": {
+              "v_align": "bottom"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - bottom"
+          }
+        },
+        "wrap_text": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "wrap": true
+            },
+            "actual": {
+              "wrap": true
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - wrap text"
+          }
+        },
+        "rotation_45": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "rotation": 45
+            },
+            "actual": {
+              "rotation": 45
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - rotation 45"
+          }
+        },
+        "indent_2": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "indent": 2
+            },
+            "actual": {
+              "indent": 2.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Align - indent 2"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "thin_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - thin all edges"
+          }
+        },
+        "medium_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "medium",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "medium",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - medium all edges"
+          }
+        },
+        "thick_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thick",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "thick",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - thick all edges"
+          }
+        },
+        "double": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "double",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "double",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - double line"
+          }
+        },
+        "dashed": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashed",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashed",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dashed"
+          }
+        },
+        "dotted": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dotted",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dotted",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dotted"
+          }
+        },
+        "dash_dot": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashDot",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dash-dot"
+          }
+        },
+        "dash_dot_dot": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashDotDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashDotDot",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dash-dot-dot"
+          }
+        },
+        "top_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": "thin",
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "border_top": "thin",
+              "border_top_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - top only"
+          }
+        },
+        "bottom_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": "thin",
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "border_bottom": "thin",
+              "border_bottom_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - bottom only"
+          }
+        },
+        "left_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": "thin",
+              "border_right": null
+            },
+            "actual": {
+              "border_left": "thin",
+              "border_left_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - left only"
+          }
+        },
+        "right_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": "thin"
+            },
+            "actual": {
+              "border_right": "thin",
+              "border_right_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - right only"
+          }
+        },
+        "diagonal_up": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_up": "thin"
+            },
+            "actual": {
+              "border_diagonal_up": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal up"
+          }
+        },
+        "diagonal_down": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "border_diagonal_down": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal down"
+          }
+        },
+        "diagonal_both": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_up": "thin",
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "border_diagonal_up": "thin",
+              "border_diagonal_down": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal both"
+          }
+        },
+        "color_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#FF0000"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - red color"
+          }
+        },
+        "color_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#0000FF"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - blue color"
+          }
+        },
+        "color_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#8B4513"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - custom color (#8B4513)"
+          }
+        },
+        "mixed_styles": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": "thick",
+              "border_bottom": "thin",
+              "border_left": "medium",
+              "border_right": "dashed"
+            },
+            "actual": {
+              "border_top": "thick",
+              "border_bottom": "thin",
+              "border_left": "medium",
+              "border_right": "dashed",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - mixed styles per edge"
+          }
+        },
+        "mixed_colors": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top_color": "#FF0000",
+              "border_bottom_color": "#00FF00",
+              "border_left_color": "#0000FF",
+              "border_right_color": "#FFFF00"
+            },
+            "actual": {
+              "border_top_color": "#FF0000",
+              "border_bottom_color": "#00FF00",
+              "border_left_color": "#0000FF",
+              "border_right_color": "#FFFF00",
+              "border_style": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - mixed colors per edge"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "borders",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "thin_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - thin all edges"
+          }
+        },
+        "medium_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "medium",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "medium",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - medium all edges"
+          }
+        },
+        "thick_all": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thick",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "thick",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - thick all edges"
+          }
+        },
+        "double": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "double",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "double",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - double line"
+          }
+        },
+        "dashed": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashed",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashed",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dashed"
+          }
+        },
+        "dotted": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dotted",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dotted",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dotted"
+          }
+        },
+        "dash_dot": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashDot",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dash-dot"
+          }
+        },
+        "dash_dot_dot": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "dashDotDot",
+              "border_color": "#000000"
+            },
+            "actual": {
+              "border_style": "dashDotDot",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - dash-dot-dot"
+          }
+        },
+        "top_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": "thin",
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "border_top": "thin",
+              "border_top_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - top only"
+          }
+        },
+        "bottom_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": "thin",
+              "border_left": null,
+              "border_right": null
+            },
+            "actual": {
+              "border_bottom": "thin",
+              "border_bottom_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - bottom only"
+          }
+        },
+        "left_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": "thin",
+              "border_right": null
+            },
+            "actual": {
+              "border_left": "thin",
+              "border_left_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - left only"
+          }
+        },
+        "right_only": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": null,
+              "border_bottom": null,
+              "border_left": null,
+              "border_right": "thin"
+            },
+            "actual": {
+              "border_right": "thin",
+              "border_right_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - right only"
+          }
+        },
+        "diagonal_up": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_up": "thin"
+            },
+            "actual": {
+              "border_diagonal_up": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal up"
+          }
+        },
+        "diagonal_down": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "border_diagonal_down": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal down"
+          }
+        },
+        "diagonal_both": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_diagonal_up": "thin",
+              "border_diagonal_down": "thin"
+            },
+            "actual": {
+              "border_diagonal_up": "thin",
+              "border_diagonal_down": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - diagonal both"
+          }
+        },
+        "color_red": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#FF0000"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - red color"
+          }
+        },
+        "color_blue": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#0000FF"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#0000FF"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - blue color"
+          }
+        },
+        "color_custom": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_style": "thin",
+              "border_color": "#8B4513"
+            },
+            "actual": {
+              "border_style": "thin",
+              "border_color": "#8B4513"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - custom color (#8B4513)"
+          }
+        },
+        "mixed_styles": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top": "thick",
+              "border_bottom": "thin",
+              "border_left": "medium",
+              "border_right": "dashed"
+            },
+            "actual": {
+              "border_top": "thick",
+              "border_bottom": "thin",
+              "border_left": "medium",
+              "border_right": "dashed",
+              "border_color": "#000000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - mixed styles per edge"
+          }
+        },
+        "mixed_colors": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "border_top_color": "#FF0000",
+              "border_bottom_color": "#00FF00",
+              "border_left_color": "#0000FF",
+              "border_right_color": "#FFFF00"
+            },
+            "actual": {
+              "border_top_color": "#FF0000",
+              "border_bottom_color": "#00FF00",
+              "border_left_color": "#0000FF",
+              "border_right_color": "#FFFF00",
+              "border_style": "thin"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Border - mixed colors per edge"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "dimensions",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "row_height_30": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "row_height": 30
+            },
+            "actual": {
+              "row_height": 30.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Row height - 30"
+          }
+        },
+        "row_height_45": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "row_height": 45
+            },
+            "actual": {
+              "row_height": 45.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Row height - 45"
+          }
+        },
+        "col_width_20": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "column_width": 20
+            },
+            "actual": {
+              "column_width": 20.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Column width - D = 20"
+          }
+        },
+        "col_width_8": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "column_width": 8
+            },
+            "actual": {
+              "column_width": 8.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Column width - E = 8"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "dimensions",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "row_height_30": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "row_height": 30
+            },
+            "actual": {
+              "row_height": 30.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Row height - 30"
+          }
+        },
+        "row_height_45": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "row_height": 45
+            },
+            "actual": {
+              "row_height": 45.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Row height - 45"
+          }
+        },
+        "col_width_20": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "column_width": 20
+            },
+            "actual": {
+              "column_width": 20.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Column width - D = 20"
+          }
+        },
+        "col_width_8": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "column_width": 8
+            },
+            "actual": {
+              "column_width": 8.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Column width - E = 8"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "multiple_sheets",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "sheet_names": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "sheet_names": [
+                "Alpha",
+                "Beta",
+                "Gamma"
+              ]
+            },
+            "actual": {
+              "sheet_names": [
+                "Alpha",
+                "Beta",
+                "Gamma"
+              ]
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Sheet names"
+          }
+        },
+        "value_alpha": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Alpha"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Alpha"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Alpha value"
+          }
+        },
+        "value_beta": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Beta"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Beta"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Beta value"
+          }
+        },
+        "value_gamma": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Gamma"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Gamma"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Gamma value"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "multiple_sheets",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "sheet_names": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "sheet_names": [
+                "Alpha",
+                "Beta",
+                "Gamma"
+              ]
+            },
+            "actual": {
+              "sheet_names": [
+                "Alpha",
+                "Beta",
+                "Gamma"
+              ]
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Sheet names"
+          }
+        },
+        "value_alpha": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Alpha"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Alpha"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Alpha value"
+          }
+        },
+        "value_beta": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Beta"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Beta"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Beta value"
+          }
+        },
+        "value_gamma": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "type": "string",
+              "value": "Gamma"
+            },
+            "actual": {
+              "type": "string",
+              "value": "Gamma"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Gamma value"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "merged_cells",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "merge_horizontal": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B2:D2",
+              "top_left_value": "Merged"
+            },
+            "actual": {
+              "merged_range": "B2:D2",
+              "top_left_value": "Merged"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Merge horizontal B2:D2"
+          }
+        },
+        "merge_vertical": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B3:B5",
+              "top_left_value": "Vertical"
+            },
+            "actual": {
+              "merged_range": "B3:B5",
+              "top_left_value": "Vertical"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Merge vertical B3:B5"
+          }
+        },
+        "merge_value_off_top_left": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B6:D6",
+              "top_left_value": "OffTop",
+              "non_top_left_nonempty": 0
+            },
+            "actual": {
+              "merged_range": "B6:D6",
+              "top_left_value": "OffTop",
+              "non_top_left_nonempty": 0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Merge with non-top-left value"
+          }
+        },
+        "merge_top_left_fill": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B7:D7",
+              "top_left_value": "Fill",
+              "top_left_bg_color": "#FF0000"
+            },
+            "actual": {
+              "merged_range": "B7:D7",
+              "top_left_value": "Fill",
+              "top_left_bg_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Merge with top-left fill"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "merged_cells",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "merge_horizontal": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B2:D2",
+              "top_left_value": "Merged"
+            },
+            "actual": {
+              "merged_range": "B2:D2",
+              "top_left_value": "Merged"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Merge horizontal B2:D2"
+          }
+        },
+        "merge_vertical": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B3:B5",
+              "top_left_value": "Vertical"
+            },
+            "actual": {
+              "merged_range": "B3:B5",
+              "top_left_value": "Vertical"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Merge vertical B3:B5"
+          }
+        },
+        "merge_value_off_top_left": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B6:D6",
+              "top_left_value": "OffTop",
+              "non_top_left_nonempty": 0
+            },
+            "actual": {
+              "merged_range": "B6:D6",
+              "top_left_value": "OffTop",
+              "non_top_left_nonempty": 0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Merge with non-top-left value"
+          }
+        },
+        "merge_top_left_fill": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "merged_range": "B7:D7",
+              "top_left_value": "Fill",
+              "top_left_bg_color": "#FF0000"
+            },
+            "actual": {
+              "merged_range": "B7:D7",
+              "top_left_value": "Fill",
+              "top_left_bg_color": "#FF0000"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Merge with top-left fill"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "conditional_formatting",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "cf_cell_gt": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "priority": 1,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "CF: cell > 5 (yellow fill)"
+          }
+        },
+        "cf_formula_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "priority": 2,
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: formula rule with cross-sheet ref"
+          }
+        },
+        "cf_text_contains": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "priority": 3,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: text contains"
+          }
+        },
+        "cf_data_bar": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar",
+                "priority": 4
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: data bar"
+          }
+        },
+        "cf_color_scale": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale",
+                "priority": 5
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: 3-color scale"
+          }
+        },
+        "cf_stop_if_true": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "priority": 1,
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: stop-if-true priority"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "conditional_formatting",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "cf_cell_gt": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "priority": 1,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "cellIs",
+                "operator": "greaterThan",
+                "formula": "5",
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "CF: cell > 5 (yellow fill)"
+          }
+        },
+        "cf_formula_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "priority": 2,
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=Ref!$A$1>5",
+                "format": {
+                  "bg_color": "#FF00FF"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: formula rule with cross-sheet ref"
+          }
+        },
+        "cf_text_contains": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "priority": 3,
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "expression",
+                "formula": "=ISNUMBER(SEARCH(\"foo\",B2))",
+                "format": {
+                  "bg_color": "#FFFF00"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: text contains"
+          }
+        },
+        "cf_data_bar": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar",
+                "priority": 4
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "dataBar"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: data bar"
+          }
+        },
+        "cf_color_scale": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale",
+                "priority": 5
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B2:B6",
+                "rule_type": "colorScale"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: 3-color scale"
+          }
+        },
+        "cf_stop_if_true": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "priority": 1,
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
+            },
+            "actual": {
+              "cf_rule": {
+                "range": "B7:B9",
+                "rule_type": "cellIs",
+                "operator": "lessThan",
+                "formula": "3",
+                "stop_if_true": true,
+                "format": {
+                  "bg_color": "#FF0000"
+                }
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "CF: stop-if-true priority"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "data_validation",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "dv_list_csv": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B2",
+                "validation_type": "list",
+                "formula1": "\"Red,Green,Blue\"",
+                "allow_blank": true
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B2",
+                "validation_type": "list",
+                "formula1": "\"Red,Green,Blue\"",
+                "allow_blank": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DV: list from CSV"
+          }
+        },
+        "dv_list_range": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B3",
+                "validation_type": "list",
+                "formula1": "=$D$2:$D$4"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B3",
+                "validation_type": "list",
+                "formula1": "=$D$2:$D$4"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: list from range"
+          }
+        },
+        "dv_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B4",
+                "validation_type": "list",
+                "formula1": "=RegionList"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B4",
+                "validation_type": "list",
+                "formula1": "=RegionList"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: cross-sheet named range"
+          }
+        },
+        "dv_custom_formula": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B5",
+                "validation_type": "custom",
+                "formula1": "=B5>C5"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B5",
+                "validation_type": "custom",
+                "formula1": "=B5>C5"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: custom formula"
+          }
+        },
+        "dv_whole_between": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B6",
+                "validation_type": "whole",
+                "operator": "between",
+                "formula1": "1",
+                "formula2": "10",
+                "allow_blank": false,
+                "error_title": "Invalid",
+                "error": "Enter 1-10"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B6",
+                "validation_type": "whole",
+                "operator": "between",
+                "formula1": "1",
+                "formula2": "10",
+                "allow_blank": false,
+                "error_title": "Invalid",
+                "error": "Enter 1-10"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DV: whole number with error"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "data_validation",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "dv_list_csv": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B2",
+                "validation_type": "list",
+                "formula1": "\"Red,Green,Blue\"",
+                "allow_blank": true
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B2",
+                "validation_type": "list",
+                "formula1": "\"Red,Green,Blue\"",
+                "allow_blank": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DV: list from CSV"
+          }
+        },
+        "dv_list_range": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B3",
+                "validation_type": "list",
+                "formula1": "=$D$2:$D$4"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B3",
+                "validation_type": "list",
+                "formula1": "=$D$2:$D$4"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: list from range"
+          }
+        },
+        "dv_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B4",
+                "validation_type": "list",
+                "formula1": "=RegionList"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B4",
+                "validation_type": "list",
+                "formula1": "=RegionList"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: cross-sheet named range"
+          }
+        },
+        "dv_custom_formula": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B5",
+                "validation_type": "custom",
+                "formula1": "=B5>C5"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B5",
+                "validation_type": "custom",
+                "formula1": "=B5>C5"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "DV: custom formula"
+          }
+        },
+        "dv_whole_between": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "validation": {
+                "range": "B6",
+                "validation_type": "whole",
+                "operator": "between",
+                "formula1": "1",
+                "formula2": "10",
+                "allow_blank": false,
+                "error_title": "Invalid",
+                "error": "Enter 1-10"
+              }
+            },
+            "actual": {
+              "validation": {
+                "range": "B6",
+                "validation_type": "whole",
+                "operator": "between",
+                "formula1": "1",
+                "formula2": "10",
+                "allow_blank": false,
+                "error_title": "Invalid",
+                "error": "Enter 1-10"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "DV: whole number with error"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "hyperlinks",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "link_external": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B2",
+                "target": "https://example.com/docs",
+                "display": "Example Docs",
+                "tooltip": "Go to docs",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B2",
+                "target": "https://example.com/docs",
+                "display": "Example Docs",
+                "tooltip": "Go to docs",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Hyperlink: external URL"
+          }
+        },
+        "link_internal": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Hyperlink: internal sheet"
+          }
+        },
+        "link_mailto": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Hyperlink: mailto"
+          }
+        },
+        "link_long": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Hyperlink: long encoded URL"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "hyperlinks",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "link_external": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B2",
+                "target": "https://example.com/docs",
+                "display": "Example Docs",
+                "tooltip": "Go to docs",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B2",
+                "target": "https://example.com/docs",
+                "display": "Example Docs",
+                "tooltip": "Go to docs",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Hyperlink: external URL"
+          }
+        },
+        "link_internal": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B3",
+                "target": "Targets!A1",
+                "display": "Go Target",
+                "tooltip": "Jump to target",
+                "internal": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Hyperlink: internal sheet"
+          }
+        },
+        "link_mailto": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B4",
+                "target": "mailto:test@example.com",
+                "display": "Email",
+                "tooltip": "Send email",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Hyperlink: mailto"
+          }
+        },
+        "link_long": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
+            "actual": {
+              "hyperlink": {
+                "cell": "B5",
+                "target": "https://example.com/search?q=excel%20bench&sort=desc#section-2",
+                "display": "Search",
+                "tooltip": "Encoded URL",
+                "internal": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Hyperlink: long encoded URL"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "images",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "image_one_cell": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "image": {
+                "cell": "B2",
+                "path": "fixtures/images/sample.png",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "image": {
+                "cell": "B2",
+                "path": "fixtures/images/sample.png",
+                "anchor": "oneCell"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Image: one-cell anchor"
+          }
+        },
+        "image_two_cell_offset": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "image": {
+                "cell": "D6",
+                "path": "fixtures/images/sample.jpg",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "image": {
+                "cell": "D6",
+                "path": "fixtures/images/sample.jpg",
+                "anchor": "oneCell"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Image: two-cell anchor with offset"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "images",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "image_one_cell": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "image": {
+                "cell": "B2",
+                "path": "fixtures/images/sample.png",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "image": {
+                "cell": "B2",
+                "path": "fixtures/images/sample.png",
+                "anchor": "oneCell"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Image: one-cell anchor"
+          }
+        },
+        "image_two_cell_offset": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "image": {
+                "cell": "D6",
+                "path": "fixtures/images/sample.jpg",
+                "anchor": "oneCell"
+              }
+            },
+            "actual": {
+              "image": {
+                "cell": "D6",
+                "path": "fixtures/images/sample.jpg",
+                "anchor": "oneCell"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Image: two-cell anchor with offset"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "pivot_tables",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": null
+      },
+      "test_cases": {},
+      "notes": "Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx)."
+    },
+    {
+      "feature": "pivot_tables",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": null
+      },
+      "test_cases": {},
+      "notes": "Unsupported on macOS without a Windows-generated pivot fixture (fixtures/excel/tier2/15_pivot_tables.xlsx)."
+    },
+    {
+      "feature": "comments",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "comment_legacy": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B2",
+                "text": "Legacy note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B2",
+                "text": "Legacy note",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Comment: legacy note"
+          }
+        },
+        "comment_threaded": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B3",
+                "text": "Threaded fallback",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B3",
+                "text": "Threaded fallback",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Comment: threaded"
+          }
+        },
+        "comment_author": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B4",
+                "text": "Another note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B4",
+                "text": "Another note",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Comment: second author"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "comments",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "comment_legacy": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B2",
+                "text": "Legacy note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B2",
+                "text": "Legacy note",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Comment: legacy note"
+          }
+        },
+        "comment_threaded": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B3",
+                "text": "Threaded fallback",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B3",
+                "text": "Threaded fallback",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Comment: threaded"
+          }
+        },
+        "comment_author": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "comment": {
+                "cell": "B4",
+                "text": "Another note",
+                "threaded": false
+              }
+            },
+            "actual": {
+              "comment": {
+                "cell": "B4",
+                "text": "Another note",
+                "threaded": false
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Comment: second author"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "freeze_panes",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "freeze_b2": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Freeze panes at B2"
+          }
+        },
+        "freeze_d5": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Freeze panes at D5"
+          }
+        },
+        "split_2x1": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Split panes row=2 col=1"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "freeze_panes",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "freeze_b2": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "B2"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Freeze panes at B2"
+          }
+        },
+        "freeze_d5": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "freeze",
+                "top_left_cell": "D5"
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Freeze panes at D5"
+          }
+        },
+        "split_2x1": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
+            },
+            "actual": {
+              "freeze": {
+                "mode": "split",
+                "x_split": 1,
+                "y_split": 2
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Split panes row=2 col=1"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "named_ranges",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "nr_simple_cell": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "SingleCell",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$2",
+              "value": 42
+            },
+            "actual": {
+              "name": "SingleCell",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$2",
+              "value": 42.0
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: single cell"
+          }
+        },
+        "nr_cell_range": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "DataRange",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$3:$D$3"
+            },
+            "actual": {
+              "name": "DataRange",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$3:$D$3"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: cell range"
+          }
+        },
+        "nr_formula_ref": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "TaxRate",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$4",
+              "value": 0.08
+            },
+            "actual": {
+              "name": "TaxRate",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$4",
+              "value": 0.08
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: used in formula"
+          }
+        },
+        "nr_sheet_scope": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "LocalName",
+              "scope": "sheet",
+              "refers_to": "named_ranges!$B$5",
+              "value": "local"
+            },
+            "actual": {
+              "name": "LocalName",
+              "scope": "sheet",
+              "refers_to": "named_ranges!$B$5",
+              "value": "local"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: sheet-scoped"
+          }
+        },
+        "nr_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "OtherSheet",
+              "scope": "workbook",
+              "refers_to": "Targets!$A$1"
+            },
+            "actual": {
+              "name": "OtherSheet",
+              "scope": "workbook",
+              "refers_to": "Targets!$A$1"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: cross-sheet reference"
+          }
+        },
+        "nr_special_chars": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "_my_range",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$7"
+            },
+            "actual": {
+              "name": "_my_range",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$7"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: underscore name"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "named_ranges",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "nr_simple_cell": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "SingleCell",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$2",
+              "value": 42
+            },
+            "actual": {
+              "name": "SingleCell",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$2",
+              "value": 42
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: single cell"
+          }
+        },
+        "nr_cell_range": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "DataRange",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$3:$D$3"
+            },
+            "actual": {
+              "name": "DataRange",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$3:$D$3"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: cell range"
+          }
+        },
+        "nr_formula_ref": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "TaxRate",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$4",
+              "value": 0.08
+            },
+            "actual": {
+              "name": "TaxRate",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$4",
+              "value": 0.08
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Named range: used in formula"
+          }
+        },
+        "nr_sheet_scope": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "LocalName",
+              "scope": "sheet",
+              "refers_to": "named_ranges!$B$5",
+              "value": "local"
+            },
+            "actual": {
+              "name": "LocalName",
+              "scope": "sheet",
+              "refers_to": "named_ranges!$B$5",
+              "value": "local"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: sheet-scoped"
+          }
+        },
+        "nr_cross_sheet": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "OtherSheet",
+              "scope": "workbook",
+              "refers_to": "Targets!$A$1"
+            },
+            "actual": {
+              "name": "OtherSheet",
+              "scope": "workbook",
+              "refers_to": "Targets!$A$1"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: cross-sheet reference"
+          }
+        },
+        "nr_special_chars": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "name": "_my_range",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$7"
+            },
+            "actual": {
+              "name": "_my_range",
+              "scope": "workbook",
+              "refers_to": "named_ranges!$B$7"
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Named range: underscore name"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "tables",
+      "library": "apache-poi",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "tbl_basic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "SalesData",
+                "ref": "E2:G5",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Name",
+                  "Qty",
+                  "Price"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "SalesData",
+                "ref": "E2:G5",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Name",
+                  "Qty",
+                  "Price"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: basic 3-col"
+          }
+        },
+        "tbl_with_totals": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "Summary",
+                "ref": "E7:G11",
+                "header_row": true,
+                "totals_row": true,
+                "style": "TableStyleLight1",
+                "columns": [
+                  "Item",
+                  "Count",
+                  "Total"
+                ],
+                "totals_row_count": 1
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "Summary",
+                "ref": "E7:G11",
+                "header_row": true,
+                "totals_row": true,
+                "style": "TableStyleLight1",
+                "columns": [
+                  "Item",
+                  "Count",
+                  "Total"
+                ],
+                "totals_row_count": 1
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: with totals row"
+          }
+        },
+        "tbl_no_style": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "PlainTable",
+                "ref": "E13:F16",
+                "header_row": true,
+                "totals_row": false,
+                "style": null,
+                "columns": [
+                  "Key",
+                  "Value"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "PlainTable",
+                "ref": "E13:F16",
+                "header_row": true,
+                "totals_row": false,
+                "style": null,
+                "columns": [
+                  "Key",
+                  "Value"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: no style"
+          }
+        },
+        "tbl_single_col": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "SingleCol",
+                "ref": "E18:E21",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium2",
+                "columns": [
+                  "Score"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "SingleCol",
+                "ref": "E18:E21",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium2",
+                "columns": [
+                  "Score"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: single column"
+          }
+        },
+        "tbl_single_row": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "EmptyTable",
+                "ref": "E23:G23",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "EmptyTable",
+                "ref": "E23:G23",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: header only (no data rows)"
+          }
+        },
+        "tbl_autofilter": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "Filtered",
+                "ref": "E25:G28",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Region",
+                  "Sales",
+                  "Year"
+                ],
+                "autofilter": true
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "Filtered",
+                "ref": "E25:G28",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Region",
+                  "Sales",
+                  "Year"
+                ],
+                "autofilter": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: with autoFilter"
+          }
+        }
+      },
+      "notes": null
+    },
+    {
+      "feature": "tables",
+      "library": "excelize",
+      "scores": {
+        "read": null,
+        "write": 3
+      },
+      "test_cases": {
+        "tbl_basic": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "SalesData",
+                "ref": "E2:G5",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Name",
+                  "Qty",
+                  "Price"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "SalesData",
+                "ref": "E2:G5",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Name",
+                  "Qty",
+                  "Price"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: basic 3-col"
+          }
+        },
+        "tbl_with_totals": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "Summary",
+                "ref": "E7:G11",
+                "header_row": true,
+                "totals_row": true,
+                "style": "TableStyleLight1",
+                "columns": [
+                  "Item",
+                  "Count",
+                  "Total"
+                ],
+                "totals_row_count": 1
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "Summary",
+                "ref": "E7:G11",
+                "header_row": true,
+                "totals_row": true,
+                "style": "TableStyleLight1",
+                "columns": [
+                  "Item",
+                  "Count",
+                  "Total"
+                ],
+                "totals_row_count": 1
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: with totals row"
+          }
+        },
+        "tbl_no_style": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "PlainTable",
+                "ref": "E13:F16",
+                "header_row": true,
+                "totals_row": false,
+                "style": null,
+                "columns": [
+                  "Key",
+                  "Value"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "PlainTable",
+                "ref": "E13:F16",
+                "header_row": true,
+                "totals_row": false,
+                "style": null,
+                "columns": [
+                  "Key",
+                  "Value"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "basic",
+            "label": "Table: no style"
+          }
+        },
+        "tbl_single_col": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "SingleCol",
+                "ref": "E18:E21",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium2",
+                "columns": [
+                  "Score"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "SingleCol",
+                "ref": "E18:E21",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium2",
+                "columns": [
+                  "Score"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: single column"
+          }
+        },
+        "tbl_single_row": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "EmptyTable",
+                "ref": "E23:G23",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "EmptyTable",
+                "ref": "E23:G23",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "A",
+                  "B",
+                  "C"
+                ]
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: header only (no data rows)"
+          }
+        },
+        "tbl_autofilter": {
+          "write": {
+            "passed": true,
+            "expected": {
+              "table": {
+                "name": "Filtered",
+                "ref": "E25:G28",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Region",
+                  "Sales",
+                  "Year"
+                ],
+                "autofilter": true
+              }
+            },
+            "actual": {
+              "table": {
+                "name": "Filtered",
+                "ref": "E25:G28",
+                "header_row": true,
+                "totals_row": false,
+                "style": "TableStyleMedium9",
+                "columns": [
+                  "Region",
+                  "Sales",
+                  "Year"
+                ],
+                "autofilter": true
+              }
+            },
+            "notes": null,
+            "diagnostics": [],
+            "importance": "edge",
+            "label": "Table: with autoFilter"
+          }
+        }
+      },
+      "notes": null
+    }
+  ]
+}

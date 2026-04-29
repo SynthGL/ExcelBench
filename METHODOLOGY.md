@@ -2,7 +2,11 @@
 
 ## Purpose
 
-ExcelBench measures **feature fidelity** for Python Excel libraries -- how accurately they can read and write Excel features compared to native Excel. It also measures **performance** (throughput, memory) as a secondary axis.
+ExcelBench measures **feature fidelity** for spreadsheet libraries -- how accurately they can read and write Excel features compared to native Excel. It also measures **performance** (throughput, memory) as a secondary axis.
+
+The default public presentation is still **Python-first** because most users are choosing between Python libraries. Cross-language comparisons are supported as a secondary ecosystem-context tier.
+
+See `docs/trackers/cross-language-comparison-strategy.md` for the comparison policy.
 
 ## Fidelity vs Performance
 
@@ -44,8 +48,8 @@ Features are organized into tiers reflecting complexity:
 | **Tier 3** (Workbook Metadata) | named_ranges, tables | 2 |
 
 **Framework coverage:** 19 modeled features total.
-**Current public XLSX profile:** 17 tested features, where 16 are scoreable per-library in
-current results (pivot_tables is tested but N/A across adapters on macOS fixtures).
+**Fresh release snapshot:** 19 tested features, where 18 are scoreable per-library in
+the 2026-04-29 wheel-backed WolfXL 2.0 rerun (pivot_tables is tested but N/A across adapters on macOS fixtures).
 
 ## Scoring
 
@@ -70,3 +74,10 @@ Renderers produce human-readable output (README.md, matrix.csv, heatmap, HTML da
 ```bash
 uv run excelbench report --input results/xlsx/results.json --output results/xlsx
 ```
+
+## Comparison policy
+
+- **Primary tables** answer the Python replacement question.
+- **Secondary tables** can include cross-language libraries such as Apache POI, ClosedXML, Excelize, and ExcelJS.
+- Cross-language results should be labeled as ecosystem context unless the report is explicitly cross-language-focused.
+- The current rollout plan for the first two cross-language candidates lives in `docs/trackers/apache-poi-excelize-rollout-plan.md`.

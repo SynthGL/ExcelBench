@@ -35,6 +35,8 @@ test_files/
 # Results - regenerated on demand (but we may want to commit some)
 # results/
 results_dev*/
+results-cross-language-smoke*/
+tools/external-oracles/**/results-*/
 
 # IDE
 .idea/
