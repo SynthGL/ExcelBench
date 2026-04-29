@@ -158,26 +158,20 @@ def _collect_deltas(
             )
         return
     if isinstance(left, list) and isinstance(right, list):
-        left_sorted = sorted(left, key=_sort_key)
-        right_sorted = sorted(right, key=_sort_key)
-        if left_sorted == right_sorted:
+        if left == right:
             return
-        max_len = max(len(left_sorted), len(right_sorted))
+        max_len = max(len(left), len(right))
         for index in range(max_len):
             _collect_deltas(
                 category=category,
                 path=f"{path}[{index}]",
-                left=left_sorted[index] if index < len(left_sorted) else None,
-                right=right_sorted[index] if index < len(right_sorted) else None,
+                left=left[index] if index < len(left) else None,
+                right=right[index] if index < len(right) else None,
                 deltas=deltas,
             )
         return
     if left != right:
         deltas.append(SemanticDelta(category=category, path=path, left=left, right=right))
-
-
-def _sort_key(value: Any) -> str:
-    return json.dumps(value, sort_keys=True, default=str)
 
 
 def _short(value: Any) -> str:

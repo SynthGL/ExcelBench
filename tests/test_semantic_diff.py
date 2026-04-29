@@ -7,8 +7,8 @@ from openpyxl import Workbook
 from openpyxl.comments import Comment
 from openpyxl.styles import PatternFill
 
-from excelbench.harness.semantic_diff import diff_workbooks, write_diff_artifacts
-from excelbench.harness.workbook_snapshot import snapshot_workbook
+from excelbench.harness.semantic_diff import compare_snapshots, diff_workbooks, write_diff_artifacts
+from excelbench.harness.workbook_snapshot import WorkbookSnapshot, snapshot_workbook
 
 
 def _write_workbook(path: Path, *, value: str = "Revenue", fill: str = "FFFF00") -> None:
@@ -50,6 +50,22 @@ def test_diff_workbooks_reports_category_counts(tmp_path: Path) -> None:
 
     assert not diff.passed
     assert diff.category_counts()["cells"] >= 1
+
+
+def test_compare_snapshots_preserves_list_order() -> None:
+    left = WorkbookSnapshot(
+        workbook="left.xlsx",
+        categories={"sheets": {"names": ["Summary", "Data"]}},
+    )
+    right = WorkbookSnapshot(
+        workbook="right.xlsx",
+        categories={"sheets": {"names": ["Data", "Summary"]}},
+    )
+
+    diff = compare_snapshots(left, right)
+
+    assert not diff.passed
+    assert [delta.path for delta in diff.deltas] == ["sheets.names[0]", "sheets.names[1]"]
 
 
 def test_write_diff_artifacts(tmp_path: Path) -> None:

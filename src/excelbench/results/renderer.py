@@ -880,6 +880,7 @@ def _render_why_failed(results: BenchmarkResults, path: Path) -> None:
         for tr in score.test_results:
             rows.append((score.feature, score.library, tr))
     if not any(not tr.passed for _, _, tr in rows):
+        path.unlink(missing_ok=True)
         return
     path.write_text(render_why_failed(rows))
 
