@@ -467,7 +467,6 @@ Outputs:
 
 1. Run benchmark with stable knobs (`--warmup`, `--iters`, fixed adapter set) and commit code before each run.
 2. Review `perf/results.json` metadata and confirm same profile, CPU, core count, memory, Python, and adapter build info.
-3. Compare `perf/matrix.csv` columns `read_cv`/`write_cv` and `regression_status`. Treat `confidence_note=high` as noisy and rerun.
+3. Compare `perf/matrix.csv` columns `read_tail_ratio`/`write_tail_ratio` and `regression_status`. Treat `confidence_note=high` as noisy and rerun.
 4. For regression gates, compare against `results/perf/history.jsonl` median of recent samples (last 5, min 3).
-5. Investigate any `regressed:>10%` rows; require two consecutive confirmations before escalating.
-
+5. Investigate any `regressed:<pct>%` row above the configured threshold, such as `regressed:12.3%`; require two consecutive confirmations before escalating.

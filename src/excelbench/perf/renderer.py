@@ -337,9 +337,10 @@ def _fmt_p50_p95_ms(perf: dict[str, Any] | None, op: str) -> str:
 def render_perf_csv(results: PerfResults, path: Path) -> None:
     data = perf_results_to_json_dict(results)
     history_path = path.parent / "history.jsonl"
+    history_entries = _load_matching_history_entries(data, history_path)
     lines = [
         "library,feature,read_p50_wall_ms,read_p95_wall_ms,read_op_count,read_op_unit,read_p50_units_per_sec,"
-        "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec,read_cv,write_cv,confidence_note,regression_status",
+        "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec,read_tail_ratio,write_tail_ratio,confidence_note,regression_status",
     ]
     for r in data["results"]:
         perf = r.get("perf") or {}
@@ -364,9 +365,9 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
         def _f(v: Any) -> str:
             return "" if v is None else str(v)
 
-        read_cv = _cv(read_wall)
-        write_cv = _cv(write_wall)
-        reg_status = _regression_status(data, r, history_path=history_path)
+        read_tail_ratio = _tail_ratio(read_wall)
+        write_tail_ratio = _tail_ratio(write_wall)
+        reg_status = _regression_status(history_entries, r)
         lines.append(
             ",".join(
                 [
@@ -382,9 +383,16 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
                     _f(write_count),
                     _f(write_unit),
                     _rate(write_count, write_wall.get("p50")),
-                    _f(read_cv),
-                    _f(write_cv),
-                    _f("high" if ((read_cv or 0)>0.20 or (write_cv or 0)>0.20) else "ok"),
+                    _f(read_tail_ratio),
+                    _f(write_tail_ratio),
+                    _f(
+                        "high"
+                        if (
+                            (read_tail_ratio or 0) > 0.20
+                            or (write_tail_ratio or 0) > 0.20
+                        )
+                        else "ok"
+                    ),
                     reg_status,
                 ]
             )
@@ -423,7 +431,7 @@ def append_perf_history(results: PerfResults, history_path: Path) -> None:
         f.write(json.dumps(entry) + "\n")
 
 
-def _cv(wall: dict[str, Any]) -> float | None:
+def _tail_ratio(wall: dict[str, Any]) -> float | None:
     p50 = wall.get("p50")
     p95 = wall.get("p95")
     try:
@@ -437,29 +445,43 @@ def _cv(wall: dict[str, Any]) -> float | None:
         return None
 
 
-def _regression_status(
+def _load_matching_history_entries(
     data: dict[str, Any],
-    row: dict[str, Any],
-    *,
     history_path: Path,
-    threshold_pct: float = 10.0,
-) -> str:
+) -> list[dict[str, Any]]:
     if not history_path.exists():
-        return "no_history"
+        return []
     metadata = data.get("metadata", {})
     current_profile = metadata.get("profile")
     current_config = metadata.get("config")
-    vals: list[float] = []
+    entries: list[dict[str, Any]] = []
     for line in history_path.read_text().splitlines():
         try:
             entry = json.loads(line)
             if entry.get("profile") != current_profile or entry.get("config") != current_config:
                 continue
+            entries.append(entry)
+        except json.JSONDecodeError:
+            continue
+    return entries
+
+
+def _regression_status(
+    history_entries: list[dict[str, Any]],
+    row: dict[str, Any],
+    *,
+    threshold_pct: float = 10.0,
+) -> str:
+    if not history_entries:
+        return "no_history"
+    vals: list[float] = []
+    for entry in history_entries:
+        try:
             sample = entry.get("p50_wall_ms", {}).get(row["library"], {}).get(row["feature"], {})
             rv = sample.get("read_p50")
             if rv is not None:
                 vals.append(float(rv))
-        except (TypeError, ValueError, KeyError, json.JSONDecodeError):
+        except (TypeError, ValueError, KeyError):
             continue
     if len(vals) < 3:
         return "insufficient_history"
