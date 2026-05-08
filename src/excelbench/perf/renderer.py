@@ -338,9 +338,26 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
     data = perf_results_to_json_dict(results)
     history_path = path.parent / "history.jsonl"
     history_entries = _load_matching_history_entries(data, history_path)
+    header_columns = [
+        "library",
+        "feature",
+        "read_p50_wall_ms",
+        "read_p95_wall_ms",
+        "read_op_count",
+        "read_op_unit",
+        "read_p50_units_per_sec",
+        "write_p50_wall_ms",
+        "write_p95_wall_ms",
+        "write_op_count",
+        "write_op_unit",
+        "write_p50_units_per_sec",
+        "read_tail_ratio",
+        "write_tail_ratio",
+        "confidence_note",
+        "regression_status",
+    ]
     lines = [
-        "library,feature,read_p50_wall_ms,read_p95_wall_ms,read_op_count,read_op_unit,read_p50_units_per_sec,"
-        "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec,read_tail_ratio,write_tail_ratio,confidence_note,regression_status",
+        ",".join(header_columns),
     ]
     for r in data["results"]:
         perf = r.get("perf") or {}
