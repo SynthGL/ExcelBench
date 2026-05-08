@@ -54,6 +54,7 @@ def explain_diagnostic(
             probable_cause=diagnostic.probable_cause
             or "library/adapter does not implement the requested feature surface",
             next_step="treat as unsupported capability, not a semantic regression",
+            tag="unsupported",
         )
 
     if diagnostic.root_cause_code and diagnostic.suggested_next_step:
