@@ -285,9 +285,9 @@ def _compute_perf_p50_deltas(
             if (
                 isinstance(prev_val, (int, float))
                 and isinstance(curr_val, (int, float))
-                and curr_val != 0
+                and prev_val != 0
             ):
-                deltas.append((prev_val - curr_val) / curr_val * 100)
+                deltas.append((prev_val - curr_val) / prev_val * 100)
     return deltas
 
 
