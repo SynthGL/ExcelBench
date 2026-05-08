@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from excelbench.results.dashboard import _build_dashboard
 
 
@@ -90,7 +92,7 @@ def test_dashboard_filters_pyumya_and_shows_modify_column() -> None:
     assert "pyumya" not in doc
 
 
-def test_dashboard_includes_delta_since_last_run(tmp_path) -> None:
+def test_dashboard_includes_delta_since_last_run(tmp_path: Path) -> None:
     fidelity_history = tmp_path / "history.jsonl"
     fidelity_history.write_text(
         '{"scores":{"openpyxl":{"cell_values":{"read":2,"write":2}}}}\n'
