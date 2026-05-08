@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from excelbench.results.dashboard import _build_dashboard
 
 
@@ -88,3 +90,32 @@ def test_dashboard_filters_pyumya_and_shows_modify_column() -> None:
     assert "| wolfxl | R+W | Patch |" in doc
     assert "| openpyxl | R+W | Rewrite |" in doc
     assert "pyumya" not in doc
+
+
+def test_dashboard_includes_delta_since_last_run(tmp_path: Path) -> None:
+    fidelity_history = tmp_path / "history.jsonl"
+    fidelity_history.write_text(
+        '{"scores":{"openpyxl":{"cell_values":{"read":2,"write":2}}}}\n'
+        '{"scores":{"openpyxl":{"cell_values":{"read":3,"write":1}}}}\n'
+    )
+    perf_history = tmp_path / "perf_history.jsonl"
+    perf_history.write_text(
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":10,"write_p50":20}}}}\n'
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":8,"write_p50":25}}}}\n'
+    )
+    fidelity = {
+        "metadata": {},
+        "libraries": {"openpyxl": {"capabilities": ["read", "write"]}},
+        "results": [],
+    }
+    doc = "\n".join(
+        _build_dashboard(
+            fidelity,
+            perf=None,
+            fidelity_history_path=fidelity_history,
+            perf_history_path=perf_history,
+        )
+    )
+    assert "## Delta Since Last Run" in doc
+    assert "Fidelity score changes" in doc
+    assert "Median read throughput" in doc

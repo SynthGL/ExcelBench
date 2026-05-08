@@ -29,6 +29,7 @@ def test_explain_diagnostic_classifies_style_drift() -> None:
 
     assert explanation is not None
     assert explanation.code == "style_drift"
+    assert explanation.tag == "style"
 
 
 def test_explain_test_failure_classifies_formula_payload() -> None:
@@ -45,3 +46,4 @@ def test_explain_test_failure_classifies_formula_payload() -> None:
 
     assert explanation is not None
     assert explanation.code == "formula_cache_or_formula_drift"
+    assert explanation.tag == "formula"

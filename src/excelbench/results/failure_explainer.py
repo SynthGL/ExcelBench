@@ -18,6 +18,7 @@ class FailureExplanation:
     summary: str
     probable_cause: str
     next_step: str
+    tag: str
 
     def to_json_dict(self) -> JSONDict:
         return {
@@ -25,6 +26,7 @@ class FailureExplanation:
             "summary": self.summary,
             "probable_cause": self.probable_cause,
             "next_step": self.next_step,
+            "tag": self.tag,
         }
 
 
@@ -60,6 +62,7 @@ def explain_diagnostic(
             summary=diagnostic.probable_cause or diagnostic.adapter_message,
             probable_cause=diagnostic.probable_cause or diagnostic.adapter_message,
             next_step=diagnostic.suggested_next_step,
+            tag=diagnostic.root_cause_code or "uncategorized",
         )
     message = f"{diagnostic.adapter_message} {diagnostic.probable_cause or ''}".lower()
     payload_text = f"{expected or {}} {actual or {}}".lower()
@@ -116,6 +119,7 @@ def _classify_payload(expected: JSONDict, actual: JSONDict) -> FailureExplanatio
             "adapter raised instead of returning comparable workbook data",
             "adapter/runtime error interrupted the assertion path",
             "open the diagnostic adapter message and reproduce the adapter call directly",
+            "exception",
         )
     if "formula" in expected_keys or "formula" in actual_keys or "cached" in text:
         return FailureExplanation(
@@ -123,6 +127,7 @@ def _classify_payload(expected: JSONDict, actual: JSONDict) -> FailureExplanatio
             "formula text or cached formula result drifted",
             "formula preservation and cached-value handling differ between libraries",
             "inspect formula XML and cached value handling for the target cell",
+            "formula",
         )
     if {"bg_color", "font_color", "number_format", "format"} & expected_keys or "style" in text:
         return FailureExplanation(
@@ -131,6 +136,7 @@ def _classify_payload(expected: JSONDict, actual: JSONDict) -> FailureExplanatio
             "style normalization, default style handling, or writer formatting support "
             "is incomplete",
             "diff styles.xml and the adapter's cell-format read/write path",
+            "style",
         )
     return _classify_text("", text)
 
@@ -145,6 +151,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "adapter does not support this feature surface",
                 "the library or adapter has no implementation for this operation",
                 "check adapter capability gating before treating this as semantic drift",
+                "unsupported",
             ),
         ),
         (
@@ -154,6 +161,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "cell style metadata changed",
                 "formatting was dropped, defaulted, or normalized differently",
                 "inspect styles.xml and the adapter's style mapping",
+                "style",
             ),
         ),
         (
@@ -163,6 +171,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "table metadata changed",
                 "table XML, totals-row state, or auto-filter metadata was not preserved",
                 "inspect xl/tables/table*.xml and worksheet table relationships",
+                "table",
             ),
         ),
         (
@@ -172,6 +181,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "image or drawing relationship changed",
                 "media part may exist but worksheet drawing rels or anchors do not match",
                 "inspect drawing XML, drawing rels, and xl/media package parts",
+                "drawing",
             ),
         ),
         (
@@ -181,6 +191,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "named range metadata changed",
                 "workbook-level vs sheet-level defined-name scope was lost or rewritten",
                 "inspect workbook.xml definedNames and localSheetId values",
+                "named_range",
             ),
         ),
         (
@@ -190,6 +201,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "merged-cell metadata changed",
                 "merged range XML or non-anchor cell handling differs",
                 "inspect mergeCells in the worksheet XML and subordinate cell behavior",
+                "merge",
             ),
         ),
         (
@@ -199,6 +211,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "data validation metadata changed",
                 "validation type, formula, or target range was dropped or rewritten",
                 "inspect dataValidations in the worksheet XML",
+                "validation",
             ),
         ),
         (
@@ -208,6 +221,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "hyperlink target or display metadata changed",
                 "hyperlink rel target, tooltip, or internal location was not preserved",
                 "inspect worksheet hyperlinks and worksheet rels",
+                "hyperlink",
             ),
         ),
         (
@@ -217,6 +231,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "comment metadata changed",
                 "legacy comment text, author, or VML relationship was not preserved",
                 "inspect comments XML plus VML drawing relationships",
+                "comment",
             ),
         ),
         (
@@ -226,6 +241,7 @@ def _classify_text(message: str, payload_text: str) -> FailureExplanation | None
                 "freeze pane settings changed",
                 "pane split/top-left metadata was dropped or normalized incorrectly",
                 "inspect sheetViews/pane in the worksheet XML",
+                "freeze_pane",
             ),
         ),
     ]
