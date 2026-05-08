@@ -433,22 +433,27 @@ class XlwtAdapter(WriteOnlyAdapter):
         ws.write_merge(r1, r2, c1, c2, "")
 
     def add_conditional_format(self, workbook: Any, sheet: str, rule: JSONDict) -> None:
-        pass  # xlwt does not support conditional formatting
+        self.unsupported_operation(
+            "add_conditional_format", "xlwt cannot author conditional formatting"
+        )
 
     def add_data_validation(self, workbook: Any, sheet: str, validation: JSONDict) -> None:
-        pass  # xlwt does not support data validation
+        self.unsupported_operation("add_data_validation", "xlwt cannot author data validations")
 
     def add_hyperlink(self, workbook: Any, sheet: str, link: JSONDict) -> None:
-        pass  # xlwt does not support hyperlinks via write_url
+        self.unsupported_operation(
+            "add_hyperlink",
+            "xlwt hyperlink metadata is not supported in this adapter",
+        )
 
     def add_image(self, workbook: Any, sheet: str, image: JSONDict) -> None:
-        pass  # xlwt does not support images
+        self.unsupported_operation("add_image", "xlwt cannot embed images in this adapter")
 
     def add_pivot_table(self, workbook: Any, sheet: str, pivot: JSONDict) -> None:
-        pass  # xlwt does not support pivot tables
+        self.unsupported_operation("add_pivot_table", "xlwt cannot author pivot tables")
 
     def add_comment(self, workbook: Any, sheet: str, comment: JSONDict) -> None:
-        pass  # xlwt does not support comments
+        self.unsupported_operation("add_comment", "xlwt cannot author comments")
 
     def set_freeze_panes(self, workbook: xlwt.Workbook, sheet: str, settings: JSONDict) -> None:
         ws = self._get_sheet(workbook, sheet)

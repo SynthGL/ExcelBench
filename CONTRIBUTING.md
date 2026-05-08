@@ -27,6 +27,7 @@ uv run excelbench benchmark --tests fixtures/excel --output results
 2. Export it from `src/excelbench/harness/adapters/__init__.py`.
 3. Add to `get_all_adapters()` if it should run by default.
 4. Verify read/write capability flags.
+5. For unsupported feature surfaces, raise `UnsupportedAdapterOperationError` via `self.unsupported_operation(...)` rather than silent no-ops so the harness can classify capability gaps separately from regressions.
 
 ## Tests
 ```bash
