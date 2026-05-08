@@ -11,6 +11,7 @@ from pathlib import Path
 
 import pytest
 
+from excelbench.harness.adapters.base import UnsupportedAdapterOperationError
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 from excelbench.harness.adapters.pyexcel_adapter import PyexcelAdapter
 from excelbench.harness.adapters.pylightxl_adapter import PylightxlAdapter
@@ -242,21 +243,15 @@ class TestPyexcelWriteRoundtrip:
         pyxl.write_cell_value(wb, "Auto", "A1", CellValue(type=CellType.STRING, value="x"))
         assert "Auto" in wb["sheets"]
 
-    def test_write_noop_methods(self, pyxl: PyexcelAdapter) -> None:
+    def test_write_unsupported_methods_raise(self, pyxl: PyexcelAdapter) -> None:
         wb = pyxl.create_workbook()
         pyxl.add_sheet(wb, "S1")
-        # All no-ops — should not raise
-        pyxl.write_cell_format(wb, "S1", "A1", CellFormat())
-        pyxl.set_row_height(wb, "S1", 1, 30.0)
-        pyxl.set_column_width(wb, "S1", "A", 20.0)
-        pyxl.merge_cells(wb, "S1", "A1:B2")
-        pyxl.add_conditional_format(wb, "S1", {})
-        pyxl.add_data_validation(wb, "S1", {})
-        pyxl.add_hyperlink(wb, "S1", {})
-        pyxl.add_image(wb, "S1", {})
-        pyxl.add_pivot_table(wb, "S1", {})
-        pyxl.add_comment(wb, "S1", {})
-        pyxl.set_freeze_panes(wb, "S1", {})
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pyxl.write_cell_format(wb, "S1", "A1", CellFormat())
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pyxl.set_row_height(wb, "S1", 1, 30.0)
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pyxl.set_column_width(wb, "S1", "A", 20.0)
 
     def test_save_empty_sheet(
         self, pyxl: PyexcelAdapter, opxl: OpenpyxlAdapter, tmp_path: Path
@@ -960,3 +955,13 @@ class TestRustCalamineRead:
         assert adapter.read_row_height(wb, "S1", 1) is None
         assert adapter.read_column_width(wb, "S1", "A") is None
         adapter.close_workbook(wb)
+
+
+class TestPylightxlUnsupportedWrite:
+    def test_unsupported_methods_raise(self, plxl: PylightxlAdapter) -> None:
+        wb = plxl.create_workbook()
+        plxl.add_sheet(wb, "S1")
+        with pytest.raises(UnsupportedAdapterOperationError):
+            plxl.write_cell_format(wb, "S1", "A1", CellFormat())
+        with pytest.raises(UnsupportedAdapterOperationError):
+            plxl.merge_cells(wb, "S1", "A1:B2")

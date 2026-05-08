@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from excelbench.models import Diagnostic, TestResult
+from excelbench.models import Diagnostic, DiagnosticCategory, TestResult
 
 JSONDict = dict[str, Any]
 
@@ -45,6 +45,15 @@ def explain_diagnostic(
     actual: JSONDict | None = None,
 ) -> FailureExplanation | None:
     """Classify a diagnostic plus optional expected/actual payloads."""
+    if diagnostic.category == DiagnosticCategory.UNSUPPORTED_FEATURE:
+        return FailureExplanation(
+            code="unsupported_feature",
+            summary="adapter reported this operation as unsupported",
+            probable_cause=diagnostic.probable_cause
+            or "library/adapter does not implement the requested feature surface",
+            next_step="treat as unsupported capability, not a semantic regression",
+        )
+
     if diagnostic.root_cause_code and diagnostic.suggested_next_step:
         return FailureExplanation(
             code=diagnostic.root_cause_code,

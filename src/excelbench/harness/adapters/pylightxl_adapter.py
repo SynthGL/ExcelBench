@@ -246,7 +246,7 @@ class PylightxlAdapter(ExcelAdapter):
         cell: str,
         format: CellFormat,
     ) -> None:
-        pass  # Not supported
+        self.unsupported_operation("write_cell_format", "pylightxl does not implement this feature")
 
     def write_cell_border(
         self,
@@ -255,7 +255,7 @@ class PylightxlAdapter(ExcelAdapter):
         cell: str,
         border: BorderInfo,
     ) -> None:
-        pass  # Not supported
+        self.unsupported_operation("write_cell_border", "pylightxl does not implement this feature")
 
     def set_row_height(
         self,
@@ -264,7 +264,7 @@ class PylightxlAdapter(ExcelAdapter):
         row: int,
         height: float,
     ) -> None:
-        pass  # Not supported
+        self.unsupported_operation("set_row_height", "pylightxl does not implement this feature")
 
     def set_column_width(
         self,
@@ -273,7 +273,7 @@ class PylightxlAdapter(ExcelAdapter):
         column: str,
         width: float,
     ) -> None:
-        pass  # Not supported
+        self.unsupported_operation("set_column_width", "pylightxl does not implement this feature")
 
     def save_workbook(self, workbook: Any, path: Path) -> None:
         # pylightxl tries to read an existing file as a ZIP for in-place update.
@@ -287,25 +287,29 @@ class PylightxlAdapter(ExcelAdapter):
     # =========================================================================
 
     def merge_cells(self, workbook: Any, sheet: str, cell_range: str) -> None:
-        pass  # Not supported
+        self.unsupported_operation("merge_cells", "pylightxl does not implement this feature")
 
     def add_conditional_format(self, workbook: Any, sheet: str, rule: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation(
+            "add_conditional_format", "pylightxl does not implement this feature"
+        )
 
     def add_data_validation(self, workbook: Any, sheet: str, validation: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation(
+            "add_data_validation", "pylightxl does not implement this feature"
+        )
 
     def add_hyperlink(self, workbook: Any, sheet: str, link: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation("add_hyperlink", "pylightxl does not implement this feature")
 
     def add_image(self, workbook: Any, sheet: str, image: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation("add_image", "pylightxl does not implement this feature")
 
     def add_pivot_table(self, workbook: Any, sheet: str, pivot: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation("add_pivot_table", "pylightxl does not implement this feature")
 
     def add_comment(self, workbook: Any, sheet: str, comment: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation("add_comment", "pylightxl does not implement this feature")
 
     def set_freeze_panes(self, workbook: Any, sheet: str, settings: JSONDict) -> None:
-        pass  # Not supported
+        self.unsupported_operation("set_freeze_panes", "pylightxl does not implement this feature")

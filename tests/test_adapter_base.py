@@ -7,7 +7,11 @@ from typing import Any
 
 import pytest
 
-from excelbench.harness.adapters.base import ReadOnlyAdapter, WriteOnlyAdapter
+from excelbench.harness.adapters.base import (
+    ReadOnlyAdapter,
+    UnsupportedAdapterOperationError,
+    WriteOnlyAdapter,
+)
 from excelbench.models import (
     BorderInfo,
     CellFormat,
@@ -344,3 +348,15 @@ def test_tier3_defaults_raise_not_implemented() -> None:
         adapter.read_tables(None, "S")
     with pytest.raises(NotImplementedError, match="table writes"):
         adapter.add_table(None, "S", {})
+
+
+def test_unsupported_operation_maps_to_unsupported_diagnostic() -> None:
+    adapter = ConcreteReadOnly()
+    with pytest.raises(UnsupportedAdapterOperationError) as exc_info:
+        adapter.unsupported_operation("write_cell_format", "missing backend feature")
+    diagnostic = adapter.map_error_to_diagnostic(
+        exc=exc_info.value,
+        feature="cell_format",
+        operation=OperationType.WRITE,
+    )
+    assert diagnostic.category == DiagnosticCategory.UNSUPPORTED_FEATURE

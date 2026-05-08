@@ -223,7 +223,7 @@ class PyexcelAdapter(ExcelAdapter):
         cell: str,
         format: CellFormat,
     ) -> None:
-        pass  # pyexcel does not support formatting
+        self.unsupported_operation("write_cell_format", "pyexcel exposes value-only cells")
 
     def write_cell_border(
         self,
@@ -232,41 +232,55 @@ class PyexcelAdapter(ExcelAdapter):
         cell: str,
         border: BorderInfo,
     ) -> None:
-        pass  # pyexcel does not support borders
+        self.unsupported_operation("write_cell_border", "pyexcel exposes value-only cells")
 
     def set_row_height(self, workbook: Any, sheet: str, row: int, height: float) -> None:
-        pass
+        self.unsupported_operation(
+            "set_row_height", "pyexcel does not expose row dimension writing"
+        )
 
     def set_column_width(self, workbook: Any, sheet: str, column: str, width: float) -> None:
-        pass
+        self.unsupported_operation(
+            "set_column_width", "pyexcel does not expose column dimension writing"
+        )
 
     # =========================================================================
     # Tier 2 Write Operations
     # =========================================================================
 
     def merge_cells(self, workbook: Any, sheet: str, cell_range: str) -> None:
-        pass
+        self.unsupported_operation("merge_cells", "pyexcel does not expose this worksheet feature")
 
     def add_conditional_format(self, workbook: Any, sheet: str, rule: JSONDict) -> None:
-        pass
+        self.unsupported_operation(
+            "add_conditional_format", "pyexcel does not expose this worksheet feature"
+        )
 
     def add_data_validation(self, workbook: Any, sheet: str, validation: JSONDict) -> None:
-        pass
+        self.unsupported_operation(
+            "add_data_validation", "pyexcel does not expose this worksheet feature"
+        )
 
     def add_hyperlink(self, workbook: Any, sheet: str, link: JSONDict) -> None:
-        pass
+        self.unsupported_operation(
+            "add_hyperlink", "pyexcel does not expose this worksheet feature"
+        )
 
     def add_image(self, workbook: Any, sheet: str, image: JSONDict) -> None:
-        pass
+        self.unsupported_operation("add_image", "pyexcel does not expose this worksheet feature")
 
     def add_pivot_table(self, workbook: Any, sheet: str, pivot: JSONDict) -> None:
-        pass
+        self.unsupported_operation(
+            "add_pivot_table", "pyexcel does not expose this worksheet feature"
+        )
 
     def add_comment(self, workbook: Any, sheet: str, comment: JSONDict) -> None:
-        pass
+        self.unsupported_operation("add_comment", "pyexcel does not expose this worksheet feature")
 
     def set_freeze_panes(self, workbook: Any, sheet: str, settings: JSONDict) -> None:
-        pass
+        self.unsupported_operation(
+            "set_freeze_panes", "pyexcel does not expose this worksheet feature"
+        )
 
     def save_workbook(self, workbook: WorkbookData, path: Path) -> None:
         book_dict: dict[str, list[list[Any]]] = {}

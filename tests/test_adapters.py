@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from excelbench.harness.adapters.base import UnsupportedAdapterOperationError
 from excelbench.harness.adapters.calamine_adapter import CalamineAdapter
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 from excelbench.harness.adapters.pylightxl_adapter import PylightxlAdapter
@@ -640,3 +641,19 @@ class TestXlrdXlsRead:
         assert xlrd_adapter.read_images(wb, "Data") == []
         assert xlrd_adapter.read_pivot_tables(wb, "Data") == []
         xlrd_adapter.close_workbook(wb)
+
+
+class TestXlwtUnsupportedOperations:
+    def test_unsupported_methods_raise(self, xlwt_adapter) -> None:
+        wb = xlwt_adapter.create_workbook()
+        xlwt_adapter.add_sheet(wb, "S1")
+        with pytest.raises(UnsupportedAdapterOperationError):
+            xlwt_adapter.add_conditional_format(wb, "S1", {})
+
+
+class TestCalamineCloseWorkbook:
+    def test_close_workbook_no_exception(
+        self, calamine_adapter: CalamineAdapter, sample_xlsx: Path
+    ) -> None:
+        wb = calamine_adapter.open_workbook(sample_xlsx)
+        calamine_adapter.close_workbook(wb)

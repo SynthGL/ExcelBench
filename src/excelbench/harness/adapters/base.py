@@ -18,6 +18,15 @@ from excelbench.models import (
 
 JSONDict = dict[str, Any]
 
+class UnsupportedAdapterOperationError(NotImplementedError):
+    """Structured exception for adapter operations a library cannot support."""
+
+    def __init__(self, *, adapter: str, operation: str, reason: str) -> None:
+        self.adapter = adapter
+        self.operation = operation
+        self.reason = reason
+        super().__init__(f"{adapter} does not support {operation}: {reason}")
+
 
 def _infer_diagnostic_category(exc: Exception) -> DiagnosticCategory:
     name = type(exc).__name__.lower()
@@ -28,7 +37,7 @@ def _infer_diagnostic_category(exc: Exception) -> DiagnosticCategory:
         return DiagnosticCategory.FILE_IO
     if isinstance(exc, (ValueError, TypeError, KeyError)):
         return DiagnosticCategory.INVALID_INPUT
-    if isinstance(exc, NotImplementedError):
+    if isinstance(exc, (NotImplementedError, UnsupportedAdapterOperationError)):
         return DiagnosticCategory.UNSUPPORTED_FEATURE
     if "not supported" in message or "unsupported" in message:
         return DiagnosticCategory.UNSUPPORTED_FEATURE
@@ -82,6 +91,12 @@ class ExcelAdapter(ABC):
         """Return whether this adapter supports reading the given file path."""
         suffix = path.suffix.lower()
         return suffix in self.supported_read_extensions
+
+    def unsupported_operation(self, operation: str, reason: str) -> None:
+        """Raise a structured unsupported-feature exception for adapter methods."""
+        raise UnsupportedAdapterOperationError(
+            adapter=self.name, operation=operation, reason=reason
+        )
 
 
     def map_error_to_diagnostic(
