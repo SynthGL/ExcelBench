@@ -128,7 +128,9 @@ class ExcelAdapter(ABC):
                 cell=cell,
             ),
             adapter_message=f"{type(exc).__name__}: {exc}",
-            probable_cause=probable_cause,
+            probable_cause=exc.reason
+            if isinstance(exc, UnsupportedAdapterOperationError)
+            else probable_cause,
         )
 
     def build_mismatch_diagnostic(

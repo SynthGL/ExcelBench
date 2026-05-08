@@ -12,6 +12,7 @@ Targets:
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import date
 from pathlib import Path
 from types import ModuleType
@@ -21,6 +22,7 @@ from unittest.mock import MagicMock, patch
 import openpyxl as _openpyxl
 import pytest
 
+from excelbench.harness.adapters.base import UnsupportedAdapterOperationError
 from excelbench.harness.adapters.calamine_adapter import (
     CalamineAdapter,
 )
@@ -306,12 +308,12 @@ class TestPyexcelCellRefAndTypes:
         border = pyexcel_adapter.read_cell_border(MagicMock(), "S1", "A1")
         assert isinstance(border, BorderInfo)
 
-    def test_write_cell_border(self, pyexcel_adapter: PyexcelAdapter) -> None:
-        """Line 235: write_cell_border is a no-op."""
+    def test_write_cell_border_unsupported(self, pyexcel_adapter: PyexcelAdapter) -> None:
+        """write_cell_border raises a structured unsupported-operation error."""
         wb = pyexcel_adapter.create_workbook()
         pyexcel_adapter.add_sheet(wb, "S1")
-        # Should not raise
-        pyexcel_adapter.write_cell_border(wb, "S1", "A1", BorderInfo())
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pyexcel_adapter.write_cell_border(wb, "S1", "A1", BorderInfo())
 
     def test_read_cell_format(self, pyexcel_adapter: PyexcelAdapter) -> None:
         """read_cell_format returns empty CellFormat."""
@@ -1047,21 +1049,26 @@ class TestPyexcelReadPaths:
         pyexcel_adapter.add_sheet(wb, "S1")  # Should not duplicate
         assert wb["_order"].count("S1") == 1
 
-    def test_write_no_op_methods(self, pyexcel_adapter: PyexcelAdapter) -> None:
-        """Tier 2 write methods are no-ops."""
+    def test_write_unsupported_methods_raise(self, pyexcel_adapter: PyexcelAdapter) -> None:
+        """Unsupported write methods raise structured capability-gap errors."""
         wb = pyexcel_adapter.create_workbook()
         pyexcel_adapter.add_sheet(wb, "S1")
-        pyexcel_adapter.merge_cells(wb, "S1", "A1:B2")
-        pyexcel_adapter.add_conditional_format(wb, "S1", {})
-        pyexcel_adapter.add_data_validation(wb, "S1", {})
-        pyexcel_adapter.add_hyperlink(wb, "S1", {})
-        pyexcel_adapter.add_image(wb, "S1", {})
-        pyexcel_adapter.add_pivot_table(wb, "S1", {})
-        pyexcel_adapter.add_comment(wb, "S1", {})
-        pyexcel_adapter.set_freeze_panes(wb, "S1", {})
-        pyexcel_adapter.set_row_height(wb, "S1", 1, 20.0)
-        pyexcel_adapter.set_column_width(wb, "S1", "A", 15.0)
-        pyexcel_adapter.write_cell_format(wb, "S1", "A1", CellFormat())
+        calls: list[Callable[[], None]] = [
+            lambda: pyexcel_adapter.merge_cells(wb, "S1", "A1:B2"),
+            lambda: pyexcel_adapter.add_conditional_format(wb, "S1", {}),
+            lambda: pyexcel_adapter.add_data_validation(wb, "S1", {}),
+            lambda: pyexcel_adapter.add_hyperlink(wb, "S1", {}),
+            lambda: pyexcel_adapter.add_image(wb, "S1", {}),
+            lambda: pyexcel_adapter.add_pivot_table(wb, "S1", {}),
+            lambda: pyexcel_adapter.add_comment(wb, "S1", {}),
+            lambda: pyexcel_adapter.set_freeze_panes(wb, "S1", {}),
+            lambda: pyexcel_adapter.set_row_height(wb, "S1", 1, 20.0),
+            lambda: pyexcel_adapter.set_column_width(wb, "S1", "A", 15.0),
+            lambda: pyexcel_adapter.write_cell_format(wb, "S1", "A1", CellFormat()),
+        ]
+        for call in calls:
+            with pytest.raises(UnsupportedAdapterOperationError):
+                call()
 
 
 # ═════════════════════════════════════════════════

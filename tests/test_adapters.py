@@ -1,7 +1,7 @@
 """Tests for python-calamine, pylightxl, and xlrd adapters."""
 
 import tempfile
-from collections.abc import Iterator
+from collections.abc import Callable, Iterator
 from datetime import date, datetime
 from pathlib import Path
 
@@ -343,30 +343,37 @@ class TestPylightxlWriteRead:
             path.unlink(missing_ok=True)
 
 
-class TestPylightxlFormatNoop:
-    """Verify formatting methods don't crash (they're no-ops)."""
+class TestPylightxlUnsupportedWrite:
+    """Verify unsupported write methods raise structured capability gaps."""
 
-    def test_write_format_noop(self, pylightxl_adapter: PylightxlAdapter) -> None:
+    def test_write_format_unsupported(self, pylightxl_adapter: PylightxlAdapter) -> None:
         wb = pylightxl_adapter.create_workbook()
         pylightxl_adapter.add_sheet(wb, "S1")
-        pylightxl_adapter.write_cell_format(wb, "S1", "A1", CellFormat(bold=True))
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pylightxl_adapter.write_cell_format(wb, "S1", "A1", CellFormat(bold=True))
 
-    def test_write_border_noop(self, pylightxl_adapter: PylightxlAdapter) -> None:
+    def test_write_border_unsupported(self, pylightxl_adapter: PylightxlAdapter) -> None:
         wb = pylightxl_adapter.create_workbook()
         pylightxl_adapter.add_sheet(wb, "S1")
-        pylightxl_adapter.write_cell_border(wb, "S1", "A1", BorderInfo())
+        with pytest.raises(UnsupportedAdapterOperationError):
+            pylightxl_adapter.write_cell_border(wb, "S1", "A1", BorderInfo())
 
-    def test_tier2_write_noops(self, pylightxl_adapter: PylightxlAdapter) -> None:
+    def test_tier2_write_unsupported(self, pylightxl_adapter: PylightxlAdapter) -> None:
         wb = pylightxl_adapter.create_workbook()
         pylightxl_adapter.add_sheet(wb, "S1")
-        pylightxl_adapter.merge_cells(wb, "S1", "A1:B1")
-        pylightxl_adapter.add_conditional_format(wb, "S1", {})
-        pylightxl_adapter.add_data_validation(wb, "S1", {})
-        pylightxl_adapter.add_hyperlink(wb, "S1", {})
-        pylightxl_adapter.add_image(wb, "S1", {})
-        pylightxl_adapter.add_pivot_table(wb, "S1", {})
-        pylightxl_adapter.add_comment(wb, "S1", {})
-        pylightxl_adapter.set_freeze_panes(wb, "S1", {})
+        calls: list[Callable[[], None]] = [
+            lambda: pylightxl_adapter.merge_cells(wb, "S1", "A1:B1"),
+            lambda: pylightxl_adapter.add_conditional_format(wb, "S1", {}),
+            lambda: pylightxl_adapter.add_data_validation(wb, "S1", {}),
+            lambda: pylightxl_adapter.add_hyperlink(wb, "S1", {}),
+            lambda: pylightxl_adapter.add_image(wb, "S1", {}),
+            lambda: pylightxl_adapter.add_pivot_table(wb, "S1", {}),
+            lambda: pylightxl_adapter.add_comment(wb, "S1", {}),
+            lambda: pylightxl_adapter.set_freeze_panes(wb, "S1", {}),
+        ]
+        for call in calls:
+            with pytest.raises(UnsupportedAdapterOperationError):
+                call()
 
 
 # =========================================================================
@@ -516,6 +523,11 @@ def xlrd_adapter() -> XlrdAdapter:
     return XlrdAdapter()
 
 
+@pytest.fixture
+def xlwt_adapter() -> XlwtAdapter:
+    return XlwtAdapter()
+
+
 class TestXlrdInfo:
     def test_name(self, xlrd_adapter: XlrdAdapter) -> None:
         assert xlrd_adapter.name == "xlrd"
@@ -648,8 +660,17 @@ class TestXlwtUnsupportedOperations:
     def test_unsupported_methods_raise(self, xlwt_adapter: XlwtAdapter) -> None:
         wb = xlwt_adapter.create_workbook()
         xlwt_adapter.add_sheet(wb, "S1")
-        with pytest.raises(UnsupportedAdapterOperationError):
-            xlwt_adapter.add_conditional_format(wb, "S1", {})
+        calls: list[Callable[[], None]] = [
+            lambda: xlwt_adapter.add_conditional_format(wb, "S1", {}),
+            lambda: xlwt_adapter.add_data_validation(wb, "S1", {}),
+            lambda: xlwt_adapter.add_hyperlink(wb, "S1", {}),
+            lambda: xlwt_adapter.add_image(wb, "S1", {}),
+            lambda: xlwt_adapter.add_pivot_table(wb, "S1", {}),
+            lambda: xlwt_adapter.add_comment(wb, "S1", {}),
+        ]
+        for call in calls:
+            with pytest.raises(UnsupportedAdapterOperationError):
+                call()
 
 
 class TestCalamineCloseWorkbook:
