@@ -652,3 +652,55 @@ def test_perf_workload_standardizes_size_and_phase_attribution(tmp_path: Path) -
     assert read_phase is not None and read_phase["parse"] > 0
     assert write_phase is not None and write_phase["write"] > 0
     assert write_phase["verify"] == 0.0
+
+
+def test_perf_metadata_includes_run_environment(tmp_path: Path) -> None:
+    suite = tmp_path / "suite"
+    suite.mkdir(parents=True, exist_ok=True)
+    wb = Workbook()
+    ws = wb.active
+    assert ws is not None
+    ws.title = "S1"
+    ws["A1"] = 1
+    (suite / "tier0").mkdir(parents=True, exist_ok=True)
+    wb.save(suite / "tier0" / "00_one.xlsx")
+    manifest = Manifest(
+        generated_at=datetime.now(UTC),
+        excel_version="test",
+        generator_version="test",
+        file_format="xlsx",
+        files=[
+            BenchFile(
+                path="tier0/00_one.xlsx",
+                feature="cell_values",
+                tier=0,
+                file_format="xlsx",
+                test_cases=[
+                    BenchCase(
+                        id="x",
+                        label="x",
+                        row=1,
+                        expected={
+                            "workload": {
+                                "scenario": "cell_values",
+                                "op": "cell_value",
+                                "sheet": "S1",
+                                "range": "A1:A1",
+                            }
+                        },
+                        importance=Importance.BASIC,
+                    )
+                ],
+            )
+        ],
+    )
+    write_manifest(manifest, suite / "manifest.json")
+    results = run_perf(
+        suite,
+        adapters=[OpenpyxlAdapter()],
+        warmup=0,
+        iters=1,
+        breakdown=False,
+    )
+    env = results.metadata.run_environment
+    assert env.core_count is None or env.core_count > 0

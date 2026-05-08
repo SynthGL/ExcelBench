@@ -16,6 +16,7 @@ from excelbench.perf.runner import (
     PerfMetadata,
     PerfOpResult,
     PerfResults,
+    PerfRunEnvironment,
     PerfStats,
 )
 
@@ -91,6 +92,8 @@ def test_perf_command_writes_outputs(tmp_path: Path) -> None:
     assert data["metadata"]["config"]["iters"] == 1
     assert data["metadata"]["config"]["iteration_policy"] == "fixed"
     assert "openpyxl" in data["libraries"]
+    assert "run_environment" in data["metadata"]
+    assert "cpu_model" in data["metadata"]["run_environment"]
 
 
 def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None:
@@ -109,6 +112,11 @@ def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None
                 iters=1,
                 iteration_policy="fixed",
                 breakdown=False,
+            ),
+            run_environment=PerfRunEnvironment(
+                cpu_model=None,
+                core_count=None,
+                memory_total_mb=None,
             ),
         ),
         libraries={
@@ -158,8 +166,10 @@ def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None
 
     markdown = readme.read_text()
     assert (
-        "| Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | "
-        "python-calamine (R p50 ms) |"
+        "| Feature | openpyxl (R p50/p95 ms) | openpyxl (W p50/p95 ms) | "
+        "python-calamine (R p50/p95 ms) |"
     ) in markdown
-    assert "| cell_values | 1.00 | 2.00 | 0.50 |" in markdown
+    assert "| cell_values | 1.00/1.00 | 2.00/2.00 | 0.50/0.50 |" in markdown
     assert markdown.count("**Tier 0") == 1
+    assert "Confidence note:" in markdown
+    assert "p50/p95" in markdown
