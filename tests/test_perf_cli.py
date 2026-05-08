@@ -16,6 +16,7 @@ from excelbench.perf.runner import (
     PerfMetadata,
     PerfOpResult,
     PerfResults,
+    PerfRunEnvironment,
     PerfStats,
 )
 
@@ -111,6 +112,11 @@ def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None
                 iters=1,
                 iteration_policy="fixed",
                 breakdown=False,
+            ),
+            run_environment=PerfRunEnvironment(
+                cpu_model=None,
+                core_count=None,
+                memory_total_mb=None,
             ),
         ),
         libraries={

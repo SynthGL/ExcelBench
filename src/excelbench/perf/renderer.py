@@ -426,9 +426,12 @@ def _cv(wall: dict[str, Any]) -> float | None:
     p50 = wall.get("p50")
     p95 = wall.get("p95")
     try:
-        if p50 in (None, 0) or p95 is None:
+        if p50 is None or p95 is None:
             return None
-        return round(max(float(p95) - float(p50), 0.0) / float(p50), 4)
+        p50_float = float(p50)
+        if p50_float == 0:
+            return None
+        return round(max(float(p95) - p50_float, 0.0) / p50_float, 4)
     except (TypeError, ValueError, ZeroDivisionError):
         return None
 
