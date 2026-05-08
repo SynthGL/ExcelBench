@@ -91,6 +91,8 @@ def test_perf_command_writes_outputs(tmp_path: Path) -> None:
     assert data["metadata"]["config"]["iters"] == 1
     assert data["metadata"]["config"]["iteration_policy"] == "fixed"
     assert "openpyxl" in data["libraries"]
+    assert "run_environment" in data["metadata"]
+    assert "cpu_model" in data["metadata"]["run_environment"]
 
 
 def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None:
@@ -163,3 +165,5 @@ def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None
     ) in markdown
     assert "| cell_values | 1.00 | 2.00 | 0.50 |" in markdown
     assert markdown.count("**Tier 0") == 1
+    assert "Confidence note:" in markdown
+    assert "p50/p95" in markdown

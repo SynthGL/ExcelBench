@@ -8,6 +8,8 @@ Design principles:
 
 from __future__ import annotations
 
+import os
+import platform
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
 from datetime import UTC, date, datetime, timedelta
@@ -68,6 +70,13 @@ class PerfFeatureResult:
 
 
 @dataclass(frozen=True)
+class PerfRunEnvironment:
+    cpu_model: str | None
+    core_count: int | None
+    memory_total_mb: float | None
+
+
+@dataclass(frozen=True)
 class PerfMetadata:
     benchmark_version: str
     run_date: datetime
@@ -77,6 +86,7 @@ class PerfMetadata:
     python: str
     commit: str | None
     config: PerfConfig
+    run_environment: PerfRunEnvironment
 
 
 @dataclass(frozen=True)
@@ -101,7 +111,6 @@ def run_perf(
     breakdown: bool = False,
     memory_mode: MemoryMode = "getrusage",
 ) -> PerfResults:
-    import platform as _platform
 
     from excelbench.generator.generate import load_manifest
     from excelbench.harness.adapters import get_all_adapters
@@ -137,9 +146,9 @@ def run_perf(
         benchmark_version=BENCHMARK_VERSION,
         run_date=datetime.now(UTC),
         excel_version=manifest.excel_version,
-        platform=f"{_platform.system()}-{_platform.machine()}",
+        platform=f"{platform.system()}-{platform.machine()}",
         profile=profile,
-        python=_platform.python_version(),
+        python=platform.python_version(),
         commit=_get_git_commit(),
         config=PerfConfig(
             warmup=warmup,
@@ -147,6 +156,7 @@ def run_perf(
             iteration_policy=iteration_policy_normalized,
             breakdown=breakdown,
         ),
+        run_environment=_collect_run_environment(),
     )
 
     libraries = {a.name: _library_info_dict(a.info) for a in adapters}
@@ -238,6 +248,7 @@ def perf_results_to_json_dict(results: PerfResults) -> dict[str, Any]:
             "python": results.metadata.python,
             "commit": results.metadata.commit,
             "config": asdict(results.metadata.config),
+            "run_environment": asdict(results.metadata.run_environment),
         },
         "libraries": results.libraries,
         "results": [_feature_result_to_dict(r) for r in results.results],
@@ -1704,3 +1715,22 @@ def run_one_iteration(
             )
 
     raise ValueError(f"kind must be 'read' or 'write'; got {kind!r}")
+
+
+def _collect_run_environment() -> PerfRunEnvironment:
+    cpu_model = platform.processor() or None
+    if not cpu_model:
+        cpu_model = os.environ.get("PROCESSOR_IDENTIFIER")
+    core_count = os.cpu_count()
+    mem_mb = None
+    try:
+        pages = os.sysconf("SC_PHYS_PAGES")
+        page_size = os.sysconf("SC_PAGE_SIZE")
+        mem_mb = float(pages * page_size) / (1024.0 * 1024.0)
+    except (AttributeError, OSError, ValueError):
+        mem_mb = None
+    return PerfRunEnvironment(
+        cpu_model=cpu_model,
+        core_count=core_count,
+        memory_total_mb=round(mem_mb, 2) if mem_mb is not None else None,
+    )

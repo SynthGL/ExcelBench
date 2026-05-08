@@ -622,3 +622,45 @@ def test_shape_fixtures_stale_corrupt_manifest_with_needs_1m(tmp_path: Path) -> 
 
     # Corrupt manifest with needs_1m=True triggers regeneration.
     assert _shape_fixtures_stale(manifest, generator, needs_1m=True) is True
+
+
+def test_perf_csv_includes_regression_status(tmp_path: Path) -> None:
+    from excelbench.perf.renderer import render_perf_csv
+    from excelbench.perf.runner import (
+        PerfConfig,
+        PerfFeatureResult,
+        PerfMetadata,
+        PerfOpResult,
+        PerfResults,
+        PerfRunEnvironment,
+        PerfStats,
+    )
+
+    stats = PerfStats(min=1, p50=1, p95=2)
+    res = PerfResults(
+        metadata=PerfMetadata(
+            benchmark_version="x",
+            run_date=datetime.now(UTC),
+            excel_version="x",
+            platform="x",
+            profile="xlsx",
+            python="3",
+            commit=None,
+            config=PerfConfig(warmup=0, iters=1, iteration_policy="fixed", breakdown=False),
+            run_environment=PerfRunEnvironment(cpu_model=None, core_count=1, memory_total_mb=None),
+        ),
+        libraries={"openpyxl": {"capabilities": ["read"]}},
+        results=[
+            PerfFeatureResult(
+                feature="f",
+                library="openpyxl",
+                workload_size="tiny",
+                perf={"read": PerfOpResult(wall_ms=stats, cpu_ms=stats), "write": None},
+            )
+        ],
+    )
+    out = tmp_path / "m.csv"
+    render_perf_csv(res, out)
+    txt = out.read_text()
+    assert "regression_status" in txt
+    assert "confidence_note" in txt

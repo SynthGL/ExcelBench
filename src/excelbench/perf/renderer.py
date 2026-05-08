@@ -74,6 +74,13 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
     lines.append(f"*Profile: {data['metadata']['profile']}*")
     lines.append(f"*Platform: {data['metadata']['platform']}*")
     lines.append(f"*Python: {data['metadata']['python']}*")
+    run_env=data["metadata"].get("run_environment") or {}
+    if run_env:
+        lines.append(f"*CPU: {run_env.get('cpu_model') or 'unknown'}*")
+        lines.append(
+            f"*Cores: {run_env.get('core_count') or 'unknown'} | "
+            f"Memory MB: {run_env.get('memory_total_mb') or 'unknown'}*"
+        )
     if data["metadata"].get("commit"):
         lines.append(f"*Commit: {data['metadata']['commit']}*")
     cfg = data["metadata"].get("config", {})
@@ -93,6 +100,10 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
         "These numbers measure only the library under test. "
         "Write timings do NOT include oracle verification."
     )
+    lines.append(
+        "Confidence note: treat deltas under ~5% as noise unless "
+        "stable across multiple runs."
+    )
     lines.append("")
 
     workload_features = _collect_workload_features(libs, features, lookup)
@@ -107,10 +118,10 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
     for lib in libs:
         caps = set(data["libraries"][lib].get("capabilities", []))
         if "read" in caps:
-            header += f" {lib} (R p50 ms) |"
+            header += f" {lib} (R p50/p95 ms) |"
             sep += "--------------|"
         if "write" in caps:
-            header += f" {lib} (W p50 ms) |"
+            header += f" {lib} (W p50/p95 ms) |"
             sep += "--------------|"
 
     tier_map: dict[int, list[str]] = {0: [], 1: [], 2: []}
@@ -133,9 +144,9 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
                 entry = lookup.get((feat, lib))
                 perf = entry.get("perf") if entry else None
                 if "read" in caps:
-                    row += f" {_fmt_p50_ms(perf, 'read')} |"
+                    row += f" {_fmt_p50_p95_ms(perf, 'read')} |"
                 if "write" in caps:
-                    row += f" {_fmt_p50_ms(perf, 'write')} |"
+                    row += f" {_fmt_p50_p95_ms(perf, 'write')} |"
             lines.append(row)
         lines.append("")
 
@@ -303,7 +314,7 @@ def _fmt_rate(rate: float) -> str:
     return f"{rate:.2f}"
 
 
-def _fmt_p50_ms(perf: dict[str, Any] | None, op: str) -> str:
+def _fmt_p50_p95_ms(perf: dict[str, Any] | None, op: str) -> str:
     if not perf or not isinstance(perf, dict):
         return "—"
     op_data = perf.get(op)
@@ -316,7 +327,9 @@ def _fmt_p50_ms(perf: dict[str, Any] | None, op: str) -> str:
     if p50 is None:
         return "—"
     try:
-        return f"{float(p50):.2f}"
+        p95 = wall.get("p95")
+        p95_txt = f"/{float(p95):.2f}" if p95 is not None else ""
+        return f"{float(p50):.2f}{p95_txt}"
     except (TypeError, ValueError):
         return "—"
 
@@ -325,7 +338,7 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
     data = perf_results_to_json_dict(results)
     lines = [
         "library,feature,read_p50_wall_ms,read_p95_wall_ms,read_op_count,read_op_unit,read_p50_units_per_sec,"
-        "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec",
+        "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec,read_cv,write_cv,confidence_note,regression_status",
     ]
     for r in data["results"]:
         perf = r.get("perf") or {}
@@ -350,6 +363,9 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
         def _f(v: Any) -> str:
             return "" if v is None else str(v)
 
+        read_cv = _cv(read_wall)
+        write_cv = _cv(write_wall)
+        reg_status = _regression_status(data, r)
         lines.append(
             ",".join(
                 [
@@ -365,6 +381,10 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
                     _f(write_count),
                     _f(write_unit),
                     _rate(write_count, write_wall.get("p50")),
+                    _f(read_cv),
+                    _f(write_cv),
+                    _f("high" if ((read_cv or 0)>0.20 or (write_cv or 0)>0.20) else "ok"),
+                    reg_status,
                 ]
             )
         )
@@ -400,3 +420,48 @@ def append_perf_history(results: PerfResults, history_path: Path) -> None:
 
     with open(history_path, "a") as f:
         f.write(json.dumps(entry) + "\n")
+
+
+def _cv(wall: dict[str, Any]) -> float | None:
+    p50 = wall.get("p50")
+    p95 = wall.get("p95")
+    try:
+        if p50 in (None, 0) or p95 is None:
+            return None
+        return round(max(float(p95) - float(p50), 0.0) / float(p50), 4)
+    except (TypeError, ValueError, ZeroDivisionError):
+        return None
+
+
+def _regression_status(
+    data: dict[str, Any], row: dict[str, Any], threshold_pct: float = 10.0
+) -> str:
+    history_path = Path("results/perf/history.jsonl")
+    if not history_path.exists():
+        return "no_history"
+    vals: list[float] = []
+    for line in history_path.read_text().splitlines():
+        try:
+            entry = json.loads(line)
+            sample = entry.get("p50_wall_ms", {}).get(row["library"], {}).get(row["feature"], {})
+            rv = sample.get("read_p50")
+            if rv is not None:
+                vals.append(float(rv))
+        except (TypeError, ValueError, KeyError, json.JSONDecodeError):
+            continue
+    if len(vals) < 3:
+        return "insufficient_history"
+    baseline = sorted(vals[-5:])[len(vals[-5:]) // 2]
+    cur = ((row.get("perf") or {}).get("read") or {}).get("wall_ms", {}).get("p50")
+    try:
+        curf = float(cur)
+    except (TypeError, ValueError):
+        return "n/a"
+    if baseline <= 0:
+        return "n/a"
+    delta = ((curf - baseline) / baseline) * 100.0
+    if delta > threshold_pct:
+        return f"regressed:{delta:.1f}%"
+    if delta < -threshold_pct:
+        return f"improved:{delta:.1f}%"
+    return f"stable:{delta:.1f}%"
