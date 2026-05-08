@@ -12,6 +12,7 @@ from excelbench.harness.adapters.calamine_adapter import CalamineAdapter
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 from excelbench.harness.adapters.pylightxl_adapter import PylightxlAdapter
 from excelbench.harness.adapters.xlrd_adapter import XlrdAdapter
+from excelbench.harness.adapters.xlwt_adapter import XlwtAdapter
 from excelbench.models import BorderInfo, CellFormat, CellType, CellValue
 
 # =========================================================================
@@ -644,7 +645,7 @@ class TestXlrdXlsRead:
 
 
 class TestXlwtUnsupportedOperations:
-    def test_unsupported_methods_raise(self, xlwt_adapter) -> None:
+    def test_unsupported_methods_raise(self, xlwt_adapter: XlwtAdapter) -> None:
         wb = xlwt_adapter.create_workbook()
         xlwt_adapter.add_sheet(wb, "S1")
         with pytest.raises(UnsupportedAdapterOperationError):
