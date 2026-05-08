@@ -100,8 +100,8 @@ def test_dashboard_includes_delta_since_last_run(tmp_path: Path) -> None:
     )
     perf_history = tmp_path / "perf_history.jsonl"
     perf_history.write_text(
-        '{"summary":{"read_ops_per_sec":1000,"write_ops_per_sec":500}}\n'
-        '{"summary":{"read_ops_per_sec":1100,"write_ops_per_sec":450}}\n'
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":10,"write_p50":20}}}}\n'
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":8,"write_p50":25}}}}\n'
     )
     fidelity = {
         "metadata": {},

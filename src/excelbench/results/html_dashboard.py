@@ -258,10 +258,23 @@ def _fmt_mb(val: float | None) -> str:
 
 
 def _is_unsupported_case(case_data: dict[str, Any]) -> bool:
-    text_parts = [str(case_data.get("message", ""))]
+    text_parts = [
+        str(case_data.get("message", "")),
+        str(case_data.get("notes", "")),
+        str(case_data.get("label", "")),
+    ]
     for diag in case_data.get("diagnostics", []):
         if not isinstance(diag, dict):
             continue
+        category = str(diag.get("category", "")).lower()
+        explanation = diag.get("explanation")
+        if category == "unsupported_feature":
+            return True
+        if (
+            isinstance(explanation, dict)
+            and str(explanation.get("tag", "")).lower() == "unsupported"
+        ):
+            return True
         text_parts.append(str(diag.get("adapter_message", "")))
         text_parts.append(str(diag.get("probable_cause", "")))
         text_parts.append(str(diag.get("root_cause_code", "")))
@@ -413,13 +426,13 @@ def _section_delta_since_last_run(fidelity_history: Path | None, perf_history: P
     perf_pair = _load_recent_history(perf_history)
     if perf_pair:
         prev, cur = perf_pair
-        prev_sum = prev.get("summary", {})
-        cur_sum = cur.get("summary", {})
-        for key, label in (("read_ops_per_sec", "Median read throughput"),
-                           ("write_ops_per_sec", "Median write throughput")):
-            pv, cv = prev_sum.get(key), cur_sum.get(key)
-            if isinstance(pv, (int, float)) and isinstance(cv, (int, float)) and pv != 0:
-                pct = round((cv - pv) / pv * 100)
+        for op_key, label in (
+            ("read_p50", "Median read throughput"),
+            ("write_p50", "Median write throughput"),
+        ):
+            perf_deltas = _compute_perf_p50_deltas(prev, cur, op_key)
+            if perf_deltas:
+                pct = round(sorted(perf_deltas)[len(perf_deltas) // 2])
                 items.append(f"<li>{label}: <b>{pct:+d}%</b></li>")
     if not items:
         return ""
@@ -441,6 +454,31 @@ def _compute_score_deltas(previous: dict[str, Any], current: dict[str, Any]) -> 
                 if pv is None or cv is None or pv == cv:
                     continue
                 out.append(int(cv) - int(pv))
+    return out
+
+
+def _compute_perf_p50_deltas(
+    previous: dict[str, Any], current: dict[str, Any], op_key: str
+) -> list[float]:
+    out: list[float] = []
+    prev_wall = previous.get("p50_wall_ms", {})
+    curr_wall = current.get("p50_wall_ms", {})
+    if not isinstance(prev_wall, dict) or not isinstance(curr_wall, dict):
+        return out
+    for library in set(prev_wall) | set(curr_wall):
+        prev_lib = prev_wall.get(library, {})
+        curr_lib = curr_wall.get(library, {})
+        if not isinstance(prev_lib, dict) or not isinstance(curr_lib, dict):
+            continue
+        for feature in set(prev_lib) | set(curr_lib):
+            prev_val = (prev_lib.get(feature) or {}).get(op_key)
+            curr_val = (curr_lib.get(feature) or {}).get(op_key)
+            if (
+                isinstance(prev_val, (int, float))
+                and isinstance(curr_val, (int, float))
+                and curr_val != 0
+            ):
+                out.append((prev_val - curr_val) / curr_val * 100)
     return out
 
 

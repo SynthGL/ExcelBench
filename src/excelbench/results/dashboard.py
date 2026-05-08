@@ -258,19 +258,37 @@ def _compute_perf_delta_summary(history_path: Path | None) -> dict[str, int] | N
     if pair is None:
         return None
     previous, current = pair
-    prev_summary = previous.get("summary", {})
-    curr_summary = current.get("summary", {})
     out: dict[str, int] = {}
-    for key in ("read_ops_per_sec", "write_ops_per_sec"):
-        prev_val = prev_summary.get(key)
-        curr_val = curr_summary.get(key)
-        if (
-            isinstance(prev_val, (int, float))
-            and isinstance(curr_val, (int, float))
-            and prev_val != 0
-        ):
-            out[key] = round((curr_val - prev_val) / prev_val * 100)
+    for key, op_key in (("read_ops_per_sec", "read_p50"), ("write_ops_per_sec", "write_p50")):
+        deltas = _compute_perf_p50_deltas(previous, current, op_key)
+        if deltas:
+            out[key] = round(sorted(deltas)[len(deltas) // 2])
     return out or None
+
+
+def _compute_perf_p50_deltas(
+    previous: dict[str, Any], current: dict[str, Any], op_key: str
+) -> list[float]:
+    deltas: list[float] = []
+    prev_wall = previous.get("p50_wall_ms", {})
+    curr_wall = current.get("p50_wall_ms", {})
+    if not isinstance(prev_wall, dict) or not isinstance(curr_wall, dict):
+        return deltas
+    for library in set(prev_wall) | set(curr_wall):
+        prev_lib = prev_wall.get(library, {})
+        curr_lib = curr_wall.get(library, {})
+        if not isinstance(prev_lib, dict) or not isinstance(curr_lib, dict):
+            continue
+        for feature in set(prev_lib) | set(curr_lib):
+            prev_val = (prev_lib.get(feature) or {}).get(op_key)
+            curr_val = (curr_lib.get(feature) or {}).get(op_key)
+            if (
+                isinstance(prev_val, (int, float))
+                and isinstance(curr_val, (int, float))
+                and curr_val != 0
+            ):
+                deltas.append((prev_val - curr_val) / curr_val * 100)
+    return deltas
 
 
 def _compute_fidelity_deltas(

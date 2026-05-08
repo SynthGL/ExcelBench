@@ -139,6 +139,10 @@ def test_render_html_dashboard_shows_delta_and_unsupported(tmp_path: Path) -> No
         '{"scores":{"openpyxl":{"cell_values":{"read":1,"write":1}}}}\n'
         '{"scores":{"openpyxl":{"cell_values":{"read":0,"write":0}}}}\n'
     )
+    (tmp_path / "perf_history.jsonl").write_text(
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":10,"write_p50":20}}}}\n'
+        '{"p50_wall_ms":{"openpyxl":{"cell_values":{"read_p50":8,"write_p50":25}}}}\n'
+    )
     out = tmp_path / "dash.html"
     render_html_dashboard(fidelity, perf_json=None, output_path=out, scatter_dir=None)
     html = out.read_text()
