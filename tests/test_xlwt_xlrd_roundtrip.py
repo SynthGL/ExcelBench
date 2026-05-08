@@ -6,11 +6,13 @@ adapters' code paths simultaneously, maximising coverage per test.
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from datetime import date, datetime
 from pathlib import Path
 
 import pytest
 
+from excelbench.harness.adapters.base import UnsupportedAdapterOperationError
 from excelbench.harness.adapters.xlrd_adapter import XlrdAdapter
 from excelbench.harness.adapters.xlwt_adapter import (
     XlwtAdapter,
@@ -573,20 +575,24 @@ class TestXlwtXlrdFreezePanes:
         xlrd.close_workbook(rb)
 
 
-# ── xlwt no-op tier 2 methods ────────────────────────────────────────────
+# ── xlwt unsupported tier 2 methods ──────────────────────────────────────
 
 
-class TestXlwtNoOps:
-    def test_noop_methods(self, xlwt: XlwtAdapter) -> None:
+class TestXlwtUnsupportedOperations:
+    def test_unsupported_methods(self, xlwt: XlwtAdapter) -> None:
         wb = xlwt.create_workbook()
         xlwt.add_sheet(wb, "S1")
-        # These are all no-ops but should not raise
-        xlwt.add_conditional_format(wb, "S1", {})
-        xlwt.add_data_validation(wb, "S1", {})
-        xlwt.add_hyperlink(wb, "S1", {})
-        xlwt.add_image(wb, "S1", {})
-        xlwt.add_pivot_table(wb, "S1", {})
-        xlwt.add_comment(wb, "S1", {})
+        calls: list[Callable[[], None]] = [
+            lambda: xlwt.add_conditional_format(wb, "S1", {}),
+            lambda: xlwt.add_data_validation(wb, "S1", {}),
+            lambda: xlwt.add_hyperlink(wb, "S1", {}),
+            lambda: xlwt.add_image(wb, "S1", {}),
+            lambda: xlwt.add_pivot_table(wb, "S1", {}),
+            lambda: xlwt.add_comment(wb, "S1", {}),
+        ]
+        for call in calls:
+            with pytest.raises(UnsupportedAdapterOperationError):
+                call()
 
 
 # ── xlrd tier 2 read stubs (empty returns) ───────────────────────────────
