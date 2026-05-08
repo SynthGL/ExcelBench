@@ -58,3 +58,10 @@ Libraries are grouped by overall fidelity + capability:
 | C | below 60% fidelity or limited scope |
 
 See [live dashboard](https://excelbench.vercel.app) for current tier assignments.
+
+## Interpreting failed vs unsupported
+- **Failed** means the adapter attempted the operation but produced mismatched output.
+- **Unsupported** means the adapter explicitly cannot perform that operation; these are visually distinct in HTML dashboards and should be triaged as coverage gaps first.
+
+## Delta since last run
+Dashboard and report outputs now include a **Delta Since Last Run** summary sourced from `history.jsonl` in each results directory.

@@ -35,7 +35,12 @@ def render_dashboard(
             perf_data = json.load(f)
         perf_data = filter_report_data(perf_data)
 
-    lines = _build_dashboard(fidelity_data, perf_data)
+    lines = _build_dashboard(
+        fidelity_data,
+        perf_data,
+        fidelity_history_path=fidelity_json.parent / "history.jsonl",
+        perf_history_path=perf_json.parent / "history.jsonl" if perf_json else None,
+    )
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w") as f:
@@ -45,6 +50,9 @@ def render_dashboard(
 def _build_dashboard(
     fidelity: dict[str, Any],
     perf: dict[str, Any] | None,
+    *,
+    fidelity_history_path: Path | None = None,
+    perf_history_path: Path | None = None,
 ) -> list[str]:
     """Build combined dashboard markdown lines."""
     fidelity = filter_report_data(fidelity)
@@ -61,6 +69,7 @@ def _build_dashboard(
     lines.append("> Combined fidelity and performance view. Fidelity shows correctness;")
     lines.append("> throughput shows speed. Use this to find the right library for your needs.")
     lines.append("")
+    lines.extend(_render_delta_since_last_run(fidelity_history_path, perf_history_path))
 
     # ── Compute per-library fidelity stats ──
     lib_stats = _compute_fidelity_stats(fidelity)
@@ -128,6 +137,30 @@ def _build_dashboard(
     return lines
 
 
+def _render_delta_since_last_run(
+    fidelity_history_path: Path | None,
+    perf_history_path: Path | None,
+) -> list[str]:
+    fidelity_delta = _compute_history_delta_summary(fidelity_history_path)
+    perf_delta = _compute_perf_delta_summary(perf_history_path)
+    if not fidelity_delta and not perf_delta:
+        return []
+    lines = ["## Delta Since Last Run", ""]
+    if fidelity_delta:
+        lines.append(
+            "- Fidelity score changes: "
+            f"**{fidelity_delta['changes']}** (improvements: **{fidelity_delta['improvements']}**, "
+            f"regressions: **{fidelity_delta['regressions']}**)"
+        )
+    if perf_delta:
+        if "read_ops_per_sec" in perf_delta:
+            lines.append(f"- Median read throughput: **{perf_delta['read_ops_per_sec']:+d}%**")
+        if "write_ops_per_sec" in perf_delta:
+            lines.append(f"- Median write throughput: **{perf_delta['write_ops_per_sec']:+d}%**")
+    lines.append("")
+    return lines
+
+
 def _compute_fidelity_stats(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
     """Compute per-library fidelity statistics from results JSON."""
     libs_info = data.get("libraries", {})
@@ -184,6 +217,81 @@ def _compute_fidelity_stats(data: dict[str, Any]) -> dict[str, dict[str, Any]]:
         }
 
     return out
+
+
+def _load_recent_history(history_path: Path | None) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    if history_path is None or not history_path.exists():
+        return None
+    entries: list[dict[str, Any]] = []
+    for line in history_path.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            parsed = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(parsed, dict):
+            entries.append(parsed)
+    if len(entries) < 2:
+        return None
+    return entries[-2], entries[-1]
+
+
+def _compute_history_delta_summary(history_path: Path | None) -> dict[str, int] | None:
+    pair = _load_recent_history(history_path)
+    if pair is None:
+        return None
+    previous, current = pair
+    changes = regressions = improvements = 0
+    for item in _compute_fidelity_deltas(previous, current):
+        changes += 1
+        if item["delta"] < 0:
+            regressions += 1
+        elif item["delta"] > 0:
+            improvements += 1
+    return {"changes": changes, "improvements": improvements, "regressions": regressions}
+
+
+def _compute_perf_delta_summary(history_path: Path | None) -> dict[str, int] | None:
+    pair = _load_recent_history(history_path)
+    if pair is None:
+        return None
+    previous, current = pair
+    prev_summary = previous.get("summary", {})
+    curr_summary = current.get("summary", {})
+    out: dict[str, int] = {}
+    for key in ("read_ops_per_sec", "write_ops_per_sec"):
+        prev_val = prev_summary.get(key)
+        curr_val = curr_summary.get(key)
+        if (
+            isinstance(prev_val, (int, float))
+            and isinstance(curr_val, (int, float))
+            and prev_val != 0
+        ):
+            out[key] = round((curr_val - prev_val) / prev_val * 100)
+    return out or None
+
+
+def _compute_fidelity_deltas(
+    previous: dict[str, Any], current: dict[str, Any]
+) -> list[dict[str, int]]:
+    deltas: list[dict[str, int]] = []
+    prev_scores: dict[str, Any] = previous.get("scores", {})
+    curr_scores: dict[str, Any] = current.get("scores", {})
+    for library in sorted(set(prev_scores) | set(curr_scores)):
+        prev_lib = prev_scores.get(library, {})
+        curr_lib = curr_scores.get(library, {})
+        for feature in sorted(set(prev_lib) | set(curr_lib)):
+            prev_feature = prev_lib.get(feature, {})
+            curr_feature = curr_lib.get(feature, {})
+            for mode in ("read", "write"):
+                prev_value = prev_feature.get(mode)
+                curr_value = curr_feature.get(mode)
+                if prev_value is None or curr_value is None or prev_value == curr_value:
+                    continue
+                deltas.append({"delta": int(curr_value) - int(prev_value)})
+    return deltas
 
 
 def _compute_throughput(data: dict[str, Any]) -> dict[str, dict[str, float | None]]:

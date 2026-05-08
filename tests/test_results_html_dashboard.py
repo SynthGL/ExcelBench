@@ -109,3 +109,38 @@ def test_compute_radar_data_uses_p50_when_op_count_missing() -> None:
     # pandas is half as fast as openpyxl in this fixture.
     assert by_lib["pandas"][1] == 25.0
     assert by_lib["pandas"][2] == 25.0
+
+
+def test_render_html_dashboard_shows_delta_and_unsupported(tmp_path: Path) -> None:
+    fidelity = tmp_path / "results.json"
+    fidelity.write_text(
+        """
+{
+  "metadata": {"profile": "xlsx", "run_date": "2026-01-01T00:00:00Z"},
+  "libraries": {"openpyxl": {"capabilities": ["read", "write"]}},
+  "results": [{
+    "feature": "cell_values",
+    "library": "openpyxl",
+    "scores": {"read": 0, "write": 0},
+    "test_cases": {
+      "tc1": {
+        "read": {
+          "passed": false,
+          "label": "unsupported check",
+          "diagnostics": [{"adapter_message": "feature not supported"}]
+        }
+      }
+    }
+  }]
+}
+""".strip()
+    )
+    (tmp_path / "history.jsonl").write_text(
+        '{"scores":{"openpyxl":{"cell_values":{"read":1,"write":1}}}}\n'
+        '{"scores":{"openpyxl":{"cell_values":{"read":0,"write":0}}}}\n'
+    )
+    out = tmp_path / "dash.html"
+    render_html_dashboard(fidelity, perf_json=None, output_path=out, scatter_dir=None)
+    html = out.read_text()
+    assert "Delta Since Last Run" in html
+    assert "unsupported" in html

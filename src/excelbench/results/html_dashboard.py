@@ -257,6 +257,19 @@ def _fmt_mb(val: float | None) -> str:
     return f"{val:.1f}"
 
 
+def _is_unsupported_case(case_data: dict[str, Any]) -> bool:
+    text_parts = [str(case_data.get("message", ""))]
+    for diag in case_data.get("diagnostics", []):
+        if not isinstance(diag, dict):
+            continue
+        text_parts.append(str(diag.get("adapter_message", "")))
+        text_parts.append(str(diag.get("probable_cause", "")))
+        text_parts.append(str(diag.get("root_cause_code", "")))
+    haystack = " ".join(text_parts).lower()
+    markers = ("unsupported", "not implemented", "not supported", "read-only", "write-only")
+    return any(x in haystack for x in markers)
+
+
 def _safe_json(data: Any) -> str:
     """JSON for embedding inside <script>; escapes </script>."""
     return json.dumps(data, ensure_ascii=False).replace("</", r"<\/")
@@ -330,6 +343,10 @@ def render_html_dashboard(
             has_file_shape=has_file_shape,
         ),
         _section_overview(fidelity, perf),
+        _section_delta_since_last_run(
+            fidelity_json.parent / "history.jsonl",
+            perf_json.parent / "history.jsonl" if perf_json else None,
+        ),
         _section_radar(fidelity, perf),
         _section_matrix(fidelity),
         _section_scatter(fidelity, perf, heatmap_svg, scatter_svgs),
@@ -359,6 +376,72 @@ def render_html_dashboard(
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
     output_path.write_text(html)
+
+
+def _load_recent_history(history_path: Path | None) -> tuple[dict[str, Any], dict[str, Any]] | None:
+    if history_path is None or not history_path.exists():
+        return None
+    entries: list[dict[str, Any]] = []
+    for line in history_path.read_text().splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            row = json.loads(line)
+        except json.JSONDecodeError:
+            continue
+        if isinstance(row, dict):
+            entries.append(row)
+    if len(entries) < 2:
+        return None
+    return entries[-2], entries[-1]
+
+
+def _section_delta_since_last_run(fidelity_history: Path | None, perf_history: Path | None) -> str:
+    items: list[str] = []
+    pair = _load_recent_history(fidelity_history)
+    if pair:
+        prev, cur = pair
+        deltas = _compute_score_deltas(prev, cur)
+        if deltas:
+            improvements = sum(1 for d in deltas if d > 0)
+            regressions = sum(1 for d in deltas if d < 0)
+            items.append(
+                f"<li>Fidelity score changes: <b>{len(deltas)}</b> "
+                f"(improvements: <b>{improvements}</b>, regressions: <b>{regressions}</b>)</li>"
+            )
+    perf_pair = _load_recent_history(perf_history)
+    if perf_pair:
+        prev, cur = perf_pair
+        prev_sum = prev.get("summary", {})
+        cur_sum = cur.get("summary", {})
+        for key, label in (("read_ops_per_sec", "Median read throughput"),
+                           ("write_ops_per_sec", "Median write throughput")):
+            pv, cv = prev_sum.get(key), cur_sum.get(key)
+            if isinstance(pv, (int, float)) and isinstance(cv, (int, float)) and pv != 0:
+                pct = round((cv - pv) / pv * 100)
+                items.append(f"<li>{label}: <b>{pct:+d}%</b></li>")
+    if not items:
+        return ""
+    return (
+        '<section id="delta" class="container"><h2>Delta Since Last Run</h2>'
+        f'<ul style="margin:.5rem 0 0 1.2rem">{"".join(items)}</ul></section>'
+    )
+
+
+def _compute_score_deltas(previous: dict[str, Any], current: dict[str, Any]) -> list[int]:
+    out: list[int] = []
+    prev_scores = previous.get("scores", {})
+    curr_scores = current.get("scores", {})
+    for lib in set(prev_scores) | set(curr_scores):
+        for feat in set(prev_scores.get(lib, {})) | set(curr_scores.get(lib, {})):
+            for mode in ("read", "write"):
+                pv = prev_scores.get(lib, {}).get(feat, {}).get(mode)
+                cv = curr_scores.get(lib, {}).get(feat, {}).get(mode)
+                if pv is None or cv is None or pv == cv:
+                    continue
+                out.append(int(cv) - int(pv))
+    return out
 
 
 # ====================================================================
@@ -686,6 +769,7 @@ details .content{padding:.8rem 1rem}
 .tc-table td,.tc-table th{font-size:.74rem;padding:.3rem .5rem}
 .tc-table .pass{color:#76d8a2}
 .tc-table .fail{color:#ff7683;font-weight:600}
+.tc-table .unsupported{color:#f5c46b;font-weight:700}
 code.val{
   font-family:var(--font-mono);
   font-size:.71rem;
@@ -1386,7 +1470,14 @@ def _section_radar(
     perf: dict[str, Any] | None,
 ) -> str:
     """Render a 5-axis spider chart comparing top libraries."""
-    import plotly.graph_objects as go
+    try:
+        import plotly.graph_objects as go
+    except ModuleNotFoundError:
+        return (
+            '<section id="radar" class="container"><h2>Strength Profiles</h2>'
+            "<p style='color:var(--text2)'>Plotly is not installed in this environment.</p>"
+            "</section>"
+        )
 
     from excelbench.results.scatter import (
         _DARK_BG,
@@ -1561,28 +1652,31 @@ def _section_scatter(
 
     # Interactive Plotly scatter charts (preferred when perf data exists)
     if perf:
-        from excelbench.results.scatter_interactive import (
-            render_interactive_scatter_features_from_data,
-            render_interactive_scatter_tiers_from_data,
-        )
+        try:
+            from excelbench.results.scatter_interactive import (
+                render_interactive_scatter_features_from_data,
+                render_interactive_scatter_tiers_from_data,
+            )
 
-        tiers_html = render_interactive_scatter_tiers_from_data(fidelity, perf)
-        features_html = render_interactive_scatter_features_from_data(fidelity, perf)
+            tiers_html = render_interactive_scatter_tiers_from_data(fidelity, perf)
+            features_html = render_interactive_scatter_features_from_data(fidelity, perf)
 
-        parts.append(
-            '<h3>By Feature Group</h3>'
-            f'<div class="chart-maximize-wrap">'
-            f'<button class="chart-maximize-btn" title="Maximize"'
-            f' aria-label="Maximize chart">\u26f6</button>'
-            f'<div class="plotly-chart">{tiers_html}</div></div>'
-        )
-        parts.append(
-            '<h3>Per Feature</h3>'
-            f'<div class="chart-maximize-wrap">'
-            f'<button class="chart-maximize-btn" title="Maximize"'
-            f' aria-label="Maximize chart">\u26f6</button>'
-            f'<div class="plotly-chart">{features_html}</div></div>'
-        )
+            parts.append(
+                '<h3>By Feature Group</h3>'
+                f'<div class="chart-maximize-wrap">'
+                f'<button class="chart-maximize-btn" title="Maximize"'
+                f' aria-label="Maximize chart">\u26f6</button>'
+                f'<div class="plotly-chart">{tiers_html}</div></div>'
+            )
+            parts.append(
+                '<h3>Per Feature</h3>'
+                f'<div class="chart-maximize-wrap">'
+                f'<button class="chart-maximize-btn" title="Maximize"'
+                f' aria-label="Maximize chart">\u26f6</button>'
+                f'<div class="plotly-chart">{features_html}</div></div>'
+            )
+        except ModuleNotFoundError:
+            parts.append('<p style="color:var(--text2)">Interactive scatter unavailable.</p>')
     else:
         # Fallback: embed pre-rendered static SVGs when perf data is unavailable
         if scatter_svgs:
@@ -1845,8 +1939,9 @@ def _section_features(fidelity: dict[str, Any]) -> str:
                     lbl = d.get("label") or tc_id
                     exp = _fmt_val(d.get("expected"))
                     act = _fmt_val(d.get("actual"))
-                    pcls = "pass" if passed else "fail"
-                    psym = "\u2713" if passed else "\u2717"
+                    is_unsupported = (not passed) and _is_unsupported_case(d)
+                    pcls = "pass" if passed else ("unsupported" if is_unsupported else "fail")
+                    psym = "✓" if passed else ("⊘" if is_unsupported else "✗")
                     rows.append(
                         f"<tr><td>{_esc(lbl)}</td><td>{op}</td>"
                         f"<td>{_esc(imp)}</td>"

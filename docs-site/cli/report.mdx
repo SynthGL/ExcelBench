@@ -64,3 +64,8 @@ uv run excelbench scatter
 ```
 
 Generates fidelity-vs-throughput scatter plots as PNG and SVG, broken down by tier.
+
+## Delta Since Last Run
+`excelbench report` and dashboard layers read `results/*/history.jsonl` and emit a compact run-over-run delta summary:
+- fidelity score changes (improvements vs regressions)
+- perf median read/write throughput percentage changes when perf history exists
