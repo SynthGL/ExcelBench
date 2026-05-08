@@ -74,7 +74,7 @@ def render_perf_markdown(results: PerfResults, path: Path) -> None:
     lines.append(f"*Profile: {data['metadata']['profile']}*")
     lines.append(f"*Platform: {data['metadata']['platform']}*")
     lines.append(f"*Python: {data['metadata']['python']}*")
-    run_env=data["metadata"].get("run_environment") or {}
+    run_env = data["metadata"].get("run_environment") or {}
     if run_env:
         lines.append(f"*CPU: {run_env.get('cpu_model') or 'unknown'}*")
         lines.append(
@@ -336,6 +336,7 @@ def _fmt_p50_p95_ms(perf: dict[str, Any] | None, op: str) -> str:
 
 def render_perf_csv(results: PerfResults, path: Path) -> None:
     data = perf_results_to_json_dict(results)
+    history_path = path.parent / "history.jsonl"
     lines = [
         "library,feature,read_p50_wall_ms,read_p95_wall_ms,read_op_count,read_op_unit,read_p50_units_per_sec,"
         "write_p50_wall_ms,write_p95_wall_ms,write_op_count,write_op_unit,write_p50_units_per_sec,read_cv,write_cv,confidence_note,regression_status",
@@ -365,7 +366,7 @@ def render_perf_csv(results: PerfResults, path: Path) -> None:
 
         read_cv = _cv(read_wall)
         write_cv = _cv(write_wall)
-        reg_status = _regression_status(data, r)
+        reg_status = _regression_status(data, r, history_path=history_path)
         lines.append(
             ",".join(
                 [
@@ -437,15 +438,23 @@ def _cv(wall: dict[str, Any]) -> float | None:
 
 
 def _regression_status(
-    data: dict[str, Any], row: dict[str, Any], threshold_pct: float = 10.0
+    data: dict[str, Any],
+    row: dict[str, Any],
+    *,
+    history_path: Path,
+    threshold_pct: float = 10.0,
 ) -> str:
-    history_path = Path("results/perf/history.jsonl")
     if not history_path.exists():
         return "no_history"
+    metadata = data.get("metadata", {})
+    current_profile = metadata.get("profile")
+    current_config = metadata.get("config")
     vals: list[float] = []
     for line in history_path.read_text().splitlines():
         try:
             entry = json.loads(line)
+            if entry.get("profile") != current_profile or entry.get("config") != current_config:
+                continue
             sample = entry.get("p50_wall_ms", {}).get(row["library"], {}).get(row["feature"], {})
             rv = sample.get("read_p50")
             if rv is not None:

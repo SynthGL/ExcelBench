@@ -166,10 +166,10 @@ def test_perf_markdown_header_matches_all_rendered_cells(tmp_path: Path) -> None
 
     markdown = readme.read_text()
     assert (
-        "| Feature | openpyxl (R p50 ms) | openpyxl (W p50 ms) | "
-        "python-calamine (R p50 ms) |"
+        "| Feature | openpyxl (R p50/p95 ms) | openpyxl (W p50/p95 ms) | "
+        "python-calamine (R p50/p95 ms) |"
     ) in markdown
-    assert "| cell_values | 1.00 | 2.00 | 0.50 |" in markdown
+    assert "| cell_values | 1.00/1.00 | 2.00/2.00 | 0.50/0.50 |" in markdown
     assert markdown.count("**Tier 0") == 1
     assert "Confidence note:" in markdown
     assert "p50/p95" in markdown
