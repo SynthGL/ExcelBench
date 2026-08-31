@@ -183,7 +183,7 @@ uv run excelbench cross-language-pivot-context --fixture fixtures/excel/tier2/15
 A benchmark directory can be bound to its exact source and artifact identities with
 a deterministic, path-free manifest:
 
-\`\`\`bash
+```bash
 uv run excelbench evidence-manifest \
   --root results-release-2026-08-31 \
   --snapshot-id wolfxl-2.1-linux-x86_64 \
@@ -194,7 +194,7 @@ uv run excelbench evidence-manifest \
 uv run excelbench verify-evidence \
   --root results-release-2026-08-31 \
   --expected-source-sha 0123456789abcdef0123456789abcdef01234567
-\`\`\`
+```
 
 The v1 contract inventories every regular file, hashes a canonical sorted file set,
 rejects symlinks and cross-platform path collisions, and refuses undeclared, missing,
