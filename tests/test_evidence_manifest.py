@@ -1,5 +1,6 @@
 import json
 from pathlib import Path
+from typing import Any
 
 import pytest
 from typer.testing import CliRunner
@@ -21,7 +22,7 @@ OBSERVED_AT = "2026-08-31T00:00:00Z"
 RUNNER = CliRunner()
 
 
-def _manifest(root: Path) -> dict[str, object]:
+def _manifest(root: Path) -> dict[str, Any]:
     return build_evidence_manifest(
         root,
         snapshot_id="wolfxl-2.1-linux-x86_64",
