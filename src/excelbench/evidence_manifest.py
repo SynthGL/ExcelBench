@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import re
+import stat
 import tempfile
 import unicodedata
 from collections.abc import Iterable, Mapping, Sequence
@@ -251,7 +252,9 @@ def _inventory(
     root: Path, *, excluded_root_name: str, require_artifact: bool = True
 ) -> list[EvidenceArtifact]:
     artifacts: list[EvidenceArtifact] = []
-    seen_casefolded: set[str] = set()
+    # The manifest is excluded from its own inventory, but its portable name is
+    # still reserved so a differently-cased artifact cannot alias it on Windows.
+    seen_casefolded: set[str] = {_portable_path_key(excluded_root_name)}
     total_size = 0
     for path in sorted(root.rglob("*"), key=lambda item: item.as_posix()):
         if path.parent == root and path.name == excluded_root_name:
@@ -269,14 +272,12 @@ def _inventory(
         if portable_key in seen_casefolded:
             raise EvidenceManifestError(f"case-insensitive evidence path collision: {relative}")
         seen_casefolded.add(portable_key)
-        size = path.stat().st_size
-        if size > MAX_FILE_BYTES:
-            raise EvidenceManifestError(f"evidence file exceeds size limit: {relative}")
+        digest, size = _sha256_stable_file(path)
         total_size += size
         if total_size > MAX_TOTAL_BYTES:
             raise EvidenceManifestError("evidence snapshot exceeds total size limit")
         artifacts.append(
-            EvidenceArtifact(path=relative, sha256=_sha256_file(path), size_bytes=size)
+            EvidenceArtifact(path=relative, sha256=digest, size_bytes=size)
         )
         if len(artifacts) > MAX_FILES:
             raise EvidenceManifestError("evidence snapshot exceeds file-count limit")
@@ -323,12 +324,52 @@ def _portable_path_key(path: str) -> str:
     return "/".join(key_parts)
 
 
-def _sha256_file(path: Path) -> str:
+def _file_signature(metadata: os.stat_result) -> tuple[int, int, int, int, int]:
+    return (
+        metadata.st_dev,
+        metadata.st_ino,
+        metadata.st_size,
+        metadata.st_mtime_ns,
+        metadata.st_ctime_ns,
+    )
+
+
+def _sha256_stable_file(path: Path) -> tuple[str, int]:
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0)
+    flags |= getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as exc:
+        raise EvidenceManifestError(f"cannot open evidence file safely: {path}") from exc
+
     digest = hashlib.sha256()
-    with path.open("rb") as source:
+    with os.fdopen(descriptor, "rb") as source:
+        before = os.fstat(source.fileno())
+        if not stat.S_ISREG(before.st_mode):
+            raise EvidenceManifestError(f"evidence entry is not a regular file: {path}")
+        if before.st_size > MAX_FILE_BYTES:
+            raise EvidenceManifestError(f"evidence file exceeds size limit: {path}")
+
+        bytes_read = 0
         for chunk in iter(lambda: source.read(1024 * 1024), b""):
+            bytes_read += len(chunk)
+            if bytes_read > MAX_FILE_BYTES:
+                raise EvidenceManifestError(f"evidence file exceeds size limit: {path}")
             digest.update(chunk)
-    return digest.hexdigest()
+        after = os.fstat(source.fileno())
+
+    try:
+        current = os.stat(path, follow_symlinks=False)
+    except OSError as exc:
+        raise EvidenceManifestError(f"evidence file changed while hashing: {path}") from exc
+    if (
+        stat.S_ISLNK(current.st_mode)
+        or bytes_read != before.st_size
+        or _file_signature(before) != _file_signature(after)
+        or _file_signature(after) != _file_signature(current)
+    ):
+        raise EvidenceManifestError(f"evidence file changed while hashing: {path}")
+    return digest.hexdigest(), before.st_size
 
 
 def _canonical_utc_timestamp(value: str) -> str:
