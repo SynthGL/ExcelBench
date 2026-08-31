@@ -95,6 +95,7 @@ def build_evidence_manifest(
         raise EvidenceManifestError("source_sha must be a full lowercase 40-character Git SHA")
     observed_at = _canonical_utc_timestamp(observed_at)
     manifest_name = _safe_manifest_name(manifest_name)
+    _read_existing_manifest_destination(root / manifest_name)
     normalized_subjects = _validate_subjects(subjects)
     artifacts = _inventory(root, excluded_root_name=manifest_name)
     artifact_dicts = [artifact.to_dict() for artifact in artifacts]
@@ -121,30 +122,24 @@ def verify_evidence_manifest(
     manifest_name: str = DEFAULT_MANIFEST_NAME,
 ) -> None:
     """Fail unless ``manifest`` exactly describes every regular file in ``root``."""
-    _validate_manifest_shape(manifest)
+    expected = _validate_manifest_document(manifest)
     source = _mapping(manifest["source"], "source")
     source_sha = _string(source.get("commit"), "source.commit")
     if expected_source_sha is not None and source_sha != expected_source_sha:
         raise EvidenceManifestError("manifest source commit does not match expected source SHA")
-    subjects = [
-        _subject_from_mapping(value, index)
-        for index, value in enumerate(manifest["subjects"])
-    ]
-    if subjects != _validate_subjects(subjects):
-        raise EvidenceManifestError("subjects must be sorted by canonical identity")
+    root = root.resolve(strict=True)
+    manifest_name = _safe_manifest_name(manifest_name)
+    destination_manifest = _read_existing_manifest_destination(root / manifest_name)
+    if (
+        destination_manifest is not None
+        and canonical_json_bytes(destination_manifest) != canonical_json_bytes(dict(manifest))
+    ):
+        raise EvidenceManifestError("manifest file does not match the manifest being verified")
     actual = _inventory(
-        root.resolve(strict=True),
-        excluded_root_name=_safe_manifest_name(manifest_name),
+        root,
+        excluded_root_name=manifest_name,
         require_artifact=False,
     )
-    expected = [
-        _artifact_from_mapping(value, index)
-        for index, value in enumerate(manifest["artifacts"])
-    ]
-    if expected != sorted(expected):
-        raise EvidenceManifestError("artifacts must be sorted by canonical path")
-    if len({artifact.path.casefold() for artifact in expected}) != len(expected):
-        raise EvidenceManifestError("manifest contains case-insensitive path collisions")
     if actual != expected:
         actual_by_path = {artifact.path: artifact for artifact in actual}
         expected_by_path = {artifact.path: artifact for artifact in expected}
@@ -158,14 +153,6 @@ def verify_evidence_manifest(
         raise EvidenceManifestError(
             f"evidence mismatch: missing={missing!r}, extra={extra!r}, changed={changed!r}"
         )
-    artifact_dicts = [artifact.to_dict() for artifact in expected]
-    digest = hashlib.sha256(canonical_json_bytes(artifact_dicts)).hexdigest()
-    if manifest["artifact_set_sha256"] != digest:
-        raise EvidenceManifestError("artifact_set_sha256 does not match the artifact inventory")
-    if manifest["artifact_count"] != len(expected):
-        raise EvidenceManifestError("artifact_count does not match the artifact inventory")
-    if manifest["total_size_bytes"] != sum(artifact.size_bytes for artifact in expected):
-        raise EvidenceManifestError("total_size_bytes does not match the artifact inventory")
 
 
 def read_evidence_manifest(path: Path) -> dict[str, Any]:
@@ -196,8 +183,16 @@ def write_evidence_manifest(
     path: Path, manifest: Mapping[str, Any], *, replace: bool = False
 ) -> None:
     """Publish one canonical manifest without exposing a partially written file."""
-    path = path.resolve()
+    if path.is_symlink():
+        raise EvidenceManifestError("manifest destination must not be a symlink")
+    name = _safe_manifest_name(path.name)
     path.parent.mkdir(parents=True, exist_ok=True)
+    path = path.parent.resolve(strict=True) / name
+    if path.is_symlink():
+        raise EvidenceManifestError("manifest destination must not be a symlink")
+    if replace:
+        _read_existing_manifest_destination(path)
+    _validate_manifest_document(manifest)
     contents = canonical_json_bytes(dict(manifest)) + b"\n"
     descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     temporary = Path(temporary_name)
@@ -207,6 +202,7 @@ def write_evidence_manifest(
             output.flush()
             os.fsync(output.fileno())
         if replace:
+            _read_existing_manifest_destination(path)
             os.replace(temporary, path)
         else:
             try:
@@ -345,8 +341,13 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
         raise EvidenceManifestError(
             f"manifest fields must be exactly {sorted(required)!r}"
         )
-    if manifest["schema_version"] != SCHEMA_VERSION:
-        raise EvidenceManifestError(f"unsupported schema_version: {manifest['schema_version']!r}")
+    schema_version = manifest["schema_version"]
+    if (
+        not isinstance(schema_version, int)
+        or isinstance(schema_version, bool)
+        or schema_version != SCHEMA_VERSION
+    ):
+        raise EvidenceManifestError(f"unsupported schema_version: {schema_version!r}")
     if manifest["schema"] != "https://excelbench.dev/schemas/evidence-manifest/v1":
         raise EvidenceManifestError("unsupported manifest schema URI")
     snapshot_id = _string(manifest["snapshot_id"], "snapshot_id")
@@ -385,6 +386,52 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
     )
     if _SHA256_RE.fullmatch(artifact_set_sha256) is None:
         raise EvidenceManifestError("artifact_set_sha256 must be a lowercase SHA-256 digest")
+
+
+def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArtifact]:
+    _validate_manifest_shape(manifest)
+    subjects = [
+        _subject_from_mapping(value, index)
+        for index, value in enumerate(manifest["subjects"])
+    ]
+    if subjects != _validate_subjects(subjects):
+        raise EvidenceManifestError("subjects must be sorted by canonical identity")
+    artifacts = [
+        _artifact_from_mapping(value, index)
+        for index, value in enumerate(manifest["artifacts"])
+    ]
+    if artifacts != sorted(artifacts):
+        raise EvidenceManifestError("artifacts must be sorted by canonical path")
+    if len({artifact.path.casefold() for artifact in artifacts}) != len(artifacts):
+        raise EvidenceManifestError("manifest contains case-insensitive path collisions")
+    artifact_dicts = [artifact.to_dict() for artifact in artifacts]
+    digest = hashlib.sha256(canonical_json_bytes(artifact_dicts)).hexdigest()
+    if manifest["artifact_set_sha256"] != digest:
+        raise EvidenceManifestError("artifact_set_sha256 does not match the artifact inventory")
+    if manifest["artifact_count"] != len(artifacts):
+        raise EvidenceManifestError("artifact_count does not match the artifact inventory")
+    if manifest["total_size_bytes"] != sum(
+        artifact.size_bytes for artifact in artifacts
+    ):
+        raise EvidenceManifestError("total_size_bytes does not match the artifact inventory")
+    return artifacts
+
+
+def _read_existing_manifest_destination(path: Path) -> dict[str, Any] | None:
+    if path.is_symlink():
+        raise EvidenceManifestError("manifest destination must not be a symlink")
+    if not path.exists():
+        return None
+    if not path.is_file():
+        raise EvidenceManifestError("manifest destination must be a regular file")
+    try:
+        manifest = read_evidence_manifest(path)
+        _validate_manifest_document(manifest)
+    except EvidenceManifestError as exc:
+        raise EvidenceManifestError(
+            "manifest destination exists but is not a valid evidence manifest"
+        ) from exc
+    return manifest
 
 
 def _artifact_from_mapping(value: Any, index: int) -> EvidenceArtifact:
