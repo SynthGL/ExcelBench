@@ -90,6 +90,35 @@ def test_manifest_file_is_excluded_and_atomic_no_clobber_is_default(tmp_path: Pa
         write_evidence_manifest(path, manifest)
 
 
+def test_manifest_destination_rejects_symlinks_and_unrelated_artifacts(
+    tmp_path: Path,
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.txt").write_text("evidence")
+    external = tmp_path / "external.json"
+    external.write_text("do not replace")
+    destination = root / "excelbench-evidence.json"
+    try:
+        destination.symlink_to(external)
+    except OSError:
+        pytest.skip("symlinks unavailable")
+
+    with pytest.raises(EvidenceManifestError, match="must not be a symlink"):
+        _manifest(root)
+    with pytest.raises(EvidenceManifestError, match="must not be a symlink"):
+        write_evidence_manifest(destination, {"irrelevant": True}, replace=True)
+    assert external.read_text() == "do not replace"
+
+    destination.unlink()
+    destination.write_text("benchmark output")
+    with pytest.raises(EvidenceManifestError, match="not a valid evidence manifest"):
+        _manifest(root)
+    with pytest.raises(EvidenceManifestError, match="not a valid evidence manifest"):
+        write_evidence_manifest(destination, {"irrelevant": True}, replace=True)
+    assert destination.read_text() == "benchmark output"
+
+
 def test_read_rejects_duplicate_json_keys(tmp_path: Path) -> None:
     path = tmp_path / "manifest.json"
     path.write_text('{"schema_version":1,"schema_version":1}')
@@ -164,6 +193,17 @@ def test_tampered_aggregate_fields_are_rejected(tmp_path: Path) -> None:
 
     with pytest.raises(EvidenceManifestError, match="artifact_count"):
         verify_evidence_manifest(root, tampered)
+
+
+def test_boolean_schema_version_is_rejected(tmp_path: Path) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "results.json").write_text("{}")
+    manifest = _manifest(root)
+    manifest["schema_version"] = True
+
+    with pytest.raises(EvidenceManifestError, match="unsupported schema_version"):
+        verify_evidence_manifest(root, manifest)
 
 
 def test_cli_builds_and_verifies_exact_snapshot(tmp_path: Path) -> None:
