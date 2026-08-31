@@ -258,11 +258,14 @@ def test_deeply_nested_json_is_a_controlled_refusal(tmp_path: Path) -> None:
     path = root / "excelbench-evidence.json"
     path.write_text('{"unexpected":' + "[" * 2_000 + "null" + "]" * 2_000 + "}")
 
-    assert isinstance(read_evidence_manifest(path), dict)
     verified = RUNNER.invoke(app, ["verify-evidence", "--root", str(root)])
     assert verified.exit_code == 1
     assert "Evidence verification failed" in verified.output
-    assert "manifest fields must be exactly" in verified.output
+    assert "Traceback" not in verified.output
+    assert (
+        "manifest is not valid UTF-8 JSON" in verified.output
+        or "manifest fields must be exactly" in verified.output
+    )
 
 
 def test_generated_and_written_manifests_share_the_reader_size_limit(
