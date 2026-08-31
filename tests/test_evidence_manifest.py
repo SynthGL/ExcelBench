@@ -179,6 +179,25 @@ def test_windows_aliases_and_reserved_names_fail_closed(tmp_path: Path) -> None:
         _manifest(root)
 
 
+@pytest.mark.parametrize("manifest_name", ["CON.json", "report.", r"nested\\manifest.json"])
+def test_manifest_name_must_be_portable(
+    tmp_path: Path, manifest_name: str
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+
+    with pytest.raises(EvidenceManifestError):
+        build_evidence_manifest(
+            root,
+            snapshot_id="snapshot",
+            repository="SynthGL/ExcelBench",
+            source_sha=SOURCE_SHA,
+            observed_at=OBSERVED_AT,
+            manifest_name=manifest_name,
+        )
+
+
 def test_timestamp_source_and_subject_contracts_are_strict(tmp_path: Path) -> None:
     root = tmp_path / "results"
     root.mkdir()
