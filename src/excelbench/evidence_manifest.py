@@ -20,6 +20,7 @@ DEFAULT_MANIFEST_NAME = "excelbench-evidence.json"
 MAX_FILES = 10_000
 MAX_FILE_BYTES = 512 * 1024 * 1024
 MAX_TOTAL_BYTES = 2 * 1024 * 1024 * 1024
+MAX_MANIFEST_BYTES = 4 * 1024 * 1024
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
 _WINDOWS_RESERVED_BASENAMES = {
@@ -82,6 +83,13 @@ def canonical_json_bytes(value: object) -> bytes:
     ).encode("utf-8")
 
 
+def _bounded_manifest_bytes(value: object) -> bytes:
+    contents = canonical_json_bytes(value) + b"\n"
+    if len(contents) > MAX_MANIFEST_BYTES:
+        raise EvidenceManifestError("manifest exceeds the 4 MiB size limit")
+    return contents
+
+
 def build_evidence_manifest(
     root: Path,
     *,
@@ -113,7 +121,7 @@ def build_evidence_manifest(
     artifacts = _inventory(root, excluded_root_name=manifest_name)
     artifact_dicts = [artifact.to_dict() for artifact in artifacts]
     artifact_set_sha256 = hashlib.sha256(canonical_json_bytes(artifact_dicts)).hexdigest()
-    return {
+    manifest = {
         "schema": "https://excelbench.dev/schemas/evidence-manifest/v1",
         "schema_version": SCHEMA_VERSION,
         "snapshot_id": snapshot_id,
@@ -125,6 +133,8 @@ def build_evidence_manifest(
         "total_size_bytes": sum(artifact.size_bytes for artifact in artifacts),
         "artifact_set_sha256": artifact_set_sha256,
     }
+    _bounded_manifest_bytes(manifest)
+    return manifest
 
 
 def verify_evidence_manifest(
@@ -172,7 +182,7 @@ def read_evidence_manifest(path: Path) -> dict[str, Any]:
     """Read a bounded UTF-8 manifest and reject duplicate JSON keys."""
     if path.is_symlink() or not path.is_file():
         raise EvidenceManifestError("manifest must be a regular non-symlink file")
-    if path.stat().st_size > 4 * 1024 * 1024:
+    if path.stat().st_size > MAX_MANIFEST_BYTES:
         raise EvidenceManifestError("manifest exceeds the 4 MiB size limit")
 
     def no_duplicates(pairs: Iterable[tuple[str, Any]]) -> dict[str, Any]:
@@ -208,7 +218,7 @@ def write_evidence_manifest(
     if replace:
         _read_existing_manifest_destination(path)
     _validate_manifest_document(manifest)
-    contents = canonical_json_bytes(dict(manifest)) + b"\n"
+    contents = _bounded_manifest_bytes(dict(manifest))
     descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     temporary = Path(temporary_name)
     try:
