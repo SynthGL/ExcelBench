@@ -133,7 +133,9 @@ def verify_evidence_manifest(
     if subjects != _validate_subjects(subjects):
         raise EvidenceManifestError("subjects must be sorted by canonical identity")
     actual = _inventory(
-        root.resolve(strict=True), excluded_root_name=_safe_manifest_name(manifest_name)
+        root.resolve(strict=True),
+        excluded_root_name=_safe_manifest_name(manifest_name),
+        require_artifact=False,
     )
     expected = [
         _artifact_from_mapping(value, index)
@@ -235,7 +237,9 @@ def parse_subject(value: str) -> EvidenceSubject:
     )
 
 
-def _inventory(root: Path, *, excluded_root_name: str) -> list[EvidenceArtifact]:
+def _inventory(
+    root: Path, *, excluded_root_name: str, require_artifact: bool = True
+) -> list[EvidenceArtifact]:
     artifacts: list[EvidenceArtifact] = []
     seen_casefolded: set[str] = set()
     total_size = 0
@@ -266,7 +270,7 @@ def _inventory(root: Path, *, excluded_root_name: str) -> list[EvidenceArtifact]
         )
         if len(artifacts) > MAX_FILES:
             raise EvidenceManifestError("evidence snapshot exceeds file-count limit")
-    if not artifacts:
+    if require_artifact and not artifacts:
         raise EvidenceManifestError("evidence snapshot must contain at least one artifact")
     return artifacts
 
