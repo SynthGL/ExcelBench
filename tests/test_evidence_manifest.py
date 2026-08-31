@@ -5,6 +5,7 @@ from typing import Any
 import pytest
 from typer.testing import CliRunner
 
+import excelbench.evidence_manifest as evidence_manifest
 from excelbench.cli import app
 from excelbench.evidence_manifest import (
     EvidenceManifestError,
@@ -196,6 +197,38 @@ def test_manifest_name_must_be_portable(
             observed_at=OBSERVED_AT,
             manifest_name=manifest_name,
         )
+
+
+def test_manifest_name_portable_key_is_reserved(tmp_path: Path) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+    (root / "ExcelBench-Evidence.json").write_text("collision")
+
+    with pytest.raises(EvidenceManifestError, match="case-insensitive"):
+        _manifest(root)
+
+
+def test_artifact_metadata_changes_during_hashing_fail_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+    real_signature = evidence_manifest._file_signature
+    calls = 0
+
+    def changing_signature(metadata: Any) -> tuple[int, int, int, int, int]:
+        nonlocal calls
+        calls += 1
+        signature = real_signature(metadata)
+        if calls == 2:
+            return (*signature[:-1], signature[-1] + 1)
+        return signature
+
+    monkeypatch.setattr(evidence_manifest, "_file_signature", changing_signature)
+    with pytest.raises(EvidenceManifestError, match="changed while hashing"):
+        _manifest(root)
 
 
 def test_timestamp_source_and_subject_contracts_are_strict(tmp_path: Path) -> None:
