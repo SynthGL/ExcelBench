@@ -127,6 +127,14 @@ def test_read_rejects_duplicate_json_keys(tmp_path: Path) -> None:
         read_evidence_manifest(path)
 
 
+def test_read_wraps_oversized_json_integer_errors(tmp_path: Path) -> None:
+    path = tmp_path / "manifest.json"
+    path.write_text('{"artifact_count":' + "9" * 5_000 + "}")
+
+    with pytest.raises(EvidenceManifestError, match="not valid UTF-8 JSON"):
+        read_evidence_manifest(path)
+
+
 def test_symlinks_and_case_collisions_fail_closed(tmp_path: Path) -> None:
     root = tmp_path / "results"
     root.mkdir()
@@ -145,6 +153,29 @@ def test_symlinks_and_case_collisions_fail_closed(tmp_path: Path) -> None:
     (root / "A.json").write_text("a")
     (root / "a.json").write_text("b")
     with pytest.raises(EvidenceManifestError, match="case-insensitive"):
+        _manifest(root)
+
+
+def test_windows_aliases_and_reserved_names_fail_closed(tmp_path: Path) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+    trailing_dot = root / "report."
+    try:
+        trailing_dot.write_text("alias")
+    except OSError:
+        pytest.skip("host filesystem rejects Windows-aliased names")
+
+    with pytest.raises(EvidenceManifestError, match="not portable to Windows"):
+        _manifest(root)
+
+    trailing_dot.unlink()
+    reserved = root / "CON.txt"
+    try:
+        reserved.write_text("reserved")
+    except OSError:
+        pytest.skip("host filesystem rejects Windows-reserved names")
+    with pytest.raises(EvidenceManifestError, match="Windows-reserved basename"):
         _manifest(root)
 
 
