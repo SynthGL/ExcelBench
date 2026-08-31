@@ -508,6 +508,8 @@ def _safe_manifest_name(value: str) -> str:
     name = _required_text(value, "manifest_name")
     if Path(name).name != name or name in {".", ".."}:
         raise EvidenceManifestError("manifest_name must be one filename")
+    if _canonical_relative_path(Path(name)) != name:
+        raise EvidenceManifestError("manifest_name must use its canonical portable form")
     return name
 
 
