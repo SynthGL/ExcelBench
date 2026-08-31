@@ -252,42 +252,78 @@ def _inventory(
     root: Path, *, excluded_root_name: str, require_artifact: bool = True
 ) -> list[EvidenceArtifact]:
     artifacts: list[EvidenceArtifact] = []
+    entries = _inventory_entries(root, excluded_root_name=excluded_root_name)
+    hashed_signatures: dict[str, tuple[int, int, int, int, int]] = {}
+    total_size = 0
+    for relative, path, _initial_signature in entries:
+        digest, size, signature = _sha256_stable_file(path)
+        hashed_signatures[relative] = signature
+        total_size += size
+        if total_size > MAX_TOTAL_BYTES:
+            raise EvidenceManifestError("evidence snapshot exceeds total size limit")
+        artifacts.append(EvidenceArtifact(path=relative, sha256=digest, size_bytes=size))
+        if len(artifacts) > MAX_FILES:
+            raise EvidenceManifestError("evidence snapshot exceeds file-count limit")
+
+    # Hashing can be long-running. Re-scan the complete namespace so a producer
+    # cannot add, remove, replace, or mutate an artifact after the first walk
+    # and still receive a successful exact-snapshot manifest.
+    final_entries = _inventory_entries(root, excluded_root_name=excluded_root_name)
+    final_signatures = {
+        relative: signature for relative, _path, signature in final_entries
+    }
+    if final_signatures != hashed_signatures:
+        raise EvidenceManifestError(
+            "evidence file set or metadata changed while inventorying"
+        )
+    if require_artifact and not artifacts:
+        raise EvidenceManifestError("evidence snapshot must contain at least one artifact")
+    return artifacts
+
+
+def _inventory_entries(
+    root: Path, *, excluded_root_name: str
+) -> list[tuple[str, Path, tuple[int, int, int, int, int]]]:
+    entries: list[tuple[str, Path, tuple[int, int, int, int, int]]] = []
     # The manifest is excluded from its own inventory, but its portable name is
     # still reserved so a differently-cased artifact cannot alias it on Windows.
     seen_casefolded: set[str] = {_portable_path_key(excluded_root_name)}
-    total_size = 0
     for path in sorted(root.rglob("*"), key=lambda item: item.as_posix()):
         if path.parent == root and path.name == excluded_root_name:
             continue
-        if path.is_symlink():
+        try:
+            metadata = os.stat(path, follow_symlinks=False)
+        except OSError as exc:
+            raise EvidenceManifestError(
+                f"evidence entry changed while inventorying: {path.relative_to(root)}"
+            ) from exc
+        if stat.S_ISLNK(metadata.st_mode):
             raise EvidenceManifestError(
                 f"symlinks are not allowed in evidence: {path.relative_to(root)}"
             )
-        if path.is_dir():
+        if stat.S_ISDIR(metadata.st_mode):
             continue
-        if not path.is_file():
+        if not stat.S_ISREG(metadata.st_mode):
             raise EvidenceManifestError(f"non-regular evidence entry: {path.relative_to(root)}")
         relative = _canonical_relative_path(path.relative_to(root))
         portable_key = _portable_path_key(relative)
         if portable_key in seen_casefolded:
             raise EvidenceManifestError(f"case-insensitive evidence path collision: {relative}")
         seen_casefolded.add(portable_key)
-        digest, size = _sha256_stable_file(path)
-        total_size += size
-        if total_size > MAX_TOTAL_BYTES:
-            raise EvidenceManifestError("evidence snapshot exceeds total size limit")
-        artifacts.append(
-            EvidenceArtifact(path=relative, sha256=digest, size_bytes=size)
-        )
-        if len(artifacts) > MAX_FILES:
+        entries.append((relative, path, _file_signature(metadata)))
+        if len(entries) > MAX_FILES:
             raise EvidenceManifestError("evidence snapshot exceeds file-count limit")
-    if require_artifact and not artifacts:
-        raise EvidenceManifestError("evidence snapshot must contain at least one artifact")
-    return artifacts
+    return entries
 
 
 def _canonical_relative_path(path: Path) -> str:
     raw = path.as_posix()
+    try:
+        raw.encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise EvidenceManifestError(
+            f"evidence path is not valid UTF-8: {raw!r}"
+        ) from exc
     if "\\" in raw:
         raise EvidenceManifestError(f"evidence path contains a backslash: {raw!r}")
     normalized = unicodedata.normalize("NFC", raw)
@@ -334,7 +370,9 @@ def _file_signature(metadata: os.stat_result) -> tuple[int, int, int, int, int]:
     )
 
 
-def _sha256_stable_file(path: Path) -> tuple[str, int]:
+def _sha256_stable_file(
+    path: Path,
+) -> tuple[str, int, tuple[int, int, int, int, int]]:
     flags = os.O_RDONLY | getattr(os, "O_BINARY", 0)
     flags |= getattr(os, "O_NOFOLLOW", 0)
     try:
@@ -369,7 +407,7 @@ def _sha256_stable_file(path: Path) -> tuple[str, int]:
         or _file_signature(after) != _file_signature(current)
     ):
         raise EvidenceManifestError(f"evidence file changed while hashing: {path}")
-    return digest.hexdigest(), before.st_size
+    return digest.hexdigest(), before.st_size, _file_signature(current)
 
 
 def _canonical_utc_timestamp(value: str) -> str:

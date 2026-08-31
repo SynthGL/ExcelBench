@@ -1,4 +1,5 @@
 import json
+import os
 from pathlib import Path
 from typing import Any
 
@@ -228,6 +229,43 @@ def test_artifact_metadata_changes_during_hashing_fail_closed(
 
     monkeypatch.setattr(evidence_manifest, "_file_signature", changing_signature)
     with pytest.raises(EvidenceManifestError, match="changed while hashing"):
+        _manifest(root)
+
+
+def test_artifact_created_during_hashing_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+    real_hash = evidence_manifest._sha256_stable_file
+    created = False
+
+    def create_late_artifact(path: Path) -> tuple[str, int, tuple[int, int, int, int, int]]:
+        nonlocal created
+        result = real_hash(path)
+        if not created:
+            (root / "late.json").write_text("late")
+            created = True
+        return result
+
+    monkeypatch.setattr(evidence_manifest, "_sha256_stable_file", create_late_artifact)
+    with pytest.raises(EvidenceManifestError, match="changed while inventorying"):
+        _manifest(root)
+
+
+@pytest.mark.skipif(os.name == "nt", reason="requires POSIX byte filenames")
+def test_non_utf8_artifact_name_fails_closed(tmp_path: Path) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    byte_path = os.path.join(os.fsencode(root), b"invalid-\xff.json")
+    descriptor = os.open(byte_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+    try:
+        os.write(descriptor, b"{}")
+    finally:
+        os.close(descriptor)
+
+    with pytest.raises(EvidenceManifestError, match="not valid UTF-8"):
         _manifest(root)
 
 
