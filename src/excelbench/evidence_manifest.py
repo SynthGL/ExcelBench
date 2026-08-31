@@ -8,10 +8,11 @@ import os
 import re
 import tempfile
 import unicodedata
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 SCHEMA_VERSION = 1
 DEFAULT_MANIFEST_NAME = "excelbench-evidence.json"
