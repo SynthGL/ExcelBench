@@ -137,6 +137,22 @@ def test_read_wraps_oversized_json_integer_errors(tmp_path: Path) -> None:
         read_evidence_manifest(path)
 
 
+def test_generated_and_written_manifests_share_the_reader_size_limit(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "results.json").write_text("{}")
+    manifest = _manifest(root)
+    limit = len(canonical_json_bytes(manifest))
+    monkeypatch.setattr(evidence_manifest, "MAX_MANIFEST_BYTES", limit)
+
+    with pytest.raises(EvidenceManifestError, match="4 MiB size limit"):
+        _manifest(root)
+    with pytest.raises(EvidenceManifestError, match="4 MiB size limit"):
+        write_evidence_manifest(root / "excelbench-evidence.json", manifest)
+
+
 def test_symlinks_and_case_collisions_fail_closed(tmp_path: Path) -> None:
     root = tmp_path / "results"
     root.mkdir()
@@ -385,3 +401,39 @@ def test_cli_builds_and_verifies_exact_snapshot(tmp_path: Path) -> None:
         ],
     )
     assert verified.exit_code == 0, verified.output
+
+
+def test_cli_refuses_success_if_snapshot_changes_after_publication(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    artifact = root / "results.json"
+    artifact.write_text("before")
+    real_write = evidence_manifest.write_evidence_manifest
+
+    def write_then_mutate(
+        path: Path, manifest: dict[str, Any], *, replace: bool = False
+    ) -> None:
+        real_write(path, manifest, replace=replace)
+        artifact.write_text("after")
+
+    monkeypatch.setattr(evidence_manifest, "write_evidence_manifest", write_then_mutate)
+    built = RUNNER.invoke(
+        app,
+        [
+            "evidence-manifest",
+            "--root",
+            str(root),
+            "--snapshot-id",
+            "release-linux",
+            "--source-sha",
+            SOURCE_SHA,
+            "--observed-at",
+            OBSERVED_AT,
+        ],
+    )
+
+    assert built.exit_code == 1
+    assert "Evidence manifest refused" in built.output
+    assert "changed=['results.json']" in built.output
