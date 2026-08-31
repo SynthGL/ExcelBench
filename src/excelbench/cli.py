@@ -2049,6 +2049,7 @@ def evidence_manifest(
         EvidenceManifestError,
         build_evidence_manifest,
         parse_subject,
+        verify_evidence_manifest,
         write_evidence_manifest,
     )
 
@@ -2065,6 +2066,7 @@ def evidence_manifest(
         )
         output = root.resolve() / manifest_name
         write_evidence_manifest(output, manifest, replace=replace)
+        verify_evidence_manifest(root, manifest, manifest_name=manifest_name)
     except (EvidenceManifestError, OSError) as exc:
         console.print(f"[red]Evidence manifest refused: {exc}[/red]")
         raise typer.Exit(1) from exc
