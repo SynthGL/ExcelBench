@@ -254,6 +254,29 @@ def test_artifact_created_during_hashing_fails_closed(
         _manifest(root)
 
 
+def test_later_artifact_replaced_before_hashing_fails_closed(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "a.json").write_text("first")
+    later = root / "z.json"
+    later.write_text("original")
+    replacement = tmp_path / "replacement.json"
+    replacement.write_text("replacement")
+    real_hash = evidence_manifest._sha256_stable_file
+
+    def replace_later(path: Path) -> tuple[str, int, tuple[int, int, int, int, int]]:
+        result = real_hash(path)
+        if path.name == "a.json":
+            os.replace(replacement, later)
+        return result
+
+    monkeypatch.setattr(evidence_manifest, "_sha256_stable_file", replace_later)
+    with pytest.raises(EvidenceManifestError, match="after the initial inventory"):
+        _manifest(root)
+
+
 @pytest.mark.skipif(os.name == "nt", reason="requires POSIX byte filenames")
 def test_non_utf8_artifact_name_fails_closed(tmp_path: Path) -> None:
     root = tmp_path / "results"

@@ -255,8 +255,12 @@ def _inventory(
     entries = _inventory_entries(root, excluded_root_name=excluded_root_name)
     hashed_signatures: dict[str, tuple[int, int, int, int, int]] = {}
     total_size = 0
-    for relative, path, _initial_signature in entries:
+    for relative, path, initial_signature in entries:
         digest, size, signature = _sha256_stable_file(path)
+        if signature != initial_signature:
+            raise EvidenceManifestError(
+                f"evidence file changed after the initial inventory: {path}"
+            )
         hashed_signatures[relative] = signature
         total_size += size
         if total_size > MAX_TOTAL_BYTES:
