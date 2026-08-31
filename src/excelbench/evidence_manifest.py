@@ -21,6 +21,18 @@ MAX_FILE_BYTES = 512 * 1024 * 1024
 MAX_TOTAL_BYTES = 2 * 1024 * 1024 * 1024
 _SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 _GIT_SHA_RE = re.compile(r"^[0-9a-f]{40}$")
+_WINDOWS_RESERVED_BASENAMES = {
+    "aux",
+    "clock$",
+    "con",
+    "conin$",
+    "conout$",
+    "nul",
+    "prn",
+    *(f"com{suffix}" for suffix in (*range(1, 10), "¹", "²", "³")),
+    *(f"lpt{suffix}" for suffix in (*range(1, 10), "¹", "²", "³")),
+}
+_WINDOWS_FORBIDDEN_CHARACTERS = frozenset('<>:"|?*')
 
 
 class EvidenceManifestError(ValueError):
@@ -172,7 +184,9 @@ def read_evidence_manifest(path: Path) -> dict[str, Any]:
 
     try:
         decoded = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=no_duplicates)
-    except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+    except EvidenceManifestError:
+        raise
+    except (OSError, UnicodeDecodeError, ValueError) as exc:
         raise EvidenceManifestError("manifest is not valid UTF-8 JSON") from exc
     if not isinstance(decoded, dict):
         raise EvidenceManifestError("manifest root must be an object")
@@ -251,10 +265,10 @@ def _inventory(
         if not path.is_file():
             raise EvidenceManifestError(f"non-regular evidence entry: {path.relative_to(root)}")
         relative = _canonical_relative_path(path.relative_to(root))
-        folded = relative.casefold()
-        if folded in seen_casefolded:
+        portable_key = _portable_path_key(relative)
+        if portable_key in seen_casefolded:
             raise EvidenceManifestError(f"case-insensitive evidence path collision: {relative}")
-        seen_casefolded.add(folded)
+        seen_casefolded.add(portable_key)
         size = path.stat().st_size
         if size > MAX_FILE_BYTES:
             raise EvidenceManifestError(f"evidence file exceeds size limit: {relative}")
@@ -281,7 +295,32 @@ def _canonical_relative_path(path: Path) -> str:
     pure = PurePosixPath(normalized)
     if pure.is_absolute() or ".." in pure.parts or not pure.parts:
         raise EvidenceManifestError(f"unsafe evidence path: {raw!r}")
-    return pure.as_posix()
+    canonical = pure.as_posix()
+    _portable_path_key(canonical)
+    return canonical
+
+
+def _portable_path_key(path: str) -> str:
+    key_parts: list[str] = []
+    for segment in PurePosixPath(path).parts:
+        if segment.endswith((".", " ")):
+            raise EvidenceManifestError(
+                f"evidence path is not portable to Windows: {path!r}"
+            )
+        if any(
+            ord(character) < 32 or character in _WINDOWS_FORBIDDEN_CHARACTERS
+            for character in segment
+        ):
+            raise EvidenceManifestError(
+                f"evidence path contains a Windows-forbidden character: {path!r}"
+            )
+        basename = segment.split(".", maxsplit=1)[0].casefold()
+        if basename in _WINDOWS_RESERVED_BASENAMES:
+            raise EvidenceManifestError(
+                f"evidence path uses a Windows-reserved basename: {path!r}"
+            )
+        key_parts.append(segment.casefold())
+    return "/".join(key_parts)
 
 
 def _sha256_file(path: Path) -> str:
@@ -402,7 +441,7 @@ def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArt
     ]
     if artifacts != sorted(artifacts):
         raise EvidenceManifestError("artifacts must be sorted by canonical path")
-    if len({artifact.path.casefold() for artifact in artifacts}) != len(artifacts):
+    if len({_portable_path_key(artifact.path) for artifact in artifacts}) != len(artifacts):
         raise EvidenceManifestError("manifest contains case-insensitive path collisions")
     artifact_dicts = [artifact.to_dict() for artifact in artifacts]
     digest = hashlib.sha256(canonical_json_bytes(artifact_dicts)).hexdigest()
