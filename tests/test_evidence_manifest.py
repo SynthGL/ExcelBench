@@ -137,6 +137,88 @@ def test_read_wraps_oversized_json_integer_errors(tmp_path: Path) -> None:
         read_evidence_manifest(path)
 
 
+@pytest.mark.parametrize(
+    "field",
+    ["snapshot_id", "source.repository", "subjects[0].name"],
+)
+def test_lone_surrogate_metadata_is_a_controlled_utf8_refusal(
+    tmp_path: Path,
+    field: str,
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "results.json").write_text("{}")
+    manifest = _manifest(root)
+    if field == "snapshot_id":
+        manifest["snapshot_id"] = "invalid-\ud800"
+    elif field == "source.repository":
+        manifest["source"]["repository"] = "invalid-\ud800"
+    else:
+        manifest["subjects"][0]["name"] = "invalid-\ud800"
+
+    with pytest.raises(EvidenceManifestError, match="valid UTF-8"):
+        canonical_json_bytes(manifest)
+    with pytest.raises(EvidenceManifestError, match="valid UTF-8"):
+        write_evidence_manifest(tmp_path / "refused.json", manifest)
+
+    path = root / "excelbench-evidence.json"
+    path.write_text(json.dumps(manifest), encoding="utf-8")
+    with pytest.raises(EvidenceManifestError, match="valid UTF-8"):
+        read_evidence_manifest(path)
+
+    verified = RUNNER.invoke(app, ["verify-evidence", "--root", str(root)])
+    assert verified.exit_code == 1
+    assert "Evidence verification failed" in verified.output
+    assert "valid UTF-8" in verified.output
+
+
+def test_read_rejects_oversized_descriptor_content(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "manifest.json"
+    path.write_bytes(b"{" + b" " * 32)
+    monkeypatch.setattr(evidence_manifest, "MAX_MANIFEST_BYTES", 16)
+
+    with pytest.raises(EvidenceManifestError, match="4 MiB size limit"):
+        read_evidence_manifest(path)
+
+
+def test_read_detects_path_replacement_after_open(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "manifest.json"
+    path.write_text("{}")
+    replacement = tmp_path / "replacement.json"
+    replacement.write_text('{"replacement":true}')
+    real_fstat = os.fstat
+    calls = 0
+
+    def replace_after_read(descriptor: int) -> os.stat_result:
+        nonlocal calls
+        metadata = real_fstat(descriptor)
+        calls += 1
+        if calls == 2:
+            os.replace(replacement, path)
+        return metadata
+
+    monkeypatch.setattr(os, "fstat", replace_after_read)
+    with pytest.raises(EvidenceManifestError, match="changed while reading"):
+        read_evidence_manifest(path)
+
+
+def test_read_rejects_manifest_symlink(tmp_path: Path) -> None:
+    target = tmp_path / "target.json"
+    target.write_text("{}")
+    path = tmp_path / "manifest.json"
+    try:
+        path.symlink_to(target)
+    except OSError:
+        pytest.skip("symlinks unavailable")
+
+    with pytest.raises(EvidenceManifestError, match="regular non-symlink"):
+        read_evidence_manifest(path)
+
+
 def test_generated_and_written_manifests_share_the_reader_size_limit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -150,6 +232,32 @@ def test_generated_and_written_manifests_share_the_reader_size_limit(
     with pytest.raises(EvidenceManifestError, match="4 MiB size limit"):
         _manifest(root)
     with pytest.raises(EvidenceManifestError, match="4 MiB size limit"):
+        write_evidence_manifest(root / "excelbench-evidence.json", manifest)
+
+
+@pytest.mark.parametrize(
+    ("limit_name", "limit", "message"),
+    [
+        ("MAX_FILES", 1, "file-count limit"),
+        ("MAX_FILE_BYTES", 4, "per-file size limit"),
+        ("MAX_TOTAL_BYTES", 8, "total size limit"),
+    ],
+)
+def test_writer_rejects_manifest_inventory_beyond_verifier_limits(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    limit_name: str,
+    limit: int,
+    message: str,
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "a.json").write_text("four")
+    (root / "b.json").write_text("five!")
+    manifest = _manifest(root)
+    monkeypatch.setattr(evidence_manifest, limit_name, limit)
+
+    with pytest.raises(EvidenceManifestError, match=message):
         write_evidence_manifest(root / "excelbench-evidence.json", manifest)
 
 

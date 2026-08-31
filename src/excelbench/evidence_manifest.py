@@ -74,13 +74,18 @@ class EvidenceArtifact:
 
 def canonical_json_bytes(value: object) -> bytes:
     """Return the one wire representation used for hashing and publication."""
-    return json.dumps(
-        value,
-        ensure_ascii=False,
-        allow_nan=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    ).encode("utf-8")
+    try:
+        return json.dumps(
+            value,
+            ensure_ascii=False,
+            allow_nan=False,
+            sort_keys=True,
+            separators=(",", ":"),
+        ).encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise EvidenceManifestError(
+            "manifest contains text that is not valid UTF-8"
+        ) from exc
 
 
 def _bounded_manifest_bytes(value: object) -> bytes:
@@ -180,10 +185,7 @@ def verify_evidence_manifest(
 
 def read_evidence_manifest(path: Path) -> dict[str, Any]:
     """Read a bounded UTF-8 manifest and reject duplicate JSON keys."""
-    if path.is_symlink() or not path.is_file():
-        raise EvidenceManifestError("manifest must be a regular non-symlink file")
-    if path.stat().st_size > MAX_MANIFEST_BYTES:
-        raise EvidenceManifestError("manifest exceeds the 4 MiB size limit")
+    contents = _read_manifest_bytes(path)
 
     def no_duplicates(pairs: Iterable[tuple[str, Any]]) -> dict[str, Any]:
         value: dict[str, Any] = {}
@@ -194,14 +196,71 @@ def read_evidence_manifest(path: Path) -> dict[str, Any]:
         return value
 
     try:
-        decoded = json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=no_duplicates)
+        decoded = json.loads(
+            contents.decode("utf-8", errors="strict"),
+            object_pairs_hook=no_duplicates,
+        )
     except EvidenceManifestError:
         raise
-    except (OSError, UnicodeDecodeError, ValueError) as exc:
+    except (UnicodeDecodeError, ValueError) as exc:
         raise EvidenceManifestError("manifest is not valid UTF-8 JSON") from exc
     if not isinstance(decoded, dict):
         raise EvidenceManifestError("manifest root must be an object")
+    _validate_serialized_text(decoded)
     return decoded
+
+
+def _read_manifest_bytes(path: Path) -> bytes:
+    """Read one stable regular file through a bounded no-follow descriptor."""
+    flags = os.O_RDONLY | getattr(os, "O_BINARY", 0)
+    flags |= getattr(os, "O_NOFOLLOW", 0)
+    try:
+        descriptor = os.open(path, flags)
+    except OSError as exc:
+        raise EvidenceManifestError(
+            "manifest must be a regular non-symlink file"
+        ) from exc
+
+    try:
+        before = os.fstat(descriptor)
+        if not stat.S_ISREG(before.st_mode):
+            raise EvidenceManifestError(
+                "manifest must be a regular non-symlink file"
+            )
+        if before.st_size > MAX_MANIFEST_BYTES:
+            raise EvidenceManifestError("manifest exceeds the 4 MiB size limit")
+        chunks: list[bytes] = []
+        remaining = MAX_MANIFEST_BYTES + 1
+        while remaining:
+            chunk = os.read(descriptor, min(1024 * 1024, remaining))
+            if not chunk:
+                break
+            chunks.append(chunk)
+            remaining -= len(chunk)
+        contents = b"".join(chunks)
+        after = os.fstat(descriptor)
+    except EvidenceManifestError:
+        raise
+    except OSError as exc:
+        raise EvidenceManifestError("manifest changed while reading") from exc
+    finally:
+        os.close(descriptor)
+
+    if len(contents) > MAX_MANIFEST_BYTES:
+        raise EvidenceManifestError("manifest exceeds the 4 MiB size limit")
+    try:
+        current = os.stat(path, follow_symlinks=False)
+    except OSError as exc:
+        raise EvidenceManifestError("manifest changed while reading") from exc
+    if (
+        stat.S_ISLNK(current.st_mode)
+        or not stat.S_ISREG(current.st_mode)
+        or len(contents) != before.st_size
+        or _file_signature(before) != _file_signature(after)
+        or _file_signature(after) != _file_signature(current)
+    ):
+        raise EvidenceManifestError("manifest changed while reading")
+    return contents
 
 
 def write_evidence_manifest(
@@ -506,6 +565,8 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
         or artifact_count < 1
     ):
         raise EvidenceManifestError("artifact_count must be a positive integer")
+    if artifact_count > MAX_FILES:
+        raise EvidenceManifestError("artifact_count exceeds the file-count limit")
     total_size_bytes = manifest["total_size_bytes"]
     if (
         not isinstance(total_size_bytes, int)
@@ -513,6 +574,8 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
         or total_size_bytes < 0
     ):
         raise EvidenceManifestError("total_size_bytes must be a non-negative integer")
+    if total_size_bytes > MAX_TOTAL_BYTES:
+        raise EvidenceManifestError("total_size_bytes exceeds the total size limit")
     artifact_set_sha256 = _string(
         manifest["artifact_set_sha256"], "artifact_set_sha256"
     )
@@ -521,6 +584,7 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
 
 
 def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArtifact]:
+    _validate_serialized_text(manifest)
     _validate_manifest_shape(manifest)
     subjects = [
         _subject_from_mapping(value, index)
@@ -532,6 +596,13 @@ def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArt
         _artifact_from_mapping(value, index)
         for index, value in enumerate(manifest["artifacts"])
     ]
+    if len(artifacts) > MAX_FILES:
+        raise EvidenceManifestError("manifest exceeds the file-count limit")
+    if any(artifact.size_bytes > MAX_FILE_BYTES for artifact in artifacts):
+        raise EvidenceManifestError("manifest artifact exceeds the per-file size limit")
+    total_size = sum(artifact.size_bytes for artifact in artifacts)
+    if total_size > MAX_TOTAL_BYTES:
+        raise EvidenceManifestError("manifest exceeds the total size limit")
     if artifacts != sorted(artifacts):
         raise EvidenceManifestError("artifacts must be sorted by canonical path")
     if len({_portable_path_key(artifact.path) for artifact in artifacts}) != len(artifacts):
@@ -542,9 +613,7 @@ def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArt
         raise EvidenceManifestError("artifact_set_sha256 does not match the artifact inventory")
     if manifest["artifact_count"] != len(artifacts):
         raise EvidenceManifestError("artifact_count does not match the artifact inventory")
-    if manifest["total_size_bytes"] != sum(
-        artifact.size_bytes for artifact in artifacts
-    ):
+    if manifest["total_size_bytes"] != total_size:
         raise EvidenceManifestError("total_size_bytes does not match the artifact inventory")
     return artifacts
 
@@ -577,7 +646,7 @@ def _artifact_from_mapping(value: Any, index: int) -> EvidenceArtifact:
     if _SHA256_RE.fullmatch(digest) is None:
         raise EvidenceManifestError(f"artifacts[{index}].sha256 is invalid")
     size = item["size_bytes"]
-    if not isinstance(size, int) or isinstance(size, bool) or size < 0 or size > MAX_FILE_BYTES:
+    if not isinstance(size, int) or isinstance(size, bool) or size < 0:
         raise EvidenceManifestError(f"artifacts[{index}].size_bytes is invalid")
     return EvidenceArtifact(path=path, sha256=digest, size_bytes=size)
 
@@ -607,6 +676,9 @@ def _safe_manifest_name(value: str) -> str:
 
 
 def _required_text(value: str, label: str) -> str:
+    if not isinstance(value, str):
+        raise EvidenceManifestError(f"{label} must be a string")
+    _validate_utf8_text(value, label)
     stripped = value.strip()
     if not stripped or any(character in stripped for character in "\r\n\x00"):
         raise EvidenceManifestError(f"{label} must be non-empty single-line text")
@@ -616,10 +688,33 @@ def _required_text(value: str, label: str) -> str:
 def _mapping(value: Any, label: str) -> Mapping[str, Any]:
     if not isinstance(value, Mapping) or not all(isinstance(key, str) for key in value):
         raise EvidenceManifestError(f"{label} must be an object with string keys")
+    for key in value:
+        _validate_utf8_text(key, f"{label} key")
     return value
 
 
 def _string(value: Any, label: str) -> str:
     if not isinstance(value, str):
         raise EvidenceManifestError(f"{label} must be a string")
+    _validate_utf8_text(value, label)
     return value
+
+
+def _validate_utf8_text(value: str, label: str) -> None:
+    try:
+        value.encode("utf-8", errors="strict")
+    except UnicodeEncodeError as exc:
+        raise EvidenceManifestError(f"{label} must be valid UTF-8 text") from exc
+
+
+def _validate_serialized_text(value: object) -> None:
+    if isinstance(value, str):
+        _validate_utf8_text(value, "manifest text")
+    elif isinstance(value, Mapping):
+        for key, item in value.items():
+            if isinstance(key, str):
+                _validate_utf8_text(key, "manifest object key")
+            _validate_serialized_text(item)
+    elif isinstance(value, (list, tuple)):
+        for item in value:
+            _validate_serialized_text(item)
