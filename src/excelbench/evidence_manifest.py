@@ -150,13 +150,16 @@ def verify_evidence_manifest(
     manifest_name: str = DEFAULT_MANIFEST_NAME,
 ) -> None:
     """Fail unless ``manifest`` exactly describes every regular file in ``root``."""
-    expected = _validate_manifest_document(manifest)
+    manifest_name = _safe_manifest_name(manifest_name)
+    expected = _validate_manifest_document(
+        manifest,
+        reserved_manifest_name=manifest_name,
+    )
     source = _mapping(manifest["source"], "source")
     source_sha = _string(source.get("commit"), "source.commit")
     if expected_source_sha is not None and source_sha != expected_source_sha:
         raise EvidenceManifestError("manifest source commit does not match expected source SHA")
     root = root.resolve(strict=True)
-    manifest_name = _safe_manifest_name(manifest_name)
     destination_manifest = _read_existing_manifest_destination(root / manifest_name)
     if (
         destination_manifest is not None
@@ -168,6 +171,13 @@ def verify_evidence_manifest(
         excluded_root_name=manifest_name,
         require_artifact=False,
     )
+    final_destination_manifest = _read_existing_manifest_destination(root / manifest_name)
+    if (destination_manifest is None) != (final_destination_manifest is None) or (
+        final_destination_manifest is not None
+        and canonical_json_bytes(final_destination_manifest)
+        != canonical_json_bytes(dict(manifest))
+    ):
+        raise EvidenceManifestError("manifest file changed while verifying evidence")
     if actual != expected:
         actual_by_path = {artifact.path: artifact for artifact in actual}
         expected_by_path = {artifact.path: artifact for artifact in expected}
@@ -202,7 +212,7 @@ def read_evidence_manifest(path: Path) -> dict[str, Any]:
         )
     except EvidenceManifestError:
         raise
-    except (UnicodeDecodeError, ValueError) as exc:
+    except (RecursionError, UnicodeDecodeError, ValueError) as exc:
         raise EvidenceManifestError("manifest is not valid UTF-8 JSON") from exc
     if not isinstance(decoded, dict):
         raise EvidenceManifestError("manifest root must be an object")
@@ -276,7 +286,7 @@ def write_evidence_manifest(
         raise EvidenceManifestError("manifest destination must not be a symlink")
     if replace:
         _read_existing_manifest_destination(path)
-    _validate_manifest_document(manifest)
+    _validate_manifest_document(manifest, reserved_manifest_name=name)
     contents = _bounded_manifest_bytes(dict(manifest))
     descriptor, temporary_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     temporary = Path(temporary_name)
@@ -583,7 +593,11 @@ def _validate_manifest_shape(manifest: Mapping[str, Any]) -> None:
         raise EvidenceManifestError("artifact_set_sha256 must be a lowercase SHA-256 digest")
 
 
-def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArtifact]:
+def _validate_manifest_document(
+    manifest: Mapping[str, Any],
+    *,
+    reserved_manifest_name: str | None = None,
+) -> list[EvidenceArtifact]:
     _validate_serialized_text(manifest)
     _validate_manifest_shape(manifest)
     subjects = [
@@ -607,6 +621,12 @@ def _validate_manifest_document(manifest: Mapping[str, Any]) -> list[EvidenceArt
         raise EvidenceManifestError("artifacts must be sorted by canonical path")
     if len({_portable_path_key(artifact.path) for artifact in artifacts}) != len(artifacts):
         raise EvidenceManifestError("manifest contains case-insensitive path collisions")
+    if reserved_manifest_name is not None:
+        reserved_key = _portable_path_key(_safe_manifest_name(reserved_manifest_name))
+        if any(_portable_path_key(artifact.path) == reserved_key for artifact in artifacts):
+            raise EvidenceManifestError(
+                "manifest artifact collides with the manifest destination"
+            )
     artifact_dicts = [artifact.to_dict() for artifact in artifacts]
     digest = hashlib.sha256(canonical_json_bytes(artifact_dicts)).hexdigest()
     if manifest["artifact_set_sha256"] != digest:
@@ -627,7 +647,10 @@ def _read_existing_manifest_destination(path: Path) -> dict[str, Any] | None:
         raise EvidenceManifestError("manifest destination must be a regular file")
     try:
         manifest = read_evidence_manifest(path)
-        _validate_manifest_document(manifest)
+        _validate_manifest_document(
+            manifest,
+            reserved_manifest_name=path.name,
+        )
     except EvidenceManifestError as exc:
         raise EvidenceManifestError(
             "manifest destination exists but is not a valid evidence manifest"
@@ -708,13 +731,15 @@ def _validate_utf8_text(value: str, label: str) -> None:
 
 
 def _validate_serialized_text(value: object) -> None:
-    if isinstance(value, str):
-        _validate_utf8_text(value, "manifest text")
-    elif isinstance(value, Mapping):
-        for key, item in value.items():
-            if isinstance(key, str):
-                _validate_utf8_text(key, "manifest object key")
-            _validate_serialized_text(item)
-    elif isinstance(value, (list, tuple)):
-        for item in value:
-            _validate_serialized_text(item)
+    pending = [value]
+    while pending:
+        item = pending.pop()
+        if isinstance(item, str):
+            _validate_utf8_text(item, "manifest text")
+        elif isinstance(item, Mapping):
+            for key, nested in item.items():
+                if isinstance(key, str):
+                    _validate_utf8_text(key, "manifest object key")
+                pending.append(nested)
+        elif isinstance(item, (list, tuple)):
+            pending.extend(item)

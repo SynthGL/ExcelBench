@@ -1,3 +1,4 @@
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -74,6 +75,38 @@ def test_verification_rejects_missing_extra_and_changed_files(tmp_path: Path) ->
     (root / "extra.txt").unlink()
     artifact.unlink()
     with pytest.raises(EvidenceManifestError, match="missing=.*results.json"):
+        verify_evidence_manifest(root, manifest)
+
+
+def test_verification_rechecks_manifest_after_inventory(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "results.json").write_text("{}")
+    manifest = _manifest(root)
+    path = root / "excelbench-evidence.json"
+    write_evidence_manifest(path, manifest)
+    replacement = json.loads(json.dumps(manifest))
+    replacement["snapshot_id"] = "replacement-snapshot"
+    real_inventory = evidence_manifest._inventory
+
+    def replace_after_inventory(
+        inventory_root: Path,
+        *,
+        excluded_root_name: str,
+        require_artifact: bool = True,
+    ) -> list[evidence_manifest.EvidenceArtifact]:
+        artifacts = real_inventory(
+            inventory_root,
+            excluded_root_name=excluded_root_name,
+            require_artifact=require_artifact,
+        )
+        path.write_bytes(canonical_json_bytes(replacement) + b"\n")
+        return artifacts
+
+    monkeypatch.setattr(evidence_manifest, "_inventory", replace_after_inventory)
+    with pytest.raises(EvidenceManifestError, match="changed while verifying evidence"):
         verify_evidence_manifest(root, manifest)
 
 
@@ -219,6 +252,19 @@ def test_read_rejects_manifest_symlink(tmp_path: Path) -> None:
         read_evidence_manifest(path)
 
 
+def test_deeply_nested_json_is_a_controlled_refusal(tmp_path: Path) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    path = root / "excelbench-evidence.json"
+    path.write_text('{"unexpected":' + "[" * 2_000 + "null" + "]" * 2_000 + "}")
+
+    assert isinstance(read_evidence_manifest(path), dict)
+    verified = RUNNER.invoke(app, ["verify-evidence", "--root", str(root)])
+    assert verified.exit_code == 1
+    assert "Evidence verification failed" in verified.output
+    assert "manifest fields must be exactly" in verified.output
+
+
 def test_generated_and_written_manifests_share_the_reader_size_limit(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -259,6 +305,29 @@ def test_writer_rejects_manifest_inventory_beyond_verifier_limits(
 
     with pytest.raises(EvidenceManifestError, match=message):
         write_evidence_manifest(root / "excelbench-evidence.json", manifest)
+
+
+@pytest.mark.parametrize(
+    "artifact_path",
+    ["excelbench-evidence.json", "ExcelBench-Evidence.json"],
+)
+def test_writer_rejects_manifest_destination_artifact_alias(
+    tmp_path: Path,
+    artifact_path: str,
+) -> None:
+    root = tmp_path / "results"
+    root.mkdir()
+    (root / "artifact.json").write_text("{}")
+    manifest = _manifest(root)
+    manifest["artifacts"][0]["path"] = artifact_path
+    manifest["artifact_set_sha256"] = hashlib.sha256(
+        canonical_json_bytes(manifest["artifacts"])
+    ).hexdigest()
+
+    destination = root / "excelbench-evidence.json"
+    with pytest.raises(EvidenceManifestError, match="collides with the manifest destination"):
+        write_evidence_manifest(destination, manifest)
+    assert not destination.exists()
 
 
 def test_symlinks_and_case_collisions_fail_closed(tmp_path: Path) -> None:
