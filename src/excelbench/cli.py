@@ -2001,5 +2001,118 @@ def show_summary(results: "BenchmarkResults") -> None:
     console.print(table)
 
 
+@app.command("evidence-manifest")
+def evidence_manifest(
+    root: Path = typer.Option(
+        Path("results"),
+        "--root",
+        help="Evidence directory to inventory exactly.",
+    ),
+    snapshot_id: str = typer.Option(
+        ...,
+        "--snapshot-id",
+        help="Stable identity for this evidence snapshot.",
+    ),
+    source_sha: str = typer.Option(
+        ...,
+        "--source-sha",
+        help="Exact 40-character source commit represented by the evidence.",
+    ),
+    observed_at: str = typer.Option(
+        ...,
+        "--observed-at",
+        help="Explicit timezone-aware observation timestamp.",
+    ),
+    repository: str = typer.Option(
+        "SynthGL/ExcelBench",
+        "--repository",
+        help="Source repository identity.",
+    ),
+    subject: list[str] | None = typer.Option(
+        None,
+        "--subject",
+        help="Bound artifact as NAME=SHA256 or NAME@VERSION=SHA256; repeatable.",
+    ),
+    manifest_name: str = typer.Option(
+        "excelbench-evidence.json",
+        "--manifest-name",
+        help="Manifest filename created directly below the evidence root.",
+    ),
+    replace: bool = typer.Option(
+        False,
+        "--replace",
+        help="Atomically replace an existing manifest.",
+    ),
+) -> None:
+    """Create a deterministic exact-file evidence manifest."""
+    from excelbench.evidence_manifest import (
+        EvidenceManifestError,
+        build_evidence_manifest,
+        parse_subject,
+        write_evidence_manifest,
+    )
+
+    try:
+        subjects = [parse_subject(value) for value in subject or []]
+        manifest = build_evidence_manifest(
+            root,
+            snapshot_id=snapshot_id,
+            repository=repository,
+            source_sha=source_sha,
+            observed_at=observed_at,
+            subjects=subjects,
+            manifest_name=manifest_name,
+        )
+        output = root.resolve() / manifest_name
+        write_evidence_manifest(output, manifest, replace=replace)
+    except (EvidenceManifestError, OSError) as exc:
+        console.print(f"[red]Evidence manifest refused: {exc}[/red]")
+        raise typer.Exit(1) from exc
+    console.print(f"[green]✓ Evidence manifest: {output}[/green]")
+    console.print(f"  Artifacts: {manifest['artifact_count']}")
+    console.print(f"  Artifact set: {manifest['artifact_set_sha256']}")
+
+
+@app.command("verify-evidence")
+def verify_evidence(
+    root: Path = typer.Option(
+        Path("results"),
+        "--root",
+        help="Evidence directory covered by the manifest.",
+    ),
+    manifest_name: str = typer.Option(
+        "excelbench-evidence.json",
+        "--manifest-name",
+        help="Manifest filename directly below the evidence root.",
+    ),
+    expected_source_sha: str | None = typer.Option(
+        None,
+        "--expected-source-sha",
+        help="Optional exact source commit required by the caller.",
+    ),
+) -> None:
+    """Fail unless a manifest exactly covers the current evidence directory."""
+    from excelbench.evidence_manifest import (
+        EvidenceManifestError,
+        read_evidence_manifest,
+        verify_evidence_manifest,
+    )
+
+    path = root.resolve() / manifest_name
+    try:
+        manifest = read_evidence_manifest(path)
+        verify_evidence_manifest(
+            root,
+            manifest,
+            expected_source_sha=expected_source_sha,
+            manifest_name=manifest_name,
+        )
+    except (EvidenceManifestError, OSError) as exc:
+        console.print(f"[red]Evidence verification failed: {exc}[/red]")
+        raise typer.Exit(1) from exc
+    console.print(f"[green]✓ Evidence verified: {path}[/green]")
+    console.print(f"  Artifact set: {manifest['artifact_set_sha256']}")
+
+
 if __name__ == "__main__":
     app()

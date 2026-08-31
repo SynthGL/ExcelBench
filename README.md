@@ -177,6 +177,37 @@ Run the dedicated pivot capability artifact with:
 uv run excelbench cross-language-pivot-context --fixture fixtures/excel/tier2/15_pivot_tables.xlsx --output results-cross-language-pivots
 ```
 
+
+## Exact Evidence Manifests
+
+A benchmark directory can be bound to its exact source and artifact identities with
+a deterministic, path-free manifest:
+
+\`\`\`bash
+uv run excelbench evidence-manifest \
+  --root results-release-2026-08-31 \
+  --snapshot-id wolfxl-2.1-linux-x86_64 \
+  --source-sha 0123456789abcdef0123456789abcdef01234567 \
+  --observed-at 2026-08-31T00:00:00Z \
+  --subject wolfxl-wheel@2.1.0=<wheel-sha256>
+
+uv run excelbench verify-evidence \
+  --root results-release-2026-08-31 \
+  --expected-source-sha 0123456789abcdef0123456789abcdef01234567
+\`\`\`
+
+The v1 contract inventories every regular file, hashes a canonical sorted file set,
+rejects symlinks and cross-platform path collisions, and refuses undeclared, missing,
+or changed files. It excludes only the manifest itself. The observation timestamp is
+explicit so identical inputs produce identical manifest bytes.
+
+The manifest is the subject to sign or attest in release CI. Successful verification
+does not make an evidence lane current by itself: public claims must still name the
+snapshot date, source commit, tested package subjects, platform, and workload.
+
+Schema: [\`schemas/evidence-manifest-v1.schema.json\`](schemas/evidence-manifest-v1.schema.json)
+
+
 ## How It Works
 
 1. **Generate reference files** -- [xlwings](https://www.xlwings.org/) drives real Excel to produce canonical `.xlsx`/`.xls` test files with known features.
