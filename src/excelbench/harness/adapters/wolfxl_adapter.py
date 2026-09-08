@@ -36,7 +36,12 @@ def _color_to_hex(color: Any) -> str | None:
     if color is None:
         return None
 
-    rgb = getattr(color, "rgb", None)
+    if isinstance(color, str):
+        # WolfXL exposes fill colors as plain ARGB strings where openpyxl
+        # returns Color objects; both spellings normalize the same way.
+        rgb: Any = color
+    else:
+        rgb = getattr(color, "rgb", None)
     if isinstance(rgb, str) and len(rgb) >= 6:
         return f"#{rgb[2:]}" if len(rgb) == 8 else f"#{rgb}"
 
