@@ -1,0 +1,537 @@
+{
+  "cells": {
+    "Schedule!B10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!B11": {
+      "type": "number",
+      "value": -308872.0
+    },
+    "Schedule!B2": {
+      "type": "number",
+      "value": 100000.0
+    },
+    "Schedule!B3": {
+      "type": "number",
+      "value": 38000.0
+    },
+    "Schedule!B4": {
+      "type": "number",
+      "value": 62000.0
+    },
+    "Schedule!B5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!B6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!B7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!B8": {
+      "type": "number",
+      "value": 400872.0
+    },
+    "Schedule!B9": {
+      "type": "number",
+      "value": -300872.0
+    },
+    "Schedule!C10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!C11": {
+      "type": "number",
+      "value": -306442.0
+    },
+    "Schedule!C2": {
+      "type": "number",
+      "value": 104500.0
+    },
+    "Schedule!C3": {
+      "type": "number",
+      "value": 39710.0
+    },
+    "Schedule!C4": {
+      "type": "number",
+      "value": 64790.0
+    },
+    "Schedule!C5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!C6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!C7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!C8": {
+      "type": "number",
+      "value": 402582.0
+    },
+    "Schedule!C9": {
+      "type": "number",
+      "value": -298082.0
+    },
+    "Schedule!D10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!D11": {
+      "type": "number",
+      "value": -303902.65
+    },
+    "Schedule!D2": {
+      "type": "number",
+      "value": 109202.5
+    },
+    "Schedule!D3": {
+      "type": "number",
+      "value": 41496.95
+    },
+    "Schedule!D4": {
+      "type": "number",
+      "value": 67705.55
+    },
+    "Schedule!D5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!D6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!D7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!D8": {
+      "type": "number",
+      "value": 404368.95
+    },
+    "Schedule!D9": {
+      "type": "number",
+      "value": -295166.45
+    },
+    "Schedule!E10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!E11": {
+      "type": "number",
+      "value": -301249.02925
+    },
+    "Schedule!E2": {
+      "type": "number",
+      "value": 114116.6125
+    },
+    "Schedule!E3": {
+      "type": "number",
+      "value": 43364.31275
+    },
+    "Schedule!E4": {
+      "type": "number",
+      "value": 70752.29975
+    },
+    "Schedule!E5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!E6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!E7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!E8": {
+      "type": "number",
+      "value": 406236.31275
+    },
+    "Schedule!E9": {
+      "type": "number",
+      "value": -292119.70025
+    },
+    "Schedule!F10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!F11": {
+      "type": "number",
+      "value": -298475.99556625
+    },
+    "Schedule!F2": {
+      "type": "number",
+      "value": 119251.8600625
+    },
+    "Schedule!F3": {
+      "type": "number",
+      "value": 45315.70682375
+    },
+    "Schedule!F4": {
+      "type": "number",
+      "value": 73936.15323875
+    },
+    "Schedule!F5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!F6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!F7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!F8": {
+      "type": "number",
+      "value": 408187.70682375
+    },
+    "Schedule!F9": {
+      "type": "number",
+      "value": -288935.84676125
+    },
+    "Schedule!G10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!G11": {
+      "type": "number",
+      "value": -295578.175366731
+    },
+    "Schedule!G2": {
+      "type": "number",
+      "value": 124618.193765312
+    },
+    "Schedule!G3": {
+      "type": "number",
+      "value": 47354.9136308187
+    },
+    "Schedule!G4": {
+      "type": "number",
+      "value": 77263.2801344937
+    },
+    "Schedule!G5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!G6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!G7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!G8": {
+      "type": "number",
+      "value": 410226.913630819
+    },
+    "Schedule!G9": {
+      "type": "number",
+      "value": -285608.719865506
+    },
+    "Schedule!H10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!H11": {
+      "type": "number",
+      "value": -292549.953258234
+    },
+    "Schedule!H2": {
+      "type": "number",
+      "value": 130226.012484752
+    },
+    "Schedule!H3": {
+      "type": "number",
+      "value": 49485.8847442056
+    },
+    "Schedule!H4": {
+      "type": "number",
+      "value": 80740.127740546
+    },
+    "Schedule!H5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!H6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!H7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!H8": {
+      "type": "number",
+      "value": 412357.884744206
+    },
+    "Schedule!H9": {
+      "type": "number",
+      "value": -282131.872259454
+    },
+    "Schedule!I10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!I11": {
+      "type": "number",
+      "value": -289385.461154855
+    },
+    "Schedule!I2": {
+      "type": "number",
+      "value": 136086.183046565
+    },
+    "Schedule!I3": {
+      "type": "number",
+      "value": 51712.7495576948
+    },
+    "Schedule!I4": {
+      "type": "number",
+      "value": 84373.4334888705
+    },
+    "Schedule!I5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!I6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!I7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!I8": {
+      "type": "number",
+      "value": 414584.749557695
+    },
+    "Schedule!I9": {
+      "type": "number",
+      "value": -278498.56651113
+    },
+    "Schedule!J10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!J11": {
+      "type": "number",
+      "value": -286078.566906823
+    },
+    "Schedule!J2": {
+      "type": "number",
+      "value": 142210.061283661
+    },
+    "Schedule!J3": {
+      "type": "number",
+      "value": 54039.8232877911
+    },
+    "Schedule!J4": {
+      "type": "number",
+      "value": 88170.2379958697
+    },
+    "Schedule!J5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!J6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!J7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!J8": {
+      "type": "number",
+      "value": 416911.823287791
+    },
+    "Schedule!J9": {
+      "type": "number",
+      "value": -274701.76200413
+    },
+    "Schedule!K10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!K11": {
+      "type": "number",
+      "value": -282622.86241763
+    },
+    "Schedule!K2": {
+      "type": "number",
+      "value": 148609.514041425
+    },
+    "Schedule!K3": {
+      "type": "number",
+      "value": 56471.6153357417
+    },
+    "Schedule!K4": {
+      "type": "number",
+      "value": 92137.8987056838
+    },
+    "Schedule!K5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!K6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!K7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!K8": {
+      "type": "number",
+      "value": 419343.615335742
+    },
+    "Schedule!K9": {
+      "type": "number",
+      "value": -270734.101294316
+    },
+    "Schedule!L10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!L11": {
+      "type": "number",
+      "value": -279011.651226424
+    },
+    "Schedule!L2": {
+      "type": "number",
+      "value": 155296.94217329
+    },
+    "Schedule!L3": {
+      "type": "number",
+      "value": 59012.8380258501
+    },
+    "Schedule!L4": {
+      "type": "number",
+      "value": 96284.1041474396
+    },
+    "Schedule!L5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!L6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!L7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!L8": {
+      "type": "number",
+      "value": 421884.83802585
+    },
+    "Schedule!L9": {
+      "type": "number",
+      "value": -266587.89585256
+    },
+    "Schedule!M10": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Schedule!M11": {
+      "type": "number",
+      "value": -275237.935531613
+    },
+    "Schedule!M2": {
+      "type": "number",
+      "value": 162285.304571088
+    },
+    "Schedule!M3": {
+      "type": "number",
+      "value": 61668.4157370133
+    },
+    "Schedule!M4": {
+      "type": "number",
+      "value": 100616.888834074
+    },
+    "Schedule!M5": {
+      "type": "number",
+      "value": 12000.0
+    },
+    "Schedule!M6": {
+      "type": "number",
+      "value": 488.0
+    },
+    "Schedule!M7": {
+      "type": "number",
+      "value": 719.0
+    },
+    "Schedule!M8": {
+      "type": "number",
+      "value": 424540.415737013
+    },
+    "Schedule!M9": {
+      "type": "number",
+      "value": -262255.111165926
+    },
+    "Summary!B10": {
+      "type": "number",
+      "value": -2021215.15613594
+    },
+    "Summary!B11": {
+      "type": "number",
+      "value": 0.213327377
+    },
+    "Summary!B12": {
+      "type": "number",
+      "value": 45777.0
+    },
+    "Summary!B13": {
+      "type": "number",
+      "value": 45777.0
+    },
+    "Summary!B14": {
+      "type": "number",
+      "value": 16.0
+    },
+    "Summary!B15": {
+      "type": "number",
+      "value": 4.0
+    },
+    "Summary!B2": {
+      "type": "number",
+      "value": 0.0
+    },
+    "Summary!B3": {
+      "type": "number",
+      "value": 2.0
+    },
+    "Summary!B4": {
+      "type": "number",
+      "value": -300872.0
+    },
+    "Summary!B5": {
+      "type": "number",
+      "value": -262255.111165926
+    },
+    "Summary!B6": {
+      "type": "number",
+      "value": -293283.86
+    },
+    "Summary!B7": {
+      "type": "number",
+      "value": 20.0
+    },
+    "Summary!B8": {
+      "type": "number",
+      "value": 125.25
+    }
+  },
+  "oracle": "libreoffice/LibreOffice 26.8.0.3 bce0998afefdbc355585ca324285661a2170ba77"
+}

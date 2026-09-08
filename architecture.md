@@ -76,15 +76,23 @@ Most-touched top-level directories:
   - `harness/roundtrip_runner.py`: open/save idempotence context lane
   - `harness/compat_cases.py`: openpyxl-style compatibility snippet lane
   - `harness/artifact_context.py`: chart and macro package evidence lanes
+  - `harness/mutation.py`: template-mutation lane (subprocess wall time, RSS,
+    package-preservation scoring)
+  - `harness/calc.py`: formula-recalculation tier engines (wolfxl, LibreOffice,
+    aspose-cells-foss, zavora oracle) against the cache-free fixture
+  - `modifiable.py`: engine registry for mutation-capable adapters
   - `harness/external_fixture_specs/`: tool-specific external oracle fixture
     definitions imported by the fixture-pack generator
   - `perf/`: performance runner + renderer
   - `results/`: fidelity result renderers (md/csv) + dashboards/plots
 
 - `fixtures/`
-  - `excel/`: canonical .xlsx fixtures (git-tracked, Excel-generated)
+  - `excel/`: canonical .xlsx fixtures (git-tracked; tiers 0-3 Excel-generated,
+    `excel/tier4/` openpyxl-structural)
   - `excel_xls/`: canonical .xls fixtures
   - `throughput_xlsx/`: scale fixtures for perf/throughput workloads
+  - `mutation/`: corporate-model template + mutation manifest
+  - `calc/`: cache-free formula fixture + LibreOffice oracle expected values
 
 - `tools/external-oracles/`
   - Optional subprocess helpers for non-Python oracle tools.
@@ -100,6 +108,8 @@ Most-touched top-level directories:
     merges, freeze panes, and sheet protection.
   - `closedxml/`: .NET helper that generates workbooks with ClosedXML tables,
     pivots, and conditional formatting.
+  - `zavora/`: Rust helper (zavora-xlsx) for write/mutate/calculate oracle
+    operations over the stdin/stdout JSON contract.
   - `npoi/`: .NET helper that generates POI-style workbooks with NPOI formulas,
     comments, rich text, merged ranges, and sheet protection.
 

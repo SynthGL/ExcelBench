@@ -1,0 +1,743 @@
+{
+  "engines": {
+    "aspose-cells-foss": {
+      "available": true,
+      "details": {
+        "added_parts": [
+          "xl/sharedStrings.xml"
+        ],
+        "customXml_identical": false,
+        "dangling_rels": [],
+        "element_diffs": [
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          }
+        ],
+        "lost_parts": [
+          "customXml/_rels/item1.xml.rels",
+          "customXml/item1.xml",
+          "customXml/itemProps1.xml"
+        ],
+        "missing_content_types": [],
+        "mutations_landed": true
+      },
+      "peak_rss_kb_median": 170752.0,
+      "preservation_score": 60.0,
+      "status": "passed",
+      "wall_ms_median": 690.0
+    },
+    "openpyxl": {
+      "available": true,
+      "details": {
+        "added_parts": [],
+        "customXml_identical": false,
+        "dangling_rels": [],
+        "element_diffs": [
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          }
+        ],
+        "lost_parts": [
+          "customXml/_rels/item1.xml.rels",
+          "customXml/item1.xml",
+          "customXml/itemProps1.xml"
+        ],
+        "missing_content_types": [],
+        "mutations_landed": true
+      },
+      "peak_rss_kb_median": 170336.0,
+      "preservation_score": 60.0,
+      "status": "passed",
+      "wall_ms_median": 710.0
+    },
+    "wolfxl": {
+      "available": true,
+      "details": {
+        "added_parts": [
+          "xl/calcChain.xml"
+        ],
+        "customXml_identical": true,
+        "dangling_rels": [],
+        "element_diffs": [
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          }
+        ],
+        "lost_parts": [],
+        "missing_content_types": [],
+        "mutations_landed": true
+      },
+      "peak_rss_kb_median": 175488.0,
+      "preservation_score": 100.0,
+      "status": "passed",
+      "wall_ms_median": 710.0
+    },
+    "zavora-xlsx": {
+      "available": true,
+      "details": {
+        "added_parts": [
+          "xl/sharedStrings.xml"
+        ],
+        "customXml_identical": true,
+        "dangling_rels": [],
+        "element_diffs": [
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": false
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet1.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet2.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "tableParts",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "sheetProtection",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "dataValidations",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "conditionalFormatting",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": false,
+            "present_in_output": false
+          },
+          {
+            "element": "pageSetup",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "headerFooter",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "sheetPr",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "pane",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          },
+          {
+            "element": "drawing",
+            "part": "xl/worksheets/sheet3.xml",
+            "present_in_original": true,
+            "present_in_output": true
+          }
+        ],
+        "integrity_failure": "mutated cell values did not match requested values",
+        "lost_parts": [
+          "xl/worksheets/_rels/sheet3.xml.rels"
+        ],
+        "missing_content_types": [],
+        "mutations_landed": false
+      },
+      "peak_rss_kb_median": 169520.0,
+      "preservation_score": 0.0,
+      "status": "integrity-failed",
+      "wall_ms_median": 1270.0
+    }
+  },
+  "metadata": {
+    "platform": "Darwin",
+    "repeats": 3,
+    "template_sha256": "da08cc9e607f267b438ec7ce2480d6eb3650d1c19928f283a18296a2b79d808e",
+    "timestamp": "2026-09-08T06:28:04Z"
+  }
+}

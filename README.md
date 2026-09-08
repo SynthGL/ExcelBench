@@ -6,12 +6,27 @@ Most Excel library comparisons focus on speed. ExcelBench focuses on the questio
 
 > Can this library handle my real spreadsheet without breaking the parts I care about?
 
-ExcelBench models 19 XLSX features across 12+ Python adapters. In the fresh
-wheel-backed WolfXL 2.0 release snapshot, 18 are scoreable across libraries
-(pivot tables remain N/A on macOS fixtures).
+ExcelBench models 22 XLSX features across 14 Python adapters plus a
+cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
+(sheet protection, page setup, chart anchoring) was added in the
+2026-09-08 competitor snapshot.
 
 ## Results at a Glance
 
+> Competitor snapshot: 2026-09-08 | WolfXL 2.1.0 wheel | aspose-cells-foss 26.7 | [Fidelity](results-2026-09-08/xlsx/README.md) | [Mutation](results-2026-09-08/mutation/README.md) | [Calc](results-2026-09-08/calc/README.md) | [Zavora cross-language](results-2026-09-08/cross-language/README.md)
+>
+> In that snapshot: openpyxl 22/22, WolfXL 19/22, aspose-cells-foss 11/22
+> green features (WolfXL 2.1.0 gaps: conditional-formatting read,
+> named-range and print-title writes).
+>
+> Mutation suite (two-cell edit on a corporate template): WolfXL patches in
+> 1.5s with 100% preservation; openpyxl and aspose rewrite at 60%;
+> zavora-xlsx 0.1.2 corrupts package relationships (0%).
+>
+> Calc tier (133-formula financial DAG, cache-free fixture, LibreOffice
+> oracle): LibreOffice 133/133, WolfXL 55/133, aspose-cells-foss 25/133,
+> zavora 0/133.
+>
 > Python release snapshot: 2026-04-29 UTC | wheel-backed WolfXL 2.0 rerun | [Fidelity](results-release-2026-04-28/README.md) | [Perf](results-release-2026-04-28/perf/README.md) | [Dashboard](results-release-2026-04-28/DASHBOARD.md)
 >
 > In that snapshot, WolfXL reaches `18/18` green features with `100%` pass rate.
@@ -21,7 +36,7 @@ wheel-backed WolfXL 2.0 release snapshot, 18 are scoreable across libraries
 > Pivot capability lane: [separate artifact](results-cross-language-pivots/README.md) because the shipped macOS pivot fixture is not scoreable, while `excelize` can still emit pivot-bearing workbooks.
 >
 > Historical public baseline: 2026-02-17 | Excel 16.105.3 | macOS (Apple Silicon) | [Full results](results/xlsx/README.md)
-
+>
 > Newer performance snapshot: 2026-04-20 | [Perf results](results/perf/README.md)
 >
 > Read [Public Reporting Status](docs/public-reporting.md) before quoting numbers across snapshots.
@@ -38,28 +53,36 @@ Cross-language libraries matter too, but for a different reason: they show how s
 
 - `Apache POI`
 - `Excelize`
+- `zavora-xlsx` (Rust writer, added 2026-09-08)
 
 Pivot tables sit in a separate capability lane. On macOS, the shipped pivot fixture does not currently contain scoreable pivot OOXML, so the pivot story is tracked as a dedicated artifact instead of being mixed into the scored lane.
 
 See [cross-language comparison strategy](docs/trackers/cross-language-comparison-strategy.md).
 
-## Three Lanes
+## Lanes
 
 1. **Python replacement lane**
 Use this when the question is: what should a Python team use instead of `openpyxl`?
 
 2. **Cross-language context lane**
-Use this when the question is: how does WolfXL compare to serious spreadsheet tooling in Java and Go?
+Use this when the question is: how does WolfXL compare to serious spreadsheet tooling in Java, Go, and Rust?
 
 3. **Pivot capability lane**
 Use this when the question is: can the cross-language helpers detect or emit pivot-bearing workbooks even when the main scored fixture is not valid on macOS?
+
+4. **Template-mutation lane**
+Use this when the question is: which engine can surgically edit a corporate template fastest while preserving the package?
+
+5. **Formula-recalculation lane**
+Use this when the question is: which engine actually computes a 133-formula financial DAG from scratch (cache-free fixture, LibreOffice oracle)?
 
 ### Library Comparison
 
 | Library | Caps | Fidelity | Read Speed | Write Speed | Modify |
 |---------|:----:|:--------:|:----------:|:-----------:|:------:|
-| **wolfxl** | R+W | 18/18 in 2026-04-29 release snapshot | workload-specific | workload-specific | Patch |
-| openpyxl | R+W | 18/18 in 2026-04-29 release snapshot | 1x (baseline per workload) | 1x (baseline per workload) | Rewrite |
+| **wolfxl** | R+W | 19/22 in 2026-09-08 competitor snapshot (18/18 in 2026-04-29 snapshot) | workload-specific | workload-specific | Patch (100% preservation in mutation suite) |
+| openpyxl | R+W | 22/22 in 2026-09-08 competitor snapshot | 1x (baseline per workload) | 1x (baseline per workload) | Rewrite (60% preservation in mutation suite) |
+| aspose-cells-foss | R+W | 11/22 in 2026-09-08 competitor snapshot | workload-specific | workload-specific | Rewrite (60% preservation) |
 | xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | ~1x | No |
 | xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | ~2x | No |
 | python-calamine | R | 1/18 in 2026-04-29 release snapshot | ~1.3x | -- | No |
@@ -69,13 +92,15 @@ Use this when the question is: can the cross-language helpers detect or emit piv
 > Speed numbers are snapshot-specific. Always cite the artifact date, workload, and profile. See [performance results](results/perf/README.md), [METHODOLOGY.md](METHODOLOGY.md), and [Public Reporting Status](docs/public-reporting.md).
 
 ### Key Findings
-
-- **High-fidelity libraries are rare**: in the fresh wheel-backed release snapshot, only openpyxl and WolfXL reach 18/18 green features
-- **Patch modify is structurally different**: WolfXL's `load_workbook(path, modify=True)` uses surgical ZIP patching rather than a full workbook rewrite
+- **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-09-08 competitor snapshot (22 features), openpyxl holds 22/22 while WolfXL 2.1.0 drops to 19/22
+- **WolfXL 2.1.0 regression signal**: conditional-formatting read scores 0 and named-range / print-title writes score 2 in the 2026-09-08 snapshot; tracked for the WolfXL repo
+- **Patch modify is structurally different**: WolfXL's `load_workbook(path, modify=True)` uses surgical ZIP patching; it is the only engine reaching 100% package preservation in the mutation suite
 - **The abstraction tax is real**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion (errors become NaN)
 - **Speed vs fidelity tradeoff is measurable**: use the perf snapshot together with the fidelity matrix rather than quoting one without the other
 - **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
-- **Cross-language context is now strong too**: both `Apache POI` and `Excelize` land at `18/18` in the current scored write lane
+- **Cross-language context is now strong too**: `Apache POI` and `Excelize` land at `18/18` in the scored write lane; `zavora-xlsx` 0.1.2 writes fast but corrupts hyperlink relationships on mutate and cannot recalculate
+- **Calculation is a differentiator**: only LibreOffice computes the full 133-formula DAG; WolfXL 2.1.0 covers 55/133 (power-operator family returns None), aspose-cells-foss 25/133
+
 
 See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) for the fresh wheel-backed combined view, or the [historical dashboard](results/DASHBOARD.md) for the older public baseline.
 
@@ -90,11 +115,13 @@ See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) fo
 
 ## Libraries Tested
 
-### XLSX Profile (12 adapters)
+### XLSX Profile (14 adapters)
 
 | Library | Version | Lang | Caps | Green Features |
 |:--------|:--------|:-----|:-----|:--------------:|
-| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | 18/18 |
+| [WolfXL](https://github.com/SynthGL/wolfxl) | 2.1.0 | Python (Rust core) | R+W | 19/22 (2026-09-08 snapshot) |
+| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | 22/22 (2026-09-08 snapshot) |
+| [aspose-cells-foss](https://pypi.org/project/aspose-cells-foss/) | 26.7 | Python (JVM-core FOSS) | R+W | 11/22 (2026-09-08 snapshot) |
 | [XlsxWriter](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 15/18 |
 | [xlsxwriter-constmem](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 12/18 |
 | [openpyxl-readonly](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R | 3/18 |
@@ -106,6 +133,18 @@ See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) fo
 | [polars](https://pola.rs/) | 1.38.1 | Rust | R | 0/18 |
 | [xlwt](https://github.com/python-excel/xlwt) | 1.3.0 | Python | W | 4/18 |
 | [xlrd](https://github.com/python-excel/xlrd) | 2.0.2 | Python | R | .xls only |
+
+> Green-feature counts are per dated snapshot; `x/18` numbers come from the
+> 2026-04-29 release snapshot and `x/22` from the 2026-09-08 competitor
+> snapshot (Tier 4 added). Never mix counts across snapshots.
+
+### Cross-Language Context (oracle helpers)
+
+| Library | Version | Lang | Caps | Notes |
+|:--------|:--------|:-----|:-----|:------|
+| Apache POI | 5.x | Java | W | 18/18 scored write lane (2026-04-29) |
+| Excelize | 2.x | Go | W | 18/18 scored write lane (2026-04-29) |
+| zavora-xlsx | 0.1.2 | Rust | W | Fast writer; 0.1.2 corrupts hyperlink relationships on mutate; no recalc |
 
 ### XLS Profile (2 adapters)
 
@@ -143,6 +182,7 @@ ExcelBench now ships a separate cross-language context snapshot for mature non-P
 
 - `Apache POI` (Java)
 - `Excelize` (Go)
+- `zavora-xlsx` (Rust writer, added 2026-09-08; helper in `tools/external-oracles/zavora`)
 
 These are not framed as Python drop-in replacements. They answer a different question: how strong is WolfXL relative to serious spreadsheet tooling outside Python?
 
@@ -214,6 +254,12 @@ uv sync
 # Run the benchmark against pre-built fixtures (no Excel required)
 uv run excelbench benchmark --tests fixtures/excel --output results
 
+# Template-mutation suite (wall time, RSS, preservation)
+uv run excelbench mutation
+
+# Formula-recalculation tier (cache-free fixture, LibreOffice oracle)
+uv run excelbench calc
+
 # Generate the heatmap
 uv run excelbench heatmap
 
@@ -232,7 +278,7 @@ uv run excelbench generate --output fixtures/excel
 
 ## Feature Coverage
 
-### Tested (19 features; 18 currently scoreable in the release snapshot)
+### Tested (22 features)
 
 | Tier | Features | Count |
 |:-----|:---------|:-----:|
@@ -240,16 +286,22 @@ uv run excelbench generate --output fixtures/excel
 | **Tier 1** -- Formatting | Text formatting, background colors, number formats, alignment, borders, dimensions | 6 |
 | **Tier 2** -- Advanced | Merged cells, conditional formatting, data validation, hyperlinks, images, comments, freeze panes, pivot tables | 8 |
 | **Tier 3** -- Workbook metadata | Named ranges, tables | 2 |
+| **Tier 4** -- Production surfaces (2026-09-08) | Sheet protection, page setup, chart anchoring | 3 |
 
 > Pivot tables are tested but score N/A across all adapters in the current macOS run.
-> Library green-feature scores therefore use an /18 denominator in the fresh release snapshot.
+> Green-feature denominators: /18 in the 2026-04-29 release snapshot, /22 in the 2026-09-08 competitor snapshot.
 
 ### Planned
 
-Charts, print settings, protection.
+None currently queued. Tier 4 (charts anchoring, print settings, protection) shipped 2026-09-08.
 
 ## Detailed Results
 
+- **[Competitor snapshot fidelity](results-2026-09-08/xlsx/README.md)** -- 22 features x 14 Python adapters, WolfXL 2.1.0 + aspose-cells-foss
+- **[Competitor snapshot heatmap](results-2026-09-08/xlsx/heatmap.png)** ([SVG](results-2026-09-08/xlsx/heatmap.svg)) -- 22x14 visual score matrix
+- **[Competitor snapshot mutation](results-2026-09-08/mutation/README.md)** -- template mutation: wall time, RSS, preservation
+- **[Competitor snapshot calc](results-2026-09-08/calc/README.md)** -- 133-formula financial DAG vs LibreOffice oracle
+- **[Competitor snapshot zavora cross-language](results-2026-09-08/cross-language/README.md)** -- zavora-xlsx 0.1.2 Rust writer context
 - **[XLSX results](results/xlsx/README.md)** -- per-library, per-test-case breakdowns with tier list
 - **[Release snapshot results](results-release-2026-04-28/README.md)** -- fresh wheel-backed WolfXL 2.0 rerun
 - **[XLS results](results/xls/README.md)** -- legacy format results

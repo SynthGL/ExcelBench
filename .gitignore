@@ -103,3 +103,6 @@ output/
 logs/
 *.log
 .vercel
+
+# regenerable fixture-merge byproduct (scripts/build_tier4_fixtures.py)
+fixtures/excel/tier4_manifest_fragment.json

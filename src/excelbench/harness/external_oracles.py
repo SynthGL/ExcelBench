@@ -117,7 +117,9 @@ class ExternalOracleResult:
     notes: str | None = None
 
 
-def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, ExternalOracleTool]:
+def external_oracle_catalog(
+    repo_root: Path | None = None,
+) -> dict[str, ExternalOracleTool]:
     """Return the planned external-oracle helper catalog.
 
     The commands are helper entrypoints, not raw runtime commands. They are
@@ -133,7 +135,13 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
     if repo_root is not None:
         libreoffice_command = (
             sys.executable,
-            str(repo_root / "tools" / "external-oracles" / "libreoffice" / "libreoffice_oracle.py"),
+            str(
+                repo_root
+                / "tools"
+                / "external-oracles"
+                / "libreoffice"
+                / "libreoffice_oracle.py"
+            ),
         )
     closedxml_command: tuple[str, ...] = ("excelbench-closedxml-oracle",)
     if repo_root is not None:
@@ -141,7 +149,13 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             "dotnet",
             "run",
             "--project",
-            str(repo_root / "tools" / "external-oracles" / "closedxml" / "closedxml-oracle.csproj"),
+            str(
+                repo_root
+                / "tools"
+                / "external-oracles"
+                / "closedxml"
+                / "closedxml-oracle.csproj"
+            ),
             "--configuration",
             "Release",
             "--no-launch-profile",
@@ -155,7 +169,9 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             "dotnet",
             "run",
             "--project",
-            str(repo_root / "tools" / "external-oracles" / "npoi" / "npoi-oracle.csproj"),
+            str(
+                repo_root / "tools" / "external-oracles" / "npoi" / "npoi-oracle.csproj"
+            ),
             "--configuration",
             "Release",
             "--no-launch-profile",
@@ -169,7 +185,9 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
     if repo_root is not None:
         exceljs_cwd = repo_root / "tools" / "external-oracles" / "exceljs"
         exceljs_command = ("node", str(exceljs_cwd / "exceljs-oracle.cjs"))
-        exceljs_required_paths = (exceljs_cwd / "node_modules" / "exceljs" / "package.json",)
+        exceljs_required_paths = (
+            exceljs_cwd / "node_modules" / "exceljs" / "package.json",
+        )
     apache_poi_command: tuple[str, ...] = ("excelbench-poi-oracle",)
     apache_poi_cwd = None
     apache_poi_required_paths: tuple[Path, ...] = ()
@@ -183,6 +201,14 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             apache_poi_cwd / "build" / "classes" / "PoiOracle.class",
             apache_poi_cwd / "deps" / "lib" / "poi-ooxml-5.5.1.jar",
         )
+
+    zavora_command: tuple[str, ...] = ("excelbench-zavora-oracle",)
+    zavora_cwd = None
+    zavora_required_paths: tuple[Path, ...] = ()
+    if repo_root is not None:
+        zavora_cwd = repo_root / "tools" / "external-oracles" / "zavora"
+        zavora_command = ("cargo", "run", "--quiet")
+        zavora_required_paths = (zavora_cwd / "Cargo.toml",)
 
     return {
         "excelize": ExternalOracleTool(
@@ -243,14 +269,27 @@ def external_oracle_catalog(repo_root: Path | None = None) -> dict[str, External
             command=closedxml_command,
             language="dotnet",
             homepage="https://docs.closedxml.io/",
-            capabilities=frozenset({"read", "write", "pivots", "conditional_formatting"}),
+            capabilities=frozenset(
+                {"read", "write", "pivots", "conditional_formatting"}
+            ),
         ),
         "npoi": ExternalOracleTool(
             name="npoi",
             command=npoi_command,
             language="dotnet",
             homepage="https://github.com/nissl-lab/npoi",
-            capabilities=frozenset({"read", "write", "comments", "rich_text", "protection"}),
+            capabilities=frozenset(
+                {"read", "write", "comments", "rich_text", "protection"}
+            ),
+        ),
+        "zavora": ExternalOracleTool(
+            name="zavora",
+            command=zavora_command,
+            language="rust",
+            homepage="https://github.com/zavora-ai/zavora-xlsx",
+            capabilities=frozenset({"read", "write", "mutate", "calculate"}),
+            cwd=zavora_cwd,
+            required_paths=zavora_required_paths,
         ),
     }
 

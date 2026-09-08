@@ -31,6 +31,10 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 | `results-release-2026-04-28/perf/README.md` | 2026-04-29 | Matching wheel-backed performance rerun |
 | `results-cross-language/README.md` | 2026-04-29 | Checked-in cross-language context snapshot for Apache POI and Excelize |
 | `results-cross-language-pivots/README.md` | 2026-04-29 | Separate pivot capability artifact for cross-language helpers |
+| `results-2026-09-08/xlsx/README.md` | 2026-09-08 | Competitor fidelity snapshot: 22 features, 14 Python adapters, WolfXL 2.1.0 + aspose-cells-foss |
+| `results-2026-09-08/mutation/README.md` | 2026-09-08 | Template-mutation lane (wall time, RSS, preservation) |
+| `results-2026-09-08/calc/README.md` | 2026-09-08 | Formula-recalculation tier vs LibreOffice oracle on a cache-free fixture |
+| `results-2026-09-08/cross-language/README.md` | 2026-09-08 | zavora-xlsx 0.1.2 Rust writer cross-language context |
 
 ## Safe Claims Right Now
 
@@ -40,6 +44,8 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 - The fresh WolfXL 2.0 wheel-backed release snapshot is available separately from the older historical baseline.
 - A separate cross-language context snapshot is available for ecosystem positioning and should be cited as a separate lane from the Python hero table.
 - A separate pivot capability artifact is available for cross-language helpers and should be cited as a capability note, not as a scored lane.
+- The 2026-09-08 competitor snapshot extends the scored matrix to 22 features (Tier 4 is openpyxl-structural, not Excel-authored) and adds aspose-cells-foss; its fidelity numbers must not be mixed with /18 denominators from earlier snapshots.
+- The mutation and calc lanes are separate decision surfaces (modify-integrity and calculation correctness) and must be cited as their own artifacts, never folded into feature-parity claims.
 
 ## Claims That Need Fresh Reruns
 

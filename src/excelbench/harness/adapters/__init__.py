@@ -2,7 +2,11 @@
 
 from typing import TypeAlias
 
-from excelbench.harness.adapters.base import ExcelAdapter, ReadOnlyAdapter, WriteOnlyAdapter
+from excelbench.harness.adapters.base import (
+    ExcelAdapter,
+    ReadOnlyAdapter,
+    WriteOnlyAdapter,
+)
 from excelbench.harness.adapters.openpyxl_adapter import OpenpyxlAdapter
 
 AdapterClass: TypeAlias = type[ExcelAdapter]
@@ -16,6 +20,7 @@ def _is_available_adapter(adapter: AdapterClass | None) -> bool:
         return True
     return bool(is_available())
 
+
 try:
     from excelbench.harness.adapters.xlsxwriter_adapter import (
         XlsxwriterAdapter as _XlsxwriterAdapter,
@@ -25,7 +30,9 @@ except ImportError:  # Optional dependency
 else:
     XlsxwriterAdapter = _XlsxwriterAdapter
 try:
-    from excelbench.harness.adapters.calamine_adapter import CalamineAdapter as _CalamineAdapter
+    from excelbench.harness.adapters.calamine_adapter import (
+        CalamineAdapter as _CalamineAdapter,
+    )
 except ImportError:
     CalamineAdapter: AdapterClass | None = None
 else:
@@ -75,14 +82,18 @@ else:
     WolfxlAdapter = _WolfxlAdapter
 
 try:
-    from excelbench.harness.adapters.pyumya_adapter import PyumyaAdapter as _PyumyaAdapter
+    from excelbench.harness.adapters.pyumya_adapter import (
+        PyumyaAdapter as _PyumyaAdapter,
+    )
 except ImportError:
     PyumyaAdapter: AdapterClass | None = None
 else:
     PyumyaAdapter = _PyumyaAdapter
 
 try:
-    from excelbench.harness.adapters.pylightxl_adapter import PylightxlAdapter as _PylightxlAdapter
+    from excelbench.harness.adapters.pylightxl_adapter import (
+        PylightxlAdapter as _PylightxlAdapter,
+    )
 except ImportError:
     PylightxlAdapter: AdapterClass | None = None
 else:
@@ -94,7 +105,9 @@ except ImportError:
 else:
     XlrdAdapter = _XlrdAdapter
 try:
-    from excelbench.harness.adapters.pyexcel_adapter import PyexcelAdapter as _PyexcelAdapter
+    from excelbench.harness.adapters.pyexcel_adapter import (
+        PyexcelAdapter as _PyexcelAdapter,
+    )
 except ImportError:
     PyexcelAdapter: AdapterClass | None = None
 else:
@@ -106,7 +119,9 @@ except ImportError:
 else:
     XlwtAdapter = _XlwtAdapter
 try:
-    from excelbench.harness.adapters.pandas_adapter import PandasAdapter as _PandasAdapter
+    from excelbench.harness.adapters.pandas_adapter import (
+        PandasAdapter as _PandasAdapter,
+    )
 except ImportError:
     PandasAdapter: AdapterClass | None = None
 else:
@@ -129,13 +144,17 @@ except ImportError:
 else:
     OpenpyxlReadonlyAdapter = _OpenpyxlReadonlyAdapter
 try:
-    from excelbench.harness.adapters.polars_adapter import PolarsAdapter as _PolarsAdapter
+    from excelbench.harness.adapters.polars_adapter import (
+        PolarsAdapter as _PolarsAdapter,
+    )
 except ImportError:
     PolarsAdapter: AdapterClass | None = None
 else:
     PolarsAdapter = _PolarsAdapter
 try:
-    from excelbench.harness.adapters.tablib_adapter import TablibAdapter as _TablibAdapter
+    from excelbench.harness.adapters.tablib_adapter import (
+        TablibAdapter as _TablibAdapter,
+    )
 except ImportError:
     TablibAdapter: AdapterClass | None = None
 else:
@@ -151,18 +170,39 @@ else:
     ExcelOracleAdapter = _ExcelOracleAdapter
 
 try:
-    from excelbench.harness.adapters.apache_poi_adapter import ApachePoiAdapter as _ApachePoiAdapter
+    from excelbench.harness.adapters.apache_poi_adapter import (
+        ApachePoiAdapter as _ApachePoiAdapter,
+    )
 except ImportError:
     ApachePoiAdapter: AdapterClass | None = None
 else:
     ApachePoiAdapter = _ApachePoiAdapter
 
 try:
-    from excelbench.harness.adapters.excelize_adapter import ExcelizeAdapter as _ExcelizeAdapter
+    from excelbench.harness.adapters.excelize_adapter import (
+        ExcelizeAdapter as _ExcelizeAdapter,
+    )
 except ImportError:
     ExcelizeAdapter: AdapterClass | None = None
 else:
     ExcelizeAdapter = _ExcelizeAdapter
+try:
+    from excelbench.harness.adapters.aspose_cells_foss_adapter import (
+        AsposeCellsFossAdapter as _AsposeCellsFossAdapter,
+    )
+except ImportError:
+    AsposeCellsFossAdapter: AdapterClass | None = None
+else:
+    AsposeCellsFossAdapter = _AsposeCellsFossAdapter
+try:
+    from excelbench.harness.adapters.zavora_adapter import (
+        ZavoraAdapter as _ZavoraAdapter,
+    )
+except ImportError:
+    ZavoraAdapter: AdapterClass | None = None
+else:
+    ZavoraAdapter = _ZavoraAdapter
+
 
 __all__ = [
     "ExcelAdapter",
@@ -202,6 +242,8 @@ if XlsxwriterConstmemAdapter is not None:
     __all__.append("XlsxwriterConstmemAdapter")
 if OpenpyxlReadonlyAdapter is not None:
     __all__.append("OpenpyxlReadonlyAdapter")
+if AsposeCellsFossAdapter is not None:
+    __all__.append("AsposeCellsFossAdapter")
 if PolarsAdapter is not None:
     __all__.append("PolarsAdapter")
 if TablibAdapter is not None:
@@ -210,6 +252,8 @@ if ApachePoiAdapter is not None:
     __all__.append("ApachePoiAdapter")
 if ExcelizeAdapter is not None:
     __all__.append("ExcelizeAdapter")
+if ZavoraAdapter is not None:
+    __all__.append("ZavoraAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -219,6 +263,8 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(XlsxwriterAdapter())
     if CalamineAdapter is not None:
         adapters.append(CalamineAdapter())
+    if AsposeCellsFossAdapter is not None:
+        adapters.append(AsposeCellsFossAdapter())
     if RustCalamineAdapter is not None:
         adapters.append(RustCalamineAdapter())
     # RustCalamineStyledAdapter is an internal WolfXL backend, not a standalone
@@ -253,4 +299,6 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(ApachePoiAdapter())
     if ExcelizeAdapter is not None and _is_available_adapter(ExcelizeAdapter):
         adapters.append(ExcelizeAdapter())
+    if ZavoraAdapter is not None and _is_available_adapter(ZavoraAdapter):
+        adapters.append(ZavoraAdapter())
     return adapters

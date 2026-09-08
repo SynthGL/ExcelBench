@@ -61,6 +61,9 @@ docs = [
     "mkdocs-minify-plugin>=0.7",
     "pymdown-extensions>=10.0",
 ]
+aspose = [
+    "aspose-cells-foss>=26.7",
+]
 
 [project.scripts]
 excelbench = "excelbench.cli:app"
@@ -121,6 +124,10 @@ module = [
     "plotly",
     "plotly.*",
     "numpy.*",
+    "aspose",
+    "aspose.*",
+    "aspose.cells_foss",
+    "aspose.cells_foss.*",
     "pyumya",
     "pyumya.*",
 ]
