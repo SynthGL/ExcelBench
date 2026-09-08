@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import shutil
 import subprocess
 import sys
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile
 
 import openpyxl
+import pytest
 
 from excelbench.harness.mutation import score_preservation
 from excelbench.modifiable import modifiable_engines
@@ -17,7 +19,10 @@ from excelbench.results.mutation_renderer import render_mutation_report
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BUILDER = REPO_ROOT / "scripts" / "build_mutation_template.py"
 TEMPLATE = REPO_ROOT / "fixtures" / "mutation" / "template_corporate_model.xlsx"
-SOFFICE = Path("/opt/homebrew/bin/soffice")
+SOFFICE = Path(shutil.which("soffice") or "/opt/homebrew/bin/soffice")
+requires_libreoffice = pytest.mark.skipif(
+    not SOFFICE.is_file(), reason="LibreOffice binary not available"
+)
 
 
 def _sha256(path: Path) -> str:
@@ -86,6 +91,7 @@ def test_builder_is_byte_stable() -> None:
     assert _sha256(TEMPLATE) == first_digest
 
 
+@requires_libreoffice
 def test_template_opens_in_openpyxl_and_libreoffice(tmp_path: Path) -> None:
     """The committed fixture parses and LibreOffice renders it to PDF."""
     workbook = openpyxl.load_workbook(TEMPLATE)

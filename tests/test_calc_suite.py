@@ -9,12 +9,19 @@ from pathlib import Path
 from types import ModuleType
 from typing import Any, cast
 
+import pytest
+
 from excelbench.harness.calc import (
+    SOFFICE_PATH,
     AsposeCellsFossCalcEngine,
     LibreOfficeCalcEngine,
     WolfXLCalcEngine,
     formula_cells,
     values_match,
+)
+
+requires_libreoffice = pytest.mark.skipif(
+    not SOFFICE_PATH.is_file(), reason="LibreOffice binary not available"
 )
 
 FIXTURE = Path("fixtures/calc/financial_model.xlsx")
@@ -34,6 +41,7 @@ def _load_fixture_builder() -> Callable[[Path, Path], dict[str, Any]]:
 build_fixture = _load_fixture_builder()
 
 
+@requires_libreoffice
 def test_builder_regenerates_identical_expected_json(tmp_path: Path) -> None:
     fixture = tmp_path / "financial_model.xlsx"
     expected = tmp_path / "expected_values.json"
@@ -67,13 +75,25 @@ def test_value_comparison_respects_tolerance_and_scalar_types() -> None:
     assert not values_match(True, 1)
 
 
+@requires_libreoffice
 def test_local_wolfxl_and_libreoffice_engines_calculate(tmp_path: Path) -> None:
-    wolfxl_result = WolfXLCalcEngine().calculate(FIXTURE, tmp_path / "wolfxl.xlsx")
+    wolfxl_engine = WolfXLCalcEngine()
+    if wolfxl_engine.available():
+        import wolfxl
+
+        try:
+            major, minor = (int(part) for part in wolfxl.__version__.split(".")[:2])
+        except (AttributeError, ValueError):
+            major, minor = 0, 0
+        if (major, minor) >= (2, 1):
+            wolfxl_result = wolfxl_engine.calculate(
+                FIXTURE, tmp_path / "wolfxl.xlsx"
+            )
+            assert wolfxl_result["status"] == "passed", wolfxl_result["reason"]
+
     libreoffice_result = LibreOfficeCalcEngine().calculate(
         FIXTURE, tmp_path / "libreoffice.xlsx"
     )
-
-    assert wolfxl_result["status"] == "passed", wolfxl_result["reason"]
     assert libreoffice_result["status"] == "passed", libreoffice_result["reason"]
 
 

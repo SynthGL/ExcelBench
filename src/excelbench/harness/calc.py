@@ -20,7 +20,9 @@ from excelbench.harness.external_oracles import (
 )
 from excelbench.results.calc_renderer import render_calc_results
 
-SOFFICE_PATH = Path("/opt/homebrew/bin/soffice")
+SOFFICE_PATH = Path(
+    shutil.which("soffice") or "/opt/homebrew/bin/soffice"
+)
 
 
 class CalcEngine(Protocol):
