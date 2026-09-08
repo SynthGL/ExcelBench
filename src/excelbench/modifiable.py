@@ -12,20 +12,30 @@ from excelbench.harness.external_oracles import (
     run_external_oracle,
 )
 
-try:
-    import openpyxl as _openpyxl
-except ImportError:  # pragma: no cover - optional dependency guard
-    _openpyxl = None
+_openpyxl: Any = None
+_wolfxl: Any = None
+_aspose_cells_foss: Any = None
 
 try:
-    import wolfxl as _wolfxl
+    import openpyxl
+
+    _openpyxl = openpyxl
 except ImportError:  # pragma: no cover - optional dependency guard
-    _wolfxl = None
+    pass
 
 try:
-    import aspose.cells_foss as _aspose_cells_foss
+    import wolfxl
+
+    _wolfxl = wolfxl
 except ImportError:  # pragma: no cover - optional dependency guard
-    _aspose_cells_foss = None
+    pass
+
+try:
+    import aspose.cells_foss
+
+    _aspose_cells_foss = aspose.cells_foss
+except ImportError:  # pragma: no cover - optional dependency guard
+    pass
 
 Mutation = dict[str, Any]
 _REPO_ROOT = Path(__file__).resolve().parents[2]

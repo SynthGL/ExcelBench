@@ -472,6 +472,7 @@ class WolfxlAdapter(ExcelAdapter):
             worksheet_source = getattr(cache_source, "worksheetSource", None)
             source_ref = getattr(worksheet_source, "ref", None)
             source_sheet = getattr(worksheet_source, "sheet", None)
+            source_range: str | None
             if source_sheet and source_ref:
                 source_range = f"{source_sheet}!{source_ref}"
             else:
@@ -589,7 +590,10 @@ class WolfxlAdapter(ExcelAdapter):
             if not columns:
                 from wolfxl.utils.cell import range_boundaries
 
-                min_col, min_row, max_col, _ = range_boundaries(str(table.ref))
+                boundaries = range_boundaries(str(table.ref))
+                min_col = int(boundaries[0] or 0)
+                min_row = int(boundaries[1] or 0)
+                max_col = int(boundaries[2] or 0)
                 columns = [
                     ""
                     if worksheet.cell(row=min_row, column=column).value is None

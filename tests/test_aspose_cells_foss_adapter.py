@@ -17,6 +17,8 @@ from excelbench.models import (
     CellValue,
 )
 
+pytest.importorskip("aspose.cells_foss", reason="optional 'aspose' extra not installed")
+
 
 @pytest.fixture
 def adapter() -> AsposeCellsFossAdapter:

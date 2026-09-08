@@ -291,7 +291,8 @@ class AsposeCellsFossAdapter(ExcelAdapter):
 
     def read_merged_ranges(self, workbook: Any, sheet: str) -> list[str]:
         """Read merged A1 ranges."""
-        return workbook.get_worksheet(sheet).cells.get_merged_cells()
+        merged: list[str] = workbook.get_worksheet(sheet).cells.get_merged_cells()
+        return merged
 
     def read_conditional_formats(self, workbook: Any, sheet: str) -> list[JSONDict]:
         """Read conditional-format rules exposed by the FOSS API."""

@@ -335,7 +335,7 @@ def values_match(expected: Any, actual: Any) -> bool:
         )
     if isinstance(expected, (int, float)) and isinstance(actual, (int, float)):
         return math.isclose(float(expected), float(actual), abs_tol=1e-6, rel_tol=1e-9)
-    return expected == actual
+    return bool(expected == actual)
 
 
 def run_calc_suite(
@@ -367,6 +367,7 @@ def run_calc_suite(
             values = {}
         matched, mismatches = _compare_expected_values(expected_cells, values)
         total = len(expected_cells)
+        reason: str | None
         if engine_result["status"] == "passed" and matched < total:
             # An engine that runs but produces wrong or missing values is a
             # failed calculation run, not a pass.
@@ -379,7 +380,7 @@ def run_calc_suite(
                 f"{missing} missing, {wrong} wrong)"
             )
         else:
-            status = engine_result["status"]
+            status = str(engine_result["status"])
             reason = engine_result.get("reason")
         engine_results[engine.name] = {
             "status": status,
@@ -431,7 +432,8 @@ def _load_expected(expected: dict[str, Any] | Path) -> dict[str, Any]:
         expected_path = (
             expected / "expected_values.json" if expected.is_dir() else expected
         )
-        return json.loads(expected_path.read_text())
+        loaded: dict[str, Any] = json.loads(expected_path.read_text())
+        return loaded
     return expected
 
 

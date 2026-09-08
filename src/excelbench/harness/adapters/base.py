@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any
+from typing import Any, NoReturn
 
 from excelbench.models import (
     BorderInfo,
@@ -95,8 +95,11 @@ class ExcelAdapter(ABC):
         suffix = path.suffix.lower()
         return suffix in self.supported_read_extensions
 
-    def unsupported_operation(self, operation: str, reason: str) -> None:
-        """Raise a structured unsupported-feature exception for adapter methods."""
+    def unsupported_operation(self, operation: str, reason: str) -> NoReturn:
+        """Raise a structured unsupported-feature exception for adapter methods.
+
+        Never returns: the raised error is the structured unsupported signal.
+        """
         raise UnsupportedAdapterOperationError(
             adapter=self.name, operation=operation, reason=reason
         )

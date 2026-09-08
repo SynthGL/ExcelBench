@@ -124,8 +124,12 @@ module = [
     "plotly",
     "plotly.*",
     "numpy.*",
+    "aspose",
+    "aspose.*",
     "aspose.cells_foss",
     "aspose.cells_foss.*",
+    "pyumya",
+    "pyumya.*",
 ]
 ignore_missing_imports = true
 
