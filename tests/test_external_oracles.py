@@ -42,7 +42,10 @@ def test_catalog_lists_planned_external_oracles() -> None:
         "exceljs",
         "closedxml",
         "npoi",
+        "zavora",
     }
+    assert catalog["zavora"].language == "rust"
+    assert "calculate" in catalog["zavora"].capabilities
     assert "pivots" in catalog["excelize"].capabilities
     assert "open_save_validate" in catalog["libreoffice"].capabilities
     assert "data_validations" in catalog["apache-poi"].capabilities

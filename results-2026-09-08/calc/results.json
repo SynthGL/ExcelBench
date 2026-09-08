@@ -1,0 +1,187 @@
+{
+  "engines": {
+    "aspose_cells_foss": {
+      "matched": 25,
+      "mismatched_cells": [
+        {
+          "actual": null,
+          "cell": "Schedule!B11",
+          "expected": -308872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B2",
+          "expected": 100000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B3",
+          "expected": 38000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B4",
+          "expected": 62000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B6",
+          "expected": 488.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B7",
+          "expected": 719.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B8",
+          "expected": 400872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B9",
+          "expected": -300872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C11",
+          "expected": -306442.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C2",
+          "expected": 104500.0
+        }
+      ],
+      "reason": "FOSS FormulaEvaluator returned no value for 107 formulas: Schedule!B2, Schedule!C2, Schedule!D2, Schedule!E2, Schedule!F2",
+      "status": "failed",
+      "total": 133
+    },
+    "libreoffice": {
+      "matched": 133,
+      "mismatched_cells": [],
+      "reason": null,
+      "status": "passed",
+      "total": 133
+    },
+    "wolfxl": {
+      "matched": 55,
+      "mismatched_cells": [
+        {
+          "actual": null,
+          "cell": "Schedule!B11",
+          "expected": -308872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B2",
+          "expected": 100000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B3",
+          "expected": 38000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B4",
+          "expected": 62000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B8",
+          "expected": 400872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B9",
+          "expected": -300872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C11",
+          "expected": -306442.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C2",
+          "expected": 104500.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C3",
+          "expected": 39710.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!C4",
+          "expected": 64790.0
+        }
+      ],
+      "reason": "78/133 formula values wrong or missing (first mismatch batch: 10 shown, 10 missing, 0 wrong)",
+      "status": "failed",
+      "total": 133
+    },
+    "zavora": {
+      "matched": 0,
+      "mismatched_cells": [
+        {
+          "actual": null,
+          "cell": "Schedule!B10",
+          "expected": 0.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B11",
+          "expected": -308872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B2",
+          "expected": 100000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B3",
+          "expected": 38000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B4",
+          "expected": 62000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B5",
+          "expected": 12000.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B6",
+          "expected": 488.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B7",
+          "expected": 719.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B8",
+          "expected": 400872.0
+        },
+        {
+          "actual": null,
+          "cell": "Schedule!B9",
+          "expected": -300872.0
+        }
+      ],
+      "reason": "133/133 formula values wrong or missing (first mismatch batch: 10 shown, 10 missing, 0 wrong)",
+      "status": "failed",
+      "total": 133
+    }
+  },
+  "fixture": "fixtures/calc/financial_model.xlsx",
+  "oracle": "libreoffice/LibreOffice 26.8.0.3 bce0998afefdbc355585ca324285661a2170ba77"
+}

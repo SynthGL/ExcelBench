@@ -107,7 +107,12 @@ def _cell_value_from_openpyxl_cell(c: Any) -> CellValue:
         return CellValue(type=CellType.DATE, value=value)
 
     if isinstance(value, datetime):
-        if value.hour == 0 and value.minute == 0 and value.second == 0 and value.microsecond == 0:
+        if (
+            value.hour == 0
+            and value.minute == 0
+            and value.second == 0
+            and value.microsecond == 0
+        ):
             return CellValue(type=CellType.DATE, value=value.date())
         return CellValue(type=CellType.DATETIME, value=value)
 
@@ -127,7 +132,9 @@ def _cell_value_from_openpyxl_cell(c: Any) -> CellValue:
             if not formula_str.startswith("=") and value:
                 formula_str = str(value)
             if formula_str in ERROR_FORMULA_MAP:
-                return CellValue(type=CellType.ERROR, value=ERROR_FORMULA_MAP[formula_str])
+                return CellValue(
+                    type=CellType.ERROR, value=ERROR_FORMULA_MAP[formula_str]
+                )
             return CellValue(type=CellType.FORMULA, value=value, formula=formula_str)
 
         return CellValue(type=CellType.STRING, value=value)
@@ -395,7 +402,9 @@ class OpenpyxlAdapter(ExcelAdapter):
         ws = workbook[sheet]
         return [str(rng) for rng in ws.merged_cells.ranges]
 
-    def read_conditional_formats(self, workbook: Workbook, sheet: str) -> list[JSONDict]:
+    def read_conditional_formats(
+        self, workbook: Workbook, sheet: str
+    ) -> list[JSONDict]:
         ws = workbook[sheet]
         rules: list[JSONDict] = []
         cf_rules = getattr(ws.conditional_formatting, "_cf_rules", {})
@@ -407,7 +416,9 @@ class OpenpyxlAdapter(ExcelAdapter):
                 range_value = str(sqref)
                 if range_value.startswith("<ConditionalFormatting"):
                     range_value = (
-                        range_value.replace("<ConditionalFormatting", "").replace(">", "").strip()
+                        range_value.replace("<ConditionalFormatting", "")
+                        .replace(">", "")
+                        .strip()
                     )
             for rule in rule_list:
                 entry: dict[str, Any] = {
@@ -422,11 +433,19 @@ class OpenpyxlAdapter(ExcelAdapter):
                 if getattr(rule, "formula", None):
                     entry["formula"] = rule.formula[0] if rule.formula else None
                 dxf = getattr(rule, "dxf", None)
-                if dxf and getattr(dxf, "fill", None) and getattr(dxf.fill, "fgColor", None):
+                if (
+                    dxf
+                    and getattr(dxf, "fill", None)
+                    and getattr(dxf.fill, "fgColor", None)
+                ):
                     bg = _openpyxl_color_to_hex(dxf.fill.fgColor)
                     if bg:
                         entry["format"]["bg_color"] = bg
-                if dxf and getattr(dxf, "font", None) and getattr(dxf.font, "color", None):
+                if (
+                    dxf
+                    and getattr(dxf, "font", None)
+                    and getattr(dxf.font, "color", None)
+                ):
                     fc = _openpyxl_color_to_hex(dxf.font.color)
                     if fc:
                         entry["format"]["font_color"] = fc
@@ -534,11 +553,15 @@ class OpenpyxlAdapter(ExcelAdapter):
         for pivot in pivot_list:
             source_range = None
             cache = getattr(pivot, "cache", None)
-            cache_source = getattr(cache, "cacheSource", None) if cache is not None else None
+            cache_source = (
+                getattr(cache, "cacheSource", None) if cache is not None else None
+            )
             if cache_source is not None:
                 worksheet_source = getattr(cache_source, "worksheetSource", None)
                 ref = (
-                    getattr(worksheet_source, "ref", None) if worksheet_source is not None else None
+                    getattr(worksheet_source, "ref", None)
+                    if worksheet_source is not None
+                    else None
                 )
                 source_sheet = (
                     getattr(worksheet_source, "sheet", None)
@@ -635,7 +658,11 @@ class OpenpyxlAdapter(ExcelAdapter):
             sheet_part, addr = raw.split("!", 1)
             # Strip only wrapper quotes used for sheet names with spaces.
             # Preserve embedded apostrophes by unescaping doubled quotes.
-            if sheet_part.startswith("'") and sheet_part.endswith("'") and len(sheet_part) >= 2:
+            if (
+                sheet_part.startswith("'")
+                and sheet_part.endswith("'")
+                and len(sheet_part) >= 2
+            ):
                 sheet_part = sheet_part[1:-1].replace("''", "'")
             return f"{sheet_part}!{addr}"
 
@@ -712,7 +739,11 @@ class OpenpyxlAdapter(ExcelAdapter):
                     ref = getattr(tbl, "ref", None)
                     if isinstance(ref, str) and ref:
                         min_col, min_row, max_col, _ = range_boundaries(ref)
-                        if min_col is not None and min_row is not None and max_col is not None:
+                        if (
+                            min_col is not None
+                            and min_row is not None
+                            and max_col is not None
+                        ):
                             for c in range(int(min_col), int(max_col) + 1):
                                 v = ws.cell(row=int(min_row), column=c).value
                                 cols.append("" if v is None else str(v))
@@ -723,7 +754,8 @@ class OpenpyxlAdapter(ExcelAdapter):
 
             out.append(
                 {
-                    "name": getattr(tbl, "displayName", None) or getattr(tbl, "name", None),
+                    "name": getattr(tbl, "displayName", None)
+                    or getattr(tbl, "name", None),
                     "ref": getattr(tbl, "ref", None),
                     "header_row": getattr(tbl, "headerRowCount", 1) != 0,
                     "totals_row": (getattr(tbl, "totalsRowCount", 0) or 0) > 0,
@@ -968,7 +1000,9 @@ class OpenpyxlAdapter(ExcelAdapter):
         ws = workbook[sheet]
         ws.merge_cells(cell_range)
 
-    def add_conditional_format(self, workbook: Workbook, sheet: str, rule: JSONDict) -> None:
+    def add_conditional_format(
+        self, workbook: Workbook, sheet: str, rule: JSONDict
+    ) -> None:
         ws = workbook[sheet]
         cf = rule.get("cf_rule", rule)
         range_ref = cf.get("range")
@@ -983,7 +1017,9 @@ class OpenpyxlAdapter(ExcelAdapter):
         if fmt.get("bg_color"):
             hex_color = fmt["bg_color"].lstrip("#")
             fill = PatternFill(
-                start_color=f"FF{hex_color}", end_color=f"FF{hex_color}", fill_type="solid"
+                start_color=f"FF{hex_color}",
+                end_color=f"FF{hex_color}",
+                fill_type="solid",
             )
         if fmt.get("font_color"):
             hex_color = fmt["font_color"].lstrip("#")
@@ -1028,7 +1064,9 @@ class OpenpyxlAdapter(ExcelAdapter):
                 rule_obj.priority = priority
             ws.conditional_formatting.add(range_ref, rule_obj)
 
-    def add_data_validation(self, workbook: Workbook, sheet: str, validation: JSONDict) -> None:
+    def add_data_validation(
+        self, workbook: Workbook, sheet: str, validation: JSONDict
+    ) -> None:
         ws = workbook[sheet]
         v = validation.get("validation", validation)
         dv = DataValidation(
@@ -1105,7 +1143,9 @@ class OpenpyxlAdapter(ExcelAdapter):
                 c = c_obj
             c.comment = Comment(text, author)
 
-    def add_named_range(self, workbook: Workbook, sheet: str, named_range: JSONDict) -> None:
+    def add_named_range(
+        self, workbook: Workbook, sheet: str, named_range: JSONDict
+    ) -> None:
         from openpyxl.workbook.defined_name import DefinedName
 
         data = named_range.get("named_range", named_range)
@@ -1119,7 +1159,11 @@ class OpenpyxlAdapter(ExcelAdapter):
         refers_to_str = str(refers_to)
         dn = DefinedName(
             str(name),
-            attr_text=(f"={refers_to_str}" if not refers_to_str.startswith("=") else refers_to_str),
+            attr_text=(
+                f"={refers_to_str}"
+                if not refers_to_str.startswith("=")
+                else refers_to_str
+            ),
         )
         if scope == "sheet":
             ws = workbook[sheet]
@@ -1174,7 +1218,8 @@ class OpenpyxlAdapter(ExcelAdapter):
                         inferred.append("" if v is None else str(v))
                     if inferred:
                         tbl.tableColumns = [
-                            TableColumn(id=i + 1, name=str(col)) for i, col in enumerate(inferred)
+                            TableColumn(id=i + 1, name=str(col))
+                            for i, col in enumerate(inferred)
                         ]
             except Exception:
                 # Best-effort: if we can't infer column names from header cells,
@@ -1187,7 +1232,9 @@ class OpenpyxlAdapter(ExcelAdapter):
         ws = workbook[sheet]
         ws.add_table(tbl)
 
-    def set_freeze_panes(self, workbook: Workbook, sheet: str, settings: JSONDict) -> None:
+    def set_freeze_panes(
+        self, workbook: Workbook, sheet: str, settings: JSONDict
+    ) -> None:
         ws = workbook[sheet]
         cfg = settings.get("freeze", settings)
         mode = cfg.get("mode")
@@ -1210,3 +1257,151 @@ class OpenpyxlAdapter(ExcelAdapter):
             if cfg.get("active_pane") is not None:
                 pane.activePane = cfg["active_pane"]
             pane.state = "split"
+
+    def read_sheet_protection(self, workbook: Workbook, sheet: str) -> JSONDict:
+        prot = workbook[sheet].protection
+        return {
+            "protected": bool(prot.sheet),
+            "password_hash_present": bool(prot.password),
+            "format_cells": prot.formatCells,
+            "insert_rows": prot.insertRows,
+            "select_locked_cells": prot.selectLockedCells,
+            "select_unlocked_cells": prot.selectUnlockedCells,
+            "sort": prot.sort,
+            "auto_filter": prot.autoFilter,
+        }
+
+    def set_sheet_protection(
+        self, workbook: Workbook, sheet: str, settings: JSONDict
+    ) -> None:
+        cfg = settings.get("protection", settings)
+        prot = workbook[sheet].protection
+        if cfg.get("protected") is not None:
+            prot.sheet = bool(cfg.get("protected"))
+        if cfg.get("format_cells") is not None:
+            prot.formatCells = bool(cfg["format_cells"])
+        if cfg.get("insert_rows") is not None:
+            prot.insertRows = bool(cfg["insert_rows"])
+        if cfg.get("select_locked_cells") is not None:
+            prot.selectLockedCells = bool(cfg["select_locked_cells"])
+        if cfg.get("select_unlocked_cells") is not None:
+            prot.selectUnlockedCells = bool(cfg["select_unlocked_cells"])
+        if cfg.get("sort") is not None:
+            prot.sort = bool(cfg["sort"])
+        if cfg.get("auto_filter") is not None:
+            prot.autoFilter = bool(cfg["auto_filter"])
+        password = cfg.get("password")
+        if password:
+            prot.set_password(str(password))
+
+    def read_page_setup(self, workbook: Workbook, sheet: str) -> JSONDict:
+        ws = workbook[sheet]
+        ps = ws.page_setup
+        return {
+            "orientation": ps.orientation,
+            "fit_to_width": ps.fitToWidth,
+            "fit_to_height": ps.fitToHeight,
+            "scale": ps.scale,
+            "print_title_rows": ws.print_title_rows,
+            "header_center": ws.oddHeader.center.text if ws.oddHeader.center else None,
+            "footer_center": ws.oddFooter.center.text if ws.oddFooter.center else None,
+        }
+
+    def set_page_setup(
+        self, workbook: Workbook, sheet: str, settings: JSONDict
+    ) -> None:
+        cfg = settings.get("page_setup", settings)
+        ws = workbook[sheet]
+        ps = ws.page_setup
+        if cfg.get("orientation") is not None:
+            ps.orientation = str(cfg["orientation"])
+        if cfg.get("fit_to_width") is not None:
+            ps.fitToWidth = int(cfg["fit_to_width"])
+        if cfg.get("fit_to_height") is not None:
+            ps.fitToHeight = int(cfg["fit_to_height"])
+        if cfg.get("scale") is not None:
+            ps.scale = int(cfg["scale"])
+        if cfg.get("print_title_rows") is not None:
+            ws.print_title_rows = str(cfg["print_title_rows"])
+        if cfg.get("header_center") is not None:
+            ws.oddHeader.center.text = str(cfg["header_center"])
+        if cfg.get("footer_center") is not None:
+            ws.oddFooter.center.text = str(cfg["footer_center"])
+
+    def read_chart_anchors(self, workbook: Workbook, sheet: str) -> list[JSONDict]:
+        from openpyxl.chart._chart import ChartBase
+        from openpyxl.drawing.spreadsheet_drawing import TwoCellAnchor
+        from openpyxl.utils.cell import get_column_letter
+
+        def _cell(marker: Any) -> str | None:
+            if marker is None:
+                return None
+            return f"{get_column_letter(marker.col + 1)}{marker.row + 1}"
+
+        results: list[JSONDict] = []
+        for chart in workbook[sheet]._charts:
+            if not isinstance(chart, ChartBase):
+                continue
+            anchor = getattr(chart, "anchor", None)
+            anchor_type = type(anchor).__name__ if anchor is not None else None
+            from_ref = (
+                _cell(getattr(anchor, "_from", None)) if anchor is not None else None
+            )
+            to_ref = (
+                _cell(getattr(anchor, "to", None))
+                if isinstance(anchor, TwoCellAnchor)
+                else None
+            )
+            normalized_type = type(chart).__name__.replace("Chart", "").lower() or None
+            if isinstance(normalized_type, str):
+                normalized_type = normalized_type or None
+            results.append(
+                {
+                    "type": normalized_type,
+                    "anchor_type": "twoCell"
+                    if isinstance(anchor, TwoCellAnchor)
+                    else ("oneCell" if anchor_type == "OneCellAnchor" else None),
+                    "from": from_ref,
+                    "to": to_ref,
+                }
+            )
+        return results
+
+    def add_chart_with_anchor(
+        self, workbook: Workbook, sheet: str, chart: JSONDict
+    ) -> None:
+        from openpyxl.chart import BarChart, LineChart, Reference
+        from openpyxl.drawing.spreadsheet_drawing import AnchorMarker, TwoCellAnchor
+        from openpyxl.utils.cell import coordinate_to_tuple
+
+        cfg = chart.get("chart", chart)
+        chart_type = str(cfg.get("type") or "bar").lower()
+        data_ref = str(cfg.get("data_ref") or "")
+        if not data_ref:
+            raise ValueError("add_chart_with_anchor requires data_ref")
+
+        ws = workbook[sheet]
+        values = Reference(
+            ws, range_string=data_ref if "!" in data_ref else f"{ws.title}!{data_ref}"
+        )
+        series_chart: Any
+        if chart_type == "line":
+            series_chart = LineChart()
+        else:
+            series_chart = BarChart()
+        series_chart.add_data(values, titles_from_data=False)
+        cats = cfg.get("categories_ref")
+        if cats:
+            cat_ref = Reference(
+                ws, range_string=cats if "!" in cats else f"{ws.title}!{cats}"
+            )
+            series_chart.set_categories(cat_ref)
+
+        from_row, from_col = coordinate_to_tuple(str(cfg.get("from") or "B2"))
+        to_row, to_col = coordinate_to_tuple(str(cfg.get("to") or "H12"))
+        anchor = TwoCellAnchor(
+            _from=AnchorMarker(col=from_col - 1, colOff=0, row=from_row - 1, rowOff=0),
+            to=AnchorMarker(col=to_col - 1, colOff=0, row=to_row - 1, rowOff=0),
+        )
+        series_chart.anchor = anchor
+        ws.add_chart(series_chart)

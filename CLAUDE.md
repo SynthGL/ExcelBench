@@ -43,6 +43,15 @@ uv run excelbench html
 # Generate fidelity-vs-throughput scatter plots
 uv run excelbench scatter
 
+# Run template-mutation suite (wall time, RSS, preservation)
+uv run excelbench mutation --output results/mutation
+
+# Run formula-recalculation tier (cache-free fixture, LibreOffice oracle)
+uv run excelbench calc --output results/calc
+
+# Run cross-language context snapshot (POI/Excelize/zavora when built)
+uv run excelbench cross-language-context --output results-cross-language
+
 # Lint + typecheck
 uv run ruff check
 uv run mypy

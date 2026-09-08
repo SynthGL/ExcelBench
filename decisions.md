@@ -40,6 +40,141 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-023 — Tier-4 fidelity features via openpyxl-structural fixtures (2026-09-08)
+
+**Context**: The scored matrix stopped at 19 features. Sheet protection, page
+setup, and chart anchoring are recurring production surfaces with no
+cross-library comparison, and this workstation has no Excel app to author
+authoritative fixtures.
+
+**Decision**:
+
+- Add three Tier-4 features: `sheet_protection`, `page_setup`,
+  `chart_anchor` (22 scored features total).
+- Fixtures are built by `scripts/build_tier4_fixtures.py` with openpyxl and
+  marked `generator: openpyxl-structural` in the manifest notes; expected
+  values are full adapter readbacks from the verifier-grade openpyxl
+  implementation, not Excel screenshots.
+- Raw OOXML semantics are pinned in `adapters/base.py` optional methods
+  (protection attribute True = BLOCKED; `fit_to_height=None` when only
+  `fit_to_width` is set; chart anchors are two-cell `from`/`to` only).
+- Write-only keys that no reader can verify (`password`,
+  `data_ref`/`categories_ref`) ride in the manifest and are stripped before
+  comparison, following the `_strip_cf_priority` precedent.
+
+**Alternatives considered**:
+
+1. Excel-authored fixtures - unavailable on this machine; would also block
+   CI reproduction.
+2. Skip the features until Excel access exists - rejected; the features are
+   structural and openpyxl is the de-facto Python semantic reference.
+
+**Consequences**:
+
+- Tier-4 expectations encode openpyxl's semantics, not Excel's. Any future
+  Excel-authored evidence that disagrees becomes a documented fixture
+  revision, not a silent change.
+- Most read-optimized adapters score 0 on Tier-4 by design (structured
+   unsupported failures), which is the correct public signal.
+
+### DEC-024 — Competitor adapters: aspose-cells-foss (Python lane) and zavora-xlsx (cross-language) (2026-09-08)
+
+**Context**: The public matrix lacked two comparison points users ask for:
+Aspose's FOSS Python offering and a fast Rust writer (zavora-xlsx).
+
+**Decision**:
+
+- `aspose-cells-foss` joins the Python lane behind the `aspose` extra
+  (`aspose-cells-foss>=26.7`), availability-gated so installs without the
+  extra lose nothing.
+- `zavora-xlsx` joins the cross-language lane only
+  (`CROSS_LANGUAGE_ADAPTER_NAMES`) via the DEC-021 external-oracle subprocess
+  contract; a Rust helper lives in `tools/external-oracles/zavora`.
+- Both adapters raise structured `UnsupportedAdapterOperationError` for
+  unsupported operations; no silent passes.
+
+**Alternatives considered**:
+
+1. Put zavora in the Python lane - rejected; it is not a Python library and
+   would blur the Python-first decision surface.
+2. Skip aspose FOSS due to missing pivots/chart rendering - rejected; its
+   11/22 with explicit gaps is exactly the comparison signal the matrix needs.
+
+**Consequences**:
+
+- The Python lane grows to 14 adapters; the main snapshot stays Python-only.
+- Upstream zavora-xlsx 0.1.2 defects (hyperlink relationship corruption on
+  mutate/save, `recalculate()` returning null caches) become visible, scored
+  findings rather than hidden skips.
+
+### DEC-025 — Template-mutation suite: wall time, RSS, preservation score (2026-09-08)
+
+**Context**: Modify workloads were only measurable via WolfXL's patch path in
+perf lanes. Real corporate deliverables are mutated templates: change two
+cells, save, keep everything else comparable.
+
+**Decision**:
+
+- Add `excelbench mutation` running surgical two-cell mutations on
+  `fixtures/mutation/template_corporate_model.xlsx` (built by
+  `scripts/build_mutation_template.py`; styles, CF, named ranges, hyperlinks,
+  data validation, multiple sheets).
+- Score three axes per engine: median wall time over repeats, peak RSS, and a
+  package-preservation score (retained parts minus damage penalties).
+- Engines: openpyxl, wolfxl (`modify=True`), aspose-cells-foss, zavora-xlsx
+  oracle mutate. Integrity failure (output cannot be reopened by the
+  verifier) scores 0 and is labeled `integrity-failed`, not silently skipped.
+
+**Alternatives considered**:
+
+1. Fold into perf lanes - rejected; perf lanes are cell-throughput oriented
+   and have no preservation axis.
+2. Byte-identical diff as the score - rejected; ZIP timestamps make byte
+   equality meaningless. Structural part retention is the honest proxy.
+
+**Consequences**:
+
+- Preservation is a structural proxy, not a semantic one. The verifier
+  reopens outputs with openpyxl to catch the failure class that matters
+  (corrupt relationships, as zavora 0.1.2 demonstrates).
+
+### DEC-026 — Calc tier: cache-free fixture, LibreOffice oracle, strict status semantics (2026-09-08)
+
+**Context**: Formula recalculation had no lane. The first builder draft
+shipped LibreOffice-computed caches inside the fixture itself, which let
+cache-passthrough engines score a perfect 133/133 without calculating
+anything (zavora 0.1.2 preserves input caches on save).
+
+**Decision**:
+
+- The canonical fixture `fixtures/calc/financial_model.xlsx` ships formulas
+  with NO cached values; the builder asserts cache-freedom and fails loudly
+  otherwise.
+- Oracle values are harvested from a throwaway LibreOffice headless
+  recalculation copy (`expected_values.json`, 133 cells, oracle version
+  pinned).
+- An engine that runs but scores below the oracle total reports `failed`
+  with matched/total; only a full match is `passed`. Missing-value
+  mismatches are counted separately from wrong-value mismatches.
+- Nested `IF` is used instead of `IFS` (LibreOffice returns `#NAME?` on this
+  path); XLOOKUP is omitted for the same reason.
+
+**Alternatives considered**:
+
+1. Keep cached fixture and accept passthrough - rejected; it scores
+   file-copying, not calculation.
+2. Excel as oracle - unavailable on this machine.
+
+**Consequences**:
+
+- Honest first snapshot: LibreOffice 133/133; wolfxl 55/133 (its calculator
+  returns None for the `^` power-operator formula family and dependents);
+  aspose-cells-foss 25/133 (FOSS FormulaEvaluator has no value for 107
+  formulas); zavora 0.1.2 0/133 (writes no caches).
+- Cache-free fixtures make engines without write-back caches look strictly
+  worse; that is the intended signal, documented here.
+
+
 ### DEC-022 — Semantic diff and context lanes stay additive (2026-04-29)
 
 **Context**: ExcelBench needed better evidence for workbook drift, roundtrip

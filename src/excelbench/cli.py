@@ -20,7 +20,7 @@ console = Console()
 XLS_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel_xls")
 XLSX_PROFILE_DEFAULT_TEST_DIR = Path("test_files")
 PERF_XLSX_PROFILE_DEFAULT_TEST_DIR = Path("fixtures/excel")
-CROSS_LANGUAGE_ADAPTER_NAMES = ("apache-poi", "excelize")
+CROSS_LANGUAGE_ADAPTER_NAMES = ("apache-poi", "excelize", "zavora-xlsx")
 
 
 @app.command()
@@ -123,7 +123,10 @@ def benchmark(
         console.print("[red]Error: profile must be one of: xlsx, xls[/red]")
         raise typer.Exit(1)
 
-    if profile == "xls" and test_dir.resolve() == XLSX_PROFILE_DEFAULT_TEST_DIR.resolve():
+    if (
+        profile == "xls"
+        and test_dir.resolve() == XLSX_PROFILE_DEFAULT_TEST_DIR.resolve()
+    ):
         test_dir = XLS_PROFILE_DEFAULT_TEST_DIR
 
     # These command functions are sometimes invoked directly from tests.
@@ -162,7 +165,9 @@ def benchmark(
     console.print()
 
     try:
-        results = run_benchmark(test_dir, adapters=selected, features=features, profile=profile)
+        results = run_benchmark(
+            test_dir, adapters=selected, features=features, profile=profile
+        )
 
         if append_results:
             import json
@@ -303,7 +308,10 @@ def perf(
         )
         raise typer.Exit(1)
 
-    if profile == "xls" and test_dir.resolve() == PERF_XLSX_PROFILE_DEFAULT_TEST_DIR.resolve():
+    if (
+        profile == "xls"
+        and test_dir.resolve() == PERF_XLSX_PROFILE_DEFAULT_TEST_DIR.resolve()
+    ):
         test_dir = XLS_PROFILE_DEFAULT_TEST_DIR
 
     available = get_all_adapters()
@@ -348,7 +356,9 @@ def perf(
         )
         render_perf_results(perf_results, output_dir)
 
-        console.print(f"[green]✓ Performance results written to {output_dir}/perf[/green]")
+        console.print(
+            f"[green]✓ Performance results written to {output_dir}/perf[/green]"
+        )
         console.print(f"  - {output_dir}/perf/results.json")
         console.print(f"  - {output_dir}/perf/README.md")
         console.print(f"  - {output_dir}/perf/matrix.csv")
@@ -390,7 +400,9 @@ _DATA_SHAPE_TIER_CAPS: list[tuple[str, int]] = [
 ]
 
 
-def _resolve_shape_features(*, types_arg: str, rows: int) -> tuple[list[str], list[str], list[str]]:
+def _resolve_shape_features(
+    *, types_arg: str, rows: int
+) -> tuple[list[str], list[str], list[str]]:
     """Translate --types and --rows into (read_features, write_features, tier_labels).
 
     Tiers are chosen as every label whose canonical cell-count <= ``rows``, so
@@ -413,7 +425,9 @@ def _resolve_shape_features(*, types_arg: str, rows: int) -> tuple[list[str], li
 
     tier_labels = [label for label, cap in _DATA_SHAPE_TIER_CAPS if cap <= rows]
     if not tier_labels:
-        raise ValueError(f"--rows {rows} is below the smallest tier (1000); pick at least 1000.")
+        raise ValueError(
+            f"--rows {rows} is below the smallest tier (1000); pick at least 1000."
+        )
 
     read_features: list[str] = []
     write_features: list[str] = []
@@ -521,7 +535,9 @@ def _resolve_file_shape_features(
     for label, total_cells in _FILE_SHAPE_LABELS:
         if total_cells > rows:
             continue
-        category = next((c for c in _FILE_SHAPE_CATEGORIES if label.startswith(c)), None)
+        category = next(
+            (c for c in _FILE_SHAPE_CATEGORIES if label.startswith(c)), None
+        )
         if category in wanted_cats:
             selected.append(label)
 
@@ -579,7 +595,9 @@ def _file_shape_fixtures_stale(
             and isinstance(f.get("feature"), str)
             and f["feature"].startswith("file_shape_")
             and (
-                "_1m" in f["feature"] or "_100x10k_" in f["feature"] or "_1000x1k_" in f["feature"]
+                "_1m" in f["feature"]
+                or "_100x10k_" in f["feature"]
+                or "_1000x1k_" in f["feature"]
             )
             for f in files
         ):
@@ -689,10 +707,14 @@ def perf_shape(
     needs_1m = "1m" in tier_labels
     manifest_path = fixtures / "manifest.json"
     generator_script = (
-        Path(__file__).resolve().parents[2] / "scripts" / "generate_throughput_fixtures.py"
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "generate_throughput_fixtures.py"
     )
 
-    if regenerate or _shape_fixtures_stale(manifest_path, generator_script, needs_1m=needs_1m):
+    if regenerate or _shape_fixtures_stale(
+        manifest_path, generator_script, needs_1m=needs_1m
+    ):
         gen_cmd = [
             sys.executable,
             str(generator_script),
@@ -875,10 +897,14 @@ def perf_file_shape(
     )
     manifest_path = fixtures / "manifest.json"
     generator_script = (
-        Path(__file__).resolve().parents[2] / "scripts" / "generate_throughput_fixtures.py"
+        Path(__file__).resolve().parents[2]
+        / "scripts"
+        / "generate_throughput_fixtures.py"
     )
 
-    if regenerate or _file_shape_fixtures_stale(manifest_path, generator_script, needs_1m=needs_1m):
+    if regenerate or _file_shape_fixtures_stale(
+        manifest_path, generator_script, needs_1m=needs_1m
+    ):
         gen_cmd = [
             sys.executable,
             str(generator_script),
@@ -888,7 +914,9 @@ def perf_file_shape(
         ]
         if needs_1m:
             gen_cmd.append("--include-1m")
-        console.print(f"[bold]Generating file-shape fixtures...[/bold] {' '.join(gen_cmd)}")
+        console.print(
+            f"[bold]Generating file-shape fixtures...[/bold] {' '.join(gen_cmd)}"
+        )
         try:
             subprocess.run(gen_cmd, check=True)
         except subprocess.CalledProcessError as e:
@@ -986,7 +1014,9 @@ def generate_xls_command(
         table.add_column("Feature", style="magenta")
         table.add_column("Test Cases", justify="right", style="green")
         for test_file in manifest.files:
-            table.add_row(test_file.path, test_file.feature, str(len(test_file.test_cases)))
+            table.add_row(
+                test_file.path, test_file.feature, str(len(test_file.test_cases))
+            )
         console.print(table)
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
@@ -1092,7 +1122,9 @@ def roundtrip_context(
         "-a",
         help="Run only specified adapter(s) by name. Repeatable.",
     ),
-    cycles: int = typer.Option(2, "--cycles", min=1, help="Number of open/save cycles."),
+    cycles: int = typer.Option(
+        2, "--cycles", min=1, help="Number of open/save cycles."
+    ),
 ) -> None:
     """Measure semantic drift after repeated workbook open/save cycles."""
     from excelbench.harness.adapters import get_all_adapters
@@ -1103,13 +1135,19 @@ def roundtrip_context(
     selected = [available[name] for name in selected_names if name in available]
     missing = [name for name in selected_names if name not in available]
     if missing:
-        console.print(f"[yellow]Skipping unavailable adapters: {', '.join(missing)}[/yellow]")
+        console.print(
+            f"[yellow]Skipping unavailable adapters: {', '.join(missing)}[/yellow]"
+        )
     if not selected:
         console.print("[red]Error: No selected adapters are available.[/red]")
         raise typer.Exit(1)
 
-    results = run_roundtrip_context(test_dir, output_dir, adapters=selected, cycles=cycles)
-    failures = [result for result in results if not result.passed and not result.skipped]
+    results = run_roundtrip_context(
+        test_dir, output_dir, adapters=selected, cycles=cycles
+    )
+    failures = [
+        result for result in results if not result.passed and not result.skipped
+    ]
     console.print(f"[green]✓ Roundtrip context written to {output_dir}[/green]")
     console.print(f"  - {output_dir}/roundtrip.json")
     console.print(f"  - {output_dir}/ROUNDTRIP.md")
@@ -1135,7 +1173,9 @@ def compatibility_context(
     from excelbench.harness.compat_cases import run_compatibility_context
 
     payload = run_compatibility_context(output_dir, adapter_names=adapters)
-    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    failures = [
+        row for row in payload["results"] if not row["passed"] and not row["skipped"]
+    ]
     console.print(f"[green]✓ Compatibility context written to {output_dir}[/green]")
     console.print(f"  - {output_dir}/compatibility.json")
     console.print(f"  - {output_dir}/COMPATIBILITY.md")
@@ -1160,7 +1200,9 @@ def cross_language_chart_context(
     from excelbench.harness.artifact_context import run_chart_context
 
     payload = run_chart_context(fixture_dir, output_dir)
-    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    failures = [
+        row for row in payload["results"] if not row["passed"] and not row["skipped"]
+    ]
     console.print(f"[green]✓ Chart context written to {output_dir}[/green]")
     console.print(f"  - {output_dir}/results.json")
     console.print(f"  - {output_dir}/README.md")
@@ -1190,8 +1232,12 @@ def macro_context(
     """Validate macro package preservation evidence."""
     from excelbench.harness.artifact_context import run_macro_context
 
-    payload = run_macro_context(test_dir, output_dir, preserve_with_wolfxl=preserve_with_wolfxl)
-    failures = [row for row in payload["results"] if not row["passed"] and not row["skipped"]]
+    payload = run_macro_context(
+        test_dir, output_dir, preserve_with_wolfxl=preserve_with_wolfxl
+    )
+    failures = [
+        row for row in payload["results"] if not row["passed"] and not row["skipped"]
+    ]
     console.print(f"[green]✓ Macro context written to {output_dir}[/green]")
     console.print(f"  - {output_dir}/results.json")
     console.print(f"  - {output_dir}/README.md")
@@ -1223,7 +1269,9 @@ def cross_language_context(
     from excelbench.results import render_results
 
     available = {adapter.name: adapter for adapter in get_all_adapters()}
-    selected = [available[name] for name in CROSS_LANGUAGE_ADAPTER_NAMES if name in available]
+    selected = [
+        available[name] for name in CROSS_LANGUAGE_ADAPTER_NAMES if name in available
+    ]
 
     if not selected:
         console.print(
@@ -1243,7 +1291,9 @@ def cross_language_context(
         render_results(results, output_dir)
         _write_cross_language_index(output_dir, [a.name for a in selected])
         console.print()
-        console.print(f"[green]✓ Cross-language context results written to {output_dir}[/green]")
+        console.print(
+            f"[green]✓ Cross-language context results written to {output_dir}[/green]"
+        )
         console.print(f"  - {output_dir}/results.json")
         console.print(f"  - {output_dir}/README.md")
         console.print(f"  - {output_dir}/matrix.csv")
@@ -1280,10 +1330,14 @@ def cross_language_pivot_context(
 
     output_dir.mkdir(parents=True, exist_ok=True)
     results = _collect_cross_language_pivot_context(fixture_path, output_dir)
-    (output_dir / "results.json").write_text(json.dumps(results, indent=2), encoding="utf-8")
+    (output_dir / "results.json").write_text(
+        json.dumps(results, indent=2), encoding="utf-8"
+    )
     _write_cross_language_pivot_readme(output_dir, results)
     _write_cross_language_pivot_context_note(output_dir)
-    console.print(f"[green]✓ Cross-language pivot context written to {output_dir}[/green]")
+    console.print(
+        f"[green]✓ Cross-language pivot context written to {output_dir}[/green]"
+    )
     console.print(f"  - {output_dir}/results.json")
     console.print(f"  - {output_dir}/README.md")
     console.print(f"  - {output_dir}/CONTEXT.md")
@@ -1348,7 +1402,9 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
                                     severity=DiagnosticSeverity(d["severity"]),
                                     location=DiagnosticLocation(
                                         feature=d["location"]["feature"],
-                                        operation=OperationType(d["location"]["operation"]),
+                                        operation=OperationType(
+                                            d["location"]["operation"]
+                                        ),
                                         test_case_id=d["location"].get("test_case_id"),
                                         sheet=d["location"].get("sheet"),
                                         cell=d["location"].get("cell"),
@@ -1379,7 +1435,11 @@ def _results_from_json(data: dict[str, Any]) -> "BenchmarkResults":
                         actual=tc["actual"],
                         notes=tc.get("notes"),
                         diagnostics=[],
-                        importance=(Importance(tc["importance"]) if tc.get("importance") else None),
+                        importance=(
+                            Importance(tc["importance"])
+                            if tc.get("importance")
+                            else None
+                        ),
                         label=tc.get("label"),
                     )
                 )
@@ -1468,7 +1528,9 @@ def _write_cross_language_index(output_dir: Path, adapters: list[str]) -> None:
     (output_dir / "CONTEXT.md").write_text(content)
 
 
-def _collect_cross_language_pivot_context(fixture_path: Path, output_dir: Path) -> dict[str, Any]:
+def _collect_cross_language_pivot_context(
+    fixture_path: Path, output_dir: Path
+) -> dict[str, Any]:
     import platform as _platform
     from datetime import UTC, datetime
     from zipfile import ZipFile
@@ -1515,7 +1577,9 @@ def _collect_cross_language_pivot_context(fixture_path: Path, output_dir: Path) 
             )
             helper_info["fixture_metadata"] = res.payload
             if res.passed:
-                helper_info["fixture_read_detects_pivot"] = _helper_detects_pivot(name, res.payload)
+                helper_info["fixture_read_detects_pivot"] = _helper_detects_pivot(
+                    name, res.payload
+                )
             else:
                 helper_info["fixture_error"] = (
                     res.payload.get("message") or res.stderr or res.stdout
@@ -1552,7 +1616,9 @@ def _helper_detects_pivot(helper_name: str, payload: dict[str, Any]) -> bool:
         sheets = payload.get("sheets") or []
         return any(int(sheet.get("pivots", 0)) > 0 for sheet in sheets)
     counts = payload.get("counts") or {}
-    return any("pivot" in key.lower() and int(value) > 0 for key, value in counts.items())
+    return any(
+        "pivot" in key.lower() and int(value) > 0 for key, value in counts.items()
+    )
 
 
 def _run_excelize_pivot_probe(output_path: Path) -> dict[str, Any]:
@@ -1617,7 +1683,9 @@ def _run_excelize_pivot_probe(output_path: Path) -> dict[str, Any]:
     pivot_parts: list[str] = []
     with ZipFile(output_path) as zf:
         pivot_parts = sorted(
-            name for name in zf.namelist() if "pivot" in name.lower() or "cache" in name.lower()
+            name
+            for name in zf.namelist()
+            if "pivot" in name.lower() or "cache" in name.lower()
         )
     verifier = OpenpyxlAdapter()
     wb = verifier.open_workbook(output_path)
@@ -1641,7 +1709,9 @@ def _pivot_coord_to_cell(row: int, col: int) -> str:
     return f"{letters}{row}"
 
 
-def _write_cross_language_pivot_readme(output_dir: Path, results: dict[str, Any]) -> None:
+def _write_cross_language_pivot_readme(
+    output_dir: Path, results: dict[str, Any]
+) -> None:
     import json
 
     fixture = results["fixture"]
@@ -1664,7 +1734,8 @@ def _write_cross_language_pivot_readme(output_dir: Path, results: dict[str, Any]
     ]
     if fixture_parts:
         lines.extend(
-            ["- Fixture pivot-related parts:"] + [f"  - `{part}`" for part in fixture_parts]
+            ["- Fixture pivot-related parts:"]
+            + [f"  - `{part}`" for part in fixture_parts]
         )
     else:
         lines.append("- Fixture pivot-related parts: none detected")
@@ -1683,7 +1754,9 @@ def _write_cross_language_pivot_readme(output_dir: Path, results: dict[str, Any]
             "| Tool | Pivot write support | Evidence |",
             "|---|---:|---|",
             _pivot_probe_row("apache-poi", apache_probe, ""),
-            _pivot_probe_row("excelize", excelize_probe, "OOXML parts + openpyxl readback"),
+            _pivot_probe_row(
+                "excelize", excelize_probe, "OOXML parts + openpyxl readback"
+            ),
         ]
     )
     if excelize_probe.get("supported"):
@@ -1695,7 +1768,10 @@ def _write_cross_language_pivot_readme(output_dir: Path, results: dict[str, Any]
                 f"- Output workbook: `{excelize_probe['output_path']}`",
                 "- Pivot-related OOXML parts:",
             ]
-            + [f"  - `{part}`" for part in excelize_probe.get("pivot_related_parts", [])]
+            + [
+                f"  - `{part}`"
+                for part in excelize_probe.get("pivot_related_parts", [])
+            ]
             + [
                 "- Openpyxl readback:",
                 "```json\n"
@@ -1726,9 +1802,13 @@ def _pivot_helper_row(helper_name: str, helpers: dict[str, Any], notes: str) -> 
     return f"| {helper_name} | {available} | {detects} | {notes} |"
 
 
-def _pivot_probe_row(tool_name: str, probe: dict[str, Any], success_evidence: str) -> str:
+def _pivot_probe_row(
+    tool_name: str, probe: dict[str, Any], success_evidence: str
+) -> str:
     supported = "Yes" if probe.get("supported") else "No"
-    evidence = success_evidence if probe.get("supported") else str(probe.get("reason", ""))
+    evidence = (
+        success_evidence if probe.get("supported") else str(probe.get("reason", ""))
+    )
     return f"| {tool_name} | {supported} | {evidence} |"
 
 
@@ -1818,7 +1898,9 @@ def heatmap(
         for p in paths:
             console.print(f"  [green]✓[/green] {p}")
         if not paths:
-            console.print("[yellow]No scored results found — nothing to render.[/yellow]")
+            console.print(
+                "[yellow]No scored results found — nothing to render.[/yellow]"
+            )
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
         raise typer.Exit(1)
@@ -1899,7 +1981,11 @@ def html_dashboard(
     try:
         perf = perf_path if perf_path.exists() else None
         sdir = scatter_dir if scatter_dir.exists() else None
-        mem = memory_path if isinstance(memory_path, Path) and memory_path.exists() else None
+        mem = (
+            memory_path
+            if isinstance(memory_path, Path) and memory_path.exists()
+            else None
+        )
         render_html_dashboard(fidelity_path, perf, output_path, sdir, memory_json=mem)
         console.print(f"  [green]✓[/green] {output_path}")
     except Exception as e:
@@ -1947,6 +2033,110 @@ def scatter(
         paths += render_scatter_features(fidelity_path, perf_path, output_dir)
         for p in paths:
             console.print(f"  [green]✓[/green] {p}")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def mutation(
+    template: Path = typer.Option(
+        Path("fixtures/mutation/template_corporate_model.xlsx"),
+        "--template",
+        help="Corporate-model template workbook to mutate.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results/mutation"),
+        "--output",
+        "-o",
+        help="Directory to save mutation-suite results.",
+    ),
+    repeats: int = typer.Option(
+        3,
+        "--repeats",
+        help="Measured mutation runs per engine (median reported).",
+    ),
+) -> None:
+    """Run the surgical template-mutation suite.
+
+    Each engine mutates two cells in a complex corporate template; the suite
+    measures wall time, peak RSS, and a package-preservation score against the
+    original template.
+    """
+    from excelbench.harness.mutation import run_mutation_suite
+
+    if not template.exists():
+        console.print(f"[red]Error: template not found at {template}[/red]")
+        raise typer.Exit(1)
+    console.print("[bold]Running template-mutation suite...[/bold]")
+    console.print(f"  Template: {template}")
+    console.print(f"  Output: {output_dir}")
+    console.print()
+
+    try:
+        results = run_mutation_suite(template, output_dir, repeats=repeats)
+        from excelbench.results.mutation_renderer import render_mutation_report
+
+        render_mutation_report(results, output_dir)
+        for name, engine in results["engines"].items():
+            console.print(
+                f"  {name}: {engine['status']}, "
+                f"{engine['wall_ms_median']}ms, preservation {engine['preservation_score']}"
+            )
+        console.print()
+        console.print(f"[green]✓ Mutation results written to {output_dir}[/green]")
+    except Exception as e:
+        console.print(f"[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@app.command()
+def calc(
+    fixture: Path = typer.Option(
+        Path("fixtures/calc/financial_model.xlsx"),
+        "--fixture",
+        help="Cache-free formula fixture workbook.",
+    ),
+    expected: Path = typer.Option(
+        Path("fixtures/calc/expected_values.json"),
+        "--expected",
+        help="Oracle expected-values JSON for the fixture.",
+    ),
+    output_dir: Path = typer.Option(
+        Path("results/calc"),
+        "--output",
+        "-o",
+        help="Directory to save calculation-tier results.",
+    ),
+) -> None:
+    """Run the formula-recalculation tier against the oracle fixture.
+
+    The fixture ships formulas without cached values, so every scored value
+    must be produced by the engine itself.
+    """
+    from excelbench.harness.calc import run_calc_suite
+
+    if not fixture.exists():
+        console.print(f"[red]Error: fixture not found at {fixture}[/red]")
+        raise typer.Exit(1)
+    if not expected.exists():
+        console.print(f"[red]Error: expected values not found at {expected}[/red]")
+        raise typer.Exit(1)
+
+    console.print("[bold]Running formula-recalculation tier...[/bold]")
+    console.print(f"  Fixture: {fixture}")
+    console.print(f"  Oracle: {expected}")
+    console.print(f"  Output: {output_dir}")
+    console.print()
+
+    try:
+        results = run_calc_suite(fixture, expected, output_dir)
+        for name, engine in results["engines"].items():
+            console.print(
+                f"  {name}: {engine['status']}, {engine['matched']}/{engine['total']}"
+            )
+        console.print()
+        console.print(f"[green]✓ Calculation results written to {output_dir}[/green]")
     except Exception as e:
         console.print(f"[red]Error: {e}[/red]")
         raise typer.Exit(1)

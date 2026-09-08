@@ -18,6 +18,7 @@ from excelbench.models import (
 
 JSONDict = dict[str, Any]
 
+
 class UnsupportedAdapterOperationError(NotImplementedError):
     """Structured exception for adapter operations a library cannot support."""
 
@@ -31,7 +32,9 @@ class UnsupportedAdapterOperationError(NotImplementedError):
 def _infer_diagnostic_category(exc: Exception) -> DiagnosticCategory:
     name = type(exc).__name__.lower()
     message = str(exc).lower()
-    if isinstance(exc, (FileNotFoundError, PermissionError, IsADirectoryError, OSError)):
+    if isinstance(
+        exc, (FileNotFoundError, PermissionError, IsADirectoryError, OSError)
+    ):
         if "format" in message or "zip" in message or "corrupt" in message:
             return DiagnosticCategory.PARSE
         return DiagnosticCategory.FILE_IO
@@ -97,7 +100,6 @@ class ExcelAdapter(ABC):
         raise UnsupportedAdapterOperationError(
             adapter=self.name, operation=operation, reason=reason
         )
-
 
     def map_error_to_diagnostic(
         self,
@@ -387,6 +389,81 @@ class ExcelAdapter(ABC):
 
         raise NotImplementedError(f"{self.name} does not implement table writes")
 
+    def read_sheet_protection(self, workbook: Any, sheet: str) -> JSONDict:
+        """Read sheet protection settings (raw OOXML attribute semantics).
+
+        Returns a dict with keys (attribute True means the action is
+        BLOCKED while protection is active, matching sheetProtection XML):
+        - protected: bool (sheetProtection@sheet)
+        - password_hash_present: bool (any password hash stored)
+        - format_cells: bool | None
+        - insert_rows: bool | None
+        - select_locked_cells: bool | None
+        - select_unlocked_cells: bool | None
+        - sort: bool | None
+        - auto_filter: bool | None
+        """
+
+        raise NotImplementedError(
+            f"{self.name} does not implement sheet protection reads"
+        )
+
+    def set_sheet_protection(
+        self, workbook: Any, sheet: str, settings: JSONDict
+    ) -> None:
+        """Apply sheet protection settings.
+
+        settings uses the same keys as read_sheet_protection (without
+        password_hash_present; use settings["password"] for a plain password
+        when the library hashes it internally).
+        """
+
+        raise NotImplementedError(
+            f"{self.name} does not implement sheet protection writes"
+        )
+
+    def read_page_setup(self, workbook: Any, sheet: str) -> JSONDict:
+        """Read page setup / print settings.
+
+        Returns a dict with keys:
+        - orientation: "portrait" | "landscape" | None
+        - fit_to_width: int | None
+        - fit_to_height: int | None
+        - scale: int | None
+        - print_title_rows: str | None (e.g. "$1:$2")
+        - header_center: str | None
+        - footer_center: str | None
+        """
+
+        raise NotImplementedError(f"{self.name} does not implement page setup reads")
+
+    def set_page_setup(self, workbook: Any, sheet: str, settings: JSONDict) -> None:
+        """Apply page setup / print settings (same keys as read_page_setup)."""
+
+        raise NotImplementedError(f"{self.name} does not implement page setup writes")
+
+    def read_chart_anchors(self, workbook: Any, sheet: str) -> list[JSONDict]:
+        """Read chart anchors from a sheet.
+
+        Returns a list of dicts with keys:
+        - type: normalized chart type ("bar", "line", "pie", ...)
+        - anchor_type: "twoCell" | "oneCell" | "absolute" | None
+        - from: top-left cell ref (e.g. "B2")
+        - to: bottom-right cell ref (e.g. "H12"), None when not two-cell
+        """
+
+        raise NotImplementedError(f"{self.name} does not implement chart anchor reads")
+
+    def add_chart_with_anchor(self, workbook: Any, sheet: str, chart: JSONDict) -> None:
+        """Add a chart with an explicit two-cell anchor.
+
+        chart dict keys: type ("bar" | "line"), from, to (cell refs),
+        data_ref (range on the same sheet feeding the first series),
+        categories_ref (optional range for category labels).
+        """
+
+        raise NotImplementedError(f"{self.name} does not implement chart anchor writes")
+
     # =========================================================================
     # Write Operations
     # =========================================================================
@@ -501,7 +578,9 @@ class ExcelAdapter(ABC):
         ...
 
     @abstractmethod
-    def add_data_validation(self, workbook: Any, sheet: str, validation: JSONDict) -> None:
+    def add_data_validation(
+        self, workbook: Any, sheet: str, validation: JSONDict
+    ) -> None:
         """Add a data validation rule to a sheet."""
         ...
 
@@ -608,7 +687,9 @@ class ReadOnlyAdapter(ExcelAdapter):
     def add_conditional_format(self, workbook: Any, sheet: str, rule: JSONDict) -> None:
         raise NotImplementedError(f"{self.name} is read-only")
 
-    def add_data_validation(self, workbook: Any, sheet: str, validation: JSONDict) -> None:
+    def add_data_validation(
+        self, workbook: Any, sheet: str, validation: JSONDict
+    ) -> None:
         raise NotImplementedError(f"{self.name} is read-only")
 
     def add_hyperlink(self, workbook: Any, sheet: str, link: JSONDict) -> None:

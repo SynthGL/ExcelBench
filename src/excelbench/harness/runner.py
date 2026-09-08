@@ -194,7 +194,9 @@ def run_benchmark(
                     "(fixtures/excel/tier2/15_pivot_tables.xlsx)."
                 )
             all_scores.append(score)
-            print(f"  {adapter.name}: read={score.read_score}, write={score.write_score}")
+            print(
+                f"  {adapter.name}: read={score.read_score}, write={score.write_score}"
+            )
 
     return BenchmarkResults(
         metadata=metadata,
@@ -292,7 +294,12 @@ def _annotate_known_limitations(score: FeatureScore) -> FeatureScore:
     if limitation is None:
         return score
     side, note = limitation
-    if side == "read" and score.read_score is not None and score.read_score < 3 and not score.notes:
+    if (
+        side == "read"
+        and score.read_score is not None
+        and score.read_score < 3
+        and not score.notes
+    ):
         score.notes = note
     if (
         side == "write"
@@ -493,6 +500,12 @@ def test_read_case(
             actual = read_comment_actual(adapter, workbook, sheet, expected)
         elif feature == "freeze_panes":
             actual = read_freeze_panes_actual(adapter, workbook, sheet, expected)
+        elif feature == "sheet_protection":
+            actual = read_sheet_protection_actual(adapter, workbook, sheet)
+        elif feature == "page_setup":
+            actual = read_page_setup_actual(adapter, workbook, sheet)
+        elif feature == "chart_anchor":
+            actual = read_chart_anchor_actual(adapter, workbook, sheet)
         else:
             actual = {"error": f"Unknown feature: {feature}"}
 
@@ -502,6 +515,10 @@ def test_read_case(
         cmp_expected = expected
         if feature == "conditional_formatting":
             cmp_expected = _strip_cf_priority(expected)
+        if feature == "sheet_protection":
+            cmp_expected = _strip_protection_password(cmp_expected)
+        if feature == "chart_anchor":
+            cmp_expected = _strip_chart_write_refs(cmp_expected)
         passed = compare_results(cmp_expected, actual)
 
         return TestResult(
@@ -770,7 +787,9 @@ def read_merged_cells_actual(
         if match:
             start_cell, end_cell = _split_range(match)
             if expected.get("top_left_value") is not None:
-                result["top_left_value"] = _read_cell_scalar(adapter, workbook, sheet, start_cell)
+                result["top_left_value"] = _read_cell_scalar(
+                    adapter, workbook, sheet, start_cell
+                )
             if expected.get("non_top_left_nonempty") is not None:
                 count = 0
                 for cell in _cells_in_range(start_cell, end_cell):
@@ -782,12 +801,16 @@ def read_merged_cells_actual(
                 result["non_top_left_nonempty"] = count
             if expected.get("top_left_bg_color") is not None:
                 fmt = adapter.read_cell_format(workbook, sheet, start_cell)
-                result["top_left_bg_color"] = fmt.bg_color.upper() if fmt.bg_color else None
+                result["top_left_bg_color"] = (
+                    fmt.bg_color.upper() if fmt.bg_color else None
+                )
             if expected.get("non_top_left_bg_color") is not None:
                 other = _first_non_top_left_cell(start_cell, end_cell)
                 if other:
                     fmt = adapter.read_cell_format(workbook, sheet, other)
-                    result["non_top_left_bg_color"] = fmt.bg_color.upper() if fmt.bg_color else None
+                    result["non_top_left_bg_color"] = (
+                        fmt.bg_color.upper() if fmt.bg_color else None
+                    )
     return result
 
 
@@ -801,6 +824,40 @@ def _strip_cf_priority(expected: JSONDict) -> JSONDict:
     out: JSONDict = dict(expected)
     out["cf_rule"] = {k: v for k, v in cf.items() if k != "priority"}
     return out
+
+
+def _strip_protection_password(expected: JSONDict) -> JSONDict:
+    """Return a copy of *expected* without the write-only protection password.
+
+    The manifest carries the plaintext password so the write lane can apply
+    it; readers can only observe ``password_hash_present``.
+    """
+    wrapped = "protection" in expected
+    protection = expected.get("protection", expected)
+    if not isinstance(protection, dict) or "password" not in protection:
+        return expected
+    stripped = {k: v for k, v in protection.items() if k != "password"}
+    if wrapped:
+        return {**expected, "protection": stripped}
+    return stripped
+
+
+def _strip_chart_write_refs(expected: JSONDict) -> JSONDict:
+    """Return a copy of *expected* without write-only chart series refs.
+
+    ``data_ref``/``categories_ref`` feed ``add_chart_with_anchor`` in the
+    write lane; ``read_chart_anchors`` only reports type/anchor/cells.
+    """
+    charts = expected.get("charts")
+    if not isinstance(charts, list):
+        return expected
+    stripped = [
+        {k: v for k, v in chart.items() if k not in ("data_ref", "categories_ref")}
+        if isinstance(chart, dict)
+        else chart
+        for chart in charts
+    ]
+    return {**expected, "charts": stripped}
 
 
 def read_conditional_format_actual(
@@ -880,7 +937,11 @@ def read_image_actual(
     normalized = dict(match)
     expected_path = expected_rule.get("path")
     actual_path = normalized.get("path")
-    if expected_path and isinstance(actual_path, str) and actual_path.startswith("/xl/media/"):
+    if (
+        expected_path
+        and isinstance(actual_path, str)
+        and actual_path.startswith("/xl/media/")
+    ):
         normalized["path"] = expected_path
     return {"image": _project_rule(normalized, expected_rule)}
 
@@ -942,6 +1003,36 @@ def read_freeze_panes_actual(
     return {"freeze": _project_rule(settings, expected_rule)}
 
 
+def read_sheet_protection_actual(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+) -> JSONDict:
+    """Read sheet protection settings and return as comparable dict."""
+    settings = adapter.read_sheet_protection(workbook, sheet)
+    return {"protection": settings}
+
+
+def read_page_setup_actual(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+) -> JSONDict:
+    """Read page setup settings and return as comparable dict."""
+    settings = adapter.read_page_setup(workbook, sheet)
+    return {"page_setup": settings}
+
+
+def read_chart_anchor_actual(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+) -> JSONDict:
+    """Read chart anchors and return as comparable dict."""
+    charts = adapter.read_chart_anchors(workbook, sheet)
+    return {"charts": charts}
+
+
 def _normalize_named_range_refers_to(value: Any) -> str:
     if value is None:
         return ""
@@ -983,7 +1074,9 @@ def read_named_ranges_actual(
     expected_scope = expected.get("scope")
     expected_ref = expected.get("refers_to")
     expected_ref_norm = (
-        _normalize_named_range_refers_to(expected_ref) if isinstance(expected_ref, str) else None
+        _normalize_named_range_refers_to(expected_ref)
+        if isinstance(expected_ref, str)
+        else None
     )
 
     for nr in all_names:
@@ -1128,9 +1221,13 @@ def test_write(
                         adapter, workbook, target_sheet, target_cell, tc.expected
                     )
                 elif test_file.feature == "formulas":
-                    _write_formula_case(adapter, workbook, target_sheet, target_cell, tc.expected)
+                    _write_formula_case(
+                        adapter, workbook, target_sheet, target_cell, tc.expected
+                    )
                 elif test_file.feature == "text_formatting":
-                    _write_text_format_case(adapter, workbook, target_sheet, target_cell, tc)
+                    _write_text_format_case(
+                        adapter, workbook, target_sheet, target_cell, tc
+                    )
                 elif test_file.feature == "background_colors":
                     _write_background_color_case(
                         adapter,
@@ -1164,7 +1261,9 @@ def test_write(
                         tc.expected,
                     )
                 elif test_file.feature == "dimensions":
-                    _write_dimensions_case(adapter, workbook, target_sheet, target_cell, tc)
+                    _write_dimensions_case(
+                        adapter, workbook, target_sheet, target_cell, tc
+                    )
                 elif test_file.feature == "multiple_sheets":
                     _write_multi_sheet_case(
                         adapter,
@@ -1174,15 +1273,23 @@ def test_write(
                         tc.expected,
                     )
                 elif test_file.feature == "merged_cells":
-                    _write_merged_cells_case(adapter, workbook, target_sheet, tc.expected)
+                    _write_merged_cells_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
                 elif test_file.feature == "conditional_formatting":
-                    _write_conditional_format_case(adapter, workbook, target_sheet, tc.expected)
+                    _write_conditional_format_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
                 elif test_file.feature == "data_validation":
-                    _write_data_validation_case(adapter, workbook, target_sheet, tc.expected)
+                    _write_data_validation_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
                 elif test_file.feature == "hyperlinks":
                     _write_hyperlink_case(adapter, workbook, target_sheet, tc.expected)
                 elif test_file.feature == "named_ranges":
-                    _write_named_range_case(adapter, workbook, target_sheet, tc.expected)
+                    _write_named_range_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
                 elif test_file.feature == "tables":
                     _write_table_case(adapter, workbook, target_sheet, tc.expected)
                 elif test_file.feature == "images":
@@ -1192,7 +1299,19 @@ def test_write(
                 elif test_file.feature == "comments":
                     _write_comment_case(adapter, workbook, target_sheet, tc.expected)
                 elif test_file.feature == "freeze_panes":
-                    _write_freeze_panes_case(adapter, workbook, target_sheet, tc.expected)
+                    _write_freeze_panes_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
+                elif test_file.feature == "sheet_protection":
+                    _write_sheet_protection_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
+                elif test_file.feature == "page_setup":
+                    _write_page_setup_case(adapter, workbook, target_sheet, tc.expected)
+                elif test_file.feature == "chart_anchor":
+                    _write_chart_anchor_case(
+                        adapter, workbook, target_sheet, tc.expected
+                    )
 
             adapter.save_workbook(workbook, output_path)
         except Exception as e:
@@ -1380,7 +1499,11 @@ def get_write_verifier_for_feature(feature: str) -> ExcelAdapter:
         return get_write_verifier()
     if platform.system() == "Darwin":
         return OpenpyxlAdapter()
-    if feature in complex_features and _excel_available() and ExcelOracleAdapter is not None:
+    if (
+        feature in complex_features
+        and _excel_available()
+        and ExcelOracleAdapter is not None
+    ):
         return ExcelOracleAdapter()
     return OpenpyxlAdapter()
 
@@ -1418,7 +1541,9 @@ def _collect_sheet_names(test_file: TestFile) -> list[str]:
             explicit = True
             break
         if test_file.feature == "formulas":
-            sheet_names.extend(_extract_formula_sheet_names(tc.expected.get("formula", "")))
+            sheet_names.extend(
+                _extract_formula_sheet_names(tc.expected.get("formula", ""))
+            )
         if test_file.feature == "conditional_formatting":
             rule = tc.expected.get("cf_rule", {})
             formula = rule.get("formula")
@@ -1520,28 +1645,34 @@ def _find_by_key(items: list[JSONDict], key: str, value: Any) -> JSONDict | None
 
 def _find_rule(rules: list[JSONDict], expected: JSONDict) -> JSONDict | None:
     for rule in rules:
-        if expected.get("range") and _normalize_range(rule.get("range", "")) != _normalize_range(
-            expected.get("range", "")
+        if expected.get("range") and _normalize_range(
+            rule.get("range", "")
+        ) != _normalize_range(expected.get("range", "")):
+            continue
+        if expected.get("rule_type") and rule.get("rule_type") != expected.get(
+            "rule_type"
         ):
             continue
-        if expected.get("rule_type") and rule.get("rule_type") != expected.get("rule_type"):
-            continue
         if expected.get("formula") and rule.get("formula"):
-            if _normalize_formula(expected["formula"]) != _normalize_formula(rule["formula"]):
+            if _normalize_formula(expected["formula"]) != _normalize_formula(
+                rule["formula"]
+            ):
                 continue
         return rule
     return None
 
 
-def _find_validation(validations: list[JSONDict], expected: JSONDict) -> JSONDict | None:
+def _find_validation(
+    validations: list[JSONDict], expected: JSONDict
+) -> JSONDict | None:
     for validation in validations:
         if expected.get("range") and _normalize_range(
             validation.get("range", "")
         ) != _normalize_range(expected.get("range", "")):
             continue
-        if expected.get("validation_type") and validation.get("validation_type") != expected.get(
+        if expected.get("validation_type") and validation.get(
             "validation_type"
-        ):
+        ) != expected.get("validation_type"):
             continue
         if expected.get("formula1"):
             if _normalize_formula(validation.get("formula1")) != _normalize_formula(
@@ -1587,10 +1718,14 @@ def _normalize_sheet_quotes(formula: str) -> str:
         return f"='{name}'!{cell_ref}"
 
     # Match =SheetName!CellRef where SheetName is not already quoted
-    return re.sub(r"=([A-Za-z0-9_][A-Za-z0-9_ ]*)!(\$?[A-Z]+\$?[0-9]+)", _quote_match, formula)
+    return re.sub(
+        r"=([A-Za-z0-9_][A-Za-z0-9_ ]*)!(\$?[A-Z]+\$?[0-9]+)", _quote_match, formula
+    )
 
 
-def _read_cell_scalar(adapter: ExcelAdapter, workbook: Any, sheet: str, cell: str) -> Any:
+def _read_cell_scalar(
+    adapter: ExcelAdapter, workbook: Any, sheet: str, cell: str
+) -> Any:
     cell_value = adapter.read_cell_value(workbook, sheet, cell)
     if cell_value.type == CellType.BLANK:
         return None
@@ -1724,8 +1859,12 @@ def _write_cell_value_case(
     adapter.write_cell_value(workbook, sheet, cell, cell_value)
 
     if cell_value.type in (CellType.DATE, CellType.DATETIME):
-        number_format = "yyyy-mm-dd" if cell_value.type == CellType.DATE else "yyyy-mm-dd hh:mm:ss"
-        adapter.write_cell_format(workbook, sheet, cell, CellFormat(number_format=number_format))
+        number_format = (
+            "yyyy-mm-dd" if cell_value.type == CellType.DATE else "yyyy-mm-dd hh:mm:ss"
+        )
+        adapter.write_cell_format(
+            workbook, sheet, cell, CellFormat(number_format=number_format)
+        )
 
 
 def _write_formula_case(
@@ -1753,7 +1892,9 @@ def _write_text_format_case(
         cell,
         CellValue(type=CellType.STRING, value=test_case.label),
     )
-    adapter.write_cell_format(workbook, sheet, cell, _cell_format_from_expected(test_case.expected))
+    adapter.write_cell_format(
+        workbook, sheet, cell, _cell_format_from_expected(test_case.expected)
+    )
 
 
 def _write_background_color_case(
@@ -1763,8 +1904,12 @@ def _write_background_color_case(
     cell: str,
     expected: JSONDict,
 ) -> None:
-    adapter.write_cell_value(workbook, sheet, cell, CellValue(type=CellType.STRING, value="Color"))
-    adapter.write_cell_format(workbook, sheet, cell, _cell_format_from_expected(expected))
+    adapter.write_cell_value(
+        workbook, sheet, cell, CellValue(type=CellType.STRING, value="Color")
+    )
+    adapter.write_cell_format(
+        workbook, sheet, cell, _cell_format_from_expected(expected)
+    )
 
 
 def _write_number_format_case(
@@ -1784,8 +1929,12 @@ def _write_number_format_case(
         # passes where libraries ignore write_cell_format() but a default date
         # number format is auto-assigned for native date objects.
         value = 45326.0  # 2024-02-04 in Excel's 1900 date system.
-    adapter.write_cell_value(workbook, sheet, cell, CellValue(type=value_type, value=value))
-    adapter.write_cell_format(workbook, sheet, cell, _cell_format_from_expected(expected))
+    adapter.write_cell_value(
+        workbook, sheet, cell, CellValue(type=value_type, value=value)
+    )
+    adapter.write_cell_format(
+        workbook, sheet, cell, _cell_format_from_expected(expected)
+    )
 
 
 def _write_alignment_case(
@@ -1795,8 +1944,12 @@ def _write_alignment_case(
     cell: str,
     expected: JSONDict,
 ) -> None:
-    adapter.write_cell_value(workbook, sheet, cell, CellValue(type=CellType.STRING, value="Align"))
-    adapter.write_cell_format(workbook, sheet, cell, _cell_format_from_expected(expected))
+    adapter.write_cell_value(
+        workbook, sheet, cell, CellValue(type=CellType.STRING, value="Align")
+    )
+    adapter.write_cell_format(
+        workbook, sheet, cell, _cell_format_from_expected(expected)
+    )
 
 
 def _write_border_case(
@@ -1806,7 +1959,9 @@ def _write_border_case(
     cell: str,
     expected: JSONDict,
 ) -> None:
-    adapter.write_cell_value(workbook, sheet, cell, CellValue(type=CellType.STRING, value="Border"))
+    adapter.write_cell_value(
+        workbook, sheet, cell, CellValue(type=CellType.STRING, value="Border")
+    )
     adapter.write_cell_border(workbook, sheet, cell, _border_from_expected(expected))
 
 
@@ -1818,10 +1973,14 @@ def _write_dimensions_case(
     test_case: TestCase,
 ) -> None:
     if "row_height" in test_case.expected:
-        adapter.set_row_height(workbook, sheet, test_case.row, test_case.expected["row_height"])
+        adapter.set_row_height(
+            workbook, sheet, test_case.row, test_case.expected["row_height"]
+        )
     if "column_width" in test_case.expected:
         column = _extract_column(cell)
-        adapter.set_column_width(workbook, sheet, column, test_case.expected["column_width"])
+        adapter.set_column_width(
+            workbook, sheet, column, test_case.expected["column_width"]
+        )
 
 
 def _write_multi_sheet_case(
@@ -1903,7 +2062,9 @@ def _write_named_range_case(
     if "value" in expected:
         refers_to = expected.get("refers_to")
         if isinstance(refers_to, str):
-            loc = _parse_named_range_single_cell(_normalize_named_range_refers_to(refers_to))
+            loc = _parse_named_range_single_cell(
+                _normalize_named_range_refers_to(refers_to)
+            )
             if loc is not None:
                 ref_sheet, ref_cell = loc
                 adapter.write_cell_value(
@@ -1984,6 +2145,36 @@ def _write_freeze_panes_case(
     expected: JSONDict,
 ) -> None:
     adapter.set_freeze_panes(workbook, sheet, expected)
+
+
+def _write_sheet_protection_case(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+    expected: JSONDict,
+) -> None:
+    settings = expected.get("protection", expected)
+    adapter.set_sheet_protection(workbook, sheet, settings)
+
+
+def _write_page_setup_case(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+    expected: JSONDict,
+) -> None:
+    settings = expected.get("page_setup", expected)
+    adapter.set_page_setup(workbook, sheet, settings)
+
+
+def _write_chart_anchor_case(
+    adapter: ExcelAdapter,
+    workbook: Any,
+    sheet: str,
+    expected: JSONDict,
+) -> None:
+    for chart in expected.get("charts", []):
+        adapter.add_chart_with_anchor(workbook, sheet, chart)
 
 
 def calculate_score(results: list[TestResult]) -> int:

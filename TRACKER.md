@@ -4,7 +4,7 @@
 > self-contained sprint (one branch, one PR, one row flip). Resume cold by reading this file
 > and the most recent `[*INCOMPLETE*]` marker.
 
-**Last updated**: 2026-04-27 (S3 shipped)
+**Last updated**: 2026-09-08 (competitor snapshot landed; S4+ perf sprints still queued)
 
 ## Status Table
 
@@ -17,6 +17,7 @@
 | S5 | Workbook complexity perf           | Planned     | M (1 wk)    | `feat/perf-complexity`         | —   | —                       |
 | S6 | Cold-start / warm path             | Planned     | S (3–5 d)   | `feat/perf-cold-start`         | —   | —                       |
 | S7 | Round-trip fidelity (LibreOffice)  | Planned     | L (~2 wk)   | `feat/fidelity-roundtrip`      | —   | —                       |
+| C1 | Competitor snapshot: aspose-foss + zavora adapters, Tier 4, mutation + calc lanes | Shipped (branch) | L | `feat/competitor-snapshot-2026-09` | — | this branch |
 
 **Status legend**: `Planned` → `In Progress` → `Shipped` (or `Blocked` with reason).
 
@@ -182,3 +183,26 @@ Use this template when appending to **Acceptance Notes** below.
 - Decisions: [`decisions.md`](decisions.md)
 - Key seams: `src/excelbench/perf/runner.py`, `src/excelbench/harness/adapters/base.py`,
   `src/excelbench/results/html_dashboard.py`.
+
+## Session Log: Competitor Snapshot (2026-09-08)
+
+Branch `feat/competitor-snapshot-2026-09` (this branch).
+
+**Shipped**:
+- `aspose-cells-foss` adapter (Python lane, `aspose` extra) — 11/22 green.
+- `zavora-xlsx` external oracle adapter (cross-language lane) + Rust helper in
+  `tools/external-oracles/zavora`.
+- Tier 4 features: sheet_protection, page_setup, chart_anchor (22 scored
+  features), openpyxl-structural fixtures.
+- wolfxl adapter ported to WolfXL 2.1.0 public API (19/22; CF read 0,
+  named-range/print-title writes 2).
+- Template-mutation lane (`excelbench mutation`): wolfxl 100% preservation;
+  openpyxl/aspose 60%; zavora 0.1.2 integrity-failed.
+- Calc tier (`excelbench calc`): cache-free 133-formula fixture, LibreOffice
+  oracle; LO 133/133, wolfxl 55/133 (power-operator family returns None),
+  aspose 25/133, zavora 0/133.
+- Snapshot artifacts: `results-2026-09-08/{xlsx,mutation,calc,cross-language}`.
+- Decisions DEC-023..DEC-026.
+
+**Verification**: full pytest suite + ruff on this branch (see PR body for
+exact receipts).
