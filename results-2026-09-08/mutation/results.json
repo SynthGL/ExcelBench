@@ -180,10 +180,10 @@
         "missing_content_types": [],
         "mutations_landed": true
       },
-      "peak_rss_kb_median": 170848.0,
+      "peak_rss_kb_median": 170752.0,
       "preservation_score": 60.0,
       "status": "passed",
-      "wall_ms_median": 770.0
+      "wall_ms_median": 690.0
     },
     "openpyxl": {
       "available": true,
@@ -366,7 +366,7 @@
       "peak_rss_kb_median": 170336.0,
       "preservation_score": 60.0,
       "status": "passed",
-      "wall_ms_median": 750.0
+      "wall_ms_median": 710.0
     },
     "wolfxl": {
       "available": true,
@@ -544,10 +544,10 @@
         "missing_content_types": [],
         "mutations_landed": true
       },
-      "peak_rss_kb_median": 175696.0,
+      "peak_rss_kb_median": 175488.0,
       "preservation_score": 100.0,
       "status": "passed",
-      "wall_ms_median": 780.0
+      "wall_ms_median": 710.0
     },
     "zavora-xlsx": {
       "available": true,
@@ -728,16 +728,16 @@
         "missing_content_types": [],
         "mutations_landed": false
       },
-      "peak_rss_kb_median": 169568.0,
+      "peak_rss_kb_median": 169520.0,
       "preservation_score": 0.0,
       "status": "integrity-failed",
-      "wall_ms_median": 1320.0
+      "wall_ms_median": 1270.0
     }
   },
   "metadata": {
     "platform": "Darwin",
     "repeats": 3,
-    "template_sha256": "74de96e1ea2b6ee8d52e9ff13b51db36d9140b371194afa1b70bba7158feca5b",
-    "timestamp": "2026-09-08T05:42:21Z"
+    "template_sha256": "da08cc9e607f267b438ec7ce2480d6eb3650d1c19928f283a18296a2b79d808e",
+    "timestamp": "2026-09-08T06:28:04Z"
   }
 }

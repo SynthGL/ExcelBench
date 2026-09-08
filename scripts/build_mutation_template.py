@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
@@ -240,6 +241,14 @@ def _inject_custom_xml(path: Path) -> None:
     Type=\"http://schemas.openxmlformats.org/officeDocument/2006/relationships/customXmlProps\"
     Target=\"itemProps1.xml\"/>
 </Relationships>"""
+
+    core = parts["docProps/core.xml"].decode("utf-8")
+    core = re.sub(
+        r"(<dcterms:modified[^>]*>)[^<]*(</dcterms:modified>)",
+        r"\g<1>2026-01-01T00:00:00Z\g<2>",
+        core,
+    )
+    parts["docProps/core.xml"] = core.encode("utf-8")
 
     with ZipFile(path, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
         for name in sorted(parts):

@@ -1,17 +1,17 @@
 # ExcelBench Mutation Results
 
-*Generated: 2026-09-08T05:42:21Z*
-*Template SHA-256: 74de96e1ea2b6ee8d52e9ff13b51db36d9140b371194afa1b70bba7158feca5b*
+*Generated: 2026-09-08T06:28:04Z*
+*Template SHA-256: da08cc9e607f267b438ec7ce2480d6eb3650d1c19928f283a18296a2b79d808e*
 *Repeats: 3*
 
 ## Comparison
 
 | Engine | Wall ms | Peak RSS KB | Preservation score | Lost parts | Verdict |
 |--------|---------|-------------|--------------------|------------|---------|
-| aspose-cells-foss | 770.000 | 170848.000 | 60.000 | 3 | Loss detected |
-| openpyxl | 750.000 | 170336.000 | 60.000 | 3 | Loss detected |
-| wolfxl | 780.000 | 175696.000 | 100.000 | 0 | Preserved |
-| zavora-xlsx | 1320.000 | 169568.000 | 0.000 | 1 | Mutation integrity failed |
+| aspose-cells-foss | 690.000 | 170752.000 | 60.000 | 3 | Loss detected |
+| openpyxl | 710.000 | 170336.000 | 60.000 | 3 | Loss detected |
+| wolfxl | 710.000 | 175488.000 | 100.000 | 0 | Preserved |
+| zavora-xlsx | 1270.000 | 169520.000 | 0.000 | 1 | Mutation integrity failed |
 
 ## Notes
 
