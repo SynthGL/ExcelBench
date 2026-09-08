@@ -33,7 +33,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - uses: astral-sh/setup-uv@v3
       - name: Install deps
-        run: uv sync --extra dev
+        run: uv sync --extra dev --extra rust --extra aspose
       - name: Unit tests with coverage
         run: >
           uv run pytest
