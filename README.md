@@ -298,6 +298,7 @@ None currently queued. Tier 4 (charts anchoring, print settings, protection) shi
 ## Detailed Results
 
 - **[Competitor snapshot fidelity](results-2026-09-08/xlsx/README.md)** -- 22 features x 14 Python adapters, WolfXL 2.1.0 + aspose-cells-foss
+- **[Competitor snapshot heatmap](results-2026-09-08/xlsx/heatmap.png)** ([SVG](results-2026-09-08/xlsx/heatmap.svg)) -- 22x14 visual score matrix
 - **[Competitor snapshot mutation](results-2026-09-08/mutation/README.md)** -- template mutation: wall time, RSS, preservation
 - **[Competitor snapshot calc](results-2026-09-08/calc/README.md)** -- 133-formula financial DAG vs LibreOffice oracle
 - **[Competitor snapshot zavora cross-language](results-2026-09-08/cross-language/README.md)** -- zavora-xlsx 0.1.2 Rust writer context
