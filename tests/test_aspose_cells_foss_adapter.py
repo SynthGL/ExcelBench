@@ -6,9 +6,13 @@ from pathlib import Path
 
 import pytest
 
-from excelbench.harness.adapters.aspose_cells_foss_adapter import AsposeCellsFossAdapter
-from excelbench.harness.adapters.base import UnsupportedAdapterOperationError
-from excelbench.models import (
+pytest.importorskip("aspose.cells_foss", reason="optional 'aspose' extra not installed")
+
+from excelbench.harness.adapters.aspose_cells_foss_adapter import (
+    AsposeCellsFossAdapter,  # noqa: E402
+)
+from excelbench.harness.adapters.base import UnsupportedAdapterOperationError  # noqa: E402
+from excelbench.models import (  # noqa: E402
     BorderEdge,
     BorderInfo,
     BorderStyle,
@@ -16,8 +20,6 @@ from excelbench.models import (
     CellType,
     CellValue,
 )
-
-pytest.importorskip("aspose.cells_foss", reason="optional 'aspose' extra not installed")
 
 
 @pytest.fixture
