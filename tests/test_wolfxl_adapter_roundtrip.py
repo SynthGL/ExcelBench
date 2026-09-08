@@ -209,3 +209,40 @@ def test_hyperlink_round_trip(adapter: Any, tmp_path: Path) -> None:
         assert any(link.get("target") == "https://example.com" for link in links)
     finally:
         adapter.close_workbook(reopened)
+
+
+def test_conditional_format_read_includes_rule_format(
+    adapter: Any, tmp_path: Path
+) -> None:
+    from openpyxl import Workbook
+    from openpyxl.formatting.rule import CellIsRule
+    from openpyxl.styles import PatternFill
+
+    src = Workbook()
+    ws = src.active
+    ws.title = "CF"
+    for row in range(1, 6):
+        ws.cell(row=row, column=2, value=row * 10)
+    ws.conditional_formatting.add(
+        "B2:B6",
+        CellIsRule(
+            operator="greaterThan",
+            formula=["25"],
+            fill=PatternFill(
+                start_color="00FFFF00", end_color="00FFFF00", fill_type="solid"
+            ),
+        ),
+    )
+    path = tmp_path / "cf.xlsx"
+    src.save(path)
+
+    workbook = adapter.open_workbook(path)
+    try:
+        rules = adapter.read_conditional_formats(workbook, "CF")
+    finally:
+        adapter.close_workbook(workbook)
+    assert len(rules) == 1
+    rule = rules[0]
+    assert rule["rule_type"] == "cellIs"
+    assert rule["operator"] == "greaterThan"
+    assert rule["format"] == {"bg_color": "#FFFF00"}
