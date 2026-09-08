@@ -196,6 +196,12 @@ class LibreOfficeCalcEngine:
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate with LibreOffice and read cached results from its output."""
+        if not self.available():
+            return {
+                "status": "unavailable",
+                "values": {},
+                "reason": f"LibreOffice binary not found at {SOFFICE_PATH}",
+            }
         reason = recalculate_with_libreoffice(input_path, output_path)
         if reason is not None:
             return {"status": "failed", "values": {}, "reason": reason}
@@ -361,9 +367,16 @@ def run_calc_suite(
                 "reason": f"{engine.name} is unavailable",
             }
             continue
-        engine_result = engine.calculate(
-            fixture, output_dir / engine.name / fixture.name
-        )
+        try:
+            engine_result = engine.calculate(
+                fixture, output_dir / engine.name / fixture.name
+            )
+        except Exception as exc:  # Engine crashes are comparison data, not aborts.
+            engine_result = {
+                "status": "failed",
+                "values": {},
+                "reason": f"{type(exc).__name__}: {exc}",
+            }
         values = engine_result.get("values", {})
         if not isinstance(values, Mapping):
             values = {}
