@@ -14,6 +14,22 @@ from typing import Any
 
 JSONDict = dict[str, Any]
 
+#: Env var naming a Docker context (for example ``pc``) on which the Java/Go
+#: write-only helpers run as containers instead of local builds.
+ORACLE_DOCKER_CONTEXT_ENV = "EXCELBENCH_ORACLE_DOCKER_CONTEXT"
+
+#: Images built from ``tools/external-oracles/<tool>/Dockerfile``; see
+#: ``tools/external-oracles/remote/README.md``.
+ORACLE_DOCKER_IMAGES: Mapping[str, str] = {
+    "apache-poi": "excelbench-poi-oracle:5.5.1",
+    "excelize": "excelbench-excelize-oracle:2.10.1",
+}
+
+#: Per-request timeout floor for helpers reached through a remote Docker
+#: context. Container start-up on a shared build host can exceed the local
+#: helper timeouts; a transport stall must not be recorded as a library failure.
+ORACLE_DOCKER_TIMEOUT_FLOOR_SECONDS = 900.0
+
 
 @dataclass(frozen=True)
 class ExternalOracleTool:
@@ -32,6 +48,8 @@ class ExternalOracleTool:
             into this repository.
         required_paths: Optional files/directories that must exist before the
             helper is considered available.
+        min_timeout_seconds: Lower bound applied to every request timeout,
+            used for transports (remote containers) slower than a local run.
     """
 
     name: str
@@ -42,6 +60,7 @@ class ExternalOracleTool:
     env: Mapping[str, str] = field(default_factory=dict)
     cwd: Path | None = None
     required_paths: tuple[Path, ...] = ()
+    min_timeout_seconds: float = 0.0
 
     def resolve_executable(self) -> str | None:
         """Resolve the command executable without running it."""
@@ -128,6 +147,8 @@ def external_oracle_catalog(
     """
     excelize_command: tuple[str, ...] = ("excelbench-excelize-oracle",)
     excelize_cwd = None
+    excelize_required_paths: tuple[Path, ...] = ()
+    remote_timeout_floor = 0.0
     if repo_root is not None:
         excelize_command = ("go", "run", ".")
         excelize_cwd = repo_root / "tools" / "external-oracles" / "excelize"
@@ -210,6 +231,23 @@ def external_oracle_catalog(
         zavora_command = ("cargo", "run", "--quiet")
         zavora_required_paths = (zavora_cwd / "Cargo.toml",)
 
+    docker_context = os.environ.get(ORACLE_DOCKER_CONTEXT_ENV)
+    if repo_root is not None and docker_context:
+        wrapper = (
+            repo_root / "tools" / "external-oracles" / "remote" / "docker_oracle.py"
+        )
+        excelize_command = _docker_oracle_command(
+            wrapper, docker_context, ORACLE_DOCKER_IMAGES["excelize"]
+        )
+        excelize_cwd = None
+        excelize_required_paths = (wrapper,)
+        apache_poi_command = _docker_oracle_command(
+            wrapper, docker_context, ORACLE_DOCKER_IMAGES["apache-poi"]
+        )
+        apache_poi_cwd = None
+        apache_poi_required_paths = (wrapper,)
+        remote_timeout_floor = ORACLE_DOCKER_TIMEOUT_FLOOR_SECONDS
+
     return {
         "excelize": ExternalOracleTool(
             name="excelize",
@@ -218,6 +256,8 @@ def external_oracle_catalog(
             homepage="https://github.com/qax-os/excelize",
             capabilities=frozenset({"read", "write", "charts", "pivots", "slicers"}),
             cwd=excelize_cwd,
+            required_paths=excelize_required_paths,
+            min_timeout_seconds=remote_timeout_floor,
         ),
         "libreoffice": ExternalOracleTool(
             name="libreoffice",
@@ -244,6 +284,7 @@ def external_oracle_catalog(
             ),
             cwd=apache_poi_cwd,
             required_paths=apache_poi_required_paths,
+            min_timeout_seconds=remote_timeout_floor,
         ),
         "exceljs": ExternalOracleTool(
             name="exceljs",
@@ -294,6 +335,11 @@ def external_oracle_catalog(
     }
 
 
+def _docker_oracle_command(wrapper: Path, context: str, image: str) -> tuple[str, ...]:
+    """Command that runs a helper image on a Docker context via the stdin/stdout wrapper."""
+    return (sys.executable, str(wrapper), "--context", context, "--image", image)
+
+
 def run_external_oracle(
     tool: ExternalOracleTool,
     request: ExternalOracleRequest,
@@ -319,6 +365,7 @@ def run_external_oracle(
             payload={},
             notes=f"External oracle helper not found: {tool.command[0] if tool.command else ''}",
         )
+    timeout_seconds = max(timeout_seconds, tool.min_timeout_seconds)
 
     env = os.environ.copy()
     env.update(tool.env)

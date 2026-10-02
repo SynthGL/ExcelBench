@@ -2060,8 +2060,8 @@ def mutation(
     """Run the surgical template-mutation suite.
 
     Each engine mutates two cells in a complex corporate template; the suite
-    measures wall time, peak RSS, and a package-preservation score against the
-    original template.
+    measures wall time, peak RSS, and whether the output's workbook content
+    equals the template's content with exactly those two edits applied.
     """
     from excelbench.harness.mutation import run_mutation_suite
 
@@ -2075,13 +2075,16 @@ def mutation(
 
     try:
         results = run_mutation_suite(template, output_dir, repeats=repeats)
-        from excelbench.results.mutation_renderer import render_mutation_report
+        from excelbench.results.mutation_renderer import (
+            mutation_verdict,
+            render_mutation_report,
+        )
 
         render_mutation_report(results, output_dir)
         for name, engine in results["engines"].items():
             console.print(
-                f"  {name}: {engine['status']}, "
-                f"{engine['wall_ms_median']}ms, preservation {engine['preservation_score']}"
+                f"  {name}: {engine['wall_ms_median']}ms, features preserved "
+                f"{engine['feature_preservation']}, {mutation_verdict(engine)}"
             )
         console.print()
         console.print(f"[green]✓ Mutation results written to {output_dir}[/green]")

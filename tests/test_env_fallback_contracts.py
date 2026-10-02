@@ -331,7 +331,8 @@ def test_run_mutation_suite_reports_failed_engine(
     row = results["engines"]["live"]
     assert row["status"] == "failed"
     assert "driver crashed" in row["details"]["error"]
-    assert row["preservation_score"] is None
+    assert row["preserved"] is None
+    assert row["feature_preservation"] is None
 
 
 def test_run_mutation_suite_passes_when_mutations_land(
@@ -371,11 +372,14 @@ def test_run_mutation_suite_passes_when_mutations_land(
     assert row["status"] == "passed"
     assert row["wall_ms_median"] == 12.5
     assert row["peak_rss_kb_median"] == 2048.0
-    assert row["preservation_score"] == 100.0
-    assert row["details"]["mutations_landed"] is True
+    assert row["preserved"] is True
+    assert row["edits_applied"] is True
+    assert row["features_changed"] == {}
+    present = len(row["features_present"])
+    assert row["feature_preservation"] == f"{present}/{present}"
 
 
-def test_run_mutation_suite_flags_integrity_when_values_do_not_land(
+def test_run_mutation_suite_reports_missing_edits(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     template = _write_template_with_manifest(tmp_path)
@@ -402,9 +406,10 @@ def test_run_mutation_suite_flags_integrity_when_values_do_not_land(
     monkeypatch.setattr(mutation_module, "modifiable_engines", lambda: [_LazyEngine()])
     results = mutation_module.run_mutation_suite(template, tmp_path / "out", repeats=1)
     row = results["engines"]["lazy"]
-    assert row["status"] == "integrity-failed"
-    assert row["preservation_score"] == 0.0
-    assert "did not match" in row["details"]["integrity_failure"]
+    assert row["status"] == "edits-missing"
+    assert row["edits_applied"] is False
+    assert row["preserved"] is False
+    assert [edit["applied"] for edit in row["details"]["edits"]] == [False, False]
 
 
 def test_mutations_for_engine_substitutes_placeholder() -> None:
@@ -417,11 +422,35 @@ def test_mutations_for_engine_substitutes_placeholder() -> None:
     assert mutations[1] == {"sheet": "S", "cell": "B1", "value": 7}
 
 
-def test_mutations_landed_rejects_unreadable_output(tmp_path: Path) -> None:
-    bogus = tmp_path / "bogus.xlsx"
-    bogus.write_bytes(b"not an xlsx")
-    mutations = [{"sheet": "S", "cell": "A1", "value": 1}]
-    assert mutation_module._mutations_landed(bogus, mutations) is False
+def test_run_mutation_suite_fails_unreadable_output(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    template = _write_template_with_manifest(tmp_path)
+
+    def _garbage(
+        engine: Any,
+        template: Path,
+        output: Path,
+        mutations: list[dict[str, Any]],
+    ) -> tuple[float, float]:
+        output.write_bytes(b"not an xlsx")
+        return 5.0, 1024.0
+
+    monkeypatch.setattr(mutation_module, "_run_subprocess_mutation", _garbage)
+
+    class _GarbageEngine(_UnavailableEngine):
+        name = "garbage"
+
+        def available(self) -> bool:
+            return True
+
+    monkeypatch.setattr(
+        mutation_module, "modifiable_engines", lambda: [_GarbageEngine()]
+    )
+    results = mutation_module.run_mutation_suite(template, tmp_path / "out", repeats=1)
+    row = results["engines"]["garbage"]
+    assert row["status"] == "failed"
+    assert "not a zip archive" in row["details"]["error"]
 
 
 def test_parse_time_output_extracts_elapsed_and_rss() -> None:
@@ -445,9 +474,7 @@ def test_package_integrity_helpers_flag_damage() -> None:
     rels_ns = "http://schemas.openxmlformats.org/package/2006/relationships"
     parts = {
         "xl/_rels/workbook.xml.rels": (
-            '<Relationships xmlns="'
-            + rels_ns
-            + '"><Relationship Id="rId1" '
+            '<Relationships xmlns="' + rels_ns + '"><Relationship Id="rId1" '
             'Type="http://schemas.openxmlformats.org/officeDocument/2006/'
             'relationships/worksheet" '
             'Target="worksheets/sheet1.xml"/></Relationships>'
@@ -531,60 +558,50 @@ def test_optional_engines_report_absence(monkeypatch: pytest.MonkeyPatch) -> Non
 
 
 def test_mutation_report_renders_all_verdict_branches(tmp_path: Path) -> None:
+    def scored(
+        status: str,
+        preserved: bool | None,
+        edits: bool | None,
+        changed: dict[str, int] | None,
+    ) -> dict[str, Any]:
+        return {
+            "available": status != "unavailable",
+            "status": status,
+            "wall_ms_median": None,
+            "peak_rss_kb_median": None,
+            "preserved": preserved,
+            "edits_applied": edits,
+            "feature_preservation": None,
+            "features_present": None,
+            "features_changed": changed,
+            "details": {},
+        }
+
     results: dict[str, Any] = {
         "metadata": {"template_sha256": "abc", "repeats": 1, "platform": "Darwin"},
         "engines": {
-            "perfect": {
-                "available": True,
-                "status": "passed",
-                "wall_ms_median": 100.0,
-                "peak_rss_kb_median": 2048.0,
-                "preservation_score": 100.0,
-                "details": {},
-            },
-            "lossy": {
-                "available": True,
-                "status": "passed",
-                "wall_ms_median": 200.0,
-                "peak_rss_kb_median": 4096.0,
-                "preservation_score": 60.0,
-                "details": {},
-            },
-            "broken": {
-                "available": True,
-                "status": "integrity-failed",
-                "wall_ms_median": 300.0,
-                "peak_rss_kb_median": None,
-                "preservation_score": 0.0,
-                "details": {"integrity_failure": "nope"},
-            },
-            "crashed": {
-                "available": True,
-                "status": "failed",
-                "wall_ms_median": None,
-                "peak_rss_kb_median": None,
-                "preservation_score": None,
-                "details": {"error": "RuntimeError: x"},
-            },
-            "ghost": {
-                "available": False,
-                "status": "unavailable",
-                "wall_ms_median": None,
-                "peak_rss_kb_median": None,
-                "preservation_score": None,
-                "details": {},
-            },
+            "perfect": scored("passed", True, True, {}),
+            "lossy": scored("passed", False, True, {"charts": 2, "custom_xml": 1}),
+            # Missing edits outrank collateral changes.
+            "lazy": scored("edits-missing", False, False, {"cells": 2}),
+            "crashed": scored("failed", None, None, None),
+            "ghost": scored("unavailable", None, None, None),
         },
     }
     render_mutation_report(results, tmp_path)
     persisted: dict[str, Any] = json.loads((tmp_path / "results.json").read_text())
-    engines = persisted["engines"]
-    assert isinstance(engines, dict)
-    assert set(engines) == set(results["engines"])
+    verdicts = {name: row["verdict"] for name, row in persisted["engines"].items()}
+    assert verdicts == {
+        "perfect": "Preserved",
+        "lossy": "Changed charts, custom_xml",
+        "lazy": "Edits missing",
+        "crashed": "Failed",
+        "ghost": "Unavailable",
+    }
 
     readme = (tmp_path / "README.md").read_text()
-    for marker in ("Preserved", "Loss detected", "Mutation integrity failed", "Failed"):
-        assert marker in readme, marker
+    for verdict in verdicts.values():
+        assert f"| {verdict} |" in readme, verdict
 
 
 # --------------------------------------------------------------------------

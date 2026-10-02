@@ -6,6 +6,13 @@ let JSZip;
 const PIXEL_PNG_BASE64 =
   "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+/p9sAAAAASUVORK5CYII=";
 
+const MODEL_OPERATIONS = {
+  describe: "describe",
+  read_model: "readModel",
+  write_model: "writeModel",
+  mutate: "mutate",
+};
+
 main().catch((error) => {
   process.stdout.write(
     `${JSON.stringify({ error: "exceljs_oracle_failed", message: error.message })}\n`,
@@ -21,7 +28,9 @@ async function main() {
       ? await writeFixture(request)
       : request.operation === "read_metadata"
         ? await readMetadata(request)
-        : fail(`Unsupported operation '${request.operation}'.`);
+        : request.operation in MODEL_OPERATIONS
+          ? await require("./exceljs-model.cjs")[MODEL_OPERATIONS[request.operation]](request)
+          : fail(`Unsupported operation '${request.operation}'.`);
   process.stdout.write(`${JSON.stringify(payload)}\n`);
 }
 

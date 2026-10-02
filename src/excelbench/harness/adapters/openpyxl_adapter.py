@@ -1262,7 +1262,7 @@ class OpenpyxlAdapter(ExcelAdapter):
         prot = workbook[sheet].protection
         return {
             "protected": bool(prot.sheet),
-            "password_hash_present": bool(prot.password),
+            "password_hash_present": bool(prot.password or prot.hashValue),
             "format_cells": prot.formatCells,
             "insert_rows": prot.insertRows,
             "select_locked_cells": prot.selectLockedCells,

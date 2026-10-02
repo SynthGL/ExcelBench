@@ -1,7 +1,8 @@
-"""Isolated mutation timing and OOXML preservation scoring."""
+"""Isolated mutation timing and content-model preservation scoring."""
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import json
 import os
@@ -17,9 +18,13 @@ from pathlib import Path, PurePosixPath
 from typing import Any
 from zipfile import ZipFile
 
-import openpyxl
-
-from excelbench.modifiable import ModifiableEngine, Mutation, modifiable_engines
+from excelbench.harness import content_model_xlsx as content_model
+from excelbench.modifiable import (
+    ModifiableEngine,
+    Mutation,
+    _mutation_target,
+    modifiable_engines,
+)
 
 _WORKSHEET_NS = "http://schemas.openxmlformats.org/spreadsheetml/2006/main"
 _RELATIONSHIPS_NS = "http://schemas.openxmlformats.org/package/2006/relationships"
@@ -47,6 +52,27 @@ _ELEMENT_CHECKS = (
     "pane",
     "drawing",
 )
+CUSTOM_XML_FEATURE = "custom_xml"
+SCORED_FEATURES: tuple[str, ...] = (*content_model.FEATURES, CUSTOM_XML_FEATURE)
+_SAMPLE_SIZE = 10
+_ROW_SCORE_FIELDS = (
+    "preserved",
+    "edits_applied",
+    "feature_preservation",
+    "features_present",
+    "features_changed",
+)
+_ROW_DETAIL_FIELDS = ("edits", "sample", "integrity", "diagnostics")
+
+_REPO_ROOT = Path(__file__).resolve().parents[3]
+
+
+def _portable_error(error: Exception) -> str:
+    """Error text for published results: repository and home paths become placeholders."""
+    text = f"{type(error).__name__}: {error}"
+    for root, placeholder in ((_REPO_ROOT, "<repo>"), (Path.home(), "~")):
+        text = text.replace(str(root), placeholder)
+    return text
 
 
 def _sha256_file(path: Path) -> str:
@@ -61,11 +87,7 @@ def _sha256_file(path: Path) -> str:
 def _package_parts(path: Path) -> dict[str, bytes]:
     """Read all file parts from an OOXML zip package."""
     with ZipFile(path) as archive:
-        return {
-            name: archive.read(name)
-            for name in archive.namelist()
-            if not name.endswith("/")
-        }
+        return {name: archive.read(name) for name in archive.namelist() if not name.endswith("/")}
 
 
 def _xml_has_element(xml: bytes, element: str) -> bool:
@@ -149,10 +171,7 @@ def _missing_content_types(parts: dict[str, bytes]) -> list[str]:
     default_tag = f"{{{_CONTENT_TYPES_NS}}}Default"
     override_tag = f"{{{_CONTENT_TYPES_NS}}}Override"
     defaults = {item.get("Extension") for item in root.findall(default_tag)}
-    overrides = {
-        item.get("PartName", "").removeprefix("/")
-        for item in root.findall(override_tag)
-    }
+    overrides = {item.get("PartName", "").removeprefix("/") for item in root.findall(override_tag)}
     missing: list[str] = []
     for part_name in sorted(parts):
         if part_name == "[Content_Types].xml":
@@ -163,51 +182,244 @@ def _missing_content_types(parts: dict[str, bytes]) -> list[str]:
     return missing
 
 
-def score_preservation(template: Path, output: Path) -> dict[str, Any]:
-    """Score a mutation output against its original OOXML package structure."""
-    original_parts = _package_parts(template)
-    output_parts = _package_parts(output)
-    original_names = set(original_parts)
-    output_names = set(output_parts)
-    lost_parts = sorted(original_names - output_names)
-    added_parts = sorted(output_names - original_names)
+def _canonical_xml(data: bytes) -> str:
+    """Return C14N 2.0 text that ignores encoding, prefixes, attribute order and padding."""
+    try:
+        return ET.canonicalize(
+            xml_data=data.decode("utf-8-sig"),
+            strip_text=True,
+            rewrite_prefixes=True,
+        )
+    except (ET.ParseError, UnicodeDecodeError):
+        return f"unparsable:{hashlib.sha256(data).hexdigest()}"
 
-    checklist = _element_checklist(original_parts, output_parts)
-    expected_checks = [entry for entry in checklist if entry["present_in_original"]]
-    retained_checks = [entry for entry in expected_checks if entry["present_in_output"]]
-    element_score = 30.0
-    if expected_checks:
-        element_score *= len(retained_checks) / len(expected_checks)
 
-    dangling_rels = _dangling_relationships(output_parts)
-    missing_content_types = _missing_content_types(output_parts)
-    integrity_issue_count = len(dangling_rels) + len(missing_content_types)
-    integrity_score = max(0.0, 20.0 - 5.0 * integrity_issue_count)
+def _relationship_sources(package: content_model._Package) -> list[str]:
+    """Return every part (``""`` for the package root) that owns a ``.rels`` part."""
+    sources: list[str] = []
+    for key in package.parts:
+        directory, base = posixpath.split(key)
+        if posixpath.basename(directory) != "_rels" or not base.endswith(".rels"):
+            continue
+        sources.append(posixpath.join(posixpath.dirname(directory), base[: -len(".rels")]))
+    return sorted(sources)
 
-    custom_parts = sorted(
-        name for name in original_parts if name.startswith("customXml/")
+
+def _custom_xml_items(path: Path) -> dict[str, dict[str, Any]]:
+    """Model custom XML data items independent of part names and relationship ids.
+
+    Items are found by relationship type from any owning part. Each item is its
+    canonical XML plus the datastore item id and schema references from its
+    properties part; the result is a multiset keyed by a hash of that record.
+    """
+    package = content_model._Package(path)
+    targets = sorted(
+        {
+            target
+            for source in _relationship_sources(package)
+            for target in package.targets(source, "customXml")
+        }
     )
-    custom_xml_identical = all(
-        name in output_parts
-        and hashlib.sha256(original_parts[name]).digest()
-        == hashlib.sha256(output_parts[name]).digest()
-        for name in custom_parts
-    )
-    custom_xml_score = 10.0 if custom_xml_identical else 0.0
-    parts_score = max(0.0, 40.0 - 10.0 * len(lost_parts))
-    preservation_score = round(
-        parts_score + element_score + integrity_score + custom_xml_score, 2
-    )
+    items: dict[str, dict[str, Any]] = {}
+    for target in targets:
+        record: dict[str, Any] = {"xml": _canonical_xml(package.parts[target])}
+        for props_part in package.targets(target, "customXmlProps")[:1]:
+            try:
+                props = ET.fromstring(package.parts[props_part])
+            except ET.ParseError:
+                record["props"] = "unparsable"
+                continue
+            item_id = next(
+                (value for name, value in props.attrib.items() if name.endswith("itemID")),
+                None,
+            )
+            record["item_id"] = item_id.upper() if item_id else None
+            record["schemas"] = sorted(
+                element.get("uri", "")
+                for element in props.iter()
+                if isinstance(element.tag, str) and element.tag.endswith("schemaRef")
+            )
+        key = hashlib.sha256(json.dumps(record, sort_keys=True).encode()).hexdigest()[:16]
+        if key in items:
+            items[key]["count"] += 1
+        else:
+            items[key] = {**record, "count": 1}
+    return items
 
+
+def _compare_custom_xml(
+    before: dict[str, dict[str, Any]], after: dict[str, dict[str, Any]]
+) -> list[dict[str, Any]]:
+    """Diff two custom XML multisets in the content model's diff-record shape."""
+    diffs: list[dict[str, Any]] = []
+    for key in sorted(set(before) | set(after)):
+        old, new = before.get(key), after.get(key)
+        if old is not None and new is not None and old["count"] == new["count"]:
+            continue
+        kind = "missing" if new is None else "added" if old is None else "changed"
+        diffs.append(
+            {
+                "feature": CUSTOM_XML_FEATURE,
+                "path": f"/{CUSTOM_XML_FEATURE}/{key}",
+                "kind": kind,
+                "before": old,
+                "after": new,
+            }
+        )
+    return diffs
+
+
+def _cell_entry(value: Any) -> dict[str, Any] | None:
+    """Return the content-model cell entry a correct engine writes for ``value``."""
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return {"type": "b", "value": value}
+    if isinstance(value, int | float):
+        return {"type": "n", "value": float(value)}
+    if isinstance(value, str):
+        return {"type": "s", "value": value}
+    raise ValueError(f"Unsupported mutation value type: {type(value).__name__}")
+
+
+def _edit_targets(
+    model: dict[str, Any], mutations: list[Mutation]
+) -> list[tuple[str, str, dict[str, Any] | None]]:
+    """Resolve declared edits to ``(sheet, canonical address, expected cell entry)``."""
+    targets: list[tuple[str, str, dict[str, Any] | None]] = []
+    for mutation in mutations:
+        sheet, cell, value = _mutation_target(mutation)
+        if sheet not in model["cells"]:
+            raise ValueError(f"Mutation sheet {sheet!r} is not a worksheet in the template")
+        targets.append((sheet, cell.replace("$", "").upper(), _cell_entry(value)))
+    return targets
+
+
+def _apply_edits(
+    model: dict[str, Any], targets: list[tuple[str, str, dict[str, Any] | None]]
+) -> dict[str, Any]:
+    """Return the model a correct engine produces: each edited cell holds its new
+    constant value (replacing any formula there) and nothing else changes."""
+    expected = copy.deepcopy(model)
+    for sheet, address, entry in targets:
+        cells = expected["cells"][sheet]
+        if entry is None:
+            cells.pop(address, None)
+        else:
+            cells[address] = entry
+        expected["formulas"][sheet].pop(address, None)
+    return expected
+
+
+def _without_formula_results(
+    model: dict[str, Any], formula_cells: set[tuple[str, str]]
+) -> dict[str, Any]:
+    """Drop cached formula results, which are recalculation state after an edit."""
+    projected = dict(model)
+    projected["cells"] = {
+        sheet: {
+            address: entry
+            for address, entry in cells.items()
+            if (sheet, address) not in formula_cells
+        }
+        for sheet, cells in model["cells"].items()
+    }
+    return projected
+
+
+def _formula_cells(*models: dict[str, Any]) -> set[tuple[str, str]]:
+    """Return every ``(sheet, address)`` holding a formula in any of ``models``."""
     return {
-        "preservation_score": preservation_score,
-        "details": {
-            "lost_parts": lost_parts,
-            "added_parts": added_parts,
-            "element_diffs": checklist,
-            "dangling_rels": dangling_rels,
-            "missing_content_types": missing_content_types,
-            "customXml_identical": custom_xml_identical,
+        (sheet, address)
+        for model in models
+        for sheet, formulas in model["formulas"].items()
+        for address in formulas
+    }
+
+
+def _has_content(value: Any) -> bool:
+    """Return whether a model value records anything beyond empty/false/zero defaults."""
+    if isinstance(value, dict):
+        return any(_has_content(item) for item in value.values())
+    if isinstance(value, list):
+        return any(_has_content(item) for item in value)
+    return bool(value)
+
+
+def score_preservation(template: Path, output: Path, mutations: list[Mutation]) -> dict[str, Any]:
+    """Score a mutation output by observable workbook content, not package layout.
+
+    The expected result is the template's content model with the declared edits
+    applied the way a correct engine applies them. Any other content difference
+    in the output is unexpected. Part names, relationship ids, XML serialization
+    and document metadata are not content, so an equivalent re-serialization
+    scores the same as a byte copy. Cached results of formula cells are
+    recalculation state (an engine may keep, drop, or recompute them after an
+    edit) and are excluded; formula text is compared under ``formulas``.
+    """
+    template_model = content_model.extract(template)
+    output_model = content_model.extract(output)
+    targets = _edit_targets(template_model, mutations)
+    expected_model = _apply_edits(template_model, targets)
+
+    formula_cells = _formula_cells(expected_model, output_model)
+    template_custom_xml = _custom_xml_items(template)
+    unexpected = content_model.compare(
+        _without_formula_results(expected_model, formula_cells),
+        _without_formula_results(output_model, formula_cells),
+    ) + _compare_custom_xml(template_custom_xml, _custom_xml_items(output))
+
+    edits = []
+    for sheet, address, entry in targets:
+        actual = output_model["cells"].get(sheet, {}).get(address)
+        actual_value = (
+            None if actual is None else {"type": actual["type"], "value": actual["value"]}
+        )
+        edits.append(
+            {
+                "sheet": sheet,
+                "cell": address,
+                "expected": entry,
+                "actual": actual_value,
+                "applied": actual_value == entry,
+            }
+        )
+    edits_applied = all(edit["applied"] for edit in edits)
+
+    template_content = {**template_model, CUSTOM_XML_FEATURE: template_custom_xml}
+    features_present = [
+        feature for feature in SCORED_FEATURES if _has_content(template_content[feature])
+    ]
+    changed_counts: dict[str, int] = {}
+    for diff in unexpected:
+        changed_counts[diff["feature"]] = changed_counts.get(diff["feature"], 0) + 1
+    features_changed = {
+        feature: changed_counts[feature] for feature in SCORED_FEATURES if feature in changed_counts
+    }
+    kept = [feature for feature in features_present if feature not in features_changed]
+
+    output_parts = _package_parts(output)
+    original_parts = _package_parts(template)
+    return {
+        "preserved": not unexpected and edits_applied,
+        "edits_applied": edits_applied,
+        "edits": edits,
+        "features_present": features_present,
+        "features_changed": features_changed,
+        "feature_preservation": f"{len(kept)}/{len(features_present)}",
+        "sample": unexpected[:_SAMPLE_SIZE],
+        "integrity": {
+            "dangling_rels": _dangling_relationships(output_parts),
+            "missing_content_types": _missing_content_types(output_parts),
+        },
+        "diagnostics": {
+            "lost_parts": sorted(set(original_parts) - set(output_parts)),
+            "added_parts": sorted(set(output_parts) - set(original_parts)),
+            "element_changes": [
+                entry
+                for entry in _element_checklist(original_parts, output_parts)
+                if entry["present_in_original"] != entry["present_in_output"]
+            ],
         },
     }
 
@@ -242,16 +454,10 @@ def _run_subprocess_mutation(
     completed = subprocess.run(command, text=True, capture_output=True, check=False)
     elapsed_seconds, peak_rss_kb = _parse_time_output(completed.stderr)
     if completed.returncode != 0:
-        message = (
-            completed.stderr.strip()
-            or completed.stdout.strip()
-            or "mutation driver failed"
-        )
+        message = completed.stderr.strip() or completed.stdout.strip() or "mutation driver failed"
         raise RuntimeError(message)
     if elapsed_seconds is None or peak_rss_kb is None:
-        raise RuntimeError(
-            f"Unable to parse /usr/bin/time -l output: {completed.stderr.strip()}"
-        )
+        raise RuntimeError(f"Unable to parse /usr/bin/time -l output: {completed.stderr.strip()}")
     return elapsed_seconds * 1000, peak_rss_kb
 
 
@@ -262,26 +468,34 @@ def _mutations_for_engine(manifest: dict[str, Any], engine_name: str) -> list[Mu
     return [first, dict(manifest["second_mutation"])]
 
 
-def _mutations_landed(output: Path, mutations: list[Mutation]) -> bool:
-    """Verify the requested values after a mutation output is written."""
-    try:
-        workbook = openpyxl.load_workbook(output, data_only=False)
-    except Exception:
-        return False
-    try:
-        return all(
-            workbook[str(mutation["sheet"])][str(mutation["cell"])].value
-            == mutation["value"]
-            for mutation in mutations
-        )
-    finally:
-        workbook.close()
-
-
-def run_mutation_suite(
-    template: Path, output_dir: Path, repeats: int = 3
+def _engine_row(
+    *,
+    available: bool,
+    status: str,
+    wall_times: list[float] | None = None,
+    peak_rss_values: list[float] | None = None,
+    scored: dict[str, Any] | None = None,
+    details: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    """Benchmark isolated surgical mutations and score package preservation."""
+    """Build one engine's result row; unscored rows carry ``None`` score fields."""
+    row: dict[str, Any] = {
+        "available": available,
+        "status": status,
+        "wall_ms_median": round(statistics.median(wall_times), 3) if wall_times else None,
+        "peak_rss_kb_median": round(statistics.median(peak_rss_values), 3)
+        if peak_rss_values
+        else None,
+    }
+    for field in _ROW_SCORE_FIELDS:
+        row[field] = scored[field] if scored is not None else None
+    row["details"] = dict(details or {})
+    if scored is not None:
+        row["details"].update({field: scored[field] for field in _ROW_DETAIL_FIELDS})
+    return row
+
+
+def run_mutation_suite(template: Path, output_dir: Path, repeats: int = 3) -> dict[str, Any]:
+    """Benchmark isolated surgical mutations and score content preservation."""
     if repeats < 1:
         raise ValueError("repeats must be at least 1")
     template = Path(template)
@@ -295,14 +509,11 @@ def run_mutation_suite(
     engine_results: dict[str, dict[str, Any]] = {}
     for engine in modifiable_engines():
         if not engine.available():
-            engine_results[engine.name] = {
-                "available": False,
-                "status": "unavailable",
-                "wall_ms_median": None,
-                "peak_rss_kb_median": None,
-                "preservation_score": None,
-                "details": {"reason": "engine unavailable"},
-            }
+            engine_results[engine.name] = _engine_row(
+                available=False,
+                status="unavailable",
+                details={"reason": "engine unavailable"},
+            )
             continue
 
         engine_dir = output_dir / engine.name
@@ -325,34 +536,20 @@ def run_mutation_suite(
                 final_output = output_path
             if final_output is None:
                 raise RuntimeError("mutation suite did not produce an output")
-            scored = score_preservation(template, final_output)
-            mutations_landed = _mutations_landed(final_output, mutations)
-            details = dict(scored["details"])
-            details["mutations_landed"] = mutations_landed
-            if not mutations_landed:
-                details["integrity_failure"] = (
-                    "mutated cell values did not match requested values"
-                )
-            engine_results[engine.name] = {
-                "available": True,
-                "status": "passed" if mutations_landed else "integrity-failed",
-                "wall_ms_median": round(statistics.median(wall_times), 3),
-                "peak_rss_kb_median": round(statistics.median(peak_rss_values), 3),
-                "preservation_score": scored["preservation_score"]
-                if mutations_landed
-                else 0.0,
-                "details": details,
-            }
+            scored = score_preservation(template, final_output, mutations)
+            engine_results[engine.name] = _engine_row(
+                available=True,
+                status="passed" if scored["edits_applied"] else "edits-missing",
+                wall_times=wall_times,
+                peak_rss_values=peak_rss_values,
+                scored=scored,
+            )
         except Exception as error:
-            engine_results[engine.name] = {
-                "available": True,
-                "status": "failed",
-                "wall_ms_median": None,
-                "peak_rss_kb_median": None,
-                "preservation_score": None,
-                "details": {"error": f"{type(error).__name__}: {error}"},
-            }
-
+            engine_results[engine.name] = _engine_row(
+                available=True,
+                status="failed",
+                details={"error": _portable_error(error)},
+            )
     return {
         "metadata": {
             "template_sha256": _sha256_file(template),

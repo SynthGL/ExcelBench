@@ -89,6 +89,10 @@ exclude = ["packages"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W", "UP"]
 
+[tool.ruff.format]
+# Vendored verbatim (see its header); reformatting would break the recorded sha256.
+exclude = ["src/excelbench/harness/content_model_xlsx.py"]
+
 [tool.mypy]
 python_version = "3.11"
 strict = true
@@ -142,6 +146,11 @@ module = [
 ]
 ignore_missing_imports = true
 disable_error_code = ["import-untyped"]
+
+[[tool.mypy.overrides]]
+# Vendored verbatim from officelibs-corpus; kept byte-identical to its source.
+module = ["excelbench.harness.content_model_xlsx"]
+ignore_errors = true
 
 [[tool.mypy.overrides]]
 module = [

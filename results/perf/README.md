@@ -7,6 +7,8 @@
 *Commit: 0aeaf16*
 *Config: warmup=3 iters=25 iteration_policy=fixed breakdown=False*
 
+> **Superseded for WolfXL.** The `wolfxl` columns in this snapshot measured private backend objects in `wolfxl._rust` (`cal=0.4.0+rxw=0.79.4`), not WolfXL's public API, so they are not comparable with the other libraries' public-API numbers. Use the [2026-10-02 perf snapshot](../../results-2026-10-02/perf/README.md), which measures WolfXL 2.0.5 through `wolfxl.load_workbook` and `wolfxl.Workbook`.
+
 ## Notes
 
 These numbers measure only the library under test. Write timings do NOT include oracle verification.
