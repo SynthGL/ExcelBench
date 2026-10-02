@@ -149,3 +149,39 @@ def test_aspose_engine_reports_unsupported_formulas_without_raising(
 
     assert result["status"] in {"failed", "unavailable"}
     assert result["reason"]
+
+
+class _ApiOnlyEngine:
+    """An engine whose API returns correct values but whose save writes none."""
+
+    name = "api-only"
+
+    def available(self) -> bool:
+        return True
+
+    def version(self) -> str | None:
+        return "1.0"
+
+    def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
+        expected = json.loads(EXPECTED.read_text(encoding="utf-8"))["cells"]
+        return {
+            "status": "passed",
+            "values": {reference: cell["value"] for reference, cell in expected.items()},
+            "saved_values": {},
+            "reason": None,
+        }
+
+
+def test_api_results_score_separately_from_saved_values(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(calc, "_engines", lambda: (_ApiOnlyEngine(),))
+
+    result = calc.run_calc_suite(FIXTURE, EXPECTED, tmp_path)["engines"]["api-only"]
+
+    assert result["status"] == "passed"
+    assert result["matched"] == result["total"]
+    assert result["saved_matched"] == 0
+    assert "| api-only | 1.0 | passed | 133/133 | 0/133 |" in (tmp_path / "README.md").read_text(
+        encoding="utf-8"
+    )

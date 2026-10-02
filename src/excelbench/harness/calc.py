@@ -196,18 +196,26 @@ class WolfXLCalcEngine:
         return _package_version("wolfxl")
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
-        """Calculate with WolfXL, save the workbook, and read cached results."""
+        """Score the values ``calculate()`` returns; record what ``save()`` persisted.
+
+        WolfXL's calculation API returns its results directly. Whether a save
+        writes them into the file as cached values depends on the build, so the
+        saved values are reported separately instead of replacing the score.
+        """
         try:
             import wolfxl
 
             output_path.parent.mkdir(parents=True, exist_ok=True)
             references = formula_cells(input_path)
             workbook = wolfxl.load_workbook(input_path)
-            workbook.calculate()
+            calculated = workbook.calculate()
             workbook.save(output_path)
             return {
                 "status": "passed",
-                "values": _read_values(output_path, references, reader="wolfxl"),
+                "values": {
+                    reference: calculated.get(reference) for reference in references
+                },
+                "saved_values": _read_values(output_path, references, reader="wolfxl"),
                 "reason": None,
             }
         except Exception as exc:  # Engine errors are data for the comparison report.
@@ -443,10 +451,17 @@ def run_calc_suite(
         else:
             status = str(engine_result["status"])
             reason = engine_result.get("reason")
+        saved_values = engine_result.get("saved_values")
+        saved_matched = (
+            _compare_expected_values(expected_cells, saved_values)[0]
+            if isinstance(saved_values, Mapping)
+            else None
+        )
         engine_results[engine.name] = {
             "status": status,
             "matched": matched,
             "total": total,
+            "saved_matched": saved_matched,
             "mismatched_cells": mismatches,
             "reason": reason,
             "version": engine.version(),
