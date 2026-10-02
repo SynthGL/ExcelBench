@@ -24,7 +24,11 @@ public API (`wolfxl.load_workbook`, `wolfxl.Workbook`) like every other library.
 
 ### Source identity
 
-- ExcelBench commit: `a9b223c268ad2c68a5314bee51810619550607d4` (branch `officelibs-m2`).
+- ExcelBench commit: `a9b223c268ad2c68a5314bee51810619550607d4` (local branch `officelibs-m2`),
+  tree `edc3fe0316aea9d6f38de6505ae30ae1fcb1fe0b`. Local history was squashed before
+  publication, so that commit id is not on GitHub. Its published equivalent is
+  `8db6afaebc3a5aef515da933608838780491a244`, which has the identical tree:
+  `git rev-parse 8db6afa^{tree}` prints `edc3fe0316aea9d6f38de6505ae30ae1fcb1fe0b`.
   `metadata.commit` in `results.json` is `null` because the harness reads
   `git rev-parse` and the staged tree is a git archive, not a checkout; the staging
   receipt below is the source identity.
