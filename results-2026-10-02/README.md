@@ -4,14 +4,15 @@
 | --- | --- | --- |
 | Fidelity (17 adapters) | [xlsx/](xlsx/README.md) | `excelbench benchmark -t fixtures/excel -o results-2026-10-02/xlsx -a openpyxl -a xlsxwriter -a python-calamine -a aspose-cells-foss -a wolfxl -a pylightxl -a xlrd -a pyexcel -a xlwt -a pandas -a xlsxwriter-constmem -a openpyxl-readonly -a polars -a tablib -a sheetjs -a exceljs -a libreoffice` then `excelbench heatmap -i results-2026-10-02/xlsx/results.json -o results-2026-10-02/xlsx` |
 | Template mutation | [mutation/](mutation/README.md) | `excelbench mutation -o results-2026-10-02/mutation --repeats 3` |
-| Formula recalculation | [calc/](calc/README.md) | `excelbench calc -o results-2026-10-02/calc` |
+| Formula recalculation | [calc/](calc/README.md) | `EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON=<commercial venv>/bin/python excelbench calc -o results-2026-10-02/calc` (rerun later the same day; see Versions) |
 | Cross-language context | [cross-language/](cross-language/README.md) | `EXCELBENCH_ORACLE_DOCKER_CONTEXT=pc excelbench cross-language-context -t fixtures/excel -o results-2026-10-02/cross-language` |
 
 ## Versions
 
 | Library | Version | Runtime |
 | --- | --- | --- |
-| wolfxl | 2.0.5 (latest PyPI release when run) | Python wheel |
+| wolfxl | 2.0.5 (latest PyPI release when run); the calc rerun used 2.0.7 | Python wheel |
+| wolfxl-commercial (calc only) | 2.3.0 from SynthGL's authenticated index | Python wheel, separate interpreter |
 | openpyxl / openpyxl-readonly | 3.1.5 | Python |
 | aspose-cells-foss | 26.7.0 | Python |
 | xlsxwriter / xlsxwriter-constmem | 3.2.9 | Python |

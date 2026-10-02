@@ -83,7 +83,10 @@ Most-touched top-level directories:
   - `harness/adapters/json_model_adapter.py`: base for adapters driven through
     an external JSON helper (SheetJS, ExcelJS, LibreOffice)
   - `harness/calc.py`: formula-recalculation tier engines (wolfxl, LibreOffice,
-    aspose-cells-foss, zavora oracle) against the cache-free fixture
+    aspose-cells-foss, zavora oracle) against the cache-free fixture; the
+    wolfxl-commercial engine runs a second `wolfxl` build in the interpreter
+    named by `EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON` and returns its values as JSON
+    (see DEC-028)
   - `modifiable.py`: engine registry for mutation-capable adapters
   - `harness/external_fixture_specs/`: tool-specific external oracle fixture
     definitions imported by the fixture-pack generator

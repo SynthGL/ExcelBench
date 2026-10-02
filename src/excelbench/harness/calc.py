@@ -2,12 +2,16 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import math
+import os
+import platform
 import shutil
 import subprocess
 import tempfile
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -20,9 +24,7 @@ from excelbench.harness.external_oracles import (
 )
 from excelbench.results.calc_renderer import render_calc_results
 
-SOFFICE_PATH = Path(
-    shutil.which("soffice") or "/opt/homebrew/bin/soffice"
-)
+SOFFICE_PATH = Path(shutil.which("soffice") or "/opt/homebrew/bin/soffice")
 
 
 class CalcEngine(Protocol):
@@ -35,6 +37,40 @@ class CalcEngine(Protocol):
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate a workbook and return its formula-cell values."""
+
+    def version(self) -> str | None:
+        """Return the engine version that produced the results, if known."""
+
+
+def _package_version(distribution: str) -> str | None:
+    """Return an installed package's version, naming any non-registry install.
+
+    A local wheel or editable checkout can carry a release's version string
+    while running different code, so a published result must cite the
+    install source as part of the version.
+    """
+    try:
+        dist = importlib.metadata.distribution(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return None
+    return _describe_install(dist.version, dist.read_text("direct_url.json"))
+
+
+def _describe_install(version: str, direct_url: str | None) -> str:
+    """Label a version with its install source from PEP 610 ``direct_url.json``."""
+    if not direct_url:
+        return version
+    try:
+        source = json.loads(direct_url)
+    except json.JSONDecodeError:
+        return f"{version} (unknown install source)"
+    vcs_info = source.get("vcs_info")
+    if isinstance(vcs_info, dict):
+        return f"{version} (vcs {str(vcs_info.get('commit_id', ''))[:12]})"
+    dir_info = source.get("dir_info")
+    if isinstance(dir_info, dict) and dir_info.get("editable"):
+        return f"{version} (local editable build)"
+    return f"{version} (local build)"
 
 
 def formula_cells(input_path: Path) -> list[str]:
@@ -67,6 +103,20 @@ def libreoffice_version() -> str | None:
         return None
     version = completed.stdout.strip() or completed.stderr.strip()
     return version or None
+
+
+def _adapter_libreoffice_version(banner: str | None) -> str | None:
+    """Turn ``LibreOffice 26.8.0.3 <build>`` into ``26.8.0.3 (build <build>)``.
+
+    The LibreOffice adapter reports that form, and one engine has one version
+    across every lane of a snapshot.
+    """
+    if banner is None:
+        return None
+    parts = banner.split()
+    if len(parts) == 3 and parts[0] == "LibreOffice":
+        return f"{parts[1]} (build {parts[2]})"
+    return banner
 
 
 def recalculate_with_libreoffice(input_path: Path, output_path: Path) -> str | None:
@@ -162,19 +212,124 @@ class WolfXLCalcEngine:
             return False
         return True
 
+    def version(self) -> str | None:
+        """Return the installed WolfXL version and install source."""
+        return _package_version("wolfxl")
+
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
-        """Calculate with WolfXL, save the workbook, and read cached results."""
+        """Score the values ``calculate()`` returns; record what ``save()`` persisted.
+
+        WolfXL's calculation API returns its results directly. Whether a save
+        writes them into the file as cached values depends on the build, so the
+        saved values are reported separately instead of replacing the score.
+        """
         try:
             import wolfxl
 
             output_path.parent.mkdir(parents=True, exist_ok=True)
             references = formula_cells(input_path)
             workbook = wolfxl.load_workbook(input_path)
-            workbook.calculate()
+            calculated = workbook.calculate()
             workbook.save(output_path)
             return {
                 "status": "passed",
-                "values": _read_values(output_path, references, reader="wolfxl"),
+                "values": {
+                    reference: calculated.get(reference) for reference in references
+                },
+                "saved_values": _read_values(output_path, references, reader="wolfxl"),
+                "reason": None,
+            }
+        except Exception as exc:  # Engine errors are data for the comparison report.
+            return {
+                "status": "failed",
+                "values": {},
+                "reason": f"{type(exc).__name__}: {exc}",
+            }
+
+
+WOLFXL_COMMERCIAL_PYTHON_ENV = "EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON"
+
+_WOLFXL_SUBPROCESS_SCRIPT = """
+import importlib.metadata, json, sys
+dist = importlib.metadata.distribution("wolfxl")
+report = {"version": dist.version, "direct_url": dist.read_text("direct_url.json")}
+if len(sys.argv) == 3:
+    import wolfxl
+    references = json.load(sys.stdin)
+    workbook = wolfxl.load_workbook(sys.argv[1])
+    calculated = workbook.calculate()
+    workbook.save(sys.argv[2])
+    report["values"] = {reference: calculated.get(reference) for reference in references}
+json.dump(report, sys.stdout, default=str)
+"""
+
+
+class WolfXLCommercialCalcEngine:
+    """WolfXL Commercial, run in the interpreter named by ``EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON``.
+
+    Commercial and Community both install as ``wolfxl``, so the Commercial build
+    runs in its own environment and reports results over JSON.
+    """
+
+    name = "wolfxl-commercial"
+
+    def _python(self) -> str | None:
+        python = os.environ.get(WOLFXL_COMMERCIAL_PYTHON_ENV)
+        return python if python and Path(python).is_file() else None
+
+    def _run(self, *args: str, stdin: str = "") -> dict[str, Any]:
+        python = self._python()
+        if python is None:
+            raise RuntimeError(
+                f"{WOLFXL_COMMERCIAL_PYTHON_ENV} does not name an interpreter"
+            )
+        completed = subprocess.run(
+            [python, "-c", _WOLFXL_SUBPROCESS_SCRIPT, *args],
+            input=stdin,
+            capture_output=True,
+            text=True,
+            check=False,
+            timeout=600,
+        )
+        if completed.returncode != 0:
+            detail = completed.stderr.strip().splitlines()[-1:] or ["no diagnostic"]
+            raise RuntimeError(detail[0])
+        report = json.loads(completed.stdout)
+        if not isinstance(report, dict):
+            raise RuntimeError("helper returned a non-object report")
+        return report
+
+    def available(self) -> bool:
+        """Return whether a Commercial interpreter is configured."""
+        return self._python() is not None
+
+    def version(self) -> str | None:
+        """Return the Commercial interpreter's WolfXL version and install source."""
+        if not self.available():
+            return None
+        try:
+            report = self._run()
+        except (RuntimeError, OSError, subprocess.TimeoutExpired, json.JSONDecodeError):
+            return None
+        return _describe_install(str(report["version"]), report.get("direct_url"))
+
+    def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
+        """Score the values ``calculate()`` returns; record what ``save()`` persisted."""
+        try:
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            references = formula_cells(input_path)
+            report = self._run(
+                str(input_path), str(output_path), stdin=json.dumps(references)
+            )
+            values = report.get("values")
+            if not isinstance(values, dict):
+                raise RuntimeError("helper report omitted values")
+            return {
+                "status": "passed",
+                "values": values,
+                "saved_values": _read_values(
+                    output_path, references, reader="openpyxl"
+                ),
                 "reason": None,
             }
         except Exception as exc:  # Engine errors are data for the comparison report.
@@ -193,6 +348,10 @@ class LibreOfficeCalcEngine:
     def available(self) -> bool:
         """Return whether the configured LibreOffice binary is available."""
         return libreoffice_version() is not None
+
+    def version(self) -> str | None:
+        """Return the LibreOffice version in the LibreOffice adapter's format."""
+        return _adapter_libreoffice_version(libreoffice_version())
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate with LibreOffice and read cached results from its output."""
@@ -234,6 +393,10 @@ class AsposeCellsFossCalcEngine:
         except ImportError:
             return False
         return True
+
+    def version(self) -> str | None:
+        """Return the installed Aspose.Cells FOSS version and install source."""
+        return _package_version("aspose-cells-foss")
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Evaluate every formula with the FOSS evaluator and save its output."""
@@ -285,6 +448,10 @@ class ZavoraCalcEngine:
     def available(self) -> bool:
         """Return whether the catalogued Zavora helper can be launched."""
         return external_oracle_catalog(_repository_root())["zavora"].is_available()
+
+    def version(self) -> str | None:
+        """Zavora's helper protocol does not report a version."""
+        return None
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Delegate calculation to Zavora's JSON external-oracle protocol."""
@@ -365,6 +532,7 @@ def run_calc_suite(
                 "total": len(expected_cells),
                 "mismatched_cells": [],
                 "reason": f"{engine.name} is unavailable",
+                "version": None,
             }
             continue
         try:
@@ -397,21 +565,41 @@ def run_calc_suite(
         else:
             status = str(engine_result["status"])
             reason = engine_result.get("reason")
+        saved_values = engine_result.get("saved_values")
+        saved_matched = (
+            _compare_expected_values(expected_cells, saved_values)[0]
+            if isinstance(saved_values, Mapping)
+            else None
+        )
         engine_results[engine.name] = {
             "status": status,
             "matched": matched,
             "total": total,
+            "saved_matched": saved_matched,
             "mismatched_cells": mismatches,
             "reason": reason,
+            "version": _engine_version(engine),
         }
 
     results = {
+        "metadata": {
+            "run_date": datetime.now(UTC).isoformat(),
+            "platform": f"{platform.system()}-{platform.machine()}",
+        },
         "fixture": str(fixture),
         "oracle": expected_data.get("oracle"),
         "engines": engine_results,
     }
     render_calc_results(results, output_dir)
     return results
+
+
+def _engine_version(engine: CalcEngine) -> str | None:
+    """Return an engine's version; a failing probe records none instead of aborting the suite."""
+    try:
+        return engine.version()
+    except Exception:  # Versions are provenance, never a reason to drop results.
+        return None
 
 
 def _compare_expected_values(
@@ -436,6 +624,7 @@ def _compare_expected_values(
 def _engines() -> tuple[CalcEngine, ...]:
     return (
         WolfXLCalcEngine(),
+        WolfXLCommercialCalcEngine(),
         LibreOfficeCalcEngine(),
         AsposeCellsFossCalcEngine(),
         ZavoraCalcEngine(),

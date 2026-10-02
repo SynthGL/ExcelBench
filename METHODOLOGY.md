@@ -135,6 +135,12 @@ oracle, oracle version pinned in the artifact).
 - Status semantics are strict: `passed` requires a full match against the
   oracle; any wrong or missing value reports `failed` with matched/total and
   per-cell mismatch details.
+- Engines with a calculation API are scored on the values that API returns.
+  How many correct values the engine's save writes into the workbook is
+  reported separately as "Saved to file". Engines that calculate only on save,
+  such as LibreOffice, are scored on the saved file (DEC-028).
+- Every engine result records the engine version; builds not installed from a
+  package registry are labeled as local, editable, or VCS builds.
 - Formulas avoid `IFS` and `XLOOKUP` because the LibreOffice oracle build
   returns `#NAME?` for them on this path; nested `IF` and INDEX/MATCH are used
   instead. This constrains function coverage and is documented per artifact.

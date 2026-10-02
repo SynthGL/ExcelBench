@@ -24,26 +24,35 @@ def _render_markdown(results: dict[str, Any]) -> str:
         f"Oracle: {results.get('oracle') or 'unknown'}",
         "",
         "Formula values are compared with absolute tolerance 1e-6 or relative tolerance 1e-9 "
-        "for numbers; strings and booleans compare exactly.",
+        "for numbers; strings and booleans compare exactly. Saved to file counts the "
+        "matching values a save writes into the workbook, for engines that return "
+        "results through an API.",
         "",
-        "| Engine | Status | Matched/total | First mismatches |",
-        "| --- | --- | --- | --- |",
+        "| Engine | Version | Status | Matched/total | Saved to file | First mismatches |",
+        "| --- | --- | --- | --- | --- | --- |",
     ]
     if not isinstance(engines, dict):
         engines = {}
+    reasons: list[str] = []
     for name, result in engines.items():
         if not isinstance(result, dict):
             continue
         mismatches = result.get("mismatched_cells", [])
         mismatch_text = _mismatch_text(mismatches)
+        saved = result.get("saved_matched")
+        saved_text = "—" if saved is None else f"{saved}/{result.get('total', 0)}"
         lines.append(
             "| "
-            f"{name} | {result.get('status', 'unknown')} | "
-            f"{result.get('matched', 0)}/{result.get('total', 0)} | {mismatch_text} |"
+            f"{name} | {result.get('version') or 'unknown'} | "
+            f"{result.get('status', 'unknown')} | "
+            f"{result.get('matched', 0)}/{result.get('total', 0)} | {saved_text} | "
+            f"{mismatch_text} |"
         )
         reason = result.get("reason")
         if reason:
-            lines.extend(["", f"{name}: {reason}"])
+            reasons.append(f"{name}: {reason}")
+    for reason in reasons:
+        lines.extend(["", reason])
     lines.append("")
     return "\n".join(lines)
 
