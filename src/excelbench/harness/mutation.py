@@ -183,14 +183,13 @@ def _missing_content_types(parts: dict[str, bytes]) -> list[str]:
 
 
 def _canonical_xml(data: bytes) -> str:
-    """Return C14N 2.0 text that ignores encoding, prefixes, attribute order and padding."""
+    """Return C14N 2.0 text that ignores encoding, prefixes, attribute order and padding.
+
+    The raw bytes go to the parser so the BOM and XML declaration select the decoding.
+    """
     try:
-        return ET.canonicalize(
-            xml_data=data.decode("utf-8-sig"),
-            strip_text=True,
-            rewrite_prefixes=True,
-        )
-    except (ET.ParseError, UnicodeDecodeError):
+        return ET.canonicalize(xml_data=data, strip_text=True, rewrite_prefixes=True)
+    except ET.ParseError:
         return f"unparsable:{hashlib.sha256(data).hexdigest()}"
 
 
