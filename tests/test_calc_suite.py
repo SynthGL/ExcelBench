@@ -214,3 +214,27 @@ def test_libreoffice_version_matches_adapter_format(
     """The calc engine and the LibreOffice adapter name the same build the same way."""
     assert calc._adapter_libreoffice_version(banner) == expected
 
+
+def test_failing_version_probe_keeps_results(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """A version probe that raises must not discard the engine's scored results."""
+
+    class _BrokenVersionEngine:
+        name = "broken-version"
+
+        def available(self) -> bool:
+            return True
+
+        def version(self) -> str | None:
+            raise RuntimeError("metadata unavailable")
+
+        def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
+            return {"status": "passed", "values": {}, "reason": None}
+
+    monkeypatch.setattr(calc, "_engines", lambda: (_BrokenVersionEngine(),))
+    results = calc.run_calc_suite(FIXTURE, EXPECTED, tmp_path)
+
+    assert results["engines"]["broken-version"]["version"] is None
+    assert (tmp_path / "results.json").exists()
+

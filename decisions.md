@@ -40,6 +40,45 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-028 — Calc tier scores API results; saved values and engine identity are recorded beside them (2026-10-02)
+
+**Context**: DEC-026 scored each engine from the cached values in the
+workbook it saved. For WolfXL that measured `save()`, not calculation:
+`Workbook.calculate()` returned values that the saved file never carried, so
+WolfXL scored 0/133 while computing them. The results also named no engine
+version, and a local WolfXL build was reported as if it were the PyPI
+release with the same version string. WolfXL Commercial and Community both
+install as `wolfxl`, so one interpreter cannot load both.
+
+**Decision**:
+
+- Engines that calculate through an API are scored on the values the API
+  returns. How many correct values `save()` writes into the workbook is
+  recorded separately as `saved_matched` and shown in a "Saved to file"
+  column. Engines that only calculate on save (LibreOffice) keep their
+  saved-file score.
+- Each engine result records `version()`. Non-registry installs carry their
+  PEP 610 source (local build, editable build, VCS commit) and never an install
+  path or URL. A failing version probe records `None`.
+- `wolfxl-commercial` runs in the interpreter named by
+  `EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON` and reports values over JSON; without
+  that variable it is unavailable.
+- Calc results carry `metadata.run_date` and `metadata.platform` so a calc
+  run can be published as its own snapshot.
+
+**Alternatives considered**:
+
+1. Keep scoring saved caches - rejected; it reports a persistence gap as a
+   calculation failure.
+2. Install both editions side by side under different names - rejected; the
+   Commercial wheel is the product users install, unmodified.
+
+**Consequences**:
+
+- WolfXL Community 2.0.7 scores 133/133 calculated and 0/133 saved; WolfXL
+  Commercial 2.3.0 scores 133/133 on both. DEC-026's cache-freedom rule still
+  holds: no engine can pass by copying input caches.
+
 ### DEC-027 — External-helper adapters are scored; mutation preservation compares parsed content (2026-10-02)
 
 **Context**: DEC-021 kept external helpers out of `get_all_adapters()` until a

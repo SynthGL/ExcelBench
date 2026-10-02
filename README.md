@@ -116,7 +116,7 @@ Use this when the question is: which engine actually computes a 133-formula fina
 - **Speed vs fidelity tradeoff is measurable**: use the perf snapshot together with the fidelity matrix rather than quoting one without the other
 - **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
 - **Cross-language context is now strong too**: `Apache POI` and `Excelize` land at `18/18` in the scored write lane; `zavora-xlsx` 0.1.2 writes fast but corrupts hyperlink relationships on mutate and cannot recalculate
-- **Calculation is a differentiator**: only LibreOffice computes the full 133-formula DAG (2026-10-02 snapshot); aspose-cells-foss covers 25/133; WolfXL 2.0.5 scores 0/133 because `Workbook.calculate()` runs but the saved workbook carries no cached formula values
+- **Calculation is a differentiator**: in the 2026-10-02 calc rerun, LibreOffice, WolfXL Community 2.0.7, and WolfXL Commercial 2.3.0 compute all 133 formulas; aspose-cells-foss covers 25/133 and zavora-xlsx 0/133. Community's `save()` writes no calculated values (0/133 saved), while Commercial saves all 133
 
 
 See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) for the fresh wheel-backed combined view, or the [historical dashboard](results/DASHBOARD.md) for the older public baseline.

@@ -578,7 +578,7 @@ def run_calc_suite(
             "saved_matched": saved_matched,
             "mismatched_cells": mismatches,
             "reason": reason,
-            "version": engine.version(),
+            "version": _engine_version(engine),
         }
 
     results = {
@@ -592,6 +592,14 @@ def run_calc_suite(
     }
     render_calc_results(results, output_dir)
     return results
+
+
+def _engine_version(engine: CalcEngine) -> str | None:
+    """Return an engine's version; a failing probe records none instead of aborting the suite."""
+    try:
+        return engine.version()
+    except Exception:  # Versions are provenance, never a reason to drop results.
+        return None
 
 
 def _compare_expected_values(
