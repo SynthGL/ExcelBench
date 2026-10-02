@@ -55,6 +55,9 @@ class _FakeEngine:
     def available(self) -> bool:
         return self._available
 
+    def version(self) -> str | None:
+        return None
+
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         if self._raises is not None:
             raise self._raises

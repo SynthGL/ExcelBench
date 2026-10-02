@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from collections.abc import Callable
 from importlib.util import module_from_spec, spec_from_file_location
 from pathlib import Path
@@ -185,3 +186,22 @@ def test_api_results_score_separately_from_saved_values(
     assert "| api-only | 1.0 | passed | 133/133 | 0/133 |" in (tmp_path / "README.md").read_text(
         encoding="utf-8"
     )
+
+
+def test_commercial_engine_matches_in_process_engine(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """The subprocess protocol reports what the same build reports in process."""
+    pytest.importorskip("wolfxl")
+    engine = calc.WolfXLCommercialCalcEngine()
+    monkeypatch.delenv(calc.WOLFXL_COMMERCIAL_PYTHON_ENV, raising=False)
+    assert not engine.available()
+
+    monkeypatch.setenv(calc.WOLFXL_COMMERCIAL_PYTHON_ENV, sys.executable)
+    in_process = WolfXLCalcEngine().calculate(FIXTURE, tmp_path / "in-process.xlsx")
+    via_subprocess = engine.calculate(FIXTURE, tmp_path / "subprocess.xlsx")
+
+    assert engine.version() == calc._package_version("wolfxl")
+    assert via_subprocess["status"] == in_process["status"] == "passed"
+    assert via_subprocess["values"] == in_process["values"]
+    assert via_subprocess["saved_values"] == in_process["saved_values"]
