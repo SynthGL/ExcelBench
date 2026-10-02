@@ -11,6 +11,7 @@ from typing import Any, cast
 
 import pytest
 
+from excelbench.harness import calc
 from excelbench.harness.calc import (
     SOFFICE_PATH,
     AsposeCellsFossCalcEngine,
@@ -75,6 +76,52 @@ def test_value_comparison_respects_tolerance_and_scalar_types() -> None:
     assert not values_match(True, 1)
 
 
+class _Distribution:
+    def __init__(self, direct_url: str | None) -> None:
+        self.version = "2.1.0"
+        self._direct_url = direct_url
+
+    def read_text(self, filename: str) -> str | None:
+        return self._direct_url if filename == "direct_url.json" else None
+
+
+@pytest.mark.parametrize(
+    ("direct_url", "expected"),
+    [
+        (None, "2.1.0"),
+        (
+            '{"url": "file:///build/wolfxl-2.1.0.whl", "archive_info": {}}',
+            "2.1.0 (local build)",
+        ),
+        (
+            '{"url": "file:///src/wolfxl", "dir_info": {"editable": true}}',
+            "2.1.0 (local editable build)",
+        ),
+        (
+            (
+                '{"url": "https://example.invalid/wolfxl.git", '
+                '"vcs_info": {"vcs": "git", "commit_id": "1a9ad6700abcdef0123"}}'
+            ),
+            "2.1.0 (vcs 1a9ad6700abc)",
+        ),
+    ],
+)
+def test_package_version_names_non_registry_installs(
+    monkeypatch: pytest.MonkeyPatch, direct_url: str | None, expected: str
+) -> None:
+    """A local build must not be reported as the registry release it shares a version with."""
+    monkeypatch.setattr(
+        calc.importlib.metadata,
+        "distribution",
+        lambda _name: _Distribution(direct_url),
+    )
+
+    version = calc._package_version("wolfxl")
+
+    assert version == expected
+    assert "/" not in version  # install paths and URLs never reach published results
+
+
 @requires_libreoffice
 def test_local_wolfxl_and_libreoffice_engines_calculate(tmp_path: Path) -> None:
     wolfxl_engine = WolfXLCalcEngine()
@@ -86,9 +133,7 @@ def test_local_wolfxl_and_libreoffice_engines_calculate(tmp_path: Path) -> None:
         except (AttributeError, ValueError):
             major, minor = 0, 0
         if (major, minor) >= (2, 1):
-            wolfxl_result = wolfxl_engine.calculate(
-                FIXTURE, tmp_path / "wolfxl.xlsx"
-            )
+            wolfxl_result = wolfxl_engine.calculate(FIXTURE, tmp_path / "wolfxl.xlsx")
             assert wolfxl_result["status"] == "passed", wolfxl_result["reason"]
 
     libreoffice_result = LibreOfficeCalcEngine().calculate(

@@ -26,8 +26,8 @@ def _render_markdown(results: dict[str, Any]) -> str:
         "Formula values are compared with absolute tolerance 1e-6 or relative tolerance 1e-9 "
         "for numbers; strings and booleans compare exactly.",
         "",
-        "| Engine | Status | Matched/total | First mismatches |",
-        "| --- | --- | --- | --- |",
+        "| Engine | Version | Status | Matched/total | First mismatches |",
+        "| --- | --- | --- | --- | --- |",
     ]
     if not isinstance(engines, dict):
         engines = {}
@@ -38,7 +38,8 @@ def _render_markdown(results: dict[str, Any]) -> str:
         mismatch_text = _mismatch_text(mismatches)
         lines.append(
             "| "
-            f"{name} | {result.get('status', 'unknown')} | "
+            f"{name} | {result.get('version') or 'unknown'} | "
+            f"{result.get('status', 'unknown')} | "
             f"{result.get('matched', 0)}/{result.get('total', 0)} | {mismatch_text} |"
         )
         reason = result.get("reason")

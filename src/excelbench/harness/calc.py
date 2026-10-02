@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib.metadata
 import json
 import math
 import shutil
@@ -20,9 +21,7 @@ from excelbench.harness.external_oracles import (
 )
 from excelbench.results.calc_renderer import render_calc_results
 
-SOFFICE_PATH = Path(
-    shutil.which("soffice") or "/opt/homebrew/bin/soffice"
-)
+SOFFICE_PATH = Path(shutil.which("soffice") or "/opt/homebrew/bin/soffice")
 
 
 class CalcEngine(Protocol):
@@ -35,6 +34,36 @@ class CalcEngine(Protocol):
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate a workbook and return its formula-cell values."""
+
+    def version(self) -> str | None:
+        """Return the engine version that produced the results, if known."""
+
+
+def _package_version(distribution: str) -> str | None:
+    """Return an installed package's version, naming any non-registry install.
+
+    A local wheel or editable checkout can carry a release's version string
+    while running different code, so a published result must cite the
+    install source as part of the version.
+    """
+    try:
+        dist = importlib.metadata.distribution(distribution)
+    except importlib.metadata.PackageNotFoundError:
+        return None
+    direct_url = dist.read_text("direct_url.json")
+    if not direct_url:
+        return dist.version
+    try:
+        source = json.loads(direct_url)
+    except json.JSONDecodeError:
+        return f"{dist.version} (unknown install source)"
+    vcs_info = source.get("vcs_info")
+    if isinstance(vcs_info, dict):
+        return f"{dist.version} (vcs {str(vcs_info.get('commit_id', ''))[:12]})"
+    dir_info = source.get("dir_info")
+    if isinstance(dir_info, dict) and dir_info.get("editable"):
+        return f"{dist.version} (local editable build)"
+    return f"{dist.version} (local build)"
 
 
 def formula_cells(input_path: Path) -> list[str]:
@@ -162,6 +191,10 @@ class WolfXLCalcEngine:
             return False
         return True
 
+    def version(self) -> str | None:
+        """Return the installed WolfXL version and install source."""
+        return _package_version("wolfxl")
+
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate with WolfXL, save the workbook, and read cached results."""
         try:
@@ -193,6 +226,10 @@ class LibreOfficeCalcEngine:
     def available(self) -> bool:
         """Return whether the configured LibreOffice binary is available."""
         return libreoffice_version() is not None
+
+    def version(self) -> str | None:
+        """Return the configured LibreOffice version string."""
+        return libreoffice_version()
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate with LibreOffice and read cached results from its output."""
@@ -234,6 +271,10 @@ class AsposeCellsFossCalcEngine:
         except ImportError:
             return False
         return True
+
+    def version(self) -> str | None:
+        """Return the installed Aspose.Cells FOSS version and install source."""
+        return _package_version("aspose-cells-foss")
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Evaluate every formula with the FOSS evaluator and save its output."""
@@ -285,6 +326,10 @@ class ZavoraCalcEngine:
     def available(self) -> bool:
         """Return whether the catalogued Zavora helper can be launched."""
         return external_oracle_catalog(_repository_root())["zavora"].is_available()
+
+    def version(self) -> str | None:
+        """Zavora's helper protocol does not report a version."""
+        return None
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Delegate calculation to Zavora's JSON external-oracle protocol."""
@@ -365,6 +410,7 @@ def run_calc_suite(
                 "total": len(expected_cells),
                 "mismatched_cells": [],
                 "reason": f"{engine.name} is unavailable",
+                "version": None,
             }
             continue
         try:
@@ -403,6 +449,7 @@ def run_calc_suite(
             "total": total,
             "mismatched_cells": mismatches,
             "reason": reason,
+            "version": engine.version(),
         }
 
     results = {
