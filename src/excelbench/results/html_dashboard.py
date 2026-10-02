@@ -1491,7 +1491,7 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
             f'<div class="wolf-icon">\U0001F43A</div>'
             f'<div class="wolf-text">'
             f'<h3>WolfXL at a glance (maintained by SynthGL)</h3>'
-            f'<p><b>{wolf_green}/{wolf_scored}</b> features at full fidelity (score 3)'
+            f'<p><b>{wolf_green}/{wolf_scored}</b> features scored 3 in read or write'
             f'{wolf_perf_note}. '
             f'Hybrid Rust+Python engine with an openpyxl-compatible API. '
             f'<a href="https://github.com/SynthGL/wolfxl" '

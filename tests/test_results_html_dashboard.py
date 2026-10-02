@@ -146,7 +146,7 @@ def test_feature_no_adapter_scored_is_excluded_from_denominators() -> None:
 
     html = _section_overview(fidelity, None)
 
-    assert "<b>1/2</b> features at full fidelity" in html
+    assert "<b>1/2</b> features scored 3 in read or write" in html
     assert '<div class="val">2</div><div class="lbl">Features Scored</div>' in html
     assert '<div class="val">2/4</div><div class="lbl">Score\u20033 Results</div>' in html
     rows = _compute_radar_data(fidelity, None, focus_libs=["wolfxl", "openpyxl"])
