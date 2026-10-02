@@ -73,6 +73,20 @@ _DEFAULT_RADAR_LIBS: list[str] = [
 ]
 
 
+def _scored_results(results: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    """Drop rows of features no adapter scored (read and write null for every adapter).
+
+    Such a feature is not in any denominator; counting it would charge every
+    library for a feature the run could not score.
+    """
+    scored = {
+        e["feature"]
+        for e in results
+        if any(e.get("scores", {}).get(op) is not None for op in ("read", "write"))
+    }
+    return [e for e in results if e["feature"] in scored]
+
+
 def _compute_radar_data(
     fidelity: dict[str, Any],
     perf: dict[str, Any] | None,
@@ -88,7 +102,7 @@ def _compute_radar_data(
       - Feature Coverage: features_with_any_score / total_features * 100
       - Capability Breadth: R-only/W-only=33, R+W=66, R+W+Patch=100
     """
-    results = fidelity.get("results", [])
+    results = _scored_results(fidelity.get("results", []))
     libs_info = fidelity.get("libraries", {})
     focus = focus_libs or _DEFAULT_RADAR_LIBS
     available = set(libs_info.keys())
@@ -1404,8 +1418,9 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
     meta = fidelity.get("metadata", {})
     libs = fidelity.get("libraries", {})
     results = fidelity.get("results", [])
+    scored = _scored_results(results)
 
-    all_features = sorted({e["feature"] for e in results})
+    all_features = sorted({e["feature"] for e in scored})
     total_libs = len(libs)
     total_feats = len(all_features)
 
@@ -1424,11 +1439,11 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
 
     # Green count
     green = sum(
-        1 for e in results
+        1 for e in scored
         if max((s for s in [e["scores"].get("read"), e["scores"].get("write")]
                 if s is not None), default=-1) == 3
     )
-    total_scored = len(results)
+    total_scored = len(scored)
 
     cards = [
         (str(total_libs), "Libraries Tested"),
@@ -1449,11 +1464,11 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
 
     # WolfXL hero stats
     wolf_green = sum(
-        1 for e in results if e["library"] == "wolfxl"
+        1 for e in scored if e["library"] == "wolfxl"
         and max((s for s in [e["scores"].get("read"), e["scores"].get("write")]
                  if s is not None), default=-1) == 3
     )
-    wolf_scored = sum(1 for e in results if e["library"] == "wolfxl")
+    wolf_scored = sum(1 for e in scored if e["library"] == "wolfxl")
     wolf_hero = ""
     if wolf_scored > 0:
         # Compute throughput headline from perf data if available
