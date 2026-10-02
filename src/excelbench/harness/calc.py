@@ -103,6 +103,20 @@ def libreoffice_version() -> str | None:
     return version or None
 
 
+def _adapter_libreoffice_version(banner: str | None) -> str | None:
+    """Turn ``LibreOffice 26.8.0.3 <build>`` into ``26.8.0.3 (build <build>)``.
+
+    The LibreOffice adapter reports that form, and one engine has one version
+    across every lane of a snapshot.
+    """
+    if banner is None:
+        return None
+    parts = banner.split()
+    if len(parts) == 3 and parts[0] == "LibreOffice":
+        return f"{parts[1]} (build {parts[2]})"
+    return banner
+
+
 def recalculate_with_libreoffice(input_path: Path, output_path: Path) -> str | None:
     """Recalculate ``input_path`` through an isolated headless LibreOffice profile.
 
@@ -334,8 +348,8 @@ class LibreOfficeCalcEngine:
         return libreoffice_version() is not None
 
     def version(self) -> str | None:
-        """Return the configured LibreOffice version string."""
-        return libreoffice_version()
+        """Return the LibreOffice version in the LibreOffice adapter's format."""
+        return _adapter_libreoffice_version(libreoffice_version())
 
     def calculate(self, input_path: Path, output_path: Path) -> dict[str, Any]:
         """Calculate with LibreOffice and read cached results from its output."""

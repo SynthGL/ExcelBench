@@ -198,3 +198,19 @@ def test_report_keeps_every_engine_row_in_the_table(tmp_path: Path) -> None:
     rows = [i for i, line in enumerate(lines) if line.startswith(("| a |", "| b |"))]
     assert rows == [rows[0], rows[0] + 1]
     assert lines.index("a: a broke") > rows[-1]
+
+
+@pytest.mark.parametrize(
+    ("banner", "expected"),
+    [
+        ("LibreOffice 26.8.0.3 bce0998afefd", "26.8.0.3 (build bce0998afefd)"),
+        ("LibreOffice 7.6.4.1", "LibreOffice 7.6.4.1"),
+        (None, None),
+    ],
+)
+def test_libreoffice_version_matches_adapter_format(
+    banner: str | None, expected: str | None
+) -> None:
+    """The calc engine and the LibreOffice adapter name the same build the same way."""
+    assert calc._adapter_libreoffice_version(banner) == expected
+
