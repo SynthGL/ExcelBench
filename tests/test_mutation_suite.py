@@ -21,6 +21,7 @@ from excelbench.results.mutation_renderer import render_mutation_report
 REPO_ROOT = Path(__file__).resolve().parents[1]
 BUILDER = REPO_ROOT / "scripts" / "build_mutation_template.py"
 TEMPLATE = REPO_ROOT / "fixtures" / "mutation" / "template_corporate_model.xlsx"
+MANIFEST = TEMPLATE.with_name("manifest.json")
 SOFFICE = Path(shutil.which("soffice") or "/opt/homebrew/bin/soffice")
 requires_libreoffice = pytest.mark.skipif(
     not SOFFICE.is_file(), reason="LibreOffice binary not available"
@@ -159,11 +160,21 @@ def _drop_custom_xml(parts: Parts) -> None:
 
 
 def test_builder_is_byte_stable() -> None:
-    """Repeated generation writes the same package bytes."""
-    subprocess.run([sys.executable, str(BUILDER)], cwd=REPO_ROOT, check=True)
-    first_digest = _sha256(TEMPLATE)
-    subprocess.run([sys.executable, str(BUILDER)], cwd=REPO_ROOT, check=True)
-    assert _sha256(TEMPLATE) == first_digest
+    """Repeated generation writes the same package bytes.
+
+    The builder writes to the committed fixture path, and openpyxl's output depends on
+    whether lxml is installed, so the committed fixture and manifest are restored
+    afterwards: every other test must score against the committed input.
+    """
+    committed = {path: path.read_bytes() for path in (TEMPLATE, MANIFEST)}
+    try:
+        subprocess.run([sys.executable, str(BUILDER)], cwd=REPO_ROOT, check=True)
+        first_digest = _sha256(TEMPLATE)
+        subprocess.run([sys.executable, str(BUILDER)], cwd=REPO_ROOT, check=True)
+        assert _sha256(TEMPLATE) == first_digest
+    finally:
+        for path, payload in committed.items():
+            path.write_bytes(payload)
 
 
 @requires_libreoffice
