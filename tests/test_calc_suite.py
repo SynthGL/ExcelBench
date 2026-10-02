@@ -61,10 +61,7 @@ def test_expected_values_cover_every_formula_cell() -> None:
 
     assert set(expected["cells"]) == set(formula_cells(FIXTURE))
     assert 80 <= len(expected["cells"]) <= 140
-    assert all(
-        cell["type"] in {"number", "string", "bool"}
-        for cell in expected["cells"].values()
-    )
+    assert all(cell["type"] in {"number", "string", "bool"} for cell in expected["cells"].values())
 
 
 def test_value_comparison_respects_tolerance_and_scalar_types() -> None:
@@ -75,15 +72,6 @@ def test_value_comparison_respects_tolerance_and_scalar_types() -> None:
     assert not values_match("exact", "different")
     assert values_match(True, True)
     assert not values_match(True, 1)
-
-
-class _Distribution:
-    def __init__(self, direct_url: str | None) -> None:
-        self.version = "2.1.0"
-        self._direct_url = direct_url
-
-    def read_text(self, filename: str) -> str | None:
-        return self._direct_url if filename == "direct_url.json" else None
 
 
 @pytest.mark.parametrize(
@@ -107,17 +95,9 @@ class _Distribution:
         ),
     ],
 )
-def test_package_version_names_non_registry_installs(
-    monkeypatch: pytest.MonkeyPatch, direct_url: str | None, expected: str
-) -> None:
+def test_package_version_names_non_registry_installs(direct_url: str | None, expected: str) -> None:
     """A local build must not be reported as the registry release it shares a version with."""
-    monkeypatch.setattr(
-        calc.importlib.metadata,
-        "distribution",
-        lambda _name: _Distribution(direct_url),
-    )
-
-    version = calc._package_version("wolfxl")
+    version = calc._describe_install("2.1.0", direct_url)
 
     assert version == expected
     assert "/" not in version  # install paths and URLs never reach published results
@@ -137,9 +117,7 @@ def test_local_wolfxl_and_libreoffice_engines_calculate(tmp_path: Path) -> None:
             wolfxl_result = wolfxl_engine.calculate(FIXTURE, tmp_path / "wolfxl.xlsx")
             assert wolfxl_result["status"] == "passed", wolfxl_result["reason"]
 
-    libreoffice_result = LibreOfficeCalcEngine().calculate(
-        FIXTURE, tmp_path / "libreoffice.xlsx"
-    )
+    libreoffice_result = LibreOfficeCalcEngine().calculate(FIXTURE, tmp_path / "libreoffice.xlsx")
     assert libreoffice_result["status"] == "passed", libreoffice_result["reason"]
 
 
@@ -220,4 +198,3 @@ def test_report_keeps_every_engine_row_in_the_table(tmp_path: Path) -> None:
     rows = [i for i, line in enumerate(lines) if line.startswith(("| a |", "| b |"))]
     assert rows == [rows[0], rows[0] + 1]
     assert lines.index("a: a broke") > rows[-1]
-
