@@ -40,6 +40,57 @@ Skip logging for routine bug fixes, refactors, or incremental test additions.
 
 ## Decisions
 
+### DEC-027 — External-helper adapters are scored; mutation preservation compares parsed content (2026-10-02)
+
+**Context**: DEC-021 kept external helpers out of `get_all_adapters()` until a
+later decision promoted them. The 2026-10-02 snapshot adds SheetJS, ExcelJS
+and LibreOffice Calc, which have no Python API: each is driven by a helper in
+`tools/external-oracles/` through the JSON-model protocol in
+`harness/adapters/json_model_adapter.py`. Separately, the DEC-025 mutation
+score counted retained package parts and byte-identical custom XML, so a byte
+copy scored 100 by construction and an engine that rewrote the package
+equivalently (new part names, renumbered relationship ids, other XML
+serialization) lost points without losing any content.
+
+**Decision**:
+
+- `sheetjs`, `exceljs` and `libreoffice` are registered in
+  `get_all_adapters()` and scored like any other adapter in the fidelity and
+  mutation lanes, so the comparison covers non-Python libraries. Registration
+  is availability-gated: a missing Node or `soffice` runtime removes the
+  adapter instead of failing the run. Helpers report only what the library's
+  own API exposes, and the Python side never fills in values the helper did
+  not report. The same availability-gated registration already applied to
+  `apache-poi`, `excelize` and `zavora-xlsx`, which stay in the
+  cross-language lane (`CROSS_LANGUAGE_ADAPTER_NAMES`).
+- Mutation preservation compares parsed content: the template's xlsx content
+  model (`harness/content_model_xlsx.py`) with the declared edits applied is
+  diffed against the output's model, plus a `custom_xml` feature (canonical
+  XML, datastore item id, schema references). Part names, relationship ids,
+  XML serialization and encoding, and document metadata are not content, so
+  an equivalent rewrite scores the same as an in-place edit. Cached results of
+  formula cells are recalculation state and are not compared; formula text is.
+  The result is features preserved (`kept/present`), edits applied, and an
+  unscored integrity report (dangling relationships, parts without a content
+  type). This supersedes the DEC-025 package-preservation score.
+
+**Alternatives considered**:
+
+1. **Keep JSON-model helpers in a separate context lane** — rejected. The
+   fidelity matrix would stay Python-only while the libraries users compare
+   against WolfXL and openpyxl include JavaScript and LibreOffice.
+2. **Keep the part-retention score and whitelist known renames** — rejected.
+   Every new engine would need its own whitelist, and a byte copy would still
+   score perfectly without proving the edits landed.
+
+**Consequences**:
+
+- Fidelity and mutation results depend on which helper runtimes are
+  installed; snapshot READMEs record runtime versions and lane membership.
+- Mutation scores before 2026-10-02 are not comparable with later scores.
+- Package-level differences remain visible as unscored diagnostics (lost and
+  added parts, element changes) so layout regressions are still reviewable.
+
 ### DEC-023 — Tier-4 fidelity features via openpyxl-structural fixtures (2026-09-08)
 
 **Context**: The scored matrix stopped at 19 features. Sheet protection, page
@@ -137,6 +188,8 @@ cells, save, keep everything else comparable.
 - Preservation is a structural proxy, not a semantic one. The verifier
   reopens outputs with openpyxl to catch the failure class that matters
   (corrupt relationships, as zavora 0.1.2 demonstrates).
+- The package-preservation score is superseded by content-model scoring in
+  DEC-027.
 
 ### DEC-026 — Calc tier: cache-free fixture, LibreOffice oracle, strict status semantics (2026-09-08)
 
@@ -257,7 +310,8 @@ ExcelBench install or CI job.
 - The first oracle sprint can focus on helper binaries/scripts and fixture
   truth-passing without changing benchmark scoring.
 - Promotion into public results requires a later explicit decision once the
-  generated workbooks are deterministic and manually audited.
+  generated workbooks are deterministic and manually audited. DEC-027 records
+  that decision for the JSON-model adapters.
 
 **Commit(s)**: this commit.
 

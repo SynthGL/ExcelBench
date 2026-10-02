@@ -224,6 +224,23 @@ def test_equivalent_rewrite_scores_the_same_as_in_place_edit(tmp_path: Path) -> 
     assert rewritten_score["diagnostics"]["lost_parts"]  # renamed parts are only diagnostics
 
 
+def test_utf16_custom_xml_scores_the_same_as_in_place_edit(tmp_path: Path) -> None:
+    """Re-encoding customXml as UTF-16 with a matching declaration is not a content change."""
+    in_place = _write_parts(tmp_path / "in_place.xlsx", _correct_output())
+    parts = _correct_output()
+    item = "customXml/item1.xml"
+    _replace(parts, item, b'encoding="UTF-8"', b'encoding="UTF-16"')
+    parts[item] = parts[item].decode("utf-8").encode("utf-16")
+    utf16 = _write_parts(tmp_path / "utf16.xlsx", parts)
+
+    in_place_score = score_preservation(TEMPLATE, in_place, MUTATIONS)
+    utf16_score = score_preservation(TEMPLATE, utf16, MUTATIONS)
+
+    assert utf16_score["features_changed"] == {}
+    assert utf16_score["preserved"] is in_place_score["preserved"] is True
+    assert utf16_score["feature_preservation"] == in_place_score["feature_preservation"]
+
+
 @pytest.mark.parametrize(
     ("drop", "feature"),
     [

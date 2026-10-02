@@ -2,7 +2,11 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from excelbench.results.html_dashboard import _compute_radar_data, render_html_dashboard
+from excelbench.results.html_dashboard import (
+    _compute_radar_data,
+    _section_overview,
+    render_html_dashboard,
+)
 
 
 def test_render_html_dashboard_smoke(tmp_path: Path) -> None:
@@ -109,6 +113,45 @@ def test_compute_radar_data_uses_p50_when_op_count_missing() -> None:
     # pandas is half as fast as openpyxl in this fixture.
     assert by_lib["pandas"][1] == 25.0
     assert by_lib["pandas"][2] == 25.0
+
+
+def test_feature_no_adapter_scored_is_excluded_from_denominators() -> None:
+    """A feature null for every adapter leaves the denominators; one scored by any stays."""
+    fidelity = {
+        "libraries": {
+            "wolfxl": {"capabilities": ["read", "write", "modify"]},
+            "openpyxl": {"capabilities": ["read", "write"]},
+        },
+        "results": [
+            {"feature": "cell_values", "library": "wolfxl", "scores": {"read": 3, "write": 3}},
+            {"feature": "cell_values", "library": "openpyxl", "scores": {"read": 3, "write": 3}},
+            {"feature": "formulas", "library": "wolfxl", "scores": {"read": 1, "write": None}},
+            {
+                "feature": "formulas",
+                "library": "openpyxl",
+                "scores": {"read": None, "write": None},
+            },
+            {
+                "feature": "pivot_tables",
+                "library": "wolfxl",
+                "scores": {"read": None, "write": None},
+            },
+            {
+                "feature": "pivot_tables",
+                "library": "openpyxl",
+                "scores": {"read": None, "write": None},
+            },
+        ],
+    }
+
+    html = _section_overview(fidelity, None)
+
+    assert "<b>1/2</b> features scored 3 in read or write" in html
+    assert '<div class="val">2</div><div class="lbl">Features Scored</div>' in html
+    assert '<div class="val">2/4</div><div class="lbl">Score\u20033 Results</div>' in html
+    rows = _compute_radar_data(fidelity, None, focus_libs=["wolfxl", "openpyxl"])
+    coverage = {r["library"]: r["values"][3] for r in rows}
+    assert coverage == {"wolfxl": 100.0, "openpyxl": 50.0}
 
 
 def test_render_html_dashboard_shows_delta_and_unsupported(tmp_path: Path) -> None:
