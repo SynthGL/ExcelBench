@@ -6,10 +6,12 @@ import importlib.metadata
 import json
 import math
 import os
+import platform
 import shutil
 import subprocess
 import tempfile
 from collections.abc import Mapping
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -580,6 +582,10 @@ def run_calc_suite(
         }
 
     results = {
+        "metadata": {
+            "run_date": datetime.now(UTC).isoformat(),
+            "platform": f"{platform.system()}-{platform.machine()}",
+        },
         "fixture": str(fixture),
         "oracle": expected_data.get("oracle"),
         "engines": engine_results,

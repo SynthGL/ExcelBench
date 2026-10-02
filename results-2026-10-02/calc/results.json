@@ -149,5 +149,9 @@
     }
   },
   "fixture": "fixtures/calc/financial_model.xlsx",
+  "metadata": {
+    "platform": "Darwin-arm64",
+    "run_date": "2026-10-02T11:37:18.885621+00:00"
+  },
   "oracle": "libreoffice/LibreOffice 26.8.0.3 bce0998afefdbc355585ca324285661a2170ba77"
 }

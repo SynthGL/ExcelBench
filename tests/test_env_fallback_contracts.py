@@ -8,7 +8,9 @@ machines without LibreOffice, aspose-cells-foss, or the Rust helper.
 from __future__ import annotations
 
 import json
+import platform
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -136,6 +138,9 @@ def test_calc_suite_full_match_passes_and_renders(
 
     rendered = json.loads((tmp_path / "results.json").read_text())
     assert set(rendered["engines"]) == {"good", "bad", "absent"}
+    # Importers date and place a calc-only snapshot from this metadata.
+    assert datetime.fromisoformat(rendered["metadata"]["run_date"]).tzinfo is not None
+    assert rendered["metadata"]["platform"] == f"{platform.system()}-{platform.machine()}"
     readme = (tmp_path / "README.md").read_text()
     assert "good" in readme and "unavailable" in readme.lower()
 
