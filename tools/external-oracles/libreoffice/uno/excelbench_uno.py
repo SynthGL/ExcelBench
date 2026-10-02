@@ -1,10 +1,11 @@
-# ruff: noqa: N802, N815
+# ruff: noqa: N802, N815, N816
 """ExcelBench JSON-model helper executed inside LibreOffice's embedded Python.
 
 ``libreoffice_uno_adapter.py`` copies this module into
 ``<profile>/user/Scripts/python`` and launches::
 
-    soffice --headless ... 'vnd.sun.star.script:excelbench_uno.py$main?language=Python&location=user'
+    soffice --headless ... \
+        'vnd.sun.star.script:excelbench_uno.py$main?language=Python&location=user'
 
 The request and response file paths arrive through the
 ``EXCELBENCH_UNO_REQUEST`` / ``EXCELBENCH_UNO_RESPONSE`` environment
