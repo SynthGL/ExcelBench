@@ -483,7 +483,7 @@ def _lib_summary(lib: str, green: int, total: int) -> str:
     """One-line summary for tier list."""
     summaries: dict[str, str] = {
         "openpyxl": "Reference adapter — full read + write fidelity",
-        "wolfxl": "Hybrid Rust+Python — near-full fidelity at 3-9x throughput",
+        "wolfxl": "Hybrid Rust+Python: openpyxl-compatible API with patch-mode modify",
         "rust_xlsxwriter": "Rust write backend — used internally by WolfXL",
         "xlsxwriter": "Best write-only option — full formatting support",
         "xlsxwriter-constmem": "Memory-optimized write — loses images, comments, row height",

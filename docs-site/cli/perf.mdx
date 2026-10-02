@@ -29,7 +29,7 @@ For each library, the perf runner captures:
 - **Bulk read** — `read_sheet_values()` returning all cells at once (10K cells)
 - **Bulk write** — `write_sheet_values()` writing all cells at once (100K cells)
 
-Rust adapters (WolfXL, calamine-styled) implement bulk methods for maximum throughput.
+Bulk workloads run only on adapters that implement `read_sheet_values()` or `write_sheet_values()`; for other adapters the harness records the bulk operation as failed. The WolfXL adapter implements both through WolfXL's public worksheet API, not a separate bulk path.
 
 ### Options
 
@@ -48,13 +48,13 @@ uv run excelbench perf --tests fixtures/excel --output results
 
 ### Reference Numbers
 
-All on Apple M-series, release build:
+From the 2026-10-02 perf snapshot (`results-2026-10-02/perf/README.md`): Apple M4 Pro, Python 3.12.3, warmup 3, 25 iterations, the same 19 xlsx features for every library. Totals are sums of per-feature p50 wall times; the multiple is openpyxl's total divided by the library's total.
 
-| Library | Bulk Read (ops/s) | Bulk Write (ops/s) |
-|---------|-------------------|--------------------|
-| WolfXL | ~1.26M | ~1.73M |
-| openpyxl | ~372K | ~347K |
-| python-calamine | ~1.1M | — |
-| pandas | ~630K | ~660K |
+| Library | Read p50 total | Read vs openpyxl | Write p50 total | Write vs openpyxl |
+|---------|----------------|------------------|-----------------|-------------------|
+| WolfXL 2.0.5 | 13.46 ms | 1.69x | 22.28 ms | 1.20x |
+| openpyxl 3.1.5 | 22.79 ms | 1.00x | 26.70 ms | 1.00x |
+| python-calamine 0.8.2 | 1.63 ms | 14.02x | n/a (read-only) | n/a |
+| pandas 3.0.6 | 28.43 ms | 0.80x | 26.66 ms | 1.00x |
 
-WolfXL is **3-5x faster** than openpyxl across workloads.
+WolfXL is measured through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), the same kind of surface as every other library. It reads 1.69x and writes 1.20x faster than openpyxl on this workload.

@@ -57,7 +57,7 @@
 | Tier | Library | Caps | Modify | Green Features | Summary |
 |:----:|---------|:----:|:------:|:--------------:|---------|
 | **S** | openpyxl | R+W | Rewrite | 21/21 | Reference adapter — full read + write fidelity |
-| **S-** | wolfxl | R+W | Patch | 19/21 | Hybrid Rust+Python — near-full fidelity at 3-9x throughput |
+| **S-** | wolfxl | R+W | Patch | 19/21 | Hybrid Rust+Python: openpyxl-compatible API with patch-mode modify |
 | **A** | exceljs | R+W | Rewrite | 15/21 | 15/21 features with full fidelity |
 | **A** | xlsxwriter | W | No | 15/21 | Best write-only option — full formatting support |
 | **B** | aspose-cells-foss | R+W | Rewrite | 14/21 | 14/21 features with full fidelity |
@@ -300,10 +300,10 @@
 | text_formatting | python-calamine | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | python-calamine | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | python-calamine | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
-| text_formatting | aspose-cells-foss | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={'underline': 'single', 'font_name': 'Aptos Narrow', 'font_size': 12.0, 'font_color': '#000000'} |
 | text_formatting | aspose-cells-foss | bold | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | aspose-cells-foss | italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | aspose-cells-foss | underline_single | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
+| text_formatting | aspose-cells-foss | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={'underline': 'single', 'font_name': 'Aptos Narrow', 'font_size': 12.0, 'font_color': '#000000'} |
 | text_formatting | aspose-cells-foss | underline_double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | aspose-cells-foss | strikethrough | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | aspose-cells-foss | bold_italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
@@ -320,114 +320,114 @@
 | text_formatting | aspose-cells-foss | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | aspose-cells-foss | combined | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support write_cell_format: aspose-cells-foss supports only a single underline, not accounting or double variants. |
 | text_formatting | pylightxl | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
-| text_formatting | pylightxl | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
-| text_formatting | pylightxl | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
-| text_formatting | pylightxl | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
-| text_formatting | pylightxl | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
-| text_formatting | pylightxl | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
-| text_formatting | pylightxl | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
-| text_formatting | pylightxl | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
-| text_formatting | pylightxl | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
-| text_formatting | pylightxl | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
-| text_formatting | pylightxl | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
-| text_formatting | pylightxl | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
-| text_formatting | pylightxl | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
-| text_formatting | pylightxl | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
-| text_formatting | pylightxl | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
-| text_formatting | pylightxl | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
-| text_formatting | pylightxl | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
-| text_formatting | pylightxl | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pylightxl | bold | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
 | text_formatting | pylightxl | italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
 | text_formatting | pylightxl | underline_single | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
 | text_formatting | pylightxl | underline_double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
 | text_formatting | pylightxl | strikethrough | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
 | text_formatting | pylightxl | bold_italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
 | text_formatting | pylightxl | font_size_8 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
 | text_formatting | pylightxl | font_size_14 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
 | text_formatting | pylightxl | font_size_24 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
 | text_formatting | pylightxl | font_size_36 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
 | text_formatting | pylightxl | font_arial | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
 | text_formatting | pylightxl | font_times | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
 | text_formatting | pylightxl | font_courier | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
 | text_formatting | pylightxl | color_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
 | text_formatting | pylightxl | color_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | pylightxl | color_green | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | pylightxl | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| text_formatting | pylightxl | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pylightxl | combined | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
 | text_formatting | pyexcel | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
-| text_formatting | pyexcel | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
-| text_formatting | pyexcel | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
-| text_formatting | pyexcel | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
-| text_formatting | pyexcel | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
-| text_formatting | pyexcel | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
-| text_formatting | pyexcel | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
-| text_formatting | pyexcel | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
-| text_formatting | pyexcel | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
-| text_formatting | pyexcel | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
-| text_formatting | pyexcel | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
-| text_formatting | pyexcel | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
-| text_formatting | pyexcel | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
-| text_formatting | pyexcel | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
-| text_formatting | pyexcel | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
-| text_formatting | pyexcel | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
-| text_formatting | pyexcel | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
-| text_formatting | pyexcel | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pyexcel | bold | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
 | text_formatting | pyexcel | italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
 | text_formatting | pyexcel | underline_single | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
 | text_formatting | pyexcel | underline_double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
 | text_formatting | pyexcel | strikethrough | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
 | text_formatting | pyexcel | bold_italic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
 | text_formatting | pyexcel | font_size_8 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
 | text_formatting | pyexcel | font_size_14 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
 | text_formatting | pyexcel | font_size_24 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
 | text_formatting | pyexcel | font_size_36 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
 | text_formatting | pyexcel | font_arial | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
 | text_formatting | pyexcel | font_times | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
 | text_formatting | pyexcel | font_courier | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
 | text_formatting | pyexcel | color_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
 | text_formatting | pyexcel | color_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | pyexcel | color_green | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | pyexcel | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| text_formatting | pyexcel | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pyexcel | combined | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
 | text_formatting | xlwt | color_green | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={'font_name': 'Arial', 'font_size': 10.0, 'font_color': '#008000'} |
 | text_formatting | xlwt | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={'font_name': 'Arial', 'font_size': 10.0, 'font_color': '#993300'} |
 | text_formatting | pandas | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
-| text_formatting | pandas | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
-| text_formatting | pandas | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
-| text_formatting | pandas | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
-| text_formatting | pandas | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
-| text_formatting | pandas | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
-| text_formatting | pandas | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
-| text_formatting | pandas | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
-| text_formatting | pandas | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
-| text_formatting | pandas | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
-| text_formatting | pandas | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
-| text_formatting | pandas | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
-| text_formatting | pandas | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
-| text_formatting | pandas | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
-| text_formatting | pandas | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
-| text_formatting | pandas | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
-| text_formatting | pandas | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
-| text_formatting | pandas | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pandas | bold | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
 | text_formatting | pandas | italic | write | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
 | text_formatting | pandas | underline_single | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
 | text_formatting | pandas | underline_double | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
 | text_formatting | pandas | strikethrough | write | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
 | text_formatting | pandas | bold_italic | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
 | text_formatting | pandas | font_size_8 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
 | text_formatting | pandas | font_size_14 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
 | text_formatting | pandas | font_size_24 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
 | text_formatting | pandas | font_size_36 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
 | text_formatting | pandas | font_arial | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
 | text_formatting | pandas | font_times | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
 | text_formatting | pandas | font_courier | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
 | text_formatting | pandas | color_red | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
 | text_formatting | pandas | color_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | pandas | color_green | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | pandas | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | pandas | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | pandas | combined | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
 | text_formatting | openpyxl-readonly | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
 | text_formatting | openpyxl-readonly | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
@@ -466,106 +466,106 @@
 | text_formatting | polars | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | polars | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | tablib | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
-| text_formatting | tablib | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
-| text_formatting | tablib | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
-| text_formatting | tablib | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
-| text_formatting | tablib | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
-| text_formatting | tablib | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
-| text_formatting | tablib | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
-| text_formatting | tablib | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
-| text_formatting | tablib | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
-| text_formatting | tablib | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
-| text_formatting | tablib | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
-| text_formatting | tablib | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
-| text_formatting | tablib | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
-| text_formatting | tablib | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
-| text_formatting | tablib | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
-| text_formatting | tablib | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
-| text_formatting | tablib | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
-| text_formatting | tablib | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | tablib | bold | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
 | text_formatting | tablib | italic | write | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
 | text_formatting | tablib | underline_single | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
 | text_formatting | tablib | underline_double | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
 | text_formatting | tablib | strikethrough | write | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
 | text_formatting | tablib | bold_italic | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
 | text_formatting | tablib | font_size_8 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
 | text_formatting | tablib | font_size_14 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
 | text_formatting | tablib | font_size_24 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
 | text_formatting | tablib | font_size_36 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
 | text_formatting | tablib | font_arial | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
 | text_formatting | tablib | font_times | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
 | text_formatting | tablib | font_courier | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
 | text_formatting | tablib | color_red | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
 | text_formatting | tablib | color_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | tablib | color_green | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | tablib | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
+| text_formatting | tablib | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | tablib | combined | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 11.0} |
 | text_formatting | sheetjs | bold | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={} |
-| text_formatting | sheetjs | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
-| text_formatting | sheetjs | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
-| text_formatting | sheetjs | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
-| text_formatting | sheetjs | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
-| text_formatting | sheetjs | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
-| text_formatting | sheetjs | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
-| text_formatting | sheetjs | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
-| text_formatting | sheetjs | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
-| text_formatting | sheetjs | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
-| text_formatting | sheetjs | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
-| text_formatting | sheetjs | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
-| text_formatting | sheetjs | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
-| text_formatting | sheetjs | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
-| text_formatting | sheetjs | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
-| text_formatting | sheetjs | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
-| text_formatting | sheetjs | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
-| text_formatting | sheetjs | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | sheetjs | bold | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | italic | read | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={} |
 | text_formatting | sheetjs | italic | write | data_mismatch | error | Expected values did not match actual values: expected={'italic': True}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | underline_single | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={} |
 | text_formatting | sheetjs | underline_single | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'single'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | underline_double | read | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={} |
 | text_formatting | sheetjs | underline_double | write | data_mismatch | error | Expected values did not match actual values: expected={'underline': 'double'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | strikethrough | read | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={} |
 | text_formatting | sheetjs | strikethrough | write | data_mismatch | error | Expected values did not match actual values: expected={'strikethrough': True}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | bold_italic | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={} |
 | text_formatting | sheetjs | bold_italic | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'italic': True}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_size_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={} |
 | text_formatting | sheetjs | font_size_8 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 8}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_size_14 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={} |
 | text_formatting | sheetjs | font_size_14 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 14}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_size_24 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={} |
 | text_formatting | sheetjs | font_size_24 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 24}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_size_36 | read | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={} |
 | text_formatting | sheetjs | font_size_36 | write | data_mismatch | error | Expected values did not match actual values: expected={'font_size': 36}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_arial | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={} |
 | text_formatting | sheetjs | font_arial | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Arial'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_times | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={} |
 | text_formatting | sheetjs | font_times | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Times New Roman'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | font_courier | read | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={} |
 | text_formatting | sheetjs | font_courier | write | data_mismatch | error | Expected values did not match actual values: expected={'font_name': 'Courier New'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={} |
 | text_formatting | sheetjs | color_red | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={} |
 | text_formatting | sheetjs | color_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#0000FF'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | color_green | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={} |
 | text_formatting | sheetjs | color_green | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#00FF00'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={} |
 | text_formatting | sheetjs | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'font_color': '#8B4513'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
+| text_formatting | sheetjs | combined | read | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={} |
 | text_formatting | sheetjs | combined | write | data_mismatch | error | Expected values did not match actual values: expected={'bold': True, 'font_size': 16, 'font_color': '#FF0000'}, actual={'font_name': 'Calibri', 'font_size': 12.0} |
 | background_colors | python-calamine | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
 | background_colors | python-calamine | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
 | background_colors | python-calamine | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | python-calamine | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pylightxl | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
-| background_colors | pylightxl | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
-| background_colors | pylightxl | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
-| background_colors | pylightxl | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pylightxl | bg_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| background_colors | pylightxl | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
 | background_colors | pylightxl | bg_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| background_colors | pylightxl | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | pylightxl | bg_green | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| background_colors | pylightxl | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pylightxl | bg_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
 | background_colors | pyexcel | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
-| background_colors | pyexcel | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
-| background_colors | pyexcel | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
-| background_colors | pyexcel | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pyexcel | bg_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| background_colors | pyexcel | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
 | background_colors | pyexcel | bg_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| background_colors | pyexcel | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | pyexcel | bg_green | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| background_colors | pyexcel | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pyexcel | bg_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
 | background_colors | xlwt | bg_green | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={'bg_color': '#008000'} |
 | background_colors | xlwt | bg_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={'bg_color': '#993300'} |
 | background_colors | pandas | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
-| background_colors | pandas | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
-| background_colors | pandas | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
-| background_colors | pandas | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pandas | bg_red | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
+| background_colors | pandas | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
 | background_colors | pandas | bg_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
+| background_colors | pandas | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | pandas | bg_green | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
+| background_colors | pandas | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | pandas | bg_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | openpyxl-readonly | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
 | background_colors | openpyxl-readonly | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
@@ -576,12 +576,12 @@
 | background_colors | polars | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | polars | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | tablib | bg_red | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
-| background_colors | tablib | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
-| background_colors | tablib | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
-| background_colors | tablib | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | tablib | bg_red | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
+| background_colors | tablib | bg_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
 | background_colors | tablib | bg_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
+| background_colors | tablib | bg_green | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
 | background_colors | tablib | bg_green | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#00FF00'}, actual={} |
+| background_colors | tablib | bg_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | tablib | bg_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#8B4513'}, actual={} |
 | background_colors | sheetjs | bg_red | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#FF0000'}, actual={} |
 | background_colors | sheetjs | bg_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'bg_color': '#0000FF'}, actual={} |
@@ -593,34 +593,34 @@
 | number_formats | python-calamine | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | python-calamine | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pylightxl | numfmt_currency | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={} |
-| number_formats | pylightxl | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
-| number_formats | pylightxl | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
-| number_formats | pylightxl | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
-| number_formats | pylightxl | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pylightxl | numfmt_currency | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| number_formats | pylightxl | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
 | number_formats | pylightxl | numfmt_percent | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| number_formats | pylightxl | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
 | number_formats | pylightxl | numfmt_date | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| number_formats | pylightxl | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | pylightxl | numfmt_scientific | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| number_formats | pylightxl | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pylightxl | numfmt_custom_text | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
 | number_formats | pyexcel | numfmt_currency | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={} |
-| number_formats | pyexcel | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
-| number_formats | pyexcel | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
-| number_formats | pyexcel | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
-| number_formats | pyexcel | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pyexcel | numfmt_currency | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| number_formats | pyexcel | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
 | number_formats | pyexcel | numfmt_percent | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| number_formats | pyexcel | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
 | number_formats | pyexcel | numfmt_date | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| number_formats | pyexcel | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | pyexcel | numfmt_scientific | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| number_formats | pyexcel | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pyexcel | numfmt_custom_text | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
 | number_formats | pandas | numfmt_currency | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={} |
-| number_formats | pandas | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
-| number_formats | pandas | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
-| number_formats | pandas | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
-| number_formats | pandas | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pandas | numfmt_currency | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={'number_format': 'General'} |
+| number_formats | pandas | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
 | number_formats | pandas | numfmt_percent | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={'number_format': 'General'} |
+| number_formats | pandas | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
 | number_formats | pandas | numfmt_date | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'General'} |
+| number_formats | pandas | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | pandas | numfmt_scientific | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={'number_format': 'General'} |
+| number_formats | pandas | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | pandas | numfmt_custom_text | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={'number_format': 'General'} |
 | number_formats | openpyxl-readonly | numfmt_currency | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={} |
 | number_formats | openpyxl-readonly | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
@@ -633,17 +633,17 @@
 | number_formats | polars | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | polars | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | tablib | numfmt_currency | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={} |
-| number_formats | tablib | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
-| number_formats | tablib | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
-| number_formats | tablib | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
-| number_formats | tablib | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | tablib | numfmt_currency | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={'number_format': 'General'} |
+| number_formats | tablib | numfmt_percent | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={} |
 | number_formats | tablib | numfmt_percent | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00%'}, actual={'number_format': 'General'} |
+| number_formats | tablib | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={} |
 | number_formats | tablib | numfmt_date | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'General'} |
+| number_formats | tablib | numfmt_scientific | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={} |
 | number_formats | tablib | numfmt_scientific | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '0.00E+00'}, actual={'number_format': 'General'} |
+| number_formats | tablib | numfmt_custom_text | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={} |
 | number_formats | tablib | numfmt_custom_text | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={'number_format': 'General'} |
-| number_formats | libreoffice | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'YYYY-MM-DD'} |
 | number_formats | libreoffice | numfmt_currency | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '$#,##0.00'}, actual={'number_format': '\\$#,##0.00'} |
+| number_formats | libreoffice | numfmt_date | read | data_mismatch | error | Expected values did not match actual values: expected={'number_format': 'yyyy-mm-dd'}, actual={'number_format': 'YYYY-MM-DD'} |
 | number_formats | libreoffice | numfmt_custom_text | write | data_mismatch | error | Expected values did not match actual values: expected={'number_format': '"USD" 0.00'}, actual={'number_format': '"USD "0.00'} |
 | alignment | xlsxwriter | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | python-calamine | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
@@ -658,58 +658,58 @@
 | alignment | aspose-cells-foss | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | aspose-cells-foss | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | pylightxl | h_left | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | h_center | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | h_right | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | v_top | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | v_center | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | v_bottom | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | wrap_text | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | rotation_45 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| alignment | pylightxl | indent_2 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | h_left | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | h_center | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | h_center | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | h_right | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | h_right | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | v_top | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | v_top | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | v_center | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | v_center | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | v_bottom | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | v_bottom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | wrap_text | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | wrap_text | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | rotation_45 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | rotation_45 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
+| alignment | pylightxl | indent_2 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | alignment | pylightxl | indent_2 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_format: pylightxl does not implement this feature |
 | alignment | pyexcel | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
-| alignment | pyexcel | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
-| alignment | pyexcel | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
-| alignment | pyexcel | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
-| alignment | pyexcel | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
-| alignment | pyexcel | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
-| alignment | pyexcel | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
-| alignment | pyexcel | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
-| alignment | pyexcel | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | pyexcel | h_left | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
 | alignment | pyexcel | h_center | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
 | alignment | pyexcel | h_right | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
 | alignment | pyexcel | v_top | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
 | alignment | pyexcel | v_center | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | pyexcel | v_bottom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
 | alignment | pyexcel | wrap_text | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
 | alignment | pyexcel | rotation_45 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
+| alignment | pyexcel | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | pyexcel | indent_2 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_format: pyexcel exposes value-only cells |
 | alignment | pandas | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
-| alignment | pandas | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
-| alignment | pandas | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
-| alignment | pandas | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
-| alignment | pandas | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
-| alignment | pandas | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
-| alignment | pandas | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
-| alignment | pandas | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
-| alignment | pandas | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | pandas | h_left | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
+| alignment | pandas | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
 | alignment | pandas | h_center | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
+| alignment | pandas | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
 | alignment | pandas | h_right | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
+| alignment | pandas | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
 | alignment | pandas | v_top | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
+| alignment | pandas | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
 | alignment | pandas | v_center | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
+| alignment | pandas | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | pandas | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
+| alignment | pandas | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
 | alignment | pandas | wrap_text | write | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
+| alignment | pandas | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
 | alignment | pandas | rotation_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
+| alignment | pandas | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | pandas | indent_2 | write | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | xlsxwriter-constmem | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | openpyxl-readonly | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
@@ -731,40 +731,40 @@
 | alignment | polars | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
 | alignment | polars | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | tablib | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
-| alignment | tablib | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
-| alignment | tablib | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
-| alignment | tablib | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
-| alignment | tablib | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
-| alignment | tablib | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
-| alignment | tablib | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
-| alignment | tablib | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
-| alignment | tablib | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | tablib | h_left | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
+| alignment | tablib | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
 | alignment | tablib | h_center | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
+| alignment | tablib | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
 | alignment | tablib | h_right | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
+| alignment | tablib | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
 | alignment | tablib | v_top | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
+| alignment | tablib | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
 | alignment | tablib | v_center | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
+| alignment | tablib | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | tablib | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
+| alignment | tablib | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
 | alignment | tablib | wrap_text | write | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
+| alignment | tablib | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
 | alignment | tablib | rotation_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
+| alignment | tablib | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | tablib | indent_2 | write | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | sheetjs | h_left | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
-| alignment | sheetjs | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
-| alignment | sheetjs | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
-| alignment | sheetjs | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
-| alignment | sheetjs | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
-| alignment | sheetjs | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
-| alignment | sheetjs | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
-| alignment | sheetjs | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
-| alignment | sheetjs | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | sheetjs | h_left | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'left'}, actual={} |
+| alignment | sheetjs | h_center | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
 | alignment | sheetjs | h_center | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'center'}, actual={} |
+| alignment | sheetjs | h_right | read | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
 | alignment | sheetjs | h_right | write | data_mismatch | error | Expected values did not match actual values: expected={'h_align': 'right'}, actual={} |
+| alignment | sheetjs | v_top | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
 | alignment | sheetjs | v_top | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'top'}, actual={} |
+| alignment | sheetjs | v_center | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
 | alignment | sheetjs | v_center | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'center'}, actual={} |
+| alignment | sheetjs | v_bottom | read | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
 | alignment | sheetjs | v_bottom | write | data_mismatch | error | Expected values did not match actual values: expected={'v_align': 'bottom'}, actual={} |
+| alignment | sheetjs | wrap_text | read | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
 | alignment | sheetjs | wrap_text | write | data_mismatch | error | Expected values did not match actual values: expected={'wrap': True}, actual={} |
+| alignment | sheetjs | rotation_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
 | alignment | sheetjs | rotation_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'rotation': 45}, actual={} |
+| alignment | sheetjs | indent_2 | read | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | alignment | sheetjs | indent_2 | write | data_mismatch | error | Expected values did not match actual values: expected={'indent': 2}, actual={} |
 | borders | python-calamine | thin_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
 | borders | python-calamine | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
@@ -787,134 +787,134 @@
 | borders | python-calamine | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
 | borders | python-calamine | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | aspose-cells-foss | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
-| borders | aspose-cells-foss | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
-| borders | aspose-cells-foss | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | aspose-cells-foss | diagonal_up | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
+| borders | aspose-cells-foss | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
 | borders | aspose-cells-foss | diagonal_down | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
+| borders | aspose-cells-foss | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | aspose-cells-foss | diagonal_both | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | pylightxl | thin_all | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | medium_all | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | thick_all | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | double | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | dashed | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | dotted | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | dash_dot | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | dash_dot_dot | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | top_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | bottom_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | left_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | right_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | diagonal_up | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | diagonal_down | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | diagonal_both | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | color_red | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | color_blue | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | color_custom | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | mixed_styles | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| borders | pylightxl | mixed_colors | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | thin_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | medium_all | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | medium_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | thick_all | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | thick_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | double | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | dashed | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | dashed | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | dotted | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | dotted | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | dash_dot | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | dash_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | dash_dot_dot | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | dash_dot_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | top_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | top_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | bottom_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | bottom_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | left_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | left_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | right_only | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | right_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | diagonal_up | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | diagonal_up | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | diagonal_down | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | diagonal_down | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | diagonal_both | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | diagonal_both | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | color_red | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | color_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | color_blue | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | color_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | color_custom | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | mixed_styles | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | mixed_styles | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
+| borders | pylightxl | mixed_colors | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | borders | pylightxl | mixed_colors | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support write_cell_border: pylightxl does not implement this feature |
 | borders | pyexcel | thin_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
-| borders | pyexcel | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
-| borders | pyexcel | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
-| borders | pyexcel | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
-| borders | pyexcel | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
-| borders | pyexcel | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
-| borders | pyexcel | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
-| borders | pyexcel | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
-| borders | pyexcel | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
-| borders | pyexcel | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
-| borders | pyexcel | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
-| borders | pyexcel | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
-| borders | pyexcel | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | pyexcel | thin_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | medium_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | thick_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | dashed | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | dotted | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | dash_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
 | borders | pyexcel | dash_dot_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
 | borders | pyexcel | top_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
 | borders | pyexcel | bottom_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
 | borders | pyexcel | left_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
 | borders | pyexcel | right_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
 | borders | pyexcel | diagonal_up | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
 | borders | pyexcel | diagonal_down | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | pyexcel | diagonal_both | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
 | borders | pyexcel | color_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
 | borders | pyexcel | color_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
 | borders | pyexcel | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
 | borders | pyexcel | mixed_styles | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
+| borders | pyexcel | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | pyexcel | mixed_colors | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support write_cell_border: pyexcel exposes value-only cells |
 | borders | xlwt | diagonal_up | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={'border_diagonal_down': 'thin'} |
 | borders | xlwt | diagonal_down | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={'border_diagonal_up': 'thin'} |
 | borders | xlwt | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={'border_style': 'thin', 'border_color': '#993300'} |
 | borders | xlwt | mixed_colors | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={'border_top_color': '#FF0000', 'border_bottom_color': '#008000', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00', 'border_style': 'thin'} |
 | borders | pandas | thin_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
-| borders | pandas | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
-| borders | pandas | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
-| borders | pandas | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
-| borders | pandas | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
-| borders | pandas | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
-| borders | pandas | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
-| borders | pandas | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
-| borders | pandas | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
-| borders | pandas | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
-| borders | pandas | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
-| borders | pandas | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
-| borders | pandas | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
-| borders | pandas | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
-| borders | pandas | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
-| borders | pandas | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
-| borders | pandas | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
-| borders | pandas | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
-| borders | pandas | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
-| borders | pandas | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | pandas | thin_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
+| borders | pandas | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
 | borders | pandas | medium_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
+| borders | pandas | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
 | borders | pandas | thick_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
+| borders | pandas | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
 | borders | pandas | double | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
+| borders | pandas | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
 | borders | pandas | dashed | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
+| borders | pandas | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
 | borders | pandas | dotted | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
+| borders | pandas | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
 | borders | pandas | dash_dot | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
+| borders | pandas | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
 | borders | pandas | dash_dot_dot | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
+| borders | pandas | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
 | borders | pandas | top_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
+| borders | pandas | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
 | borders | pandas | bottom_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
+| borders | pandas | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
 | borders | pandas | left_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
+| borders | pandas | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
 | borders | pandas | right_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
+| borders | pandas | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
 | borders | pandas | diagonal_up | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
+| borders | pandas | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
 | borders | pandas | diagonal_down | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
+| borders | pandas | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | pandas | diagonal_both | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
+| borders | pandas | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
 | borders | pandas | color_red | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
+| borders | pandas | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
 | borders | pandas | color_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
+| borders | pandas | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
 | borders | pandas | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
+| borders | pandas | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
 | borders | pandas | mixed_styles | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
+| borders | pandas | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | pandas | mixed_colors | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | openpyxl-readonly | thin_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
 | borders | openpyxl-readonly | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
@@ -957,84 +957,84 @@
 | borders | polars | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
 | borders | polars | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | tablib | thin_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
-| borders | tablib | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
-| borders | tablib | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
-| borders | tablib | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
-| borders | tablib | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
-| borders | tablib | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
-| borders | tablib | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
-| borders | tablib | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
-| borders | tablib | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
-| borders | tablib | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
-| borders | tablib | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
-| borders | tablib | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
-| borders | tablib | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
-| borders | tablib | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
-| borders | tablib | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
-| borders | tablib | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
-| borders | tablib | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
-| borders | tablib | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
-| borders | tablib | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
-| borders | tablib | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | tablib | thin_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#000000'}, actual={} |
+| borders | tablib | medium_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
 | borders | tablib | medium_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'medium', 'border_color': '#000000'}, actual={} |
+| borders | tablib | thick_all | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
 | borders | tablib | thick_all | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thick', 'border_color': '#000000'}, actual={} |
+| borders | tablib | double | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
 | borders | tablib | double | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'double', 'border_color': '#000000'}, actual={} |
+| borders | tablib | dashed | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
 | borders | tablib | dashed | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashed', 'border_color': '#000000'}, actual={} |
+| borders | tablib | dotted | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
 | borders | tablib | dotted | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dotted', 'border_color': '#000000'}, actual={} |
+| borders | tablib | dash_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
 | borders | tablib | dash_dot | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDot', 'border_color': '#000000'}, actual={} |
+| borders | tablib | dash_dot_dot | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
 | borders | tablib | dash_dot_dot | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'dashDotDot', 'border_color': '#000000'}, actual={} |
+| borders | tablib | top_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
 | borders | tablib | top_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thin', 'border_bottom': None, 'border_left': None, 'border_right': None}, actual={} |
+| borders | tablib | bottom_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
 | borders | tablib | bottom_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': 'thin', 'border_left': None, 'border_right': None}, actual={} |
+| borders | tablib | left_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
 | borders | tablib | left_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': 'thin', 'border_right': None}, actual={} |
+| borders | tablib | right_only | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
 | borders | tablib | right_only | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': None, 'border_bottom': None, 'border_left': None, 'border_right': 'thin'}, actual={} |
+| borders | tablib | diagonal_up | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
 | borders | tablib | diagonal_up | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin'}, actual={} |
+| borders | tablib | diagonal_down | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
 | borders | tablib | diagonal_down | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_down': 'thin'}, actual={} |
+| borders | tablib | diagonal_both | read | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
 | borders | tablib | diagonal_both | write | data_mismatch | error | Expected values did not match actual values: expected={'border_diagonal_up': 'thin', 'border_diagonal_down': 'thin'}, actual={} |
+| borders | tablib | color_red | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
 | borders | tablib | color_red | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#FF0000'}, actual={} |
+| borders | tablib | color_blue | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
 | borders | tablib | color_blue | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#0000FF'}, actual={} |
+| borders | tablib | color_custom | read | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
 | borders | tablib | color_custom | write | data_mismatch | error | Expected values did not match actual values: expected={'border_style': 'thin', 'border_color': '#8B4513'}, actual={} |
+| borders | tablib | mixed_styles | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
 | borders | tablib | mixed_styles | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top': 'thick', 'border_bottom': 'thin', 'border_left': 'medium', 'border_right': 'dashed'}, actual={} |
+| borders | tablib | mixed_colors | read | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | tablib | mixed_colors | write | data_mismatch | error | Expected values did not match actual values: expected={'border_top_color': '#FF0000', 'border_bottom_color': '#00FF00', 'border_left_color': '#0000FF', 'border_right_color': '#FFFF00'}, actual={} |
 | borders | sheetjs | thin_all | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | medium_all | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | thick_all | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | double | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | dashed | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | dotted | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | dash_dot | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | dash_dot_dot | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | top_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | bottom_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | left_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | right_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | diagonal_up | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | diagonal_down | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | diagonal_both | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | color_red | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | color_blue | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | color_custom | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | mixed_styles | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
-| borders | sheetjs | mixed_colors | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | thin_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | medium_all | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | medium_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | thick_all | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | thick_all | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | double | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | double | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | dashed | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | dashed | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | dotted | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | dotted | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | dash_dot | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | dash_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | dash_dot_dot | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | dash_dot_dot | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | top_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | top_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | bottom_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | bottom_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | left_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | left_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | right_only | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | right_only | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | diagonal_up | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | diagonal_up | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | diagonal_down | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | diagonal_down | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | diagonal_both | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | diagonal_both | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | color_red | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | color_red | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | color_blue | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | color_blue | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | color_custom | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | color_custom | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | mixed_styles | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | mixed_styles | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
+| borders | sheetjs | mixed_colors | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE does not expose cell borders: with cellStyles the XLSX reader attaches only the fill to cell.s |
 | borders | sheetjs | mixed_colors | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support cell_border: SheetJS CE has no border API; the SheetJS CE writer only emits number formats in cell styles |
 | dimensions | python-calamine | row_height_30 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
 | dimensions | python-calamine | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
@@ -1043,30 +1043,30 @@
 | dimensions | aspose-cells-foss | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': 20.83203125} |
 | dimensions | aspose-cells-foss | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': 8.83203125} |
 | dimensions | pylightxl | row_height_30 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
-| dimensions | pylightxl | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
-| dimensions | pylightxl | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
-| dimensions | pylightxl | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pylightxl | row_height_30 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_row_height: pylightxl does not implement this feature |
+| dimensions | pylightxl | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
 | dimensions | pylightxl | row_height_45 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_row_height: pylightxl does not implement this feature |
+| dimensions | pylightxl | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
 | dimensions | pylightxl | col_width_20 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_row_height: pylightxl does not implement this feature |
+| dimensions | pylightxl | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pylightxl | col_width_8 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_row_height: pylightxl does not implement this feature |
 | dimensions | pyexcel | row_height_30 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
-| dimensions | pyexcel | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
-| dimensions | pyexcel | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
-| dimensions | pyexcel | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pyexcel | row_height_30 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_row_height: pyexcel does not expose row dimension writing |
+| dimensions | pyexcel | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
 | dimensions | pyexcel | row_height_45 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_row_height: pyexcel does not expose row dimension writing |
+| dimensions | pyexcel | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
 | dimensions | pyexcel | col_width_20 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_row_height: pyexcel does not expose row dimension writing |
+| dimensions | pyexcel | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pyexcel | col_width_8 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_row_height: pyexcel does not expose row dimension writing |
 | dimensions | xlwt | row_height_30 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
 | dimensions | xlwt | row_height_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
 | dimensions | pandas | row_height_30 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
-| dimensions | pandas | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
-| dimensions | pandas | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
-| dimensions | pandas | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pandas | row_height_30 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
+| dimensions | pandas | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
 | dimensions | pandas | row_height_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
+| dimensions | pandas | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
 | dimensions | pandas | col_width_20 | write | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': 13.0} |
+| dimensions | pandas | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | pandas | col_width_8 | write | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': 13.0} |
 | dimensions | xlsxwriter-constmem | row_height_30 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
 | dimensions | xlsxwriter-constmem | row_height_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
@@ -1079,12 +1079,12 @@
 | dimensions | polars | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
 | dimensions | polars | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | tablib | row_height_30 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
-| dimensions | tablib | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
-| dimensions | tablib | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
-| dimensions | tablib | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | tablib | row_height_30 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
+| dimensions | tablib | row_height_45 | read | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
 | dimensions | tablib | row_height_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
+| dimensions | tablib | col_width_20 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': None} |
 | dimensions | tablib | col_width_20 | write | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 20}, actual={'column_width': 13.0} |
+| dimensions | tablib | col_width_8 | read | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': None} |
 | dimensions | tablib | col_width_8 | write | data_mismatch | error | Expected values did not match actual values: expected={'column_width': 8}, actual={'column_width': 13.0} |
 | dimensions | sheetjs | row_height_30 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 30}, actual={'row_height': None} |
 | dimensions | sheetjs | row_height_45 | write | data_mismatch | error | Expected values did not match actual values: expected={'row_height': 45}, actual={'row_height': None} |
@@ -1097,32 +1097,32 @@
 | merged_cells | python-calamine | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | python-calamine | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pylightxl | merge_horizontal | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
-| merged_cells | pylightxl | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
-| merged_cells | pylightxl | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
-| merged_cells | pylightxl | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pylightxl | merge_horizontal | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support merge_cells: pylightxl does not implement this feature |
+| merged_cells | pylightxl | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
 | merged_cells | pylightxl | merge_vertical | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support merge_cells: pylightxl does not implement this feature |
+| merged_cells | pylightxl | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | pylightxl | merge_value_off_top_left | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support merge_cells: pylightxl does not implement this feature |
+| merged_cells | pylightxl | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pylightxl | merge_top_left_fill | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support merge_cells: pylightxl does not implement this feature |
 | merged_cells | pyexcel | merge_horizontal | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
-| merged_cells | pyexcel | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
-| merged_cells | pyexcel | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
-| merged_cells | pyexcel | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pyexcel | merge_horizontal | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support merge_cells: pyexcel does not expose this worksheet feature |
+| merged_cells | pyexcel | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
 | merged_cells | pyexcel | merge_vertical | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support merge_cells: pyexcel does not expose this worksheet feature |
+| merged_cells | pyexcel | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | pyexcel | merge_value_off_top_left | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support merge_cells: pyexcel does not expose this worksheet feature |
+| merged_cells | pyexcel | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pyexcel | merge_top_left_fill | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support merge_cells: pyexcel does not expose this worksheet feature |
 | merged_cells | xlwt | merge_horizontal | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': 'B2:D2', 'top_left_value': None} |
 | merged_cells | xlwt | merge_vertical | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': 'B3:B5', 'top_left_value': None} |
 | merged_cells | xlwt | merge_value_off_top_left | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': 'B6:D6', 'top_left_value': None, 'non_top_left_nonempty': 0} |
 | merged_cells | xlwt | merge_top_left_fill | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': 'B7:D7', 'top_left_value': None, 'top_left_bg_color': None} |
 | merged_cells | pandas | merge_horizontal | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
-| merged_cells | pandas | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
-| merged_cells | pandas | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
-| merged_cells | pandas | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pandas | merge_horizontal | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
+| merged_cells | pandas | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
 | merged_cells | pandas | merge_vertical | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
+| merged_cells | pandas | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | pandas | merge_value_off_top_left | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
+| merged_cells | pandas | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | pandas | merge_top_left_fill | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | openpyxl-readonly | merge_horizontal | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
 | merged_cells | openpyxl-readonly | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
@@ -1133,12 +1133,12 @@
 | merged_cells | polars | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | polars | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | tablib | merge_horizontal | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
-| merged_cells | tablib | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
-| merged_cells | tablib | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
-| merged_cells | tablib | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | tablib | merge_horizontal | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B2:D2', 'top_left_value': 'Merged'}, actual={'merged_range': None} |
+| merged_cells | tablib | merge_vertical | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
 | merged_cells | tablib | merge_vertical | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B3:B5', 'top_left_value': 'Vertical'}, actual={'merged_range': None} |
+| merged_cells | tablib | merge_value_off_top_left | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
 | merged_cells | tablib | merge_value_off_top_left | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B6:D6', 'top_left_value': 'OffTop', 'non_top_left_nonempty': 0}, actual={'merged_range': None} |
+| merged_cells | tablib | merge_top_left_fill | read | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | tablib | merge_top_left_fill | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': None} |
 | merged_cells | sheetjs | merge_top_left_fill | write | data_mismatch | error | Expected values did not match actual values: expected={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': '#FF0000'}, actual={'merged_range': 'B7:D7', 'top_left_value': 'Fill', 'top_left_bg_color': None} |
 | conditional_formatting | python-calamine | cf_cell_gt | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
@@ -1148,28 +1148,28 @@
 | conditional_formatting | python-calamine | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
 | conditional_formatting | python-calamine | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | pylightxl | cf_cell_gt | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| conditional_formatting | pylightxl | cf_formula_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| conditional_formatting | pylightxl | cf_text_contains | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| conditional_formatting | pylightxl | cf_data_bar | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| conditional_formatting | pylightxl | cf_color_scale | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| conditional_formatting | pylightxl | cf_stop_if_true | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_cell_gt | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
+| conditional_formatting | pylightxl | cf_formula_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_formula_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
+| conditional_formatting | pylightxl | cf_text_contains | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_text_contains | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
+| conditional_formatting | pylightxl | cf_data_bar | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_data_bar | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
+| conditional_formatting | pylightxl | cf_color_scale | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_color_scale | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
+| conditional_formatting | pylightxl | cf_stop_if_true | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | conditional_formatting | pylightxl | cf_stop_if_true | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_conditional_format: pylightxl does not implement this feature |
 | conditional_formatting | pyexcel | cf_cell_gt | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | pyexcel | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
-| conditional_formatting | pyexcel | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | pyexcel | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
-| conditional_formatting | pyexcel | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
-| conditional_formatting | pyexcel | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | pyexcel | cf_cell_gt | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
+| conditional_formatting | pyexcel | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
 | conditional_formatting | pyexcel | cf_formula_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
+| conditional_formatting | pyexcel | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
 | conditional_formatting | pyexcel | cf_text_contains | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
+| conditional_formatting | pyexcel | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
 | conditional_formatting | pyexcel | cf_data_bar | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
+| conditional_formatting | pyexcel | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
 | conditional_formatting | pyexcel | cf_color_scale | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
+| conditional_formatting | pyexcel | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | pyexcel | cf_stop_if_true | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_conditional_format: pyexcel does not expose this worksheet feature |
 | conditional_formatting | xlwt | cf_cell_gt | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_conditional_format: xlwt cannot author conditional formatting |
 | conditional_formatting | xlwt | cf_formula_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_conditional_format: xlwt cannot author conditional formatting |
@@ -1178,16 +1178,16 @@
 | conditional_formatting | xlwt | cf_color_scale | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_conditional_format: xlwt cannot author conditional formatting |
 | conditional_formatting | xlwt | cf_stop_if_true | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_conditional_format: xlwt cannot author conditional formatting |
 | conditional_formatting | pandas | cf_cell_gt | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | pandas | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
-| conditional_formatting | pandas | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | pandas | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
-| conditional_formatting | pandas | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
-| conditional_formatting | pandas | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | pandas | cf_cell_gt | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
+| conditional_formatting | pandas | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
 | conditional_formatting | pandas | cf_formula_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
+| conditional_formatting | pandas | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
 | conditional_formatting | pandas | cf_text_contains | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
+| conditional_formatting | pandas | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
 | conditional_formatting | pandas | cf_data_bar | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
+| conditional_formatting | pandas | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
 | conditional_formatting | pandas | cf_color_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
+| conditional_formatting | pandas | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | pandas | cf_stop_if_true | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | openpyxl-readonly | cf_cell_gt | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
 | conditional_formatting | openpyxl-readonly | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
@@ -1202,36 +1202,36 @@
 | conditional_formatting | polars | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
 | conditional_formatting | polars | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | tablib | cf_cell_gt | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | tablib | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
-| conditional_formatting | tablib | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
-| conditional_formatting | tablib | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
-| conditional_formatting | tablib | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
-| conditional_formatting | tablib | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | tablib | cf_cell_gt | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
+| conditional_formatting | tablib | cf_formula_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
 | conditional_formatting | tablib | cf_formula_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={} |
+| conditional_formatting | tablib | cf_text_contains | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
 | conditional_formatting | tablib | cf_text_contains | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={} |
+| conditional_formatting | tablib | cf_data_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
 | conditional_formatting | tablib | cf_data_bar | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'dataBar', 'priority': 4}}, actual={} |
+| conditional_formatting | tablib | cf_color_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
 | conditional_formatting | tablib | cf_color_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
+| conditional_formatting | tablib | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | tablib | cf_stop_if_true | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={} |
 | conditional_formatting | sheetjs | cf_cell_gt | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
-| conditional_formatting | sheetjs | cf_formula_cross_sheet | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
-| conditional_formatting | sheetjs | cf_text_contains | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
-| conditional_formatting | sheetjs | cf_data_bar | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
-| conditional_formatting | sheetjs | cf_color_scale | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
-| conditional_formatting | sheetjs | cf_stop_if_true | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_cell_gt | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
+| conditional_formatting | sheetjs | cf_formula_cross_sheet | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_formula_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
+| conditional_formatting | sheetjs | cf_text_contains | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_text_contains | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
+| conditional_formatting | sheetjs | cf_data_bar | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_data_bar | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
+| conditional_formatting | sheetjs | cf_color_scale | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_color_scale | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
+| conditional_formatting | sheetjs | cf_stop_if_true | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_formats: SheetJS CE has no conditional formatting API; the XLSX reader skips <conditionalFormatting> |
 | conditional_formatting | sheetjs | cf_stop_if_true | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support conditional_format: SheetJS CE has no conditional formatting API; the XLSX writer emits no <conditionalFormatting> |
 | conditional_formatting | exceljs | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'stop_if_true': None, 'format': {'bg_color': '#FF0000'}}} |
 | conditional_formatting | exceljs | cf_stop_if_true | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'stop_if_true': None, 'format': {'bg_color': '#FF0000'}}} |
-| conditional_formatting | libreoffice | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'stop_if_true': None, 'format': {'bg_color': '#FF0000'}}} |
 | conditional_formatting | libreoffice | cf_cell_gt | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'priority': 1, 'format': {'bg_color': '#FFFF00'}}}, actual={'cf_rule': {'range': 'B2:B6', 'rule_type': 'cellIs', 'operator': 'greaterThan', 'formula': '5', 'format': {'bg_color': '#000000'}}} |
 | conditional_formatting | libreoffice | cf_formula_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'priority': 2, 'format': {'bg_color': '#FF00FF'}}}, actual={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=Ref!$A$1>5', 'format': {'bg_color': '#000000'}}} |
 | conditional_formatting | libreoffice | cf_text_contains | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'priority': 3, 'format': {'bg_color': '#FFFF00'}}}, actual={'cf_rule': {'range': 'B2:B6', 'rule_type': 'expression', 'formula': '=ISNUMBER(SEARCH("foo",B2))', 'format': {'bg_color': '#000000'}}} |
 | conditional_formatting | libreoffice | cf_color_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B2:B6', 'rule_type': 'colorScale', 'priority': 5}}, actual={} |
+| conditional_formatting | libreoffice | cf_stop_if_true | read | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'stop_if_true': None, 'format': {'bg_color': '#FF0000'}}} |
 | conditional_formatting | libreoffice | cf_stop_if_true | write | data_mismatch | error | Expected values did not match actual values: expected={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'priority': 1, 'stop_if_true': True, 'format': {'bg_color': '#FF0000'}}}, actual={'cf_rule': {'range': 'B7:B9', 'rule_type': 'cellIs', 'operator': 'lessThan', 'formula': '3', 'stop_if_true': None, 'format': {'bg_color': '#000000'}}} |
 | data_validation | python-calamine | dv_list_csv | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
 | data_validation | python-calamine | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
@@ -1239,24 +1239,24 @@
 | data_validation | python-calamine | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
 | data_validation | python-calamine | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | pylightxl | dv_list_csv | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| data_validation | pylightxl | dv_list_range | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| data_validation | pylightxl | dv_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| data_validation | pylightxl | dv_custom_formula | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| data_validation | pylightxl | dv_whole_between | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | data_validation | pylightxl | dv_list_csv | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_data_validation: pylightxl does not implement this feature |
+| data_validation | pylightxl | dv_list_range | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | data_validation | pylightxl | dv_list_range | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_data_validation: pylightxl does not implement this feature |
+| data_validation | pylightxl | dv_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | data_validation | pylightxl | dv_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_data_validation: pylightxl does not implement this feature |
+| data_validation | pylightxl | dv_custom_formula | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | data_validation | pylightxl | dv_custom_formula | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_data_validation: pylightxl does not implement this feature |
+| data_validation | pylightxl | dv_whole_between | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | data_validation | pylightxl | dv_whole_between | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_data_validation: pylightxl does not implement this feature |
 | data_validation | pyexcel | dv_list_csv | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
-| data_validation | pyexcel | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
-| data_validation | pyexcel | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
-| data_validation | pyexcel | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
-| data_validation | pyexcel | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | pyexcel | dv_list_csv | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_data_validation: pyexcel does not expose this worksheet feature |
+| data_validation | pyexcel | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
 | data_validation | pyexcel | dv_list_range | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_data_validation: pyexcel does not expose this worksheet feature |
+| data_validation | pyexcel | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
 | data_validation | pyexcel | dv_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_data_validation: pyexcel does not expose this worksheet feature |
+| data_validation | pyexcel | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
 | data_validation | pyexcel | dv_custom_formula | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_data_validation: pyexcel does not expose this worksheet feature |
+| data_validation | pyexcel | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | pyexcel | dv_whole_between | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_data_validation: pyexcel does not expose this worksheet feature |
 | data_validation | xlwt | dv_list_csv | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_data_validation: xlwt cannot author data validations |
 | data_validation | xlwt | dv_list_range | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_data_validation: xlwt cannot author data validations |
@@ -1264,14 +1264,14 @@
 | data_validation | xlwt | dv_custom_formula | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_data_validation: xlwt cannot author data validations |
 | data_validation | xlwt | dv_whole_between | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_data_validation: xlwt cannot author data validations |
 | data_validation | pandas | dv_list_csv | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
-| data_validation | pandas | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
-| data_validation | pandas | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
-| data_validation | pandas | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
-| data_validation | pandas | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | pandas | dv_list_csv | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
+| data_validation | pandas | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
 | data_validation | pandas | dv_list_range | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
+| data_validation | pandas | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
 | data_validation | pandas | dv_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
+| data_validation | pandas | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
 | data_validation | pandas | dv_custom_formula | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
+| data_validation | pandas | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | pandas | dv_whole_between | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | openpyxl-readonly | dv_list_csv | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
 | data_validation | openpyxl-readonly | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
@@ -1284,24 +1284,24 @@
 | data_validation | polars | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
 | data_validation | polars | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | tablib | dv_list_csv | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
-| data_validation | tablib | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
-| data_validation | tablib | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
-| data_validation | tablib | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
-| data_validation | tablib | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | tablib | dv_list_csv | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B2', 'validation_type': 'list', 'formula1': '"Red,Green,Blue"', 'allow_blank': True}}, actual={} |
+| data_validation | tablib | dv_list_range | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
 | data_validation | tablib | dv_list_range | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B3', 'validation_type': 'list', 'formula1': '=$D$2:$D$4'}}, actual={} |
+| data_validation | tablib | dv_cross_sheet | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
 | data_validation | tablib | dv_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
+| data_validation | tablib | dv_custom_formula | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
 | data_validation | tablib | dv_custom_formula | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B5', 'validation_type': 'custom', 'formula1': '=B5>C5'}}, actual={} |
+| data_validation | tablib | dv_whole_between | read | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | tablib | dv_whole_between | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B6', 'validation_type': 'whole', 'operator': 'between', 'formula1': '1', 'formula2': '10', 'allow_blank': False, 'error_title': 'Invalid', 'error': 'Enter 1-10'}}, actual={} |
 | data_validation | sheetjs | dv_list_csv | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
-| data_validation | sheetjs | dv_list_range | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
-| data_validation | sheetjs | dv_cross_sheet | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
-| data_validation | sheetjs | dv_custom_formula | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
-| data_validation | sheetjs | dv_whole_between | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
 | data_validation | sheetjs | dv_list_csv | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validation: SheetJS CE has no data validation API; the XLSX writer emits no <dataValidations> |
+| data_validation | sheetjs | dv_list_range | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
 | data_validation | sheetjs | dv_list_range | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validation: SheetJS CE has no data validation API; the XLSX writer emits no <dataValidations> |
+| data_validation | sheetjs | dv_cross_sheet | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
 | data_validation | sheetjs | dv_cross_sheet | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validation: SheetJS CE has no data validation API; the XLSX writer emits no <dataValidations> |
+| data_validation | sheetjs | dv_custom_formula | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
 | data_validation | sheetjs | dv_custom_formula | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validation: SheetJS CE has no data validation API; the XLSX writer emits no <dataValidations> |
+| data_validation | sheetjs | dv_whole_between | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validations: SheetJS CE has no data validation API; the XLSX reader skips <dataValidations> |
 | data_validation | sheetjs | dv_whole_between | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support data_validation: SheetJS CE has no data validation API; the XLSX writer emits no <dataValidations> |
 | data_validation | libreoffice | dv_cross_sheet | write | data_mismatch | error | Expected values did not match actual values: expected={'validation': {'range': 'B4', 'validation_type': 'list', 'formula1': '=RegionList'}}, actual={} |
 | hyperlinks | python-calamine | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
@@ -1313,32 +1313,32 @@
 | hyperlinks | aspose-cells-foss | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': None, 'tooltip': 'Send email', 'internal': False}} |
 | hyperlinks | aspose-cells-foss | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': None, 'tooltip': 'Encoded URL', 'internal': False}} |
 | hyperlinks | pylightxl | link_external | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| hyperlinks | pylightxl | link_internal | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| hyperlinks | pylightxl | link_mailto | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| hyperlinks | pylightxl | link_long | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | hyperlinks | pylightxl | link_external | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_hyperlink: pylightxl does not implement this feature |
+| hyperlinks | pylightxl | link_internal | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | hyperlinks | pylightxl | link_internal | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_hyperlink: pylightxl does not implement this feature |
+| hyperlinks | pylightxl | link_mailto | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | hyperlinks | pylightxl | link_mailto | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_hyperlink: pylightxl does not implement this feature |
+| hyperlinks | pylightxl | link_long | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | hyperlinks | pylightxl | link_long | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_hyperlink: pylightxl does not implement this feature |
 | hyperlinks | pyexcel | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
-| hyperlinks | pyexcel | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
-| hyperlinks | pyexcel | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
-| hyperlinks | pyexcel | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | pyexcel | link_external | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_hyperlink: pyexcel does not expose this worksheet feature |
+| hyperlinks | pyexcel | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
 | hyperlinks | pyexcel | link_internal | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_hyperlink: pyexcel does not expose this worksheet feature |
+| hyperlinks | pyexcel | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
 | hyperlinks | pyexcel | link_mailto | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_hyperlink: pyexcel does not expose this worksheet feature |
+| hyperlinks | pyexcel | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | pyexcel | link_long | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_hyperlink: pyexcel does not expose this worksheet feature |
 | hyperlinks | xlwt | link_external | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_hyperlink: xlwt hyperlink metadata is not supported in this adapter |
 | hyperlinks | xlwt | link_internal | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_hyperlink: xlwt hyperlink metadata is not supported in this adapter |
 | hyperlinks | xlwt | link_mailto | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_hyperlink: xlwt hyperlink metadata is not supported in this adapter |
 | hyperlinks | xlwt | link_long | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_hyperlink: xlwt hyperlink metadata is not supported in this adapter |
 | hyperlinks | pandas | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
-| hyperlinks | pandas | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
-| hyperlinks | pandas | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
-| hyperlinks | pandas | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | pandas | link_external | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
+| hyperlinks | pandas | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
 | hyperlinks | pandas | link_internal | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
+| hyperlinks | pandas | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
 | hyperlinks | pandas | link_mailto | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
+| hyperlinks | pandas | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | pandas | link_long | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | openpyxl-readonly | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
 | hyperlinks | openpyxl-readonly | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
@@ -1349,45 +1349,45 @@
 | hyperlinks | polars | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
 | hyperlinks | polars | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | tablib | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
-| hyperlinks | tablib | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
-| hyperlinks | tablib | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
-| hyperlinks | tablib | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | tablib | link_external | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={} |
+| hyperlinks | tablib | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
 | hyperlinks | tablib | link_internal | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
+| hyperlinks | tablib | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
 | hyperlinks | tablib | link_mailto | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={} |
+| hyperlinks | tablib | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | tablib | link_long | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={} |
 | hyperlinks | exceljs | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': None, 'internal': False}} |
 | hyperlinks | exceljs | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={} |
+| hyperlinks | exceljs | link_internal | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1#Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': False}} |
 | hyperlinks | exceljs | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': None, 'internal': False}} |
 | hyperlinks | exceljs | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': None, 'internal': False}} |
-| hyperlinks | exceljs | link_internal | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1#Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': False}} |
 | hyperlinks | libreoffice | link_external | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': None, 'internal': False}} |
-| hyperlinks | libreoffice | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': None, 'internal': True}} |
-| hyperlinks | libreoffice | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': None, 'internal': False}} |
-| hyperlinks | libreoffice | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': None, 'internal': False}} |
 | hyperlinks | libreoffice | link_external | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': 'Go to docs', 'internal': False}}, actual={'hyperlink': {'cell': 'B2', 'target': 'https://example.com/docs', 'display': 'Example Docs', 'tooltip': None, 'internal': False}} |
+| hyperlinks | libreoffice | link_internal | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': None, 'internal': True}} |
 | hyperlinks | libreoffice | link_internal | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': 'Jump to target', 'internal': True}}, actual={'hyperlink': {'cell': 'B3', 'target': 'Targets!A1', 'display': 'Go Target', 'tooltip': None, 'internal': True}} |
+| hyperlinks | libreoffice | link_mailto | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': None, 'internal': False}} |
 | hyperlinks | libreoffice | link_mailto | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': 'Send email', 'internal': False}}, actual={'hyperlink': {'cell': 'B4', 'target': 'mailto:test@example.com', 'display': 'Email', 'tooltip': None, 'internal': False}} |
+| hyperlinks | libreoffice | link_long | read | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': None, 'internal': False}} |
 | hyperlinks | libreoffice | link_long | write | data_mismatch | error | Expected values did not match actual values: expected={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': 'Encoded URL', 'internal': False}}, actual={'hyperlink': {'cell': 'B5', 'target': 'https://example.com/search?q=excel%20bench&sort=desc#section-2', 'display': 'Search', 'tooltip': None, 'internal': False}} |
 | images | python-calamine | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
 | images | python-calamine | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | aspose-cells-foss | image_one_cell | read | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support read_images: aspose-cells-foss does not preserve the source one-cell versus two-cell anchor kind. |
-| images | aspose-cells-foss | image_two_cell_offset | read | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support read_images: aspose-cells-foss does not preserve the source one-cell versus two-cell anchor kind. |
 | images | aspose-cells-foss | image_one_cell | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support add_image: aspose-cells-foss writes only two-cell picture anchors, while the benchmark requires one-cell anchors. |
+| images | aspose-cells-foss | image_two_cell_offset | read | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support read_images: aspose-cells-foss does not preserve the source one-cell versus two-cell anchor kind. |
 | images | aspose-cells-foss | image_two_cell_offset | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support add_image: aspose-cells-foss writes only two-cell picture anchors, while the benchmark requires one-cell anchors. |
 | images | pylightxl | image_one_cell | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| images | pylightxl | image_two_cell_offset | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | images | pylightxl | image_one_cell | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_image: pylightxl does not implement this feature |
+| images | pylightxl | image_two_cell_offset | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | images | pylightxl | image_two_cell_offset | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_image: pylightxl does not implement this feature |
 | images | pyexcel | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
-| images | pyexcel | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | pyexcel | image_one_cell | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_image: pyexcel does not expose this worksheet feature |
+| images | pyexcel | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | pyexcel | image_two_cell_offset | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_image: pyexcel does not expose this worksheet feature |
 | images | xlwt | image_one_cell | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_image: xlwt cannot embed images in this adapter |
 | images | xlwt | image_two_cell_offset | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_image: xlwt cannot embed images in this adapter |
 | images | pandas | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
-| images | pandas | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | pandas | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
+| images | pandas | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | pandas | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | xlsxwriter-constmem | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
 | images | xlsxwriter-constmem | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
@@ -1396,16 +1396,16 @@
 | images | polars | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
 | images | polars | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | tablib | image_one_cell | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
-| images | tablib | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | tablib | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
+| images | tablib | image_two_cell_offset | read | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | tablib | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | images | sheetjs | image_one_cell | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support images: SheetJS CE does not parse worksheet drawings, so embedded images are not exposed |
-| images | sheetjs | image_two_cell_offset | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support images: SheetJS CE does not parse worksheet drawings, so embedded images are not exposed |
 | images | sheetjs | image_one_cell | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support image: SheetJS CE cannot embed images (drawing parts are not written) |
+| images | sheetjs | image_two_cell_offset | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support images: SheetJS CE does not parse worksheet drawings, so embedded images are not exposed |
 | images | sheetjs | image_two_cell_offset | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support image: SheetJS CE cannot embed images (drawing parts are not written) |
 | images | exceljs | image_one_cell | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
-| images | exceljs | image_two_cell_offset | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
 | images | exceljs | image_one_cell | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'B2', 'path': 'fixtures/images/sample.png', 'anchor': 'oneCell'}}, actual={} |
+| images | exceljs | image_two_cell_offset | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
 | images | exceljs | image_two_cell_offset | write | data_mismatch | error | Expected values did not match actual values: expected={'image': {'cell': 'D6', 'path': 'fixtures/images/sample.jpg', 'anchor': 'oneCell'}}, actual={} |
 | comments | python-calamine | comment_legacy | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
 | comments | python-calamine | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
@@ -1414,25 +1414,25 @@
 | comments | aspose-cells-foss | comment_threaded | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={'comment': {'cell': 'B3', 'text': 'None:Threaded fallback', 'threaded': False}} |
 | comments | aspose-cells-foss | comment_author | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={'comment': {'cell': 'B4', 'text': 'None:Another note', 'threaded': False}} |
 | comments | pylightxl | comment_legacy | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
-| comments | pylightxl | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
-| comments | pylightxl | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pylightxl | comment_legacy | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_comment: pylightxl does not implement this feature |
+| comments | pylightxl | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
 | comments | pylightxl | comment_threaded | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_comment: pylightxl does not implement this feature |
+| comments | pylightxl | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pylightxl | comment_author | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support add_comment: pylightxl does not implement this feature |
 | comments | pyexcel | comment_legacy | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
-| comments | pyexcel | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
-| comments | pyexcel | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pyexcel | comment_legacy | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_comment: pyexcel does not expose this worksheet feature |
+| comments | pyexcel | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
 | comments | pyexcel | comment_threaded | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_comment: pyexcel does not expose this worksheet feature |
+| comments | pyexcel | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pyexcel | comment_author | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support add_comment: pyexcel does not expose this worksheet feature |
 | comments | xlwt | comment_legacy | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_comment: xlwt cannot author comments |
 | comments | xlwt | comment_threaded | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_comment: xlwt cannot author comments |
 | comments | xlwt | comment_author | write | unsupported_feature | warning | UnsupportedAdapterOperationError: xlwt does not support add_comment: xlwt cannot author comments |
 | comments | pandas | comment_legacy | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
-| comments | pandas | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
-| comments | pandas | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pandas | comment_legacy | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
+| comments | pandas | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
 | comments | pandas | comment_threaded | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
+| comments | pandas | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | pandas | comment_author | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | xlsxwriter-constmem | comment_legacy | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
 | comments | xlsxwriter-constmem | comment_threaded | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
@@ -1444,34 +1444,34 @@
 | comments | polars | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
 | comments | polars | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | tablib | comment_legacy | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
-| comments | tablib | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
-| comments | tablib | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | tablib | comment_legacy | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B2', 'text': 'Legacy note', 'threaded': False}}, actual={} |
+| comments | tablib | comment_threaded | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
 | comments | tablib | comment_threaded | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B3', 'text': 'Threaded fallback', 'threaded': False}}, actual={} |
+| comments | tablib | comment_author | read | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | comments | tablib | comment_author | write | data_mismatch | error | Expected values did not match actual values: expected={'comment': {'cell': 'B4', 'text': 'Another note', 'threaded': False}}, actual={} |
 | freeze_panes | python-calamine | freeze_b2 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | python-calamine | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | python-calamine | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | pylightxl | freeze_b2 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| freeze_panes | pylightxl | freeze_d5 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| freeze_panes | pylightxl | split_2x1 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | freeze_panes | pylightxl | freeze_b2 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_freeze_panes: pylightxl does not implement this feature |
+| freeze_panes | pylightxl | freeze_d5 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | freeze_panes | pylightxl | freeze_d5 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_freeze_panes: pylightxl does not implement this feature |
+| freeze_panes | pylightxl | split_2x1 | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | freeze_panes | pylightxl | split_2x1 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pylightxl does not support set_freeze_panes: pylightxl does not implement this feature |
 | freeze_panes | pyexcel | freeze_b2 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | pyexcel | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | pyexcel | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | pyexcel | freeze_b2 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_freeze_panes: pyexcel does not expose this worksheet feature |
+| freeze_panes | pyexcel | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | pyexcel | freeze_d5 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_freeze_panes: pyexcel does not expose this worksheet feature |
+| freeze_panes | pyexcel | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | pyexcel | split_2x1 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: pyexcel does not support set_freeze_panes: pyexcel does not expose this worksheet feature |
 | freeze_panes | xlwt | freeze_b2 | write | internal | error | AttributeError: 'Sheet' object has no attribute 'frozen_row_count' |
 | freeze_panes | xlwt | freeze_d5 | write | internal | error | AttributeError: 'Sheet' object has no attribute 'frozen_row_count' |
 | freeze_panes | xlwt | split_2x1 | write | internal | error | AttributeError: 'Sheet' object has no attribute 'frozen_row_count' |
 | freeze_panes | pandas | freeze_b2 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | pandas | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | pandas | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | pandas | freeze_b2 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
+| freeze_panes | pandas | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | pandas | freeze_d5 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
+| freeze_panes | pandas | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | pandas | split_2x1 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | openpyxl-readonly | freeze_b2 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | openpyxl-readonly | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
@@ -1480,16 +1480,16 @@
 | freeze_panes | polars | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | polars | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | tablib | freeze_b2 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | tablib | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
-| freeze_panes | tablib | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | tablib | freeze_b2 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'B2'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
+| freeze_panes | tablib | freeze_d5 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
 | freeze_panes | tablib | freeze_d5 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'freeze', 'top_left_cell': 'D5'}}, actual={'freeze': {'mode': None, 'top_left_cell': None}} |
+| freeze_panes | tablib | split_2x1 | read | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | tablib | split_2x1 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | freeze_panes | sheetjs | freeze_b2 | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze_panes: SheetJS CE parses <sheetView> only for zoom and right-to-left; panes are not exposed |
-| freeze_panes | sheetjs | freeze_d5 | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze_panes: SheetJS CE parses <sheetView> only for zoom and right-to-left; panes are not exposed |
-| freeze_panes | sheetjs | split_2x1 | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze_panes: SheetJS CE parses <sheetView> only for zoom and right-to-left; panes are not exposed |
 | freeze_panes | sheetjs | freeze_b2 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze: SheetJS CE's XLSX writer emits <sheetView> without a <pane> element, so panes cannot be set |
+| freeze_panes | sheetjs | freeze_d5 | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze_panes: SheetJS CE parses <sheetView> only for zoom and right-to-left; panes are not exposed |
 | freeze_panes | sheetjs | freeze_d5 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze: SheetJS CE's XLSX writer emits <sheetView> without a <pane> element, so panes cannot be set |
+| freeze_panes | sheetjs | split_2x1 | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze_panes: SheetJS CE parses <sheetView> only for zoom and right-to-left; panes are not exposed |
 | freeze_panes | sheetjs | split_2x1 | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support freeze: SheetJS CE's XLSX writer emits <sheetView> without a <pane> element, so panes cannot be set |
 | freeze_panes | libreoffice | split_2x1 | write | data_mismatch | error | Expected values did not match actual values: expected={'freeze': {'mode': 'split', 'x_split': 1, 'y_split': 2}}, actual={'freeze': {'mode': None, 'x_split': None, 'y_split': None}} |
 | named_ranges | xlsxwriter | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: xlsxwriter does not implement named range writes |
@@ -1508,28 +1508,28 @@
 | named_ranges | wolfxl | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
 | named_ranges | wolfxl | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
 | named_ranges | pylightxl | nr_simple_cell | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| named_ranges | pylightxl | nr_cell_range | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| named_ranges | pylightxl | nr_formula_ref | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| named_ranges | pylightxl | nr_sheet_scope | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| named_ranges | pylightxl | nr_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| named_ranges | pylightxl | nr_special_chars | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
+| named_ranges | pylightxl | nr_cell_range | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
+| named_ranges | pylightxl | nr_formula_ref | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_formula_ref | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
+| named_ranges | pylightxl | nr_sheet_scope | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_sheet_scope | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
+| named_ranges | pylightxl | nr_cross_sheet | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_cross_sheet | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
+| named_ranges | pylightxl | nr_special_chars | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | named_ranges | pylightxl | nr_special_chars | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement named range writes |
 | named_ranges | pyexcel | nr_simple_cell | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
-| named_ranges | pyexcel | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
-| named_ranges | pyexcel | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
-| named_ranges | pyexcel | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
-| named_ranges | pyexcel | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
-| named_ranges | pyexcel | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
+| named_ranges | pyexcel | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
+| named_ranges | pyexcel | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_formula_ref | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
+| named_ranges | pyexcel | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_sheet_scope | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
+| named_ranges | pyexcel | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_cross_sheet | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
+| named_ranges | pyexcel | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range reads |
 | named_ranges | pyexcel | nr_special_chars | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement named range writes |
 | named_ranges | xlwt | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement named range writes |
 | named_ranges | xlwt | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement named range writes |
@@ -1538,16 +1538,16 @@
 | named_ranges | xlwt | nr_cross_sheet | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement named range writes |
 | named_ranges | xlwt | nr_special_chars | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement named range writes |
 | named_ranges | pandas | nr_simple_cell | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
-| named_ranges | pandas | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
-| named_ranges | pandas | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
-| named_ranges | pandas | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
-| named_ranges | pandas | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
-| named_ranges | pandas | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
+| named_ranges | pandas | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
+| named_ranges | pandas | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_formula_ref | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
+| named_ranges | pandas | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_sheet_scope | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
+| named_ranges | pandas | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_cross_sheet | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
+| named_ranges | pandas | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: pandas does not implement named range reads |
 | named_ranges | pandas | nr_special_chars | write | unsupported_feature | warning | NotImplementedError: pandas does not implement named range writes |
 | named_ranges | xlsxwriter-constmem | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement named range writes |
 | named_ranges | xlsxwriter-constmem | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement named range writes |
@@ -1568,16 +1568,16 @@
 | named_ranges | polars | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: polars does not implement named range reads |
 | named_ranges | polars | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: polars does not implement named range reads |
 | named_ranges | tablib | nr_simple_cell | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
-| named_ranges | tablib | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
-| named_ranges | tablib | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
-| named_ranges | tablib | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
-| named_ranges | tablib | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
-| named_ranges | tablib | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_simple_cell | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
+| named_ranges | tablib | nr_cell_range | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_cell_range | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
+| named_ranges | tablib | nr_formula_ref | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_formula_ref | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
+| named_ranges | tablib | nr_sheet_scope | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_sheet_scope | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
+| named_ranges | tablib | nr_cross_sheet | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_cross_sheet | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
+| named_ranges | tablib | nr_special_chars | read | unsupported_feature | warning | NotImplementedError: tablib does not implement named range reads |
 | named_ranges | tablib | nr_special_chars | write | unsupported_feature | warning | NotImplementedError: tablib does not implement named range writes |
 | named_ranges | exceljs | nr_sheet_scope | read | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
 | named_ranges | exceljs | nr_sheet_scope | write | data_mismatch | error | Expected values did not match actual values: expected={'name': 'LocalName', 'scope': 'sheet', 'refers_to': 'named_ranges!$B$5', 'value': 'local'}, actual={'name': 'LocalName', 'scope': 'not_found', 'refers_to': ''} |
@@ -1594,33 +1594,33 @@
 | tables | python-calamine | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement table reads |
 | tables | python-calamine | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement table reads |
 | tables | aspose-cells-foss | tbl_with_totals | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': False, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 0}} |
-| tables | aspose-cells-foss | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Key', 'Value']}} |
 | tables | aspose-cells-foss | tbl_with_totals | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': True, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 1}}, actual={'table': {'name': 'Summary', 'ref': 'E7:G11', 'header_row': True, 'totals_row': False, 'style': 'TableStyleLight1', 'columns': ['Item', 'Count', 'Total'], 'totals_row_count': 0}} |
+| tables | aspose-cells-foss | tbl_no_style | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Key', 'Value']}} |
 | tables | aspose-cells-foss | tbl_no_style | write | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': None, 'columns': ['Key', 'Value']}}, actual={'table': {'name': 'PlainTable', 'ref': 'E13:F16', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium2', 'columns': ['Key', 'Value']}} |
 | tables | wolfxl | tbl_autofilter | read | data_mismatch | error | Expected values did not match actual values: expected={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': True}}, actual={'table': {'name': 'Filtered', 'ref': 'E25:G28', 'header_row': True, 'totals_row': False, 'style': 'TableStyleMedium9', 'columns': ['Region', 'Sales', 'Year'], 'autofilter': False}} |
 | tables | pylightxl | tbl_basic | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| tables | pylightxl | tbl_with_totals | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| tables | pylightxl | tbl_no_style | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| tables | pylightxl | tbl_single_col | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| tables | pylightxl | tbl_single_row | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| tables | pylightxl | tbl_autofilter | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_basic | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
+| tables | pylightxl | tbl_with_totals | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
+| tables | pylightxl | tbl_no_style | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_no_style | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
+| tables | pylightxl | tbl_single_col | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_single_col | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
+| tables | pylightxl | tbl_single_row | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_single_row | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
+| tables | pylightxl | tbl_autofilter | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | tables | pylightxl | tbl_autofilter | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement table writes |
 | tables | pyexcel | tbl_basic | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
-| tables | pyexcel | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
-| tables | pyexcel | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
-| tables | pyexcel | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
-| tables | pyexcel | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
-| tables | pyexcel | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_basic | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
+| tables | pyexcel | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
+| tables | pyexcel | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_no_style | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
+| tables | pyexcel | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_single_col | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
+| tables | pyexcel | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_single_row | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
+| tables | pyexcel | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table reads |
 | tables | pyexcel | tbl_autofilter | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement table writes |
 | tables | xlwt | tbl_basic | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement table writes |
 | tables | xlwt | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement table writes |
@@ -1629,16 +1629,16 @@
 | tables | xlwt | tbl_single_row | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement table writes |
 | tables | xlwt | tbl_autofilter | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement table writes |
 | tables | pandas | tbl_basic | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
-| tables | pandas | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
-| tables | pandas | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
-| tables | pandas | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
-| tables | pandas | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
-| tables | pandas | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_basic | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
+| tables | pandas | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
+| tables | pandas | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_no_style | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
+| tables | pandas | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_single_col | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
+| tables | pandas | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_single_row | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
+| tables | pandas | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: pandas does not implement table reads |
 | tables | pandas | tbl_autofilter | write | unsupported_feature | warning | NotImplementedError: pandas does not implement table writes |
 | tables | xlsxwriter-constmem | tbl_basic | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement table writes |
 | tables | xlsxwriter-constmem | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement table writes |
@@ -1659,28 +1659,28 @@
 | tables | polars | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: polars does not implement table reads |
 | tables | polars | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: polars does not implement table reads |
 | tables | tablib | tbl_basic | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
-| tables | tablib | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
-| tables | tablib | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
-| tables | tablib | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
-| tables | tablib | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
-| tables | tablib | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_basic | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
+| tables | tablib | tbl_with_totals | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_with_totals | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
+| tables | tablib | tbl_no_style | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_no_style | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
+| tables | tablib | tbl_single_col | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_single_col | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
+| tables | tablib | tbl_single_row | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_single_row | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
+| tables | tablib | tbl_autofilter | read | unsupported_feature | warning | NotImplementedError: tablib does not implement table reads |
 | tables | tablib | tbl_autofilter | write | unsupported_feature | warning | NotImplementedError: tablib does not implement table writes |
 | tables | sheetjs | tbl_basic | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
-| tables | sheetjs | tbl_with_totals | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
-| tables | sheetjs | tbl_no_style | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
-| tables | sheetjs | tbl_single_col | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
-| tables | sheetjs | tbl_single_row | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
-| tables | sheetjs | tbl_autofilter | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_basic | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
+| tables | sheetjs | tbl_with_totals | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_with_totals | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
+| tables | sheetjs | tbl_no_style | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_no_style | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
+| tables | sheetjs | tbl_single_col | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_single_col | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
+| tables | sheetjs | tbl_single_row | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_single_row | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
+| tables | sheetjs | tbl_autofilter | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support tables: SheetJS CE does not parse table parts (xl/tables/*.xml); only the sheet autofilter is exposed |
 | tables | sheetjs | tbl_autofilter | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support table: SheetJS CE cannot create table parts; only a sheet autofilter (ws['!autofilter']) is writable |
 | tables | exceljs | tbl_basic | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'name') |
 | tables | exceljs | tbl_with_totals | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'name') |
@@ -1696,25 +1696,25 @@
 | sheet_protection | python-calamine | prot_password | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement sheet protection reads |
 | sheet_protection | python-calamine | prot_granular | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement sheet protection reads |
 | sheet_protection | pylightxl | prot_basic | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| sheet_protection | pylightxl | prot_password | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| sheet_protection | pylightxl | prot_granular | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | sheet_protection | pylightxl | prot_basic | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement sheet protection writes |
+| sheet_protection | pylightxl | prot_password | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | sheet_protection | pylightxl | prot_password | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement sheet protection writes |
+| sheet_protection | pylightxl | prot_granular | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | sheet_protection | pylightxl | prot_granular | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement sheet protection writes |
 | sheet_protection | pyexcel | prot_basic | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection reads |
-| sheet_protection | pyexcel | prot_password | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection reads |
-| sheet_protection | pyexcel | prot_granular | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection reads |
 | sheet_protection | pyexcel | prot_basic | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection writes |
+| sheet_protection | pyexcel | prot_password | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection reads |
 | sheet_protection | pyexcel | prot_password | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection writes |
+| sheet_protection | pyexcel | prot_granular | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection reads |
 | sheet_protection | pyexcel | prot_granular | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement sheet protection writes |
 | sheet_protection | xlwt | prot_basic | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement sheet protection writes |
 | sheet_protection | xlwt | prot_password | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement sheet protection writes |
 | sheet_protection | xlwt | prot_granular | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement sheet protection writes |
 | sheet_protection | pandas | prot_basic | read | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection reads |
-| sheet_protection | pandas | prot_password | read | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection reads |
-| sheet_protection | pandas | prot_granular | read | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection reads |
 | sheet_protection | pandas | prot_basic | write | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection writes |
+| sheet_protection | pandas | prot_password | read | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection reads |
 | sheet_protection | pandas | prot_password | write | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection writes |
+| sheet_protection | pandas | prot_granular | read | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection reads |
 | sheet_protection | pandas | prot_granular | write | unsupported_feature | warning | NotImplementedError: pandas does not implement sheet protection writes |
 | sheet_protection | xlsxwriter-constmem | prot_basic | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement sheet protection writes |
 | sheet_protection | xlsxwriter-constmem | prot_password | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement sheet protection writes |
@@ -1726,10 +1726,10 @@
 | sheet_protection | polars | prot_password | read | unsupported_feature | warning | NotImplementedError: polars does not implement sheet protection reads |
 | sheet_protection | polars | prot_granular | read | unsupported_feature | warning | NotImplementedError: polars does not implement sheet protection reads |
 | sheet_protection | tablib | prot_basic | read | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection reads |
-| sheet_protection | tablib | prot_password | read | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection reads |
-| sheet_protection | tablib | prot_granular | read | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection reads |
 | sheet_protection | tablib | prot_basic | write | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection writes |
+| sheet_protection | tablib | prot_password | read | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection reads |
 | sheet_protection | tablib | prot_password | write | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection writes |
+| sheet_protection | tablib | prot_granular | read | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection reads |
 | sheet_protection | tablib | prot_granular | write | unsupported_feature | warning | NotImplementedError: tablib does not implement sheet protection writes |
 | sheet_protection | sheetjs | prot_basic | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support sheet_protection: SheetJS CE's XLSX reader does not parse <sheetProtection>; ws['!protect'] is populated only for XLS/XLSB/XLML inputs |
 | sheet_protection | sheetjs | prot_password | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support sheet_protection: SheetJS CE's XLSX reader does not parse <sheetProtection>; ws['!protect'] is populated only for XLS/XLSB/XLML inputs |
@@ -1746,31 +1746,31 @@
 | page_setup | python-calamine | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement page setup reads |
 | page_setup | python-calamine | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: python-calamine does not implement page setup reads |
 | page_setup | aspose-cells-foss | page_setup_landscape | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': 100, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
-| page_setup | aspose-cells-foss | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 100, 'print_title_rows': None, 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}} |
 | page_setup | aspose-cells-foss | page_setup_landscape | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support set_page_setup: aspose-cells-foss has no print-title-rows API. |
 | page_setup | aspose-cells-foss | page_setup_scale | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support set_page_setup: aspose-cells-foss has no print-title-rows API. |
+| page_setup | aspose-cells-foss | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 100, 'print_title_rows': None, 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}} |
 | page_setup | aspose-cells-foss | page_setup_titles | write | unsupported_feature | warning | UnsupportedAdapterOperationError: aspose-cells-foss does not support set_page_setup: aspose-cells-foss has no print-title-rows API. |
 | page_setup | wolfxl | page_setup_titles | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}} |
 | page_setup | pylightxl | page_setup_landscape | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| page_setup | pylightxl | page_setup_scale | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| page_setup | pylightxl | page_setup_titles | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | page_setup | pylightxl | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement page setup writes |
+| page_setup | pylightxl | page_setup_scale | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | page_setup | pylightxl | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement page setup writes |
+| page_setup | pylightxl | page_setup_titles | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | page_setup | pylightxl | page_setup_titles | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement page setup writes |
 | page_setup | pyexcel | page_setup_landscape | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup reads |
-| page_setup | pyexcel | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup reads |
-| page_setup | pyexcel | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup reads |
 | page_setup | pyexcel | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup writes |
+| page_setup | pyexcel | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup reads |
 | page_setup | pyexcel | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup writes |
+| page_setup | pyexcel | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup reads |
 | page_setup | pyexcel | page_setup_titles | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement page setup writes |
 | page_setup | xlwt | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement page setup writes |
 | page_setup | xlwt | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement page setup writes |
 | page_setup | xlwt | page_setup_titles | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement page setup writes |
 | page_setup | pandas | page_setup_landscape | read | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup reads |
-| page_setup | pandas | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup reads |
-| page_setup | pandas | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup reads |
 | page_setup | pandas | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup writes |
+| page_setup | pandas | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup reads |
 | page_setup | pandas | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup writes |
+| page_setup | pandas | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup reads |
 | page_setup | pandas | page_setup_titles | write | unsupported_feature | warning | NotImplementedError: pandas does not implement page setup writes |
 | page_setup | xlsxwriter-constmem | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement page setup writes |
 | page_setup | xlsxwriter-constmem | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement page setup writes |
@@ -1782,26 +1782,26 @@
 | page_setup | polars | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: polars does not implement page setup reads |
 | page_setup | polars | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: polars does not implement page setup reads |
 | page_setup | tablib | page_setup_landscape | read | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup reads |
-| page_setup | tablib | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup reads |
-| page_setup | tablib | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup reads |
 | page_setup | tablib | page_setup_landscape | write | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup writes |
+| page_setup | tablib | page_setup_scale | read | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup reads |
 | page_setup | tablib | page_setup_scale | write | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup writes |
+| page_setup | tablib | page_setup_titles | read | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup reads |
 | page_setup | tablib | page_setup_titles | write | unsupported_feature | warning | NotImplementedError: tablib does not implement page setup writes |
 | page_setup | sheetjs | page_setup_landscape | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {}} |
-| page_setup | sheetjs | page_setup_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {}} |
-| page_setup | sheetjs | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'print_title_rows': '$1:$2'}} |
 | page_setup | sheetjs | page_setup_landscape | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
+| page_setup | sheetjs | page_setup_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {}} |
 | page_setup | sheetjs | page_setup_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
+| page_setup | sheetjs | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'print_title_rows': '$1:$2'}} |
 | page_setup | sheetjs | page_setup_titles | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': None, 'footer_center': None}} |
 | page_setup | exceljs | page_setup_landscape | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 100, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
-| page_setup | exceljs | page_setup_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
 | page_setup | exceljs | page_setup_landscape | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 100, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
+| page_setup | exceljs | page_setup_scale | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
 | page_setup | exceljs | page_setup_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
 | page_setup | exceljs | page_setup_titles | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 100, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}} |
 | page_setup | libreoffice | page_setup_landscape | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'fit_to_height': None, 'fit_to_width': None, 'footer_center': None, 'header_center': None, 'orientation': 'landscape', 'print_title_rows': None, 'scale': 100}} |
-| page_setup | libreoffice | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'fit_to_height': None, 'fit_to_width': None, 'footer_center': 'Page &P', 'header_center': 'ExcelBench Report', 'orientation': 'portrait', 'print_title_rows': '$1:$2', 'scale': 100}} |
 | page_setup | libreoffice | page_setup_landscape | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': None, 'scale': None, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'landscape', 'fit_to_width': 1, 'fit_to_height': 0, 'scale': 100, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
 | page_setup | libreoffice | page_setup_scale | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': 'portrait', 'fit_to_width': None, 'fit_to_height': None, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 75, 'print_title_rows': None, 'header_center': None, 'footer_center': None}} |
+| page_setup | libreoffice | page_setup_titles | read | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'fit_to_height': None, 'fit_to_width': None, 'footer_center': 'Page &P', 'header_center': 'ExcelBench Report', 'orientation': 'portrait', 'print_title_rows': '$1:$2', 'scale': 100}} |
 | page_setup | libreoffice | page_setup_titles | write | data_mismatch | error | Expected values did not match actual values: expected={'page_setup': {'orientation': None, 'fit_to_width': None, 'fit_to_height': None, 'scale': None, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}}, actual={'page_setup': {'orientation': 'portrait', 'fit_to_width': 1, 'fit_to_height': 1, 'scale': 100, 'print_title_rows': '$1:$2', 'header_center': 'ExcelBench Report', 'footer_center': 'Page &P'}} |
 | chart_anchor | xlsxwriter | chart_bar | write | unsupported_feature | warning | NotImplementedError: xlsxwriter does not implement chart anchor writes |
 | chart_anchor | xlsxwriter | chart_line | write | unsupported_feature | warning | NotImplementedError: xlsxwriter does not implement chart anchor writes |
@@ -1810,18 +1810,18 @@
 | chart_anchor | wolfxl | chart_bar | write | invalid_input | error | TypeError: argument 'anchor_a1': 'TwoCellAnchor' object is not an instance of 'str' |
 | chart_anchor | wolfxl | chart_line | write | invalid_input | error | TypeError: argument 'anchor_a1': 'TwoCellAnchor' object is not an instance of 'str' |
 | chart_anchor | pylightxl | chart_bar | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
-| chart_anchor | pylightxl | chart_line | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | chart_anchor | pylightxl | chart_bar | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement chart anchor writes |
+| chart_anchor | pylightxl | chart_line | read | invalid_input | error | TypeError: expected string or bytes-like object, got 'NoneType' |
 | chart_anchor | pylightxl | chart_line | write | unsupported_feature | warning | NotImplementedError: pylightxl does not implement chart anchor writes |
 | chart_anchor | pyexcel | chart_bar | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement chart anchor reads |
-| chart_anchor | pyexcel | chart_line | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement chart anchor reads |
 | chart_anchor | pyexcel | chart_bar | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement chart anchor writes |
+| chart_anchor | pyexcel | chart_line | read | unsupported_feature | warning | NotImplementedError: pyexcel does not implement chart anchor reads |
 | chart_anchor | pyexcel | chart_line | write | unsupported_feature | warning | NotImplementedError: pyexcel does not implement chart anchor writes |
 | chart_anchor | xlwt | chart_bar | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement chart anchor writes |
 | chart_anchor | xlwt | chart_line | write | unsupported_feature | warning | NotImplementedError: xlwt does not implement chart anchor writes |
 | chart_anchor | pandas | chart_bar | read | unsupported_feature | warning | NotImplementedError: pandas does not implement chart anchor reads |
-| chart_anchor | pandas | chart_line | read | unsupported_feature | warning | NotImplementedError: pandas does not implement chart anchor reads |
 | chart_anchor | pandas | chart_bar | write | unsupported_feature | warning | NotImplementedError: pandas does not implement chart anchor writes |
+| chart_anchor | pandas | chart_line | read | unsupported_feature | warning | NotImplementedError: pandas does not implement chart anchor reads |
 | chart_anchor | pandas | chart_line | write | unsupported_feature | warning | NotImplementedError: pandas does not implement chart anchor writes |
 | chart_anchor | xlsxwriter-constmem | chart_bar | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement chart anchor writes |
 | chart_anchor | xlsxwriter-constmem | chart_line | write | unsupported_feature | warning | NotImplementedError: xlsxwriter-constmem does not implement chart anchor writes |
@@ -1830,20 +1830,20 @@
 | chart_anchor | polars | chart_bar | read | unsupported_feature | warning | NotImplementedError: polars does not implement chart anchor reads |
 | chart_anchor | polars | chart_line | read | unsupported_feature | warning | NotImplementedError: polars does not implement chart anchor reads |
 | chart_anchor | tablib | chart_bar | read | unsupported_feature | warning | NotImplementedError: tablib does not implement chart anchor reads |
-| chart_anchor | tablib | chart_line | read | unsupported_feature | warning | NotImplementedError: tablib does not implement chart anchor reads |
 | chart_anchor | tablib | chart_bar | write | unsupported_feature | warning | NotImplementedError: tablib does not implement chart anchor writes |
+| chart_anchor | tablib | chart_line | read | unsupported_feature | warning | NotImplementedError: tablib does not implement chart anchor reads |
 | chart_anchor | tablib | chart_line | write | unsupported_feature | warning | NotImplementedError: tablib does not implement chart anchor writes |
 | chart_anchor | sheetjs | chart_bar | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support chart_anchors: SheetJS CE does not parse charts or drawing anchors in worksheets |
-| chart_anchor | sheetjs | chart_line | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support chart_anchors: SheetJS CE does not parse charts or drawing anchors in worksheets |
 | chart_anchor | sheetjs | chart_bar | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support chart: SheetJS CE cannot create charts |
+| chart_anchor | sheetjs | chart_line | read | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support chart_anchors: SheetJS CE does not parse charts or drawing anchors in worksheets |
 | chart_anchor | sheetjs | chart_line | write | unsupported_feature | warning | UnsupportedAdapterOperationError: sheetjs does not support chart: SheetJS CE cannot create charts |
 | chart_anchor | exceljs | chart_bar | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
-| chart_anchor | exceljs | chart_line | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
 | chart_anchor | exceljs | chart_bar | write | unsupported_feature | warning | UnsupportedAdapterOperationError: exceljs does not support chart: ExcelJS 4.4.0 has no chart creation API |
+| chart_anchor | exceljs | chart_line | read | internal | error | HelperError: exceljs read_model failed: Cannot read properties of undefined (reading 'anchors') |
 | chart_anchor | exceljs | chart_line | write | unsupported_feature | warning | UnsupportedAdapterOperationError: exceljs does not support chart: ExcelJS 4.4.0 has no chart creation API |
 | chart_anchor | libreoffice | chart_bar | read | data_mismatch | error | Expected values did not match actual values: expected={'charts': [{'type': 'bar', 'anchor_type': 'twoCell', 'from': 'B2', 'to': 'H12', 'data_ref': 'E2:E8', 'categories_ref': 'F2:F8'}]}, actual={'charts': [{'anchor_type': 'twoCell', 'from': 'B2', 'to': 'G11', 'type': 'bar'}, {'anchor_type': 'twoCell', 'from': 'J2', 'to': 'O11', 'type': 'line'}]} |
-| chart_anchor | libreoffice | chart_line | read | data_mismatch | error | Expected values did not match actual values: expected={'charts': [{'type': 'line', 'anchor_type': 'twoCell', 'from': 'J2', 'to': 'P12', 'data_ref': 'E2:E8', 'categories_ref': 'F2:F8'}]}, actual={'charts': [{'anchor_type': 'twoCell', 'from': 'B2', 'to': 'G11', 'type': 'bar'}, {'anchor_type': 'twoCell', 'from': 'J2', 'to': 'O11', 'type': 'line'}]} |
 | chart_anchor | libreoffice | chart_bar | write | data_mismatch | error | Expected values did not match actual values: expected={'charts': [{'type': 'bar', 'anchor_type': 'twoCell', 'from': 'B2', 'to': 'H12', 'data_ref': 'E2:E8', 'categories_ref': 'F2:F8'}]}, actual={'charts': [{'type': 'bar', 'anchor_type': 'twoCell', 'from': 'B2', 'to': 'G11'}, {'type': 'line', 'anchor_type': 'twoCell', 'from': 'J2', 'to': 'O11'}]} |
+| chart_anchor | libreoffice | chart_line | read | data_mismatch | error | Expected values did not match actual values: expected={'charts': [{'type': 'line', 'anchor_type': 'twoCell', 'from': 'J2', 'to': 'P12', 'data_ref': 'E2:E8', 'categories_ref': 'F2:F8'}]}, actual={'charts': [{'anchor_type': 'twoCell', 'from': 'B2', 'to': 'G11', 'type': 'bar'}, {'anchor_type': 'twoCell', 'from': 'J2', 'to': 'O11', 'type': 'line'}]} |
 | chart_anchor | libreoffice | chart_line | write | data_mismatch | error | Expected values did not match actual values: expected={'charts': [{'type': 'line', 'anchor_type': 'twoCell', 'from': 'J2', 'to': 'P12', 'data_ref': 'E2:E8', 'categories_ref': 'F2:F8'}]}, actual={'charts': [{'type': 'bar', 'anchor_type': 'twoCell', 'from': 'B2', 'to': 'G11'}, {'type': 'line', 'anchor_type': 'twoCell', 'from': 'J2', 'to': 'O11'}]} |
 
 ## Detailed Results

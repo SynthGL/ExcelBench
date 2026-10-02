@@ -1,15 +1,17 @@
 ---
 title: "WolfXL"
-description: "The fastest Python-accessible Excel library. Read + Write + Modify in one."
+description: "Rust-backed Python Excel library with an openpyxl-compatible API. Read + Write + Modify in one."
 ---
 
-WolfXL is a hybrid Rust library that combines three backends:
+WolfXL is a Rust-backed Python library with an openpyxl-compatible API. ExcelBench drives it through that public API:
 
-| Operation | Backend | Speed vs openpyxl |
-|-----------|---------|-------------------|
-| Read | calamine (styled fork) | **4-6x faster** |
-| Write | rust_xlsxwriter | **5x faster** |
-| Modify | XlsxPatcher (ZIP surgery) | **10-14x faster** |
+| Operation | Public API (WolfXL 2.0.5) | Speed vs openpyxl (2026-10-02 perf snapshot) |
+|-----------|---------------------------|-------------------|
+| Read | `wolfxl.load_workbook(path)` | **1.69x faster** (13.46 ms vs 22.79 ms) |
+| Write | `wolfxl.Workbook()` then `save(path)` | **1.20x faster** (22.28 ms vs 26.70 ms) |
+| Modify | `wolfxl.load_workbook(path, modify=True)` then `save(path)`: patch mode rewrites only the changed sheet XML and copies every other ZIP entry unchanged | No current measurement |
+
+Speed figures are sums of per-feature p50 wall times over the same 19 xlsx features for both libraries (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), measured on WolfXL 2.0.5 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`). Source: `results-2026-10-02/perf/README.md`.
 
 ## Install
 
@@ -35,7 +37,7 @@ ws = wb.active
 ws["A1"] = "Hello, world"
 wb.save("output.xlsx")
 
-# Modify (surgical patch — no full rewrite)
+# Modify (surgical patch, no full rewrite)
 wb = wolfxl.load_workbook("template.xlsx", modify=True)
 ws = wb.active
 ws["B2"] = 42
@@ -46,21 +48,21 @@ wb.save("patched.xlsx")
 
 Standard Excel libraries rewrite the entire `.xlsx` ZIP archive on save. WolfXL's modify mode instead patches only the changed XML sheets in-place, leaving all other ZIP entries untouched.
 
-This is 10-14x faster for templates with large static content (images, charts, pivot tables) where only a few cells change.
+Large static content in a template (images, charts, pivot tables) is never parsed or re-serialized when only a few cells change.
 
 ## Benchmark Scores
 
-From the current ExcelBench run:
+From the 2026-10-02 snapshot (WolfXL 2.0.5; fidelity from `results-2026-10-02/xlsx`, 21 scored features with `pivot_tables` unscored; speed from `results-2026-10-02/perf`):
 
 | Axis | Score |
 |------|-------|
-| Fidelity | 87.5% (14/16 features = 3) |
-| Read Speed | 100 (5.9x openpyxl, capped) |
-| Write Speed | 100 (3.7x openpyxl, capped) |
-| Feature Coverage | 88.2% |
+| Fidelity | 17/21 features green in both read and write (read 19/21, write 18/21) |
+| Read Speed | 1.69x openpyxl (WolfXL 2.0.5 public API) |
+| Write Speed | 1.20x openpyxl (WolfXL 2.0.5 public API) |
+| Feature Coverage | 100% (21/21 features score at least 1 in read or write) |
 | Capability Breadth | 100 (R+W+Modify) |
 
-Known gaps: `alignment` (indent level) = 1/3, `images` (read) = 0/3.
+Known gaps: `named_ranges` read 2/3 and write 2/3, `tables` read 2/3, `page_setup` write 2/3, `chart_anchor` write 0/3.
 
 ## Source
 

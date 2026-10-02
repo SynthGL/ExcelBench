@@ -33,7 +33,7 @@ ExcelBench tests adapters across three categories.
 
 | Adapter | Capabilities | Notes |
 |---------|-------------|-------|
-| `wolfxl` | R+W+Modify | WolfXL: calamine read + rust_xlsxwriter write + XlsxPatcher |
+| `wolfxl` | R+W+Modify | WolfXL public API: `load_workbook`, `Workbook`, patch-mode `load_workbook(path, modify=True)` |
 | `calamine-styled` | R | calamine fork with style support |
 | `rust-calamine` | R | Basic calamine (no styles) |
 | `rust-xlsxwriter` | W | rust_xlsxwriter write bindings |
