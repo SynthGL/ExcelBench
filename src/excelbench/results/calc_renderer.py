@@ -33,6 +33,7 @@ def _render_markdown(results: dict[str, Any]) -> str:
     ]
     if not isinstance(engines, dict):
         engines = {}
+    reasons: list[str] = []
     for name, result in engines.items():
         if not isinstance(result, dict):
             continue
@@ -49,7 +50,9 @@ def _render_markdown(results: dict[str, Any]) -> str:
         )
         reason = result.get("reason")
         if reason:
-            lines.extend(["", f"{name}: {reason}"])
+            reasons.append(f"{name}: {reason}")
+    for reason in reasons:
+        lines.extend(["", reason])
     lines.append("")
     return "\n".join(lines)
 

@@ -205,3 +205,19 @@ def test_commercial_engine_matches_in_process_engine(
     assert via_subprocess["status"] == in_process["status"] == "passed"
     assert via_subprocess["values"] == in_process["values"]
     assert via_subprocess["saved_values"] == in_process["saved_values"]
+
+
+def test_report_keeps_every_engine_row_in_the_table(tmp_path: Path) -> None:
+    """Engine notes print after the table, so a note never splits it."""
+    from excelbench.results.calc_renderer import render_calc_results
+
+    engine = {"status": "failed", "matched": 0, "total": 1, "mismatched_cells": []}
+    render_calc_results(
+        {"oracle": "o", "engines": {"a": {**engine, "reason": "a broke"}, "b": engine}},
+        tmp_path,
+    )
+    lines = (tmp_path / "README.md").read_text().splitlines()
+    rows = [i for i, line in enumerate(lines) if line.startswith(("| a |", "| b |"))]
+    assert rows == [rows[0], rows[0] + 1]
+    assert lines.index("a: a broke") > rows[-1]
+
