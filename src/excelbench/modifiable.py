@@ -199,6 +199,62 @@ class ZavoraEngine:
                 intermediate_path.unlink(missing_ok=True)
 
 
+class _JsonHelperEngine:
+    """Workbook mutation through a JSON-model adapter helper (Node, LibreOffice)."""
+
+    name = ""
+    adapter_module = ""
+    adapter_class = ""
+
+    def _adapter(self) -> Any:
+        import importlib
+
+        module = importlib.import_module(self.adapter_module)
+        return getattr(module, self.adapter_class)
+
+    def available(self) -> bool:
+        """Return whether the helper runtime and dependencies are installed."""
+        return bool(self._adapter().is_available())
+
+    def mutate(self, template: Path, output: Path, mutations: list[Mutation]) -> None:
+        """Open the template with the library, set values, and save the output."""
+        for mutation in mutations:
+            _mutation_target(mutation)
+        self._adapter().mutate_file(template, output, mutations)
+
+
+class SheetjsEngine(_JsonHelperEngine):
+    """SheetJS CE: parse the whole package, set cells, write a new package."""
+
+    name = "sheetjs"
+    adapter_module = "excelbench.harness.adapters.sheetjs_adapter"
+    adapter_class = "SheetjsAdapter"
+
+
+class ExceljsEngine(_JsonHelperEngine):
+    """ExcelJS: load the workbook model, set cells, write a new package."""
+
+    name = "exceljs"
+    adapter_module = "excelbench.harness.adapters.exceljs_adapter"
+    adapter_class = "ExceljsAdapter"
+
+
+class LibreofficeEngine(_JsonHelperEngine):
+    """LibreOffice Calc: import via the OOXML filter, set cells, export again."""
+
+    name = "libreoffice"
+    adapter_module = "excelbench.harness.adapters.libreoffice_adapter"
+    adapter_class = "LibreofficeAdapter"
+
+
 def modifiable_engines() -> list[ModifiableEngine]:
     """Return the fixed engine registry used by the mutation suite."""
-    return [OpenpyxlEngine(), WolfxlEngine(), AsposeFossEngine(), ZavoraEngine()]
+    return [
+        OpenpyxlEngine(),
+        WolfxlEngine(),
+        AsposeFossEngine(),
+        ZavoraEngine(),
+        SheetjsEngine(),
+        ExceljsEngine(),
+        LibreofficeEngine(),
+    ]

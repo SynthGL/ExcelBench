@@ -202,6 +202,30 @@ except ImportError:
     ZavoraAdapter: AdapterClass | None = None
 else:
     ZavoraAdapter = _ZavoraAdapter
+try:
+    from excelbench.harness.adapters.sheetjs_adapter import (
+        SheetjsAdapter as _SheetjsAdapter,
+    )
+except ImportError:
+    SheetjsAdapter: AdapterClass | None = None
+else:
+    SheetjsAdapter = _SheetjsAdapter
+try:
+    from excelbench.harness.adapters.exceljs_adapter import (
+        ExceljsAdapter as _ExceljsAdapter,
+    )
+except ImportError:
+    ExceljsAdapter: AdapterClass | None = None
+else:
+    ExceljsAdapter = _ExceljsAdapter
+try:
+    from excelbench.harness.adapters.libreoffice_adapter import (
+        LibreofficeAdapter as _LibreofficeAdapter,
+    )
+except ImportError:
+    LibreofficeAdapter: AdapterClass | None = None
+else:
+    LibreofficeAdapter = _LibreofficeAdapter
 
 
 __all__ = [
@@ -254,6 +278,12 @@ if ExcelizeAdapter is not None:
     __all__.append("ExcelizeAdapter")
 if ZavoraAdapter is not None:
     __all__.append("ZavoraAdapter")
+if SheetjsAdapter is not None:
+    __all__.append("SheetjsAdapter")
+if ExceljsAdapter is not None:
+    __all__.append("ExceljsAdapter")
+if LibreofficeAdapter is not None:
+    __all__.append("LibreofficeAdapter")
 
 
 def get_all_adapters() -> list[ExcelAdapter]:
@@ -301,4 +331,10 @@ def get_all_adapters() -> list[ExcelAdapter]:
         adapters.append(ExcelizeAdapter())
     if ZavoraAdapter is not None and _is_available_adapter(ZavoraAdapter):
         adapters.append(ZavoraAdapter())
+    if SheetjsAdapter is not None and _is_available_adapter(SheetjsAdapter):
+        adapters.append(SheetjsAdapter())
+    if ExceljsAdapter is not None and _is_available_adapter(ExceljsAdapter):
+        adapters.append(ExceljsAdapter())
+    if LibreofficeAdapter is not None and _is_available_adapter(LibreofficeAdapter):
+        adapters.append(LibreofficeAdapter())
     return adapters

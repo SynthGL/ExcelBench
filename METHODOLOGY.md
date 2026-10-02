@@ -102,12 +102,27 @@ subprocess and saves the result.
 
 - **Wall time**: median over `--repeats` (default 3) subprocess runs.
 - **Peak RSS**: median subprocess peak resident set size.
-- **Preservation score**: fraction of original package parts retained after the
-  edit, minus damage penalties; outputs must reopen cleanly with the openpyxl
-  verifier or the engine is marked `integrity-failed` with score 0.
+- **Preservation (content model)**: the template is read into the vendored
+  xlsx content model (`src/excelbench/harness/content_model_xlsx.py`, copied
+  verbatim from `officelibs-corpus`), the two declared cell edits are applied
+  to that model the way a correct engine applies them, and the result is
+  compared with the output's model. Any difference is an unexpected change,
+  counted per feature (`features_changed`); `feature_preservation` is `k/n`
+  for the `n` features present in the template. Custom XML data items are an
+  extra scorer-side feature (`custom_xml`, canonical XML plus datastore id).
+  Cached results of formula cells are recalculation state and are not
+  compared; formula text is.
+- **Edits applied**: each edited cell must hold its new value, checked
+  separately from preservation.
+- **Integrity**: dangling relationships and parts without a content type are
+  reported but not scored.
+- **Verdict**: Preserved / Changed `<features>` / Edits missing / Failed.
 
-Preservation is a structural proxy (ZIP part inventory), not a semantic
-equivalence claim. Cite wall time and preservation together.
+Part names, relationship ids, XML serialization and document metadata are not
+content, so an equivalent re-serialization scores the same as a byte copy.
+Part-name based checks (lost/added parts, worksheet elements in same-named
+parts) survive only as an unscored `diagnostics` block. Cite wall time and
+preservation together.
 
 ## Calculation Lane
 
