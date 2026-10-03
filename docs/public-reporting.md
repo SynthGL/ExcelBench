@@ -12,7 +12,8 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 - Fresh WolfXL 2.0 wheel-backed release snapshot: `results-release-2026-04-28/` generated 2026-04-29 UTC
 - Current checked-in cross-language context snapshot: `results-cross-language/` generated 2026-04-29 UTC
 - Current checked-in cross-language pivot capability artifact: `results-cross-language-pivots/` generated 2026-04-29 UTC
-- Current competitor snapshot: `results-2026-10-02/` (fidelity, mutation, calc, cross-language, perf) generated 2026-10-02 UTC with WolfXL 2.0.5
+- Current competitor snapshot: `results-2026-10-03/` (fidelity, mutation, calc, cross-language) generated 2026-10-03 UTC with WolfXL 2.0.8
+- Previous competitor snapshot: `results-2026-10-02/` (fidelity, mutation, calc, cross-language, perf) generated 2026-10-02 UTC with WolfXL 2.0.5
 
 ## How To Cite ExcelBench Safely
 
@@ -41,6 +42,10 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 | `results-2026-10-02/calc/README.md` | 2026-10-02 | Formula-recalculation tier vs LibreOffice 26.8.0.3 oracle on the cache-free 133-formula fixture |
 | `results-2026-10-02/cross-language/README.md` | 2026-10-02 | Cross-language context: Apache POI 5.5.1, Excelize 2.10.1, zavora-xlsx 0.1.2 |
 | `results-2026-10-02/perf/README.md` | 2026-10-02 | Performance snapshot: April's 19 features x 13 Python adapters, warmup 3, 25 iterations, WolfXL 2.0.5 through its public API, Apple M4 Pro |
+| `results-2026-10-03/xlsx/README.md` | 2026-10-03 | Competitor fidelity snapshot: 21 scored features (`pivot_tables` unscored), the same 17 adapters as 2026-10-02; WolfXL 2.0.8, python-calamine 0.8.2, pandas 3.0.6, polars 1.44.2, pyexcel 0.7.6, tablib 3.10.0 |
+| `results-2026-10-03/mutation/README.md` | 2026-10-03 | Template-mutation lane (content-model preservation, wall time, RSS); see its Scope note for host load |
+| `results-2026-10-03/calc/README.md` | 2026-10-03 | Formula-recalculation tier vs LibreOffice 26.8.0.3 oracle; WolfXL Community 2.0.8 and Commercial 2.3.0 |
+| `results-2026-10-03/cross-language/README.md` | 2026-10-03 | Cross-language context: Apache POI 5.5.1, Excelize 2.11.0, zavora-xlsx 0.1.2 |
 
 ## Safe Claims Right Now
 

@@ -22,7 +22,7 @@ ORACLE_DOCKER_CONTEXT_ENV = "EXCELBENCH_ORACLE_DOCKER_CONTEXT"
 #: ``tools/external-oracles/remote/README.md``.
 ORACLE_DOCKER_IMAGES: Mapping[str, str] = {
     "apache-poi": "excelbench-poi-oracle:5.5.1",
-    "excelize": "excelbench-excelize-oracle:2.10.1",
+    "excelize": "excelbench-excelize-oracle:2.11.0",
 }
 
 #: Per-request timeout floor for helpers reached through a remote Docker

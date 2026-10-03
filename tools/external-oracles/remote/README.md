@@ -17,7 +17,7 @@ docker --context pc build --build-context oracle-remote=../remote \
 
 cd ../excelize
 docker --context pc build --build-context oracle-remote=../remote \
-  -t excelbench-excelize-oracle:2.10.1 .
+  -t excelbench-excelize-oracle:2.11.0 .
 ```
 
 The POI image runs `build.sh` (which runs `fetch_deps.py`, verifying every
@@ -63,12 +63,12 @@ pull images implicitly.
 
 ## Runtime versions
 
-Recorded from the images built on `pc` (linux/amd64) on 2026-10-01.
+Recorded from the images built on `pc` (linux/amd64): POI on 2026-10-01, Excelize 2.11.0 on 2026-10-02 (UTC).
 
 | Image | Image ID | Library | Runtime |
 | --- | --- | --- | --- |
 | `excelbench-poi-oracle:5.5.1` | `ef46106ed14d` | Apache POI 5.5.1 (`poi`, `poi-ooxml`, `poi-ooxml-lite`), xmlbeans 5.3.0 | Eclipse Temurin OpenJDK 21.0.12.1+1 LTS (`javac 21.0.12.1`), Python 3.14.4, Ubuntu 26.04.1 LTS |
-| `excelbench-excelize-oracle:2.10.1` | `425caf1a873f` | `github.com/xuri/excelize/v2` v2.10.1 | Go 1.25.14 (static, `CGO_ENABLED=0`), Python 3.13.5, Debian 13 (trixie) |
+| `excelbench-excelize-oracle:2.11.0` | `79f691f8e6d0` | `github.com/xuri/excelize/v2` v2.11.0 | Go 1.25.14 (static, `CGO_ENABLED=0`), Python 3.13.5, Debian 13 (trixie) |
 
 Base images are pinned by digest in the Dockerfiles:
 

@@ -13,12 +13,13 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 
 ## Results at a Glance
 
-> Competitor snapshot: 2026-10-02 | WolfXL 2.0.5 (latest PyPI) | 17 fidelity adapters incl. SheetJS CE 0.20.3, ExcelJS 4.4.0, LibreOffice 26.8.0.3 | [Snapshot README](results-2026-10-02/README.md) | [Fidelity](results-2026-10-02/xlsx/README.md) | [Mutation](results-2026-10-02/mutation/README.md) | [Calc](results-2026-10-02/calc/README.md) | [Cross-language](results-2026-10-02/cross-language/README.md)
+> Competitor snapshot: 2026-10-03 | WolfXL 2.0.8 (latest PyPI) | 17 fidelity adapters incl. SheetJS CE 0.20.3, ExcelJS 4.4.0, LibreOffice 26.8.0.3 | [Snapshot README](results-2026-10-03/README.md) | [Fidelity](results-2026-10-03/xlsx/README.md) | [Mutation](results-2026-10-03/mutation/README.md) | [Calc](results-2026-10-03/calc/README.md) | [Cross-language](results-2026-10-03/cross-language/README.md)
 >
 > Green features in that snapshot (read / write, out of 21¹): openpyxl
-> 21/21 / 21/21, WolfXL 19/21 / 18/21, ExcelJS 12/21 / 15/21,
-> aspose-cells-foss 11/21 / 14/21, LibreOffice 12/21 / 12/21, SheetJS CE
-> 9/21 / 8/21; write-only xlsxwriter 15/21.
+> 21/21 / 21/21 and WolfXL 21/21 / 21/21 (both pass all 133 tests in each
+> mode), ExcelJS 12/21 / 15/21, aspose-cells-foss 11/21 / 14/21,
+> LibreOffice 12/21 / 12/21, SheetJS CE 9/21 / 8/21; write-only
+> xlsxwriter 15/21.
 >
 > Mutation suite (two-cell edit on a corporate template, content-model
 > preservation; features kept / features in the template): WolfXL
@@ -26,21 +27,25 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 > (cell styles, page setup); aspose-cells-foss 15/17 (drops 87 string
 > cells, custom XML); SheetJS 8/17 and zavora-xlsx 8/17 (charts, tables,
 > styles and more); ExcelJS fails to load the template. Every engine that
-> ran applied both edits. Wall times in that run are not comparable (host
-> under heavy unrelated load).
+> ran applied both edits.
 >
 > Calc tier (133-formula financial DAG, cache-free fixture, LibreOffice
-> oracle): LibreOffice 133/133, aspose-cells-foss 25/133, WolfXL 0/133,
-> zavora 0/133. SheetJS CE, ExcelJS, and the other non-calculating
-> adapters are not applicable.
+> oracle): LibreOffice 26.8.0.3, WolfXL Community 2.0.8 and WolfXL
+> Commercial 2.3.0 133/133; aspose-cells-foss 25/133; zavora 0/133.
+> Community's `save()` writes no calculated values (0/133 saved), while
+> Commercial saves all 133. SheetJS CE, ExcelJS, and the other
+> non-calculating adapters are not applicable.
 >
 > Cross-language context (write lane): Apache POI 5.5.1 18/21, Excelize
-> 2.10.1 18/21, zavora-xlsx 0.1.2 8/21. The POI and Excelize misses are
+> 2.11.0 18/21, zavora-xlsx 0.1.2 8/21. The POI and Excelize misses are
 > the three Tier 4 features, which the ExcelBench adapters do not
 > implement yet (`NotImplementedError`). They are not library gaps.
 >
 > ¹ `pivot_tables` is excluded from every denominator because no adapter
-> produced a score for it in either competitor snapshot.
+> produced a score for it in any competitor snapshot (2026-09-08,
+> 2026-10-02, 2026-10-03).
+>
+> Previous competitor snapshot: [2026-10-02](results-2026-10-02/README.md) (WolfXL 2.0.5: 19/21 read, 18/21 write).
 >
 > Python release snapshot: 2026-04-29 UTC | wheel-backed WolfXL 2.0 rerun | [Fidelity](results-release-2026-04-28/README.md) | [Perf](results-release-2026-04-28/perf/README.md) | [Dashboard](results-release-2026-04-28/DASHBOARD.md)
 >
@@ -97,9 +102,9 @@ Use this when the question is: which engine actually computes a 133-formula fina
 
 | Library | Caps | Fidelity | Read Speed | Write Speed | Modify |
 |---------|:----:|:--------:|:----------:|:-----------:|:------:|
-| **wolfxl** | R+W | R 20/21, W 19/21 in 2026-09-08 competitor snapshot (18/18 in 2026-04-29 snapshot) | 1.69x (13.46 ms) | 1.20x (22.28 ms) | Patch (Preserved, 17/17 features in 2026-10-02 mutation suite) |
-| openpyxl | R+W | R 21/21, W 21/21 in 2026-09-08 competitor snapshot | 1.00x (22.79 ms, baseline) | 1.00x (26.70 ms, baseline) | Rewrite (16/17 features in 2026-10-02 mutation suite) |
-| aspose-cells-foss | R+W | R 11/21, W 14/21 in 2026-09-08 competitor snapshot | not measured | not measured | Rewrite (15/17 features) |
+| **wolfxl** | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot (18/18 in 2026-04-29 snapshot) | 1.69x (13.46 ms) | 1.20x (22.28 ms) | Patch (Preserved, 17/17 features in 2026-10-03 mutation suite) |
+| openpyxl | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot | 1.00x (22.79 ms, baseline) | 1.00x (26.70 ms, baseline) | Rewrite (16/17 features in 2026-10-03 mutation suite) |
+| aspose-cells-foss | R+W | R 11/21, W 14/21 in 2026-10-03 competitor snapshot | not measured | not measured | Rewrite (15/17 features) |
 | xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | 0.86x (31.12 ms) | No |
 | xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | 0.86x (31.17 ms) | No |
 | python-calamine | R | 1/18 in 2026-04-29 release snapshot | 14.02x (1.63 ms) | -- | No |
@@ -109,14 +114,14 @@ Use this when the question is: which engine actually computes a 133-formula fina
 > Speed columns come from the [2026-10-02 perf snapshot](results-2026-10-02/perf/README.md): sum of per-feature p50 wall times over the same 19 xlsx features for every library (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), shown as openpyxl's total divided by the library's total. WolfXL 2.0.5 is measured through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), like every other library. aspose-cells-foss was not part of the perf run. Always cite the artifact date, workload, and profile. See [METHODOLOGY.md](METHODOLOGY.md) and [Public Reporting Status](docs/public-reporting.md).
 
 ### Key Findings
-- **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-09-08 competitor snapshot (21 scored features; `pivot_tables` unscored), openpyxl holds 21/21 read and write while WolfXL 2.1.0 reaches 20/21 read and 19/21 write
+- **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-10-03 competitor snapshot (21 scored features; `pivot_tables` unscored), openpyxl 3.1.5 and WolfXL 2.0.8 both hold 21/21 read and 21/21 write and pass all 133 tests in each mode. The next best are ExcelJS (15/21 write) and xlsxwriter (15/21 write)
 - **WolfXL 2.1.0 regression signal**: conditional-formatting read scores 0 and named-range / print-title writes score 2 in the 2026-09-08 snapshot; tracked for the WolfXL repo
-- **Patch modify is structurally different**: WolfXL's `load_workbook(path, modify=True)` uses surgical ZIP patching; it is the only engine whose output keeps every template feature in the 2026-10-02 mutation suite
+- **Patch modify is structurally different**: WolfXL's `load_workbook(path, modify=True)` uses surgical ZIP patching; it is the only engine whose output keeps every template feature in the 2026-10-03 mutation suite
 - **The abstraction tax is real**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion (errors become NaN)
 - **Speed vs fidelity tradeoff is measurable**: use the perf snapshot together with the fidelity matrix rather than quoting one without the other
 - **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
 - **Cross-language context is now strong too**: `Apache POI` and `Excelize` land at `18/18` in the scored write lane; `zavora-xlsx` 0.1.2 writes fast but corrupts hyperlink relationships on mutate and cannot recalculate
-- **Calculation is a differentiator**: in the 2026-10-02 calc rerun, LibreOffice, WolfXL Community 2.0.7, and WolfXL Commercial 2.3.0 compute all 133 formulas; aspose-cells-foss covers 25/133 and zavora-xlsx 0/133. Community's `save()` writes no calculated values (0/133 saved), while Commercial saves all 133
+- **Calculation is a differentiator**: in the 2026-10-03 calc lane, LibreOffice, WolfXL Community 2.0.8, and WolfXL Commercial 2.3.0 compute all 133 formulas; aspose-cells-foss covers 25/133 and zavora-xlsx 0/133. Community's `save()` writes no calculated values (0/133 saved), while Commercial saves all 133
 
 
 See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) for the fresh wheel-backed combined view, or the [historical dashboard](results/DASHBOARD.md) for the older public baseline.
@@ -136,9 +141,9 @@ See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) fo
 
 | Library | Version | Lang | Caps | Green Features |
 |:--------|:--------|:-----|:-----|:--------------:|
-| [WolfXL](https://github.com/SynthGL/wolfxl) | 2.1.0 | Python (Rust core) | R+W | R 20/21, W 19/21 (2026-09-08 snapshot) |
-| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | R 21/21, W 21/21 (2026-09-08 snapshot) |
-| [aspose-cells-foss](https://pypi.org/project/aspose-cells-foss/) | 26.7 | Python (JVM-core FOSS) | R+W | R 11/21, W 14/21 (2026-09-08 snapshot) |
+| [WolfXL](https://github.com/SynthGL/wolfxl) | 2.0.8 | Python (Rust core) | R+W | R 21/21, W 21/21 (2026-10-03 snapshot) |
+| [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | R 21/21, W 21/21 (2026-10-03 snapshot) |
+| [aspose-cells-foss](https://pypi.org/project/aspose-cells-foss/) | 26.7 | Python (JVM-core FOSS) | R+W | R 11/21, W 14/21 (2026-10-03 snapshot) |
 | [XlsxWriter](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 15/18 |
 | [xlsxwriter-constmem](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 12/18 |
 | [openpyxl-readonly](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R | 3/18 |
@@ -152,9 +157,9 @@ See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) fo
 | [xlrd](https://github.com/python-excel/xlrd) | 2.0.2 | Python | R | .xls only |
 
 > Green-feature counts are per dated snapshot; `x/18` numbers come from the
-> 2026-04-29 release snapshot and `x/21` from the 2026-09-08 competitor
-> snapshot (Tier 4 added; `pivot_tables` is unscored and excluded from the
-> denominator). Never mix counts across snapshots.
+> 2026-04-29 release snapshot and `x/21` from the 2026-10-03 competitor
+> snapshot (Tier 4 added 2026-09-08; `pivot_tables` is unscored and
+> excluded from the denominator). Never mix counts across snapshots.
 
 ### Cross-Language Context (oracle helpers)
 
@@ -307,7 +312,7 @@ uv run excelbench generate --output fixtures/excel
 | **Tier 4** -- Production surfaces (2026-09-08) | Sheet protection, page setup, chart anchoring | 3 |
 
 > Pivot tables are tested but score N/A across all adapters in the current macOS run.
-> Green-feature denominators: /18 in the 2026-04-29 release snapshot, /21 in the 2026-09-08 and 2026-10-02 competitor snapshots (22 features modeled; `pivot_tables` is unscored and excluded).
+> Green-feature denominators: /18 in the 2026-04-29 release snapshot, /21 in the 2026-09-08, 2026-10-02 and 2026-10-03 competitor snapshots (22 features modeled; `pivot_tables` is unscored and excluded).
 
 ### Planned
 
@@ -315,6 +320,8 @@ None currently queued. Tier 4 (charts anchoring, print settings, protection) shi
 
 ## Detailed Results
 
+- **[2026-10-03 competitor snapshot](results-2026-10-03/README.md)** -- current: [fidelity](results-2026-10-03/xlsx/README.md) (21 scored features x 17 adapters, WolfXL 2.0.8, heatmap [PNG](results-2026-10-03/xlsx/heatmap.png) / [SVG](results-2026-10-03/xlsx/heatmap.svg)), [mutation](results-2026-10-03/mutation/README.md), [calc](results-2026-10-03/calc/README.md), [cross-language](results-2026-10-03/cross-language/README.md)
+- **[2026-10-02 competitor snapshot](results-2026-10-02/README.md)** -- previous: same lanes and adapters, WolfXL 2.0.5
 - **[Competitor snapshot fidelity](results-2026-09-08/xlsx/README.md)** -- 22 features x 14 Python adapters, WolfXL 2.1.0 + aspose-cells-foss
 - **[Competitor snapshot heatmap](results-2026-09-08/xlsx/heatmap.png)** ([SVG](results-2026-09-08/xlsx/heatmap.svg)) -- 22x14 visual score matrix
 - **[Competitor snapshot mutation](results-2026-09-08/mutation/README.md)** -- template mutation: wall time, RSS, preservation
