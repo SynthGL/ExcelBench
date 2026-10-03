@@ -1,0 +1,1318 @@
+{
+  "engines": {
+    "aspose-cells-foss": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [
+            "xl/sharedStrings.xml"
+          ],
+          "element_changes": [],
+          "lost_parts": [
+            "customXml/_rels/item1.xml.rels",
+            "customXml/item1.xml",
+            "customXml/itemProps1.xml"
+          ]
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-aspose-cells-foss"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-aspose-cells-foss"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": [
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Driver"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A1"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 09"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A10"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 10"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A11"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 11"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A12"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 12"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A13"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 13"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A14"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 14"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A15"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 15"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A16"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 16"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A17"
+          },
+          {
+            "after": null,
+            "before": {
+              "type": "s",
+              "value": "Input 17"
+            },
+            "feature": "cells",
+            "kind": "missing",
+            "path": "/cells/Inputs/A18"
+          }
+        ]
+      },
+      "edits_applied": true,
+      "feature_preservation": "15/17",
+      "features_changed": {
+        "cells": 87,
+        "custom_xml": 1
+      },
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 168128.0,
+      "preserved": false,
+      "status": "passed",
+      "verdict": "Changed cells, custom_xml",
+      "wall_ms_median": 750.0
+    },
+    "exceljs": {
+      "available": true,
+      "details": {
+        "error": "RuntimeError: Traceback (most recent call last):\n  File \"<string>\", line 9, in <module>\n    engine.mutate(Path(template), Path(output), json.loads(mutations))\n    ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<repo>/src/excelbench/modifiable.py\", line 223, in mutate\n    self._adapter().mutate_file(template, output, mutations)\n    ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<repo>/src/excelbench/harness/adapters/json_model_adapter.py\", line 545, in mutate_file\n    cls.call_helper(\n    ~~~~~~~~~~~~~~~^\n        \"mutate\",\n        ^^^^^^^^^\n    ...<2 lines>...\n        output_path=output,\n        ^^^^^^^^^^^^^^^^^^^\n    )\n    ^\n  File \"<repo>/src/excelbench/harness/adapters/json_model_adapter.py\", line 215, in call_helper\n    raise HelperError(f\"{tool.name} {operation} failed: {message}\")\nexcelbench.harness.adapters.json_model_adapter.HelperError: exceljs mutate failed: Cannot read properties of undefined (reading 'anchors')\n        1.45 real         0.90 user         0.27 sys\n           171589632  maximum resident set size\n                   0  average shared memory size\n                   0  average unshared data size\n                   0  average unshared stack size\n               34091  page reclaims\n                   4  page faults\n                   0  swaps\n                   0  block input operations\n                   0  block output operations\n                   0  messages sent\n                   0  messages received\n                   0  signals received\n                 807  voluntary context switches\n                3245  involuntary context switches\n          5970234356  instructions retired\n          3822258271  cycles elapsed\n           132039448  peak memory footprint"
+      },
+      "edits_applied": null,
+      "feature_preservation": null,
+      "features_changed": null,
+      "features_present": null,
+      "peak_rss_kb_median": null,
+      "preserved": null,
+      "status": "failed",
+      "verdict": "Failed",
+      "wall_ms_median": null
+    },
+    "libreoffice": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [
+            "docProps/custom.xml",
+            "xl/charts/_rels/chart1.xml.rels",
+            "xl/charts/_rels/chart2.xml.rels",
+            "xl/charts/colors1.xml",
+            "xl/charts/colors2.xml",
+            "xl/charts/style1.xml",
+            "xl/charts/style2.xml",
+            "xl/comments1.xml",
+            "xl/drawings/vmlDrawing1.vml",
+            "xl/sharedStrings.xml"
+          ],
+          "element_changes": [
+            {
+              "element": "pageSetup",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": false,
+              "present_in_output": true
+            },
+            {
+              "element": "headerFooter",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": false,
+              "present_in_output": true
+            },
+            {
+              "element": "pageSetup",
+              "part": "xl/worksheets/sheet2.xml",
+              "present_in_original": false,
+              "present_in_output": true
+            },
+            {
+              "element": "headerFooter",
+              "part": "xl/worksheets/sheet2.xml",
+              "present_in_original": false,
+              "present_in_output": true
+            }
+          ],
+          "lost_parts": [
+            "xl/comments/comment1.xml",
+            "xl/drawings/commentsDrawing1.vml"
+          ]
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-libreoffice"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-libreoffice"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": [
+          {
+            "after": "Cambria",
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/A1/font/name"
+          },
+          {
+            "after": 11.0,
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/A1/font/size"
+          },
+          {
+            "after": "Cambria",
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/B1/font/name"
+          },
+          {
+            "after": 11.0,
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/B1/font/size"
+          },
+          {
+            "after": "Cambria",
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/C1/font/name"
+          },
+          {
+            "after": 11.0,
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/C1/font/size"
+          },
+          {
+            "after": "Cambria",
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/D1/font/name"
+          },
+          {
+            "after": 11.0,
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/D1/font/size"
+          },
+          {
+            "after": "Cambria",
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/E1/font/name"
+          },
+          {
+            "after": 11.0,
+            "before": null,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/sheets/Inputs/E1/font/size"
+          }
+        ]
+      },
+      "edits_applied": true,
+      "feature_preservation": "15/17",
+      "features_changed": {
+        "cell_styles": 16,
+        "page_setup": 5
+      },
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 264352.0,
+      "preserved": false,
+      "status": "passed",
+      "verdict": "Changed cell_styles, page_setup",
+      "wall_ms_median": 1660.0
+    },
+    "openpyxl": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [],
+          "element_changes": [],
+          "lost_parts": [
+            "customXml/_rels/item1.xml.rels",
+            "customXml/item1.xml",
+            "customXml/itemProps1.xml"
+          ]
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-openpyxl"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-openpyxl"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": [
+          {
+            "after": null,
+            "before": {
+              "count": 1,
+              "item_id": "{11111111-2222-3333-4444-555555555555}",
+              "schemas": [],
+              "xml": "<n0:p1Fidelity xmlns:n0=\"https://wolfxl.local/fidelity\"><n0:source>openpyxl-targeted-fixture</n0:source></n0:p1Fidelity>"
+            },
+            "feature": "custom_xml",
+            "kind": "missing",
+            "path": "/custom_xml/923316dfc82cc7cb"
+          }
+        ]
+      },
+      "edits_applied": true,
+      "feature_preservation": "16/17",
+      "features_changed": {
+        "custom_xml": 1
+      },
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 167968.0,
+      "preserved": false,
+      "status": "passed",
+      "verdict": "Changed custom_xml",
+      "wall_ms_median": 860.0
+    },
+    "sheetjs": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [
+            "xl/comments1.xml",
+            "xl/drawings/vmlDrawing1.vml",
+            "xl/metadata.xml"
+          ],
+          "element_changes": [
+            {
+              "element": "tableParts",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "dataValidations",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "conditionalFormatting",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "sheetPr",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "pane",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "sheetProtection",
+              "part": "xl/worksheets/sheet2.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "sheetPr",
+              "part": "xl/worksheets/sheet2.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "pane",
+              "part": "xl/worksheets/sheet2.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "pageSetup",
+              "part": "xl/worksheets/sheet3.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "headerFooter",
+              "part": "xl/worksheets/sheet3.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "sheetPr",
+              "part": "xl/worksheets/sheet3.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "pane",
+              "part": "xl/worksheets/sheet3.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "drawing",
+              "part": "xl/worksheets/sheet3.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            }
+          ],
+          "lost_parts": [
+            "customXml/_rels/item1.xml.rels",
+            "customXml/item1.xml",
+            "customXml/itemProps1.xml",
+            "xl/charts/chart1.xml",
+            "xl/charts/chart2.xml",
+            "xl/comments/comment1.xml",
+            "xl/drawings/_rels/drawing1.xml.rels",
+            "xl/drawings/commentsDrawing1.vml",
+            "xl/drawings/drawing1.xml",
+            "xl/tables/table1.xml",
+            "xl/worksheets/_rels/sheet3.xml.rels"
+          ]
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-sheetjs"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-sheetjs"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": [
+          {
+            "after": 12.0,
+            "before": 11.0,
+            "feature": "cell_styles",
+            "kind": "changed",
+            "path": "/cell_styles/default/font/size"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/A1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/B1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/C1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/D1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/E1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/F1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/G1"
+          },
+          {
+            "after": null,
+            "before": {
+              "alignment": {
+                "horizontal": "general",
+                "indent": 0,
+                "justify_last_line": false,
+                "reading_order": 0,
+                "shrink_to_fit": false,
+                "text_rotation": 0,
+                "vertical": "bottom",
+                "wrap_text": false
+              },
+              "border": {
+                "bottom": {
+                  "style": "none"
+                },
+                "left": {
+                  "style": "none"
+                },
+                "right": {
+                  "style": "none"
+                },
+                "top": {
+                  "style": "none"
+                }
+              },
+              "fill": {
+                "fg": "1F4E78",
+                "pattern": "solid"
+              },
+              "font": {
+                "bold": true,
+                "color": "FFFFFF",
+                "italic": false,
+                "name": null,
+                "size": null,
+                "strike": false,
+                "underline": "none",
+                "vert_align": "baseline"
+              },
+              "number_format": "General",
+              "protection": {
+                "hidden": false,
+                "locked": true
+              }
+            },
+            "feature": "cell_styles",
+            "kind": "missing",
+            "path": "/cell_styles/sheets/Inputs/H1"
+          },
+          {
+            "after": null,
+            "before": {
+              "cols": 1,
+              "rows": 1
+            },
+            "feature": "views",
+            "kind": "missing",
+            "path": "/views/Inputs/freeze"
+          }
+        ]
+      },
+      "edits_applied": true,
+      "feature_preservation": "8/17",
+      "features_changed": {
+        "cell_styles": 9,
+        "charts": 2,
+        "conditional_formats": 2,
+        "custom_xml": 1,
+        "data_validations": 2,
+        "page_setup": 2,
+        "protection": 1,
+        "tables": 1,
+        "views": 3
+      },
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 167136.0,
+      "preserved": false,
+      "status": "passed",
+      "verdict": "Changed cell_styles, views, data_validations, conditional_formats, protection, page_setup, charts, tables, custom_xml",
+      "wall_ms_median": 800.0
+    },
+    "wolfxl": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [
+            "xl/calcChain.xml"
+          ],
+          "element_changes": [],
+          "lost_parts": []
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-wolfxl"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-wolfxl"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": []
+      },
+      "edits_applied": true,
+      "feature_preservation": "17/17",
+      "features_changed": {},
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 170032.0,
+      "preserved": true,
+      "status": "passed",
+      "verdict": "Preserved",
+      "wall_ms_median": 780.0
+    },
+    "zavora-xlsx": {
+      "available": true,
+      "details": {
+        "diagnostics": {
+          "added_parts": [
+            "xl/sharedStrings.xml"
+          ],
+          "element_changes": [
+            {
+              "element": "tableParts",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            },
+            {
+              "element": "sheetPr",
+              "part": "xl/worksheets/sheet1.xml",
+              "present_in_original": true,
+              "present_in_output": false
+            }
+          ],
+          "lost_parts": [
+            "xl/worksheets/_rels/sheet3.xml.rels"
+          ]
+        },
+        "edits": [
+          {
+            "actual": {
+              "type": "s",
+              "value": "MUTATED-zavora-xlsx"
+            },
+            "applied": true,
+            "cell": "B2",
+            "expected": {
+              "type": "s",
+              "value": "MUTATED-zavora-xlsx"
+            },
+            "sheet": "Inputs"
+          },
+          {
+            "actual": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "applied": true,
+            "cell": "C3",
+            "expected": {
+              "type": "n",
+              "value": 1337.0
+            },
+            "sheet": "Inputs"
+          }
+        ],
+        "integrity": {
+          "dangling_rels": [],
+          "missing_content_types": []
+        },
+        "sample": [
+          {
+            "after": "",
+            "before": "Driver",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A1/value"
+          },
+          {
+            "after": "",
+            "before": "Input 09",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A10/value"
+          },
+          {
+            "after": "",
+            "before": "Input 10",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A11/value"
+          },
+          {
+            "after": "",
+            "before": "Input 11",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A12/value"
+          },
+          {
+            "after": "",
+            "before": "Input 12",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A13/value"
+          },
+          {
+            "after": "",
+            "before": "Input 13",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A14/value"
+          },
+          {
+            "after": "",
+            "before": "Input 14",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A15/value"
+          },
+          {
+            "after": "",
+            "before": "Input 15",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A16/value"
+          },
+          {
+            "after": "",
+            "before": "Input 16",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A17/value"
+          },
+          {
+            "after": "",
+            "before": "Input 17",
+            "feature": "cells",
+            "kind": "changed",
+            "path": "/cells/Inputs/A18/value"
+          }
+        ]
+      },
+      "edits_applied": true,
+      "feature_preservation": "8/17",
+      "features_changed": {
+        "cell_styles": 17,
+        "cells": 48,
+        "charts": 2,
+        "comments": 1,
+        "conditional_formats": 2,
+        "custom_xml": 1,
+        "data_validations": 2,
+        "tables": 1,
+        "theme": 1
+      },
+      "features_present": [
+        "workbook",
+        "defined_names",
+        "cells",
+        "formulas",
+        "cell_styles",
+        "columns",
+        "views",
+        "data_validations",
+        "conditional_formats",
+        "hyperlinks",
+        "comments",
+        "protection",
+        "page_setup",
+        "charts",
+        "tables",
+        "theme",
+        "custom_xml"
+      ],
+      "peak_rss_kb_median": 167184.0,
+      "preserved": false,
+      "status": "passed",
+      "verdict": "Changed cells, cell_styles, data_validations, conditional_formats, comments, charts, tables, theme, custom_xml",
+      "wall_ms_median": 1240.0
+    }
+  },
+  "metadata": {
+    "platform": "Darwin",
+    "repeats": 3,
+    "template_sha256": "da08cc9e607f267b438ec7ce2480d6eb3650d1c19928f283a18296a2b79d808e",
+    "timestamp": "2026-10-03T00:25:19Z"
+  }
+}

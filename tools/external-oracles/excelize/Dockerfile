@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-# Excelize v2.10.1 oracle helper image for remote Docker runs.
+# Excelize v2.11.0 oracle helper image for remote Docker runs.
 # Build (see ../remote/README.md):
 #   docker --context pc build --build-context oracle-remote=../remote \
-#     -t excelbench-excelize-oracle:2.10.1 .
+#     -t excelbench-excelize-oracle:2.11.0 .
 FROM golang:1.25-trixie@sha256:2c4c60ef415fbfa5e90300722293bef36c5e63fae17570ce18f580af933dbd73 AS build
 
 ENV GOTOOLCHAIN=local CGO_ENABLED=0
@@ -23,7 +23,7 @@ COPY --from=oracle-remote container_entry.py /opt/excelbench/remote/container_en
 
 LABEL org.excelbench.adapter=excelize \
       org.excelbench.library=github.com/xuri/excelize/v2 \
-      org.excelbench.library-version=v2.10.1
+      org.excelbench.library-version=v2.11.0
 
 ENTRYPOINT ["python3", "/opt/excelbench/remote/container_entry.py", \
     "--cwd", "/opt/excelbench/excelize", "--", \

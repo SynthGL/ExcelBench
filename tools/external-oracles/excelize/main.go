@@ -866,7 +866,7 @@ func applyCharts(workbook *excelize.File, charts []chartSpec) error {
 			VaryColors: chart.VaryColors,
 		}
 		if chart.Title != "" {
-			excelChart.Title = []excelize.RichTextRun{{Text: chart.Title}}
+			excelChart.Title = excelize.ChartTitle{Paragraph: []excelize.RichTextRun{{Text: chart.Title}}}
 		}
 		if err := workbook.AddChart(chart.Sheet, chart.Cell, excelChart); err != nil {
 			return fmt.Errorf("add chart %s!%s: %w", chart.Sheet, chart.Cell, err)

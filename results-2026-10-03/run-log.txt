@@ -1,0 +1,11 @@
+start_utc 2026-10-03T00:00:01Z
+load_start { 6.66 5.91 4.97 }
+xlsx_exit 0
+cross_language_exit 0
+heatmap_exit 0
+gate_check 00:02:15Z load1=7.18
+mutation_load_before { 7.18 6.93 5.56 }
+mutation_exit 0
+mutation_load_after { 21.30 11.57 7.66 }
+calc_exit 0
+end_utc 2026-10-03T00:06:34Z
