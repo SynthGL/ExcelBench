@@ -51,7 +51,7 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 >
 > In that snapshot, WolfXL reaches `18/18` green features with `100%` pass rate.
 >
-> Performance snapshot: 2026-10-02 UTC | WolfXL 2.0.5 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`) | [Perf](results-2026-10-02/perf/README.md). It supersedes the 2026-04-29 perf numbers for WolfXL, which measured private backend objects.
+> Performance snapshot: 2026-10-03 UTC | WolfXL 2.0.8 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`) | [Perf](results-2026-10-03/perf/README.md). It supersedes the 2026-10-02 perf snapshot (WolfXL 2.0.5) and the 2026-04-29 perf numbers for WolfXL, which measured private backend objects.
 >
 > Cross-language context snapshot: [Apache POI `18/18`](results-cross-language/README.md) | [Excelize `18/18`](results-cross-language/README.md)
 >
@@ -102,16 +102,16 @@ Use this when the question is: which engine actually computes a 133-formula fina
 
 | Library | Caps | Fidelity | Read Speed | Write Speed | Modify |
 |---------|:----:|:--------:|:----------:|:-----------:|:------:|
-| **wolfxl** | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot (18/18 in 2026-04-29 snapshot) | 1.69x (13.46 ms) | 1.20x (22.28 ms) | Patch (Preserved, 17/17 features in 2026-10-03 mutation suite) |
-| openpyxl | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot | 1.00x (22.79 ms, baseline) | 1.00x (26.70 ms, baseline) | Rewrite (16/17 features in 2026-10-03 mutation suite) |
+| **wolfxl** | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot (18/18 in 2026-04-29 snapshot) | 1.73x (13.90 ms) | 2.45x (11.26 ms) | Patch (Preserved, 17/17 features in 2026-10-03 mutation suite) |
+| openpyxl | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot | 1.00x (24.01 ms, baseline) | 1.00x (27.59 ms, baseline) | Rewrite (16/17 features in 2026-10-03 mutation suite) |
 | aspose-cells-foss | R+W | R 11/21, W 14/21 in 2026-10-03 competitor snapshot | not measured | not measured | Rewrite (15/17 features) |
-| xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | 0.86x (31.12 ms) | No |
-| xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | 0.86x (31.17 ms) | No |
-| python-calamine | R | 1/18 in 2026-04-29 release snapshot | 14.02x (1.63 ms) | -- | No |
-| pandas | R+W | 3/18 in 2026-04-29 release snapshot | 0.80x (28.43 ms) | 1.00x (26.66 ms) | Rebuild |
-| polars | R | 0/18 in 2026-04-29 release snapshot | 3.72x (6.13 ms) | -- | No |
+| xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | 0.82x (33.63 ms) | No |
+| xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | 0.82x (33.69 ms) | No |
+| python-calamine | R | 1/18 in 2026-04-29 release snapshot | 13.92x (1.73 ms) | -- | No |
+| pandas | R+W | 3/18 in 2026-04-29 release snapshot | 0.82x (29.33 ms) | 0.97x (28.57 ms) | Rebuild |
+| polars | R | 0/18 in 2026-04-29 release snapshot | 3.87x (6.21 ms) | -- | No |
 
-> Speed columns come from the [2026-10-02 perf snapshot](results-2026-10-02/perf/README.md): sum of per-feature p50 wall times over the same 19 xlsx features for every library (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), shown as openpyxl's total divided by the library's total. WolfXL 2.0.5 is measured through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), like every other library. aspose-cells-foss was not part of the perf run. Always cite the artifact date, workload, and profile. See [METHODOLOGY.md](METHODOLOGY.md) and [Public Reporting Status](docs/public-reporting.md).
+> Speed columns come from the [2026-10-03 perf snapshot](results-2026-10-03/perf/README.md): sum of per-feature p50 wall times over the same 19 xlsx features for every library (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), shown as openpyxl's total divided by the library's total. WolfXL 2.0.8 is measured through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), like every other library. python-calamine and polars read faster than WolfXL; openpyxl writes faster than xlsxwriter and pandas. aspose-cells-foss was not part of the perf run. Always cite the artifact date, workload, and profile. See [METHODOLOGY.md](METHODOLOGY.md) and [Public Reporting Status](docs/public-reporting.md).
 
 ### Key Findings
 - **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-10-03 competitor snapshot (21 scored features; `pivot_tables` unscored), openpyxl 3.1.5 and WolfXL 2.0.8 both hold 21/21 read and 21/21 write and pass all 133 tests in each mode. The next best are ExcelJS (15/21 write) and xlsxwriter (15/21 write)
@@ -332,7 +332,8 @@ None currently queued. Tier 4 (charts anchoring, print settings, protection) shi
 - **[XLS results](results/xls/README.md)** -- legacy format results
 - **[Performance results](results/perf/README.md)** -- 2026-04-20 perf snapshot (historical; its WolfXL column measured private backend objects)
 - **[Release snapshot perf](results-release-2026-04-28/perf/README.md)** -- 2026-04-29 perf snapshot (historical; its WolfXL column measured private backend objects)
-- **[2026-10-02 perf snapshot](results-2026-10-02/perf/README.md)** -- current perf: 13 Python adapters, 19 features, WolfXL 2.0.5 through its public API
+- **[2026-10-02 perf snapshot](results-2026-10-02/perf/README.md)** -- 2026-10-02 perf snapshot (historical): 13 Python adapters, 19 features, WolfXL 2.0.5 through its public API
+- **[2026-10-03 perf snapshot](results-2026-10-03/perf/README.md)** -- current perf: same command, host and adapters as 2026-10-02, WolfXL 2.0.8 through its public API
 - **[Dashboard](results/DASHBOARD.md)** -- combined fidelity + performance comparison
 - **[Release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md)** -- combined view for the fresh rerun
 - **[Heatmap (PNG)](results/xlsx/heatmap.png)** | **[SVG](results/xlsx/heatmap.svg)** -- visual score matrix

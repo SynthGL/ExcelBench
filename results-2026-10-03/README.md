@@ -6,8 +6,9 @@
 | Template mutation | [mutation/](mutation/README.md) | `excelbench mutation -o results-2026-10-03/mutation --repeats 3` |
 | Formula recalculation | [calc/](calc/README.md) | `EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON=<commercial venv>/bin/python excelbench calc -o results-2026-10-03/calc` |
 | Cross-language context | [cross-language/](cross-language/README.md) | `EXCELBENCH_ORACLE_DOCKER_CONTEXT=pc excelbench cross-language-context -t fixtures/excel -o results-2026-10-03/cross-language` |
+| Performance (13 Python adapters, separate host) | [perf/](perf/README.md) | `excelbench perf --tests fixtures/excel --profile xlsx --warmup 3 --iters 25 --iteration-policy fixed --memory-mode getrusage` with 19 `--feature` and 13 `--adapter` flags (full command in [perf/README.md](perf/README.md)) |
 
-All four lanes ran from [run.sh](run.sh) (`EB_VENV` and `EB_COMMERCIAL` name the two interpreters); its console output is [run-log.txt](run-log.txt). The per-lane console logs it writes to `logs/` are gitignored and not committed; every score is in each lane's `results.json`. Perf is a separate snapshot. Fixtures, scoring and adapters are the ones used for 2026-10-02; the only code change is the Excelize helper port to 2.11.0 (see the cross-language README).
+The fidelity, mutation, calc and cross-language lanes ran from [run.sh](run.sh) (`EB_VENV` and `EB_COMMERCIAL` name the two interpreters); its console output is [run-log.txt](run-log.txt). The per-lane console logs it writes to `logs/` are gitignored and not committed; every score is in each lane's `results.json`. Perf ran separately on a different host (Apple M4 Pro, Python 3.12.3, the WolfXL 2.0.8 cp312 wheel) with the 2026-10-02 perf command; its receipt, pins and log are in [perf/](perf/README.md). Fixtures, scoring and adapters are the ones used for 2026-10-02; the only code change is the Excelize helper port to 2.11.0 (see the cross-language README).
 
 ## Versions
 
@@ -54,3 +55,4 @@ macOS 26.5.1 (25F80), Apple M5 Pro, 64 GB, arm64; Python 3.13.9; ExcelBench `mas
 - Cross-language: identical scores (Apache POI 18/21, Excelize 18/21 after the 2.11.0 bump, zavora-xlsx 8/21).
 - Calc: identical except the WolfXL Community version (2.0.8, 133/133 calculated, 0/133 saved).
 - Mutation: identical verdicts (wolfxl Preserved 17/17, openpyxl 16/17, LibreOffice 15/17, aspose-cells-foss 15/17, SheetJS 8/17, zavora-xlsx 8/17, ExcelJS fails to load the template). The committed table is a rerun at 00:24:57Z with the same command, because unrelated host load spiked during the `run.sh` attempt and skewed its timings; `run-log.txt` covers only the `run.sh` attempt. Details and load readings are in the mutation README.
+- Perf ([perf/](perf/README.md)): the only package change is WolfXL 2.0.5 to 2.0.8. WolfXL write fell from 22.28 to 11.26 ms (sum of 19 per-feature p50s; 1.20x to 2.45x openpyxl) and read is flat (13.46 to 13.90 ms; 1.69x to 1.73x). python-calamine (13.92x openpyxl) and polars (3.87x) still read faster than WolfXL. The other adapters moved by -3.8% to +13.3% with no version change, which is run-to-run variance.
