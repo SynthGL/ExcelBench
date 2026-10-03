@@ -52,17 +52,19 @@ Large static content in a template (images, charts, pivot tables) is never parse
 
 ## Benchmark Scores
 
-Fidelity from the 2026-10-02 snapshot (WolfXL 2.0.5; `results-2026-10-02/xlsx`, 21 scored features with `pivot_tables` unscored); speed from the 2026-10-03 perf snapshot (WolfXL 2.0.8; `results-2026-10-03/perf`):
+From the 2026-10-03 snapshot (WolfXL 2.0.8): fidelity from `results-2026-10-03/xlsx` (21 scored features; `pivot_tables` is unscored for every adapter), mutation from `results-2026-10-03/mutation`, calc from `results-2026-10-03/calc`, speed from `results-2026-10-03/perf`:
 
 | Axis | Score |
 |------|-------|
-| Fidelity | 17/21 features green in both read and write (read 19/21, write 18/21) |
+| Fidelity | 21/21 features green in both read and write, tied with openpyxl 3.1.5 (21/21 read and write) |
 | Read Speed | 1.73x openpyxl (WolfXL 2.0.8 public API) |
 | Write Speed | 2.45x openpyxl (WolfXL 2.0.8 public API) |
 | Feature Coverage | 100% (21/21 features score at least 1 in read or write) |
+| Template mutation | Preserved, 17/17 template features kept (openpyxl 16/17) |
+| Calc | Community 2.0.8 calculates 133/133 formulas, but its `save()` writes 0/133 calculated values; Commercial 2.3.0 calculates and saves 133/133 |
 | Capability Breadth | 100 (R+W+Modify) |
 
-Known gaps: `named_ranges` read 2/3 and write 2/3, `tables` read 2/3, `page_setup` write 2/3, `chart_anchor` write 0/3.
+Every scored feature is 3/3 in both read and write, so there are no fidelity gaps in this snapshot.
 
 ## Source
 

@@ -115,7 +115,7 @@ Use this when the question is: which engine actually computes a 133-formula fina
 
 ### Key Findings
 - **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-10-03 competitor snapshot (21 scored features; `pivot_tables` unscored), openpyxl 3.1.5 and WolfXL 2.0.8 both hold 21/21 read and 21/21 write and pass all 133 tests in each mode. The next best are ExcelJS (15/21 write) and xlsxwriter (15/21 write)
-- **WolfXL 2.1.0 regression signal**: conditional-formatting read scores 0 and named-range / print-title writes score 2 in the 2026-09-08 snapshot; tracked for the WolfXL repo
+- **WolfXL 2.1.0 regression signal (2026-09-08)**: conditional-formatting read scored 0 and named-range / print-title writes scored 2 in the 2026-09-08 snapshot; WolfXL 2.0.8 scores 3 on all three in the 2026-10-03 snapshot
 - **Patch modify is structurally different**: WolfXL's `load_workbook(path, modify=True)` uses surgical ZIP patching; it is the only engine whose output keeps every template feature in the 2026-10-03 mutation suite
 - **The abstraction tax is real**: pandas wraps openpyxl but drops from 16 to 3 green features due to DataFrame coercion (errors become NaN)
 - **Speed vs fidelity tradeoff is measurable**: use the perf snapshot together with the fidelity matrix rather than quoting one without the other
