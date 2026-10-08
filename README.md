@@ -141,7 +141,7 @@ See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) fo
 
 | Library | Version | Lang | Caps | Green Features |
 |:--------|:--------|:-----|:-----|:--------------:|
-| [WolfXL](https://github.com/SynthGL/wolfxl) | 2.0.8 | Python (Rust core) | R+W | R 21/21, W 21/21 (2026-10-03 snapshot) |
+| [WolfXL](https://github.com/SynthGL/wolfxl-oss) | 2.0.8 | Python (Rust core) | R+W | R 21/21, W 21/21 (2026-10-03 snapshot) |
 | [openpyxl](https://openpyxl.readthedocs.io/) | 3.1.5 | Python | R+W | R 21/21, W 21/21 (2026-10-03 snapshot) |
 | [aspose-cells-foss](https://pypi.org/project/aspose-cells-foss/) | 26.7 | Python (JVM-core FOSS) | R+W | R 11/21, W 14/21 (2026-10-03 snapshot) |
 | [XlsxWriter](https://xlsxwriter.readthedocs.io/) | 3.2.9 | Python | W | 15/18 |
@@ -182,8 +182,8 @@ Five additional adapters via Rust/PyO3 extension modules:
 
 | Library | Caps | Source | Notes |
 |:--------|:-----|:-------|:------|
-| [WolfXL](https://github.com/SynthGL/wolfxl) (calamine-styled) | R | PyPI | Full-fidelity Rust reader with style extraction |
-| [WolfXL](https://github.com/SynthGL/wolfxl) (rust_xlsxwriter) | W | PyPI | Full-fidelity Rust writer |
+| [WolfXL](https://github.com/SynthGL/wolfxl-oss) (calamine-styled) | R | PyPI | Full-fidelity Rust reader with style extraction |
+| [WolfXL](https://github.com/SynthGL/wolfxl-oss) (rust_xlsxwriter) | W | PyPI | Full-fidelity Rust writer |
 | calamine (basic) | R | Local | Direct calamine bindings (data only, no styles) |
 | rust_xlsxwriter (direct) | W | Local | Direct rust_xlsxwriter bindings |
 | umya-spreadsheet | R+W | Local | Rust read + write |
@@ -260,13 +260,13 @@ See [docs/public-reporting.md](docs/public-reporting.md).
 
 ## WolfXL Docs
 
-WolfXL documentation lives in the [wolfxl repository](https://github.com/SynthGL/wolfxl/tree/main/docs).
+WolfXL documentation lives at [wolfxl.com/docs](https://wolfxl.com/docs/).
 
-- [Quickstart](https://github.com/SynthGL/wolfxl/blob/main/docs/getting-started/quickstart.md)
-- [Openpyxl migration guide](https://github.com/SynthGL/wolfxl/blob/main/docs/migration/openpyxl-migration.md)
-- [Compatibility matrix](https://github.com/SynthGL/wolfxl/blob/main/docs/migration/compatibility-matrix.md)
-- [Benchmark methodology](https://github.com/SynthGL/wolfxl/blob/main/docs/performance/methodology.md)
-- [Known limitations](https://github.com/SynthGL/wolfxl/blob/main/docs/trust/limitations.md)
+- [Quickstart](https://wolfxl.com/docs/getting-started/quickstart/)
+- [Openpyxl migration guide](https://wolfxl.com/docs/migration/openpyxl-migration/)
+- [Compatibility matrix](https://wolfxl.com/docs/migration/compatibility-matrix/)
+- [Benchmark methodology](https://wolfxl.com/docs/performance/methodology/)
+- [Known limitations](https://wolfxl.com/docs/trust/limitations/)
 
 ## Quick Start
 
