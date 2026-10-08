@@ -1406,7 +1406,7 @@ def _section_nav(
         f'<div class="brand">ExcelBench</div>'
         f'<div class="links" id="site-nav-links">{link_html}</div>'
         f'<div class="nav-actions">'
-        f'<a class="wolf-link" href="https://github.com/SynthGL/wolfxl" target="_blank" '
+        f'<a class="wolf-link" href="https://github.com/SynthGL/wolfxl-oss" target="_blank" '
         f'rel="noopener noreferrer">\U0001F43A WolfXL</a>'
         f'<button type="button" class="nav-toggle" aria-controls="site-nav-links" '
         f'aria-expanded="false" aria-label="Toggle navigation menu">Menu</button>'
@@ -1494,7 +1494,7 @@ def _section_overview(fidelity: dict[str, Any], perf: dict[str, Any] | None) -> 
             f'<p><b>{wolf_green}/{wolf_scored}</b> features scored 3 in read or write'
             f'{wolf_perf_note}. '
             f'Hybrid Rust+Python engine with an openpyxl-compatible API. '
-            f'<a href="https://github.com/SynthGL/wolfxl" '
+            f'<a href="https://github.com/SynthGL/wolfxl-oss" '
             f'style="color:#ea580c;font-weight:600">View on GitHub &rarr;</a></p>'
             f'</div></div>'
         )
