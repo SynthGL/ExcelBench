@@ -1,0 +1,45 @@
+{
+  "source_commit": "5f71713413c43f3733e303ba8a4eed6a756760cd",
+  "source_tree": "c3033f5741e2b701a5e7f833d65d96a1ac2ebdb5",
+  "wheel": {
+    "filename": "wolfxl-2.0.21-cp313-cp313-macosx_11_0_arm64.whl",
+    "url": "https://files.pythonhosted.org/packages/e6/92/855dfba4140912b833272fefc06d7cf8157b64dc335fe21839f4bc123fb6/wolfxl-2.0.21-cp313-cp313-macosx_11_0_arm64.whl",
+    "digests": {
+      "blake2b_256": "e692855dfba4140912b833272fefc06d7cf8157b64dc335fe21839f4bc123fb6",
+      "md5": "06a8a28be530120b7400f604c83f3dd3",
+      "sha256": "d16ed9ce31fa89338efbe694a96ca504a778ded9e8837b9498ad0cbdfcc0d320"
+    },
+    "upload_time_iso_8601": "2026-10-27T07:31:16.830604Z",
+    "installed_extension": "wolfxl/_rust.cpython-313-darwin.so",
+    "installed_extension_sha256": "8f504835f5a991c5e13405685e4c1f97edc76839b1f60345afebf4bfbe7dbc63"
+  },
+  "host": {
+    "cpu": "Apple M5 Pro",
+    "core_count": 18,
+    "memory_bytes": 68719476736,
+    "macos": "26.5.1",
+    "macos_build": "25F80",
+    "python": "3.13.9",
+    "architecture": "arm64",
+    "uv": "0.12.3"
+  },
+  "fixtures": {
+    "fixtures/calc/financial_model.xlsx": "8b95250d4f14ace64469b2c023aeae5f0f252e8ac663e0d4429dea98e00e209a",
+    "fixtures/calc/expected_values.json": "60558dafaae3f090e2c7352da805728c20ba7a638aef093696f3fa4f7c26385e",
+    "fixtures/excel/manifest.json": "984073b67669fb0566b55e35a05447fbaaeb9f0da2d6de1a335baf61de9b382f"
+  },
+  "run": {
+    "start_utc": "2026-10-28T01:53:53.882703+00:00",
+    "end_utc": "2026-10-28T01:54:31.643061+00:00",
+    "wall_seconds": 37.76014845794998,
+    "exit_code": 0,
+    "overall_timeout_seconds": 600,
+    "stdout": "start_utc 2026-10-28T01:53:53Z\nload_before { 12.98 9.46 6.63 }\ncalc_exit 0\nperf_start_utc 2026-10-28T01:54:17Z\nperf_load_before { 9.05 8.81 6.48 }\nperf_exit 0\nload_after { 7.94 8.58 6.44 }\nend_utc 2026-10-28T01:54:31Z\n",
+    "stderr": ""
+  },
+  "commercial_interpreter_configured": false,
+  "cache_state": "Three warmup iterations discarded per library/feature/operation; 25 recorded in-process iterations. No cold-start metric. Installed public prebuilt wheel, no local Rust build.",
+  "per_operation_timeout_seconds": null,
+  "perf_overall_timeout_seconds": 600,
+  "attempts": 1
+}
