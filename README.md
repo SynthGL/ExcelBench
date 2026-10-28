@@ -2,6 +2,10 @@
 
 **Objective, reproducible spreadsheet-library benchmarks with a Python-first decision surface.**
 
+> **Independence:** ExcelBench is maintained by the authors of WolfXL, not an
+> independent testing organization. The harness, fixtures, and raw results are
+> public so anyone can [reproduce the measurements](results-2026-10-27/README.md#reproduce).
+
 Most Excel library comparisons focus on speed. ExcelBench focuses on the question developers actually have:
 
 > Can this library handle my real spreadsheet without breaking the parts I care about?
@@ -13,9 +17,9 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 
 ## Results at a Glance
 
-> Competitor snapshot: 2026-10-03 | WolfXL 2.0.8 (latest PyPI) | 17 fidelity adapters incl. SheetJS CE 0.20.3, ExcelJS 4.4.0, LibreOffice 26.8.0.3 | [Snapshot README](results-2026-10-03/README.md) | [Fidelity](results-2026-10-03/xlsx/README.md) | [Mutation](results-2026-10-03/mutation/README.md) | [Calc](results-2026-10-03/calc/README.md) | [Cross-language](results-2026-10-03/cross-language/README.md)
+> Latest calc and small-file perf refresh: [2026-10-27](results-2026-10-27/README.md), WolfXL Community 2.0.21 from public PyPI. Fidelity and mutation remain on the 2026-10-03 snapshot, measured with WolfXL 2.0.8; they have not been rerun with 2.0.21. [Fidelity](results-2026-10-03/xlsx/README.md) | [Mutation](results-2026-10-03/mutation/README.md) | [Calc](results-2026-10-27/calc/README.md) | [Cross-language](results-2026-10-03/cross-language/README.md)
 >
-> Green features in that snapshot (read / write, out of 21¹): openpyxl
+> Green features in the 2026-10-03 fidelity snapshot (read / write, out of 21¹): openpyxl
 > 21/21 / 21/21 and WolfXL 21/21 / 21/21 (both pass all 133 tests in each
 > mode), ExcelJS 12/21 / 15/21, aspose-cells-foss 11/21 / 14/21,
 > LibreOffice 12/21 / 12/21, SheetJS CE 9/21 / 8/21; write-only
@@ -30,11 +34,12 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 > ran applied both edits.
 >
 > Calc tier (133-formula financial DAG, cache-free fixture, LibreOffice
-> oracle): LibreOffice 26.8.0.3, WolfXL Community 2.0.8 and WolfXL
-> Commercial 2.3.0 133/133; aspose-cells-foss 25/133; zavora 0/133.
-> Community's `save()` writes no calculated values (0/133 saved), while
-> Commercial saves all 133. SheetJS CE, ExcelJS, and the other
-> non-calculating adapters are not applicable.
+> oracle): in the [2026-10-27 refresh](results-2026-10-27/calc/README.md),
+> WolfXL Community 2.0.21 computes all 133 formulas and saves all 133
+> cached values. LibreOffice 26.8.0.3 computes 133/133; aspose-cells-foss
+> 25/133; zavora 0/133. Commercial 2.3.0's 133/133 computed and saved
+> result is carried forward from 2026-10-03, not rerun. Non-calculating
+> adapters are not applicable.
 >
 > Cross-language context (write lane): Apache POI 5.5.1 18/21, Excelize
 > 2.11.0 18/21, zavora-xlsx 0.1.2 8/21. The POI and Excelize misses are
@@ -51,7 +56,7 @@ cross-language context lane (Apache POI, Excelize, zavora-xlsx). Tier 4
 >
 > In that snapshot, WolfXL reaches `18/18` green features with `100%` pass rate.
 >
-> Performance snapshot: 2026-10-03 UTC | WolfXL 2.0.8 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`) | [Perf](results-2026-10-03/perf/README.md). It supersedes the 2026-10-02 perf snapshot (WolfXL 2.0.5) and the 2026-04-29 perf numbers for WolfXL, which measured private backend objects.
+> Performance refresh: [2026-10-27](results-2026-10-27/perf/README.md), WolfXL 2.0.21 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), Apple M5 Pro, Python 3.13.9. This replaces the README's small-file speed column, not its fidelity or mutation results. The previous [2026-10-03 perf snapshot](results-2026-10-03/perf/README.md) used a different host and interpreter, so changes between dates cannot be attributed to a library version.
 >
 > Cross-language context snapshot: [Apache POI `18/18`](results-cross-language/README.md) | [Excelize `18/18`](results-cross-language/README.md)
 >
@@ -100,18 +105,20 @@ Use this when the question is: which engine actually computes a 133-formula fina
 
 ### Library Comparison
 
-| Library | Caps | Fidelity | Read Speed | Write Speed | Modify |
-|---------|:----:|:--------:|:----------:|:-----------:|:------:|
-| **wolfxl** | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot (18/18 in 2026-04-29 snapshot) | 1.73x (13.90 ms) | 2.45x (11.26 ms) | Patch (Preserved, 17/17 features in 2026-10-03 mutation suite) |
-| openpyxl | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot | 1.00x (24.01 ms, baseline) | 1.00x (27.59 ms, baseline) | Rewrite (16/17 features in 2026-10-03 mutation suite) |
-| aspose-cells-foss | R+W | R 11/21, W 14/21 in 2026-10-03 competitor snapshot | not measured | not measured | Rewrite (15/17 features) |
-| xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | 0.82x (33.63 ms) | No |
-| xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | 0.82x (33.69 ms) | No |
-| python-calamine | R | 1/18 in 2026-04-29 release snapshot | 13.92x (1.73 ms) | -- | No |
-| pandas | R+W | 3/18 in 2026-04-29 release snapshot | 0.82x (29.33 ms) | 0.97x (28.57 ms) | Rebuild |
-| polars | R | 0/18 in 2026-04-29 release snapshot | 3.87x (6.21 ms) | -- | No |
+| Library | Caps | Fidelity | Small-file Read | Small-file Write | Modify | Calc: computed / saved |
+|---------|:----:|:--------:|:---------------:|:----------------:|:------:|:----------------------:|
+| **wolfxl** | R+W | R 21/21, W 21/21 with 2.0.8 in 2026-10-03 snapshot | 1.52x (14.54 ms) | 2.05x (13.73 ms) | Patch (Preserved, 17/17 features in 2026-10-03 mutation suite) | **133/133 / 133/133 with Community 2.0.21** |
+| openpyxl | R+W | R 21/21, W 21/21 in 2026-10-03 competitor snapshot | 1.00x (22.13 ms, baseline) | 1.00x (28.09 ms, baseline) | Rewrite (16/17 features in 2026-10-03 mutation suite) | N/A |
+| aspose-cells-foss | R+W | R 11/21, W 14/21 in 2026-10-03 competitor snapshot | not measured | not measured | Rewrite (15/17 features) | 25/133 / not measured |
+| xlsxwriter | W | 15/18 in 2026-04-29 release snapshot | -- | 0.77x (36.28 ms) | No | N/A |
+| xlsxwriter-constmem | W | 12/18 in 2026-04-29 release snapshot | -- | 0.80x (35.29 ms) | No | N/A |
+| python-calamine | R | 1/18 in 2026-04-29 release snapshot | **12.67x (1.75 ms)** | -- | No | N/A |
+| pandas | R+W | 3/18 in 2026-04-29 release snapshot | 0.71x (31.28 ms) | 0.86x (32.80 ms) | Rebuild | N/A |
+| polars | R | 0/18 in 2026-04-29 release snapshot | 3.06x (7.24 ms) | -- | No | N/A |
 
-> Speed columns come from the [2026-10-03 perf snapshot](results-2026-10-03/perf/README.md): sum of per-feature p50 wall times over the same 19 xlsx features for every library (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), shown as openpyxl's total divided by the library's total. WolfXL 2.0.8 is measured through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`), like every other library. python-calamine and polars read faster than WolfXL; openpyxl writes faster than xlsxwriter and pandas. aspose-cells-foss was not part of the perf run. Always cite the artifact date, workload, and profile. See [METHODOLOGY.md](METHODOLOGY.md) and [Public Reporting Status](docs/public-reporting.md).
+> **What these speed columns measure:** the [2026-10-27 perf snapshot](results-2026-10-27/perf/README.md) sums the per-feature p50 wall times over **19 small feature workbooks**, mostly measuring per-call overhead, not large-file throughput. Ratios are openpyxl's total divided by each library's total within the same run (3 warmups, 25 recorded iterations, Apple M5 Pro, Python 3.13.9). WolfXL 2.0.21 uses its public API, like the other libraries. **python-calamine leads this small-file read comparison**; polars also reads faster than WolfXL. openpyxl writes faster than xlsxwriter and pandas. aspose-cells-foss was not part of this perf run. Calc counts come from the [new raw calc results](results-2026-10-27/calc/results.json); N/A means no calculation engine, not a zero score.
+>
+> **For throughput:** WolfXL's separate [large-file ecosystem results](https://github.com/SynthGL/wolfxl-oss/tree/main/benchmarks/results) include a [1.6M-cell workbook comparison](https://github.com/SynthGL/wolfxl-oss/blob/main/benchmarks/results/2026-08-18-ecosystem-full-linux-epyc.md) (200,000 rows x 8 columns). Those are different workloads, APIs, environments, and library versions, not a contradiction or interchangeable speed ratios. See [METHODOLOGY.md](METHODOLOGY.md) and [Public Reporting Status](docs/public-reporting.md).
 
 ### Key Findings
 - **High-fidelity libraries are rare**: in the 2026-04-29 release snapshot, only openpyxl and WolfXL reached 18/18 green features; in the 2026-10-03 competitor snapshot (21 scored features; `pivot_tables` unscored), openpyxl 3.1.5 and WolfXL 2.0.8 both hold 21/21 read and 21/21 write and pass all 133 tests in each mode. The next best are ExcelJS (15/21 write) and xlsxwriter (15/21 write)
@@ -121,7 +128,7 @@ Use this when the question is: which engine actually computes a 133-formula fina
 - **Speed vs fidelity tradeoff is measurable**: use the perf snapshot together with the fidelity matrix rather than quoting one without the other
 - **Optimization modes have clear costs**: openpyxl-readonly loses 13 green features for streaming speed
 - **Cross-language context is now strong too**: `Apache POI` and `Excelize` land at `18/18` in the scored write lane; `zavora-xlsx` 0.1.2 writes fast but corrupts hyperlink relationships on mutate and cannot recalculate
-- **Calculation is a differentiator**: in the 2026-10-03 calc lane, LibreOffice, WolfXL Community 2.0.8, and WolfXL Commercial 2.3.0 compute all 133 formulas; aspose-cells-foss covers 25/133 and zavora-xlsx 0/133. Community's `save()` writes no calculated values (0/133 saved), while Commercial saves all 133
+- **Calculation and saved caches:** in the [2026-10-27 calc refresh](results-2026-10-27/calc/README.md), WolfXL Community 2.0.21 computes and saves all 133 formula values in the financial fixture. LibreOffice computes 133/133; aspose-cells-foss covers 25/133 and zavora-xlsx 0/133. Commercial 2.3.0's 133/133 computed and saved row is carried forward from 2026-10-03 because no Commercial interpreter was configured. This fixture does not establish coverage of all Excel functions.
 
 
 See the [release snapshot dashboard](results-release-2026-04-28/DASHBOARD.md) for the fresh wheel-backed combined view, or the [historical dashboard](results/DASHBOARD.md) for the older public baseline.

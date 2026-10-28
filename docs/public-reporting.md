@@ -12,7 +12,8 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 - Fresh WolfXL 2.0 wheel-backed release snapshot: `results-release-2026-04-28/` generated 2026-04-29 UTC
 - Current checked-in cross-language context snapshot: `results-cross-language/` generated 2026-04-29 UTC
 - Current checked-in cross-language pivot capability artifact: `results-cross-language-pivots/` generated 2026-04-29 UTC
-- Current competitor snapshot: `results-2026-10-03/` (fidelity, mutation, calc, cross-language, perf) generated 2026-10-03 UTC with WolfXL 2.0.8
+- Current fidelity, mutation, and cross-language competitor snapshot: `results-2026-10-03/`, measured with WolfXL 2.0.8.
+- Latest calc and small-file perf refresh: `results-2026-10-27/`, measured with WolfXL Community 2.0.21. The directory uses the local date; raw timestamps are 2026-10-28 UTC. Commercial 2.3.0's calc row is carried forward from 2026-10-03, not rerun.
 - Previous competitor snapshot: `results-2026-10-02/` (fidelity, mutation, calc, cross-language, perf) generated 2026-10-02 UTC with WolfXL 2.0.5
 
 ## How To Cite ExcelBench Safely
@@ -47,6 +48,8 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 | `results-2026-10-03/calc/README.md` | 2026-10-03 | Formula-recalculation tier vs LibreOffice 26.8.0.3 oracle; WolfXL Community 2.0.8 and Commercial 2.3.0 |
 | `results-2026-10-03/cross-language/README.md` | 2026-10-03 | Cross-language context: Apache POI 5.5.1, Excelize 2.11.0, zavora-xlsx 0.1.2 |
 | `results-2026-10-03/perf/README.md` | 2026-10-03 | Performance snapshot: the 2026-10-02 command, host and 13 Python adapters x 19 features, warmup 3, 25 iterations; WolfXL 2.0.8 through its public API is the only package change |
+| `results-2026-10-27/calc/README.md` | 2026-10-27 local, 2026-10-28 UTC | Community 2.0.21 calculates and saves 133/133 values; Commercial 2.3.0 carried forward from 2026-10-03 |
+| `results-2026-10-27/perf/README.md` | 2026-10-27 local, 2026-10-28 UTC | Latest small-file perf: same 13 adapters x 19 features, 3 warmups and 25 iterations, Apple M5 Pro, Python 3.13.9; replaces the README speed column, not a version-isolated comparison |
 
 ## Safe Claims Right Now
 
@@ -58,6 +61,9 @@ This page explains what the current ExcelBench repo artifacts mean and how to ci
 - A separate pivot capability artifact is available for cross-language helpers and should be cited as a capability note, not as a scored lane.
 - The 2026-09-08 competitor snapshot extends the scored matrix to 22 features (Tier 4 is openpyxl-structural, not Excel-authored) and adds aspose-cells-foss; its fidelity numbers must not be mixed with /18 denominators from earlier snapshots.
 - The mutation and calc lanes are separate decision surfaces (modify-integrity and calculation correctness) and must be cited as their own artifacts, never folded into feature-parity claims.
+- ExcelBench is maintained by the authors of WolfXL, not an independent testing organization. The public harness, fixtures, raw results, and [reproduce commands](../results-2026-10-27/README.md#reproduce) allow others to check the measurements.
+- The 2026-10-27 perf totals sum per-feature p50 timings for 19 small workbooks, mostly measuring per-call overhead. They are not large-workbook throughput figures; python-calamine leads the small-file read comparison.
+- The 2026-10-27 calculation fixture shows Community 2.0.21 computes and saves all 133 tested values. It does not establish support for all Excel formulas. Its fidelity and mutation results remain on the older 2.0.8 snapshot.
 
 ## Claims That Need Fresh Reruns
 

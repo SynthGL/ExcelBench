@@ -1,0 +1,62 @@
+{
+  "calc/aspose_cells_foss/financial_model.xlsx": {
+    "sha256": "7acfcea09bdfc1bc76eaa34aace553ba5c28272df90ce4e306b6f4fc5de02146",
+    "bytes": 9655,
+    "mtime_utc": "2026-10-28T01:54:09.684371+00:00"
+  },
+  "calc/commercial-carry-forward.json": {
+    "sha256": "148b61e71b5bf288800a6f7311b133a9bd43bbb11358d0c459604f2b7153f1c1",
+    "bytes": 429,
+    "mtime_utc": "2026-10-28T01:55:59.612813+00:00"
+  },
+  "calc/libreoffice/financial_model.xlsx": {
+    "sha256": "6c1e3836bdd074989658eb62148e27b9f077b65c61af6a6901953aea5c2ffd26",
+    "bytes": 13135,
+    "mtime_utc": "2026-10-28T01:54:09.306664+00:00"
+  },
+  "calc/results.json": {
+    "sha256": "80e08918e022f65adece602b5a5d591e218321e9b5aa3829445c6f5a45d46bdb",
+    "bytes": 3755,
+    "mtime_utc": "2026-10-28T01:54:16.815713+00:00"
+  },
+  "calc/wolfxl/financial_model.xlsx": {
+    "sha256": "30ff89a0fbd01b0cf2844d5310c5a7da9280eaff27d60a80dbc5b00b6ad16cae",
+    "bytes": 9955,
+    "mtime_utc": "2026-10-28T01:54:07.758964+00:00"
+  },
+  "calc/zavora/financial_model.xlsx": {
+    "sha256": "7baa13b3a3af6ba0339b974498bac63c1217b2593d6715bc87fab98a407dbf22",
+    "bytes": 9022,
+    "mtime_utc": "2026-10-28T01:54:16.814312+00:00"
+  },
+  "calc-run.txt": {
+    "sha256": "0d18656ec917de1c739455c99332f831d284d9fe160a08e8a00bce50800fa7b3",
+    "bytes": 411,
+    "mtime_utc": "2026-10-28T01:54:16.995977+00:00"
+  },
+  "perf/history.jsonl": {
+    "sha256": "534569c1722f6f8480feebd653751bb9ab47e8a61fa9d0845d6f8b9413b8480b",
+    "bytes": 15000,
+    "mtime_utc": "2026-10-28T01:54:31.474435+00:00"
+  },
+  "perf/matrix.csv": {
+    "sha256": "e3ed564385097a728096ecbe621e2f2f05ef929e7ddb658f984a2370429c117d",
+    "bytes": 18995,
+    "mtime_utc": "2026-10-28T01:54:31.473832+00:00"
+  },
+  "perf/results.json": {
+    "sha256": "4aef9b8066c8346f4b2ef5a654509e619088694a86cbfb7fc675ad859fd065af",
+    "bytes": 229439,
+    "mtime_utc": "2026-10-28T01:54:31.472165+00:00"
+  },
+  "perf-run.txt": {
+    "sha256": "f503411acd7ae5e25c08e2a31af4a7ddc045c1b2e24b61a4a9ab1beff5181f84",
+    "bytes": 6697,
+    "mtime_utc": "2026-10-28T01:55:59.623050+00:00"
+  },
+  "receipt.json": {
+    "sha256": "1319ba769abe6e0a2e40fa1117a6ae66d3cd5f91a11eefd5dfa0e35abf1bcdab",
+    "bytes": 2232,
+    "mtime_utc": "2026-10-28T01:55:45.363919+00:00"
+  }
+}

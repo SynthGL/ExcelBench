@@ -1,0 +1,58 @@
+Running performance benchmark...
+  Profile: xlsx
+  Test files: fixtures/excel
+  Output: results-2026-10-27/perf
+  Warmup: 3
+  Iterations: 25
+  Iteration policy: fixed
+  Breakdown: False
+  Memory mode: getrusage
+  Adapters: openpyxl, xlsxwriter, python-calamine, wolfxl, pylightxl, xlrd, 
+pyexcel, xlwt, pandas, xlsxwriter-constmem, openpyxl-readonly, polars, tablib
+
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+src/excelbench/harness/adapters/polars_adapter.py:97: FutureWarning: from_arrow(<ArrowStreamExportable>) will return a Series instead of a DataFrame in 2.0. To avoid this warning, pass the ArrowStreamExportable to either `pl.DataFrame` or `pl.Series` instead based on your desired output type.
+  frames = pl.read_excel(
+✓ Performance results written to results-2026-10-27/perf
+  - results-2026-10-27/perf/results.json
+  - results-2026-10-27/perf/README.md
+  - results-2026-10-27/perf/matrix.csv
+  - results-2026-10-27/perf/history.jsonl
+real 14.63
+user 10.90
+sys 3.71

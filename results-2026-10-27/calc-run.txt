@@ -1,0 +1,15 @@
+Running formula-recalculation tier...
+  Fixture: fixtures/calc/financial_model.xlsx
+  Oracle: fixtures/calc/expected_values.json
+  Output: results-2026-10-27/calc
+
+  wolfxl: passed, 133/133
+  wolfxl-commercial: unavailable, 0/133
+  libreoffice: passed, 133/133
+  aspose_cells_foss: failed, 25/133
+  zavora: failed, 0/133
+
+✓ Calculation results written to results-2026-10-27/calc
+real 23.09
+user 2.81
+sys 1.38

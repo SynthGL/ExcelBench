@@ -1,0 +1,15 @@
+{
+  "source": "results-2026-10-03/calc/results.json",
+  "source_run_date": "2026-10-03T00:06:34.185831+00:00",
+  "reason": "No EXCELBENCH_WOLFXL_COMMERCIAL_PYTHON interpreter was configured. This row was not rerun.",
+  "engine": "wolfxl-commercial",
+  "result": {
+    "matched": 133,
+    "mismatched_cells": [],
+    "reason": null,
+    "saved_matched": 133,
+    "status": "passed",
+    "total": 133,
+    "version": "2.3.0"
+  }
+}

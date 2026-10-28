@@ -5,13 +5,13 @@ description: "Rust-backed Python Excel library with an openpyxl-compatible API. 
 
 WolfXL is a Rust-backed Python library with an openpyxl-compatible API. ExcelBench drives it through that public API:
 
-| Operation | Public API (WolfXL 2.0.8) | Speed vs openpyxl (2026-10-03 perf snapshot) |
+| Operation | Public API (WolfXL 2.0.21) | Speed vs openpyxl (2026-10-27 perf refresh) |
 |-----------|---------------------------|-------------------|
-| Read | `wolfxl.load_workbook(path)` | **1.73x faster** (13.90 ms vs 24.01 ms) |
-| Write | `wolfxl.Workbook()` then `save(path)` | **2.45x faster** (11.26 ms vs 27.59 ms) |
+| Read | `wolfxl.load_workbook(path)` | **1.52x** (14.54 ms vs 22.13 ms) |
+| Write | `wolfxl.Workbook()` then `save(path)` | **2.05x** (13.73 ms vs 28.09 ms) |
 | Modify | `wolfxl.load_workbook(path, modify=True)` then `save(path)`: patch mode rewrites only the changed sheet XML and copies every other ZIP entry unchanged | No current measurement |
 
-Speed figures are sums of per-feature p50 wall times over the same 19 xlsx features for both libraries (warmup 3, 25 iterations, Apple M4 Pro, Python 3.12.3), measured on WolfXL 2.0.8 through its public API (`wolfxl.load_workbook`, `wolfxl.Workbook`). In the same run python-calamine (13.92x openpyxl) and polars (3.87x) read faster than WolfXL. Source: `results-2026-10-03/perf/README.md`.
+Speed figures sum per-feature p50 wall times over 19 small feature workbooks, mostly measuring per-call overhead, not large-file throughput (3 warmups, 25 recorded iterations, Apple M5 Pro, Python 3.13.9). WolfXL 2.0.21 uses its public API. In the same run python-calamine (12.67x openpyxl) and polars (3.06x) read faster than WolfXL. Source: [2026-10-27 perf results](https://github.com/SynthGL/ExcelBench/blob/master/results-2026-10-27/perf/README.md). WolfXL's [large-file ecosystem results](https://github.com/SynthGL/wolfxl-oss/tree/main/benchmarks/results) measure different workloads and are not interchangeable with these ratios.
 
 ## Install
 
@@ -52,16 +52,16 @@ Large static content in a template (images, charts, pivot tables) is never parse
 
 ## Benchmark Scores
 
-From the 2026-10-03 snapshot (WolfXL 2.0.8): fidelity from `results-2026-10-03/xlsx` (21 scored features; `pivot_tables` is unscored for every adapter), mutation from `results-2026-10-03/mutation`, calc from `results-2026-10-03/calc`, speed from `results-2026-10-03/perf`:
+Fidelity and mutation remain from the 2026-10-03 snapshot (WolfXL 2.0.8): `results-2026-10-03/xlsx` (21 scored features; `pivot_tables` is unscored for every adapter) and `results-2026-10-03/mutation`. Calc and speed are refreshed with Community 2.0.21 in `results-2026-10-27/` (local date; raw timestamps 2026-10-28 UTC). Commercial's calc row is carried forward from 2026-10-03, not rerun:
 
 | Axis | Score |
 |------|-------|
 | Fidelity | 21/21 features green in both read and write, tied with openpyxl 3.1.5 (21/21 read and write) |
-| Read Speed | 1.73x openpyxl (WolfXL 2.0.8 public API) |
-| Write Speed | 2.45x openpyxl (WolfXL 2.0.8 public API) |
+| Read Speed | 1.52x openpyxl (WolfXL 2.0.21 public API) |
+| Write Speed | 2.05x openpyxl (WolfXL 2.0.21 public API) |
 | Feature Coverage | 100% (21/21 features score at least 1 in read or write) |
 | Template mutation | Preserved, 17/17 template features kept (openpyxl 16/17) |
-| Calc | Community 2.0.8 calculates 133/133 formulas, but its `save()` writes 0/133 calculated values; Commercial 2.3.0 calculates and saves 133/133 |
+| Calc | Community 2.0.21 calculates 133/133 formulas and saves 133/133 cached values; Commercial 2.3.0's 133/133 calculated and saved row is carried forward from 2026-10-03, not rerun |
 | Capability Breadth | 100 (R+W+Modify) |
 
 Every scored feature is 3/3 in both read and write, so there are no fidelity gaps in this snapshot.
