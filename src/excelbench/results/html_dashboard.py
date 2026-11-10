@@ -393,7 +393,7 @@ def render_html_dashboard(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ExcelBench Dashboard</title>
-<meta name="description" content="ExcelBench scores Python Excel libraries such as openpyxl, XlsxWriter, python-calamine, pandas and WolfXL on XLSX feature fidelity, speed and memory.">
+<meta name="description" content="{_META_DESCRIPTION}">
 <style>{_CSS}</style>
 </head>
 <body>
@@ -500,6 +500,11 @@ def _compute_perf_p50_deltas(
 # ====================================================================
 #  CSS
 # ====================================================================
+
+_META_DESCRIPTION = (
+    "ExcelBench scores Python Excel libraries such as openpyxl, XlsxWriter, python-calamine, "
+    "pandas and WolfXL on XLSX feature fidelity, speed and memory."
+)
 
 _CSS = """
 @import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
