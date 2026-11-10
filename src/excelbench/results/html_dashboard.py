@@ -393,6 +393,7 @@ def render_html_dashboard(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ExcelBench Dashboard</title>
+<meta name="description" content="ExcelBench scores Python Excel libraries such as openpyxl, XlsxWriter, python-calamine, pandas and WolfXL on XLSX feature fidelity, speed and memory.">
 <style>{_CSS}</style>
 </head>
 <body>
