@@ -23,7 +23,7 @@ umya = ["dep:umya-spreadsheet", "dep:chrono"]
 wolfxl = ["dep:zip", "dep:quick-xml"]
 
 [dependencies]
-pyo3 = { version = "0.24", features = ["extension-module", "multiple-pymethods"] }
+pyo3 = { version = "0.29", features = ["extension-module", "multiple-pymethods"] }
 
 # Optional backend dependencies (enabled via crate features)
 # Published styles fork with Font/Fill/Borders/Alignment/NumberFormat parsing.
